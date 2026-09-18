@@ -1,0 +1,34 @@
+[
+  {
+    "program_id": "prog-cs-bsc",
+    "title": "Computer Science",
+    "faculty": "Faculty of Engineering",
+    "degree_level": "bachelor",
+    "language": "English",
+    "is_active": true
+  },
+  {
+    "program_id": "prog-ba-msc",
+    "title": "Business Administration",
+    "faculty": "Faculty of Economics",
+    "degree_level": "master",
+    "language": "English",
+    "is_active": true
+  },
+  {
+    "program_id": "prog-law-bsc",
+    "title": "International Law",
+    "faculty": "Faculty of Law",
+    "degree_level": "bachelor",
+    "language": "English",
+    "is_active": true
+  },
+  {
+    "program_id": "prog-arch-bsc",
+    "title": "Architecture",
+    "faculty": "Faculty of Engineering",
+    "degree_level": "bachelor",
+    "language": "English",
+    "is_active": true
+  }
+]

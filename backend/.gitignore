@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+app/data/faq_index.json
