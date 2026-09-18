@@ -1,0 +1,54 @@
+# SDU Admissions frontend
+
+Web portal for SDU University (Kaskelen) admissions: programme catalogue, document checklist, and a session chat that answers from a mocked official FAQ.
+
+Sprint 1 talks to mocks by default. The API client already uses the backend contract, so switching later is an env change.
+
+## Stack
+
+- Vite + React 19 + TypeScript
+- Tailwind CSS v4
+- React Router
+- TanStack Query
+- Zustand (chat session)
+- shadcn/ui primitives (Button, Input, Select, Sheet)
+
+## Local start
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Open the printed local URL. The app calls `/api/health` on load; with mocks this returns `{ status: "ok" }`.
+
+## Environment
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `VITE_USE_MOCKS` | `true` | `false` sends requests to the real API |
+| `VITE_API_BASE_URL` | `http://localhost:8000` | Used only when mocks are off |
+
+## Routes
+
+- `/` — admissions entry
+- `/programs` — catalogue (search + school / degree / language)
+- `/programs/:id` — programme + document checklist
+
+The chat widget is mounted on every page.
+
+## Mock QA helpers
+
+- Empty catalogue: `/programs?force=empty`
+- Connection error: `/programs?force=503` (filters stay; **Try again** refetches)
+- Chat timeout: send a question containing `timeout`
+- Chat 4xx / 5xx: send `error 400` or `error 500`
+- Missing checklist: open **Management** (master)
+
+## When the backend is ready
+
+1. Set `VITE_USE_MOCKS=false`
+2. Point `VITE_API_BASE_URL` at the deployed API
+3. Keep the same paths: `GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist`, `POST /api/assistant`
