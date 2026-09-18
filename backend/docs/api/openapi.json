@@ -1,0 +1,402 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Admissions Portal API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/programs": {
+      "get": {
+        "tags": [
+          "catalogue"
+        ],
+        "summary": "Search and filter study programs",
+        "description": "Active programs matching every given filter (AND), ordered by title.\n\n`total` is always present. No match returns 200 with `{\"total\": 0, \"programs\": []}`.",
+        "operationId": "list_programs_api_programs_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Keyword in the program title or faculty",
+              "title": "Q"
+            },
+            "description": "Keyword in the program title or faculty"
+          },
+          {
+            "name": "faculty",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 255
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Faculty"
+            }
+          },
+          {
+            "name": "degree_level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "bachelor",
+                    "master",
+                    "phd"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Degree Level"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramListResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/programs/{program_id}": {
+      "get": {
+        "tags": [
+          "catalogue"
+        ],
+        "summary": "Get one study program",
+        "description": "One active program by its id, for the program detail page.",
+        "operationId": "get_program_api_programs__program_id__get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "title": "Program Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active program with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "PROGRAM_NOT_FOUND",
+                  "message": "Program not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assistant/ask": {
+      "post": {
+        "summary": "Ask",
+        "operationId": "ask_api_assistant_ask_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "properties": {
+          "error_code": {
+            "type": "string",
+            "title": "Error Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error_code",
+          "message"
+        ],
+        "title": "ErrorResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ProgramListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "programs": {
+            "items": {
+              "$ref": "#/components/schemas/ProgramOut"
+            },
+            "type": "array",
+            "title": "Programs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "programs"
+        ],
+        "title": "ProgramListResponse"
+      },
+      "ProgramOut": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "faculty": {
+            "type": "string",
+            "title": "Faculty"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "tuition_fee": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Fee"
+          },
+          "application_deadline": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Deadline"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "program_id",
+          "title",
+          "faculty",
+          "degree_level",
+          "language",
+          "tuition_fee",
+          "application_deadline",
+          "is_active"
+        ],
+        "title": "ProgramOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

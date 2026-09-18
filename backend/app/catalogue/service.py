@@ -41,3 +41,10 @@ def search_programs(
         query = query.where(func.lower(Program.language) == language.lower())
 
     return list(session.scalars(query.order_by(Program.title, Program.program_id)))
+
+
+def get_active_program(session: Session, program_id: str) -> Program | None:
+    program = session.get(Program, program_id)
+    if program is None or not program.is_active:
+        return None
+    return program

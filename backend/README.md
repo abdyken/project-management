@@ -14,6 +14,7 @@ docker compose up --build
 - API: http://localhost:8000
 - Health check: http://localhost:8000/api/health → `{"status": "ok", "database": "ok"}` (503 when the database is unreachable)
 - Interactive API docs (Swagger): http://localhost:8000/docs
+- Catalogue API contract (for the front-end and checklist): [docs/api/programs.md](docs/api/programs.md), full OpenAPI file: [docs/api/openapi.json](docs/api/openapi.json) (`uv run python scripts/export_openapi.py` after changing endpoints)
 
 Migrations are applied automatically on API start (`alembic upgrade head`).
 

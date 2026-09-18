@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Path, Query
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE
+from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
 from app.catalogue.schemas import DegreeLevel, ProgramListResponse, ProgramOut
-from app.catalogue.service import search_programs
+from app.catalogue.service import get_active_program, search_programs
 from app.db import get_db_session
 
 router = APIRouter(prefix="/programs", tags=["catalogue"])
@@ -48,3 +49,34 @@ def list_programs(
         total=len(programs),
         programs=[ProgramOut.model_validate(program) for program in programs],
     )
+
+
+@router.get(
+    "/{program_id}",
+    response_model=ProgramOut,
+    responses={
+        404: {
+            "model": ErrorResponse,
+            "description": "No active program with this id.",
+            "content": {
+                "application/json": {
+                    "example": {"error_code": PROGRAM_NOT_FOUND, "message": "Program not found."}
+                }
+            },
+        },
+        **DATABASE_UNAVAILABLE_RESPONSE,
+    },
+    summary="Get one study program",
+)
+def get_program(
+    session: Annotated[Session, Depends(get_db_session)],
+    program_id: Annotated[str, Path(max_length=64)],
+) -> ProgramOut | JSONResponse:
+    """One active program by its id, for the program detail page."""
+    program = get_active_program(session, program_id)
+    if program is None:
+        return JSONResponse(
+            status_code=404,
+            content=ErrorResponse(error_code=PROGRAM_NOT_FOUND, message="Program not found.").model_dump(),
+        )
+    return ProgramOut.model_validate(program)

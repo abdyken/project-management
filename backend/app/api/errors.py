@@ -15,6 +15,7 @@ from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
 logger = logging.getLogger(__name__)
 
 DATABASE_UNAVAILABLE = "DATABASE_UNAVAILABLE"
+PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND"
 RETRY_AFTER_SECONDS = 5
 
 

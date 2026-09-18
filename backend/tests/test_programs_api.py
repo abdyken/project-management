@@ -133,3 +133,27 @@ def test_invalid_degree_level_rejected(client):
     response = client.get("/api/programs", params={"degree_level": "diploma"})
 
     assert response.status_code == 422
+
+
+def test_get_program_by_id(client):
+    response = client.get("/api/programs/cs-bsc-en")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "program_id": "cs-bsc-en",
+        "title": "Computer Science",
+        "faculty": "Engineering",
+        "degree_level": "bachelor",
+        "language": "English",
+        "tuition_fee": 2500000.0,
+        "application_deadline": "2026-08-01",
+        "is_active": True,
+    }
+
+
+@pytest.mark.parametrize("program_id", ["does-not-exist", "arch-old"])
+def test_get_unknown_or_inactive_program_returns_404(client, program_id):
+    response = client.get(f"/api/programs/{program_id}")
+
+    assert response.status_code == 404
+    assert response.json() == {"error_code": "PROGRAM_NOT_FOUND", "message": "Program not found."}
