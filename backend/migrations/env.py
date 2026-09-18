@@ -10,6 +10,7 @@ from sqlalchemy import engine_from_config, pool
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.assistant.models import FaqEmbeddingRecord  # noqa: E402,F401 — registers the table on Base.metadata
+from app.catalogue.models import Program  # noqa: E402,F401
 from app.config import get_settings  # noqa: E402
 from app.db import Base  # noqa: E402
 
