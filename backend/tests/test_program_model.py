@@ -37,14 +37,14 @@ def test_program_table_has_agreed_columns(db_engine):
     }
 
 
-def test_program_round_trip(db_session):
-    db_session.add(
+def test_program_round_trip(catalogue_session):
+    catalogue_session.add(
         make_program(tuition_fee=Decimal("2500000.00"), application_deadline=date(2026, 8, 1))
     )
-    db_session.flush()
-    db_session.expire_all()
+    catalogue_session.flush()
+    catalogue_session.expire_all()
 
-    program = db_session.get(Program, "test-cs-bsc")
+    program = catalogue_session.get(Program, "test-cs-bsc")
 
     assert program.title == "Computer Science"
     assert program.tuition_fee == Decimal("2500000.00")
@@ -52,35 +52,35 @@ def test_program_round_trip(db_session):
     assert program.is_active is True
 
 
-def test_fee_and_deadline_may_be_unknown(db_session):
-    db_session.add(make_program())
-    db_session.flush()
-    db_session.expire_all()
+def test_fee_and_deadline_may_be_unknown(catalogue_session):
+    catalogue_session.add(make_program())
+    catalogue_session.flush()
+    catalogue_session.expire_all()
 
-    program = db_session.get(Program, "test-cs-bsc")
+    program = catalogue_session.get(Program, "test-cs-bsc")
 
     assert program.tuition_fee is None
     assert program.application_deadline is None
 
 
-def test_unknown_degree_level_rejected(db_session):
-    db_session.add(make_program(degree_level="diploma"))
+def test_unknown_degree_level_rejected(catalogue_session):
+    catalogue_session.add(make_program(degree_level="diploma"))
 
     with pytest.raises(IntegrityError, match="ck_program_degree_level"):
-        db_session.flush()
+        catalogue_session.flush()
 
 
-def test_negative_tuition_fee_rejected(db_session):
-    db_session.add(make_program(tuition_fee=Decimal("-1")))
+def test_negative_tuition_fee_rejected(catalogue_session):
+    catalogue_session.add(make_program(tuition_fee=Decimal("-1")))
 
     with pytest.raises(IntegrityError, match="ck_program_tuition_fee_non_negative"):
-        db_session.flush()
+        catalogue_session.flush()
 
 
-def test_duplicate_program_id_rejected(db_session):
-    db_session.add(make_program())
-    db_session.flush()
-    db_session.add(make_program(title="Another title"))
+def test_duplicate_program_id_rejected(catalogue_session):
+    catalogue_session.add(make_program())
+    catalogue_session.flush()
+    catalogue_session.add(make_program(title="Another title"))
 
     with pytest.raises(IntegrityError):
-        db_session.flush()
+        catalogue_session.flush()

@@ -44,3 +44,15 @@ def db_session(db_engine):
         with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
             yield session
         transaction.rollback()
+
+
+@pytest.fixture
+def catalogue_session(db_session):
+    """db_session with the program table emptied inside the rolled-back transaction,
+    so catalogue tests don't depend on (or change) programs already in the database."""
+    from sqlalchemy import delete
+
+    from app.catalogue.models import Program
+
+    db_session.execute(delete(Program))
+    return db_session

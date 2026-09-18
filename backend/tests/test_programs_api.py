@@ -32,10 +32,10 @@ def make_programs() -> list[Program]:
 
 
 @pytest.fixture
-def client(db_session):
-    db_session.add_all(make_programs())
-    db_session.flush()
-    app.dependency_overrides[get_db_session] = lambda: db_session
+def client(catalogue_session):
+    catalogue_session.add_all(make_programs())
+    catalogue_session.flush()
+    app.dependency_overrides[get_db_session] = lambda: catalogue_session
     try:
         yield TestClient(app)
     finally:
