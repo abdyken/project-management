@@ -14,8 +14,8 @@ export const FACULTIES = [
   "SDU Business School",
 ] as const
 
-export const DEGREE_LEVELS = ["bachelor", "master"] as const
-export const PROGRAM_LANGUAGES = ["en", "kk", "ru"] as const
+export const DEGREE_LEVELS = ["bachelor", "master", "phd"] as const
+export const PROGRAM_LANGUAGES = ["English", "Kazakh", "Russian"] as const
 
 export const MESSAGE_MAX_LENGTH = 500
 export const ASSISTANT_TIMEOUT_MS = 10_000
@@ -27,12 +27,13 @@ export const TIMEOUT_MESSAGE =
 export const FALLBACK_MESSAGE = `I could not find this, please contact the admissions office. ${ADMISSIONS_CONTACT.name}, ${ADMISSIONS_CONTACT.address}. Tel. ${ADMISSIONS_CONTACT.phone}.`
 
 export const LANGUAGE_LABELS: Record<(typeof PROGRAM_LANGUAGES)[number], string> = {
-  en: "English",
-  kk: "Kazakh",
-  ru: "Russian",
+  English: "English",
+  Kazakh: "Kazakh",
+  Russian: "Russian",
 }
 
 export const DEGREE_LABELS: Record<(typeof DEGREE_LEVELS)[number], string> = {
   bachelor: "Bachelor",
   master: "Master",
+  phd: "PhD",
 }

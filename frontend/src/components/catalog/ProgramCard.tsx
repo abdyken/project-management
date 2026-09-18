@@ -14,8 +14,8 @@ export function ProgramCard({ program }: { program: Program }) {
       <h2 className="mt-2 text-2xl font-semibold leading-tight tracking-tight group-hover:text-primary">{program.title}</h2>
       <p className="mt-3 text-sm text-muted-foreground">{program.faculty}</p>
       <div className="mt-6 flex items-end justify-between gap-4 text-xs text-muted-foreground">
-        <span>Deadline {program.application_deadline}</span>
-        <span className="text-right">{program.tuition_fee}</span>
+        <span>Deadline {program.application_deadline ?? "Not specified"}</span>
+        <span className="text-right">{program.tuition_fee === null ? "Tuition not specified" : `${program.tuition_fee.toLocaleString()} KZT / year`}</span>
       </div>
     </Link>
   )

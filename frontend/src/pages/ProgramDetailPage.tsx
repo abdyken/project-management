@@ -72,11 +72,11 @@ export function ProgramDetailPage() {
         </div>
         <div>
           <dt className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Tuition</dt>
-          <dd className="mt-1">{program.tuition_fee}</dd>
+          <dd className="mt-1">{program.tuition_fee === null ? "Not specified" : `${program.tuition_fee.toLocaleString()} KZT / year`}</dd>
         </div>
         <div>
           <dt className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Application deadline</dt>
-          <dd className="mt-1">{program.application_deadline}</dd>
+          <dd className="mt-1">{program.application_deadline ?? "Not specified"}</dd>
         </div>
       </dl>
 
