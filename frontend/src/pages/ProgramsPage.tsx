@@ -41,7 +41,7 @@ export function ProgramsPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Catalogue</p>
-      <h1 className="mt-3 font-serif text-4xl sm:text-5xl">Study programmes</h1>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Study programmes</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
         Mock data compiled from public SDU pages. Fees and deadlines should be confirmed with the Admissions
         Office until the official import lands.
@@ -56,7 +56,7 @@ export function ProgramsPage() {
 
         {unavailable ? (
           <div className="border border-border bg-card p-6">
-            <p className="font-serif text-2xl">Connection error</p>
+            <p className="text-2xl font-semibold tracking-tight">Connection error</p>
             <p className="mt-2 text-sm text-muted-foreground">
               The catalogue is temporarily unavailable. Your search and filters are still here.
             </p>
@@ -68,7 +68,7 @@ export function ProgramsPage() {
 
         {query.data && query.data.total === 0 ? (
           <div className="border border-border bg-card p-6">
-            <p className="font-serif text-2xl">No programs found</p>
+            <p className="text-2xl font-semibold tracking-tight">No programs found</p>
             <p className="mt-2 text-sm text-muted-foreground">
               Nothing matches this combination. Clear a filter or try another keyword.
             </p>

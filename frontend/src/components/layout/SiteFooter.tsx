@@ -13,7 +13,7 @@ export function SiteFooter() {
     <footer className="mt-auto border-t border-border/80">
       <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10 text-sm text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
         <div>
-          <p className="font-serif text-base text-foreground">SDU University</p>
+          <p className="text-base font-semibold text-foreground">SDU University</p>
           <p className="mt-2 max-w-xs">{ADMISSIONS_CONTACT.address}</p>
           <p className="mt-1">{ADMISSIONS_CONTACT.phone}</p>
         </div>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { HeroGlobe } from "@/components/home/HeroGlobe"
 import { useChatStore } from "@/store/chat"
 
 const steps = [
@@ -42,7 +43,7 @@ export function HomePage() {
           <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
             SDU University · Kaskelen
           </p>
-          <h1 className="mt-4 max-w-xl font-serif text-5xl leading-[1.05] sm:text-6xl">
+          <h1 className="mt-4 max-w-xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
             Look up a programme.
             <br />
             Ask the office.
@@ -64,15 +65,15 @@ export function HomePage() {
             </button>
           </div>
         </div>
-        <HeroMark />
+        <HeroGlobe />
       </section>
 
       <section className="border-y border-border/80">
         <div className="mx-auto grid max-w-5xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-3">
           {steps.map((step) => (
             <div key={step.n}>
-              <p className="font-serif text-3xl text-gold">{step.n}</p>
-              <h2 className="mt-3 font-serif text-2xl">{step.title}</h2>
+              <p className="text-3xl font-semibold text-gold">{step.n}</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight">{step.title}</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
             </div>
           ))}
@@ -81,7 +82,7 @@ export function HomePage() {
 
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
         <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">People also ask</p>
-        <h2 className="mt-3 font-serif text-4xl">Start with a usual question</h2>
+        <h2 className="mt-3 text-4xl font-semibold tracking-tight">Start with a usual question</h2>
         <ol className="mt-10 divide-y divide-border border-y border-border">
           {questions.map((question, index) => (
             <li key={question}>
@@ -97,20 +98,6 @@ export function HomePage() {
           ))}
         </ol>
       </section>
-    </div>
-  )
-}
-
-function HeroMark() {
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-sm">
-      <svg viewBox="0 0 320 320" className="h-full w-full text-primary" fill="none" aria-hidden>
-        <circle cx="160" cy="160" r="118" stroke="currentColor" strokeWidth="1" />
-        <rect x="108" y="96" width="104" height="128" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M108 96 L160 62 L212 96" stroke="currentColor" strokeWidth="1.2" />
-        <rect x="148" y="168" width="24" height="56" stroke="currentColor" strokeWidth="1.2" />
-        <circle cx="160" cy="62" r="5" fill="currentColor" />
-      </svg>
     </div>
   )
 }

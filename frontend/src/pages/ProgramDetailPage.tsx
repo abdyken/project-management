@@ -41,7 +41,7 @@ export function ProgramDetailPage() {
   if (programQuery.isError || !programQuery.data) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-16">
-        <p className="font-serif text-3xl">Programme not found</p>
+        <p className="text-3xl font-semibold tracking-tight">Programme not found</p>
         <Link to="/programs" className="mt-4 inline-block text-sm underline">
           Back to the catalogue
         </Link>
@@ -59,7 +59,7 @@ export function ProgramDetailPage() {
       <p className="mt-6 text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
         {program.program_id} · {DEGREE_LABELS[program.degree_level]}
       </p>
-      <h1 className="mt-3 font-serif text-4xl sm:text-5xl">{program.title}</h1>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{program.title}</h1>
 
       <dl className="mt-10 grid gap-6 border-y border-border py-8 sm:grid-cols-2">
         <div>
@@ -83,7 +83,7 @@ export function ProgramDetailPage() {
       <section className="mt-12">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="font-serif text-3xl">Required documents</h2>
+            <h2 className="text-3xl font-semibold tracking-tight">Required documents</h2>
             <p className="mt-2 text-sm text-muted-foreground">Same list the assistant uses for this programme.</p>
           </div>
           <div className="flex gap-2">

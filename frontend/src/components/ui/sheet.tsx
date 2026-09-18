@@ -65,7 +65,7 @@ function SheetHeader({ className, ...props }: ComponentProps<"div">) {
 }
 
 function SheetTitle({ className, ...props }: ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title className={cn("font-serif text-lg", className)} {...props} />
+  return <DialogPrimitive.Title className={cn("text-lg font-semibold tracking-tight", className)} {...props} />
 }
 
 function SheetDescription({ className, ...props }: ComponentProps<typeof DialogPrimitive.Description>) {

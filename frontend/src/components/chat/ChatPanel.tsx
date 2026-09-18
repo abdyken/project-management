@@ -68,7 +68,7 @@ export function ChatPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="border-b border-border px-4 py-3">
-        <p className="font-serif text-lg">Admissions desk</p>
+        <p className="text-lg font-semibold tracking-tight">Admissions desk</p>
         <p className="text-xs text-muted-foreground">Official FAQ only. Session stays while you browse.</p>
       </div>
       <div ref={listRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">

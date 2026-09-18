@@ -13,7 +13,7 @@ export function SiteHeader() {
     <header className="border-b border-border/80">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-baseline gap-2">
-          <span className="font-serif text-xl tracking-tight">SDU</span>
+          <span className="text-xl font-semibold tracking-tight">SDU</span>
           <span className="hidden text-[11px] tracking-[0.12em] text-muted-foreground uppercase sm:inline">
             Admissions
           </span>
