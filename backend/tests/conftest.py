@@ -18,3 +18,29 @@ def _clear_settings_cache():
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
+
+
+# --- Database fixtures (catalogue tests; need the Postgres from docker compose) ---
+
+
+@pytest.fixture(scope="session")
+def db_engine():
+    from alembic import command
+    from alembic.config import Config
+
+    from app.db import get_engine
+
+    command.upgrade(Config(str(BACKEND_ROOT / "alembic.ini")), "head")
+    return get_engine(get_settings())
+
+
+@pytest.fixture
+def db_session(db_engine):
+    """Session inside a transaction that is rolled back after the test."""
+    from sqlalchemy.orm import Session
+
+    with db_engine.connect() as connection:
+        transaction = connection.begin()
+        with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
+            yield session
+        transaction.rollback()
