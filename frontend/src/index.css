@@ -107,22 +107,18 @@
 
 .sdu-globe-marker__card {
   margin-top: 0.15rem;
-  padding: 0.2rem 0.45rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
   border-radius: 999px;
-  border: 1px solid rgb(255 252 247 / 65%);
-  background: rgb(255 252 247 / 88%);
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 10px 28px rgb(22 22 22 / 14%),
-    0 1px 0 rgb(255 255 255 / 75%) inset;
+  background: rgb(22 22 22 / 78%);
+  box-shadow: 0 8px 22px rgb(22 22 22 / 22%);
 }
 
 .sdu-globe-marker__logo {
   display: block;
-  width: 2.35rem;
-  height: 2.65rem;
-  object-fit: cover;
-  object-position: top center;
-  mix-blend-mode: multiply;
-  filter: contrast(1.06) saturate(1.05);
+  width: 1.45rem;
+  height: 1.45rem;
 }

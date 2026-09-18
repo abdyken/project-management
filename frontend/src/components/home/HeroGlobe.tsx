@@ -107,7 +107,6 @@ export function HeroGlobe() {
 
   return (
     <div className="relative mx-auto w-full max-w-sm">
-      <p className="mb-3 text-center text-xs text-muted-foreground">Drag to rotate</p>
       <div
         ref={containerRef}
         className="relative aspect-square w-full cursor-grab touch-none select-none"
@@ -120,7 +119,7 @@ export function HeroGlobe() {
           <span className="sdu-globe-marker__ring" />
           <span className="sdu-globe-marker__stem" />
           <div className="sdu-globe-marker__card">
-            <img src="/sdu-logo.png" alt="" className="sdu-globe-marker__logo" width={40} height={52} draggable={false} />
+            <img src="/logo.svg" alt="" className="sdu-globe-marker__logo" width={40} height={40} draggable={false} />
           </div>
         </div>
       </div>

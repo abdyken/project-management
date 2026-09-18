@@ -12,7 +12,8 @@ export function SiteHeader() {
   return (
     <header className="border-b border-border/80">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="flex items-baseline gap-2">
+        <Link to="/" className="flex items-center gap-2">
+          <img src="/logo.svg" alt="" className="size-6" />
           <span className="text-xl font-semibold tracking-tight">SDU</span>
           <span className="hidden text-[11px] tracking-[0.12em] text-muted-foreground uppercase sm:inline">
             Admissions
