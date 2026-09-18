@@ -7,7 +7,7 @@ import { TypingIndicator } from "@/components/chat/TypingIndicator"
 import { MESSAGE_MAX_LENGTH, TIMEOUT_MESSAGE } from "@/lib/constants"
 import { useChatStore } from "@/store/chat"
 
-export function ChatPanel() {
+export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
   const messages = useChatStore((state) => state.messages)
   const draft = useChatStore((state) => state.draft)
   const sending = useChatStore((state) => state.sending)
@@ -67,10 +67,12 @@ export function ChatPanel() {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="border-b border-border px-4 py-3">
-        <p className="text-lg font-semibold tracking-tight">Admissions desk</p>
-        <p className="text-xs text-muted-foreground">Official FAQ only. Session stays while you browse.</p>
-      </div>
+      {showTitle ? (
+        <div className="border-b border-border px-4 py-3">
+          <p className="text-lg font-semibold tracking-tight">Admissions desk</p>
+          <p className="text-xs text-muted-foreground">Official FAQ only. Session stays while you browse.</p>
+        </div>
+      ) : null}
       <div ref={listRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
           <p className="text-sm leading-relaxed text-muted-foreground">
