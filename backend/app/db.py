@@ -1,20 +1,19 @@
-"""SQLAlchemy engine/session setup (T0.1 stack decision: SQLAlchemy + Alembic,
-PostgreSQL 16 + pgvector).
+"""SQLAlchemy engine/session setup shared by all modules (T0.3).
 
-Only the ``assistant`` module's own table (``faq_embeddings``, see
-``app/assistant/models.py``) lives behind this for now. Once T0.3 (Dinmukhamed)
-lands the shared backend skeleton, this file's ``Base``/``get_engine`` should
-be replaced by the shared one and the Alembic history in ``migrations/``
-merged into the project-wide migration chain.
+- ``Base``: declarative base for every ORM model; Alembic reads ``Base.metadata``.
+- ``get_db_session``: FastAPI dependency for request handlers.
+- ``get_engine`` / ``get_session``: for scripts and non-request code (e.g. the
+  assistant's reindex script) that pass their own ``Settings``.
 """
 from __future__ import annotations
 
+from collections.abc import Iterator
 from functools import lru_cache
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from app.config import Settings
+from app.config import Settings, get_settings
 
 
 class Base(DeclarativeBase):
@@ -23,7 +22,7 @@ class Base(DeclarativeBase):
 
 @lru_cache
 def get_engine_for(database_url: str):
-    return create_engine(database_url, pool_pre_ping=True)
+    return create_engine(database_url, pool_pre_ping=True, connect_args={"connect_timeout": 3})
 
 
 def get_engine(settings: Settings):
@@ -31,5 +30,10 @@ def get_engine(settings: Settings):
 
 
 def get_session(settings: Settings) -> Session:
-    SessionLocal = sessionmaker(bind=get_engine(settings))
+    SessionLocal = sessionmaker(bind=get_engine(settings), autoflush=False, expire_on_commit=False)
     return SessionLocal()
+
+
+def get_db_session() -> Iterator[Session]:
+    with get_session(get_settings()) as session:
+        yield session

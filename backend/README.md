@@ -1,24 +1,80 @@
-# Backend
+# Backend — Admissions Portal API
 
-Stack (T0.1 decision): **Python 3.12 + FastAPI**, **SQLAlchemy + Alembic** for migrations, **PostgreSQL 16 + pgvector** (FAQ embeddings live in the same DB, no separate vector store).
+Stack (T0.1): **Python 3.12 + FastAPI**, **SQLAlchemy 2 + Alembic**, **PostgreSQL 16 + pgvector** (FAQ embeddings live in the same database, no separate vector store). Dependencies are managed with [uv](https://docs.astral.sh/uv/) (`pyproject.toml` + `uv.lock`).
 
-Right now the repo only contains the **assistant module** (Serdar, AI/IS developer — T0.7, T3.2–T3.7, see [docs/serdar-ai-tasks/](docs/serdar-ai-tasks/)). The catalogue and checklist modules (T0.3, Dinmukhamed) are not built yet; this module ships with file-based stand-ins for them (`app/data/programs_sample.json`, `app/data/checklist_sample.json`) so it runs and is fully tested on its own. Swap `CATALOG_API_URL` / `CHECKLIST_API_URL` in `.env` once those endpoints are deployed.
-
-## Setup
+## Run with Docker (recommended)
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # defaults to mock LLM/embedding providers + a local JSON index — no keys needed to run
+cd backend
+cp .env.example .env
+uv run python scripts/reindex_faq.py   # builds the FAQ index file used by the assistant (INDEX_BACKEND=file)
+docker compose up --build
 ```
 
-## Run it
+- API: http://localhost:8000
+- Health check: http://localhost:8000/api/health → `{"status": "ok", "database": "ok"}` (503 when the database is unreachable)
+- Interactive API docs (Swagger): http://localhost:8000/docs
+
+Migrations are applied automatically on API start (`alembic upgrade head`).
+
+## Run the API on your machine (database still in Docker)
 
 ```bash
-python scripts/reindex_faq.py      # builds the FAQ retrieval index (T3.2)
-uvicorn app.main:app --reload      # standalone runner; mount app.assistant.router into the real app once T0.3 exists
+cd backend
+cp .env.example .env
+docker compose up -d db
+uv sync
+uv run alembic upgrade head
+uv run python scripts/reindex_faq.py
+uv run uvicorn app.main:app --reload
 ```
+
+## Tests
+
+```bash
+docker compose up -d db
+uv run python scripts/reindex_faq.py   # the assistant router tests need the FAQ index
+uv run pytest
+```
+
+## Migrations
+
+One shared Alembic chain for all modules (`migrations/versions/`):
+
+| Revision | Owner | What |
+| -------- | ----- | ---- |
+| 0001 | Dinmukhamed (T0.3) | Baseline |
+| 0002 | Serdar (T3.2) | `faq_embeddings` table + `vector` extension |
+
+```bash
+uv run alembic revision --autogenerate -m "describe the change"   # after changing models
+uv run alembic upgrade head
+uv run alembic downgrade -1
+```
+
+New migrations must set `down_revision` to the current head (`uv run alembic heads` shows it) so the chain never splits. Import new model modules in `migrations/env.py` so autogenerate sees them.
+
+## Structure
+
+```
+app/
+  main.py        FastAPI app, CORS, router registration
+  config.py      settings from environment variables (.env)
+  db.py          SQLAlchemy Base, engine, sessions (get_db_session for FastAPI)
+  api/health.py  GET /api/health
+  catalogue/     US1 - programs, search and filter API (Dinmukhamed)
+  checklist/     US4 - document requirements and checklist endpoint (Nurmek)
+  assistant/     US3 - FAQ assistant, POST /api/assistant/ask (Serdar)
+  data/          sample FAQ / program / checklist fixtures used by the assistant
+migrations/      Alembic migrations (one chain)
+scripts/         reindex_faq.py, run_accuracy_test.py, smoke_test_provider.py
+tests/
+docs/            task notes (docs/serdar-ai-tasks/ - assistant tasks T0.7, T3.2-T3.7)
+```
+
+## Assistant module (US3, Serdar)
+
+See [docs/serdar-ai-tasks/](docs/serdar-ai-tasks/). Defaults use mock LLM and embedding providers, so no API keys are needed locally.
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/assistant/ask \
@@ -26,33 +82,10 @@ curl -X POST http://127.0.0.1:8000/api/assistant/ask \
   -d '{"question": "When is the application deadline?", "session_id": "demo"}'
 ```
 
-## Tests
-
-```bash
-python -m pytest tests/ -v
-```
-
-19 tests, all offline (mock LLM/embedding providers, no DB needed) — retrieval accuracy (T3.2), fallback guard (T3.4), assistant service incl. document-checklist questions (T3.3/T3.6), and the full HTTP contract (T3.5).
-
-Accuracy report against a 10-question test set: `python scripts/run_accuracy_test.py` (see T3.7 doc for the recorded results and how to point it at a deployed dev environment).
-
-## Postgres / pgvector backend
-
-Default `INDEX_BACKEND=file` needs no database. To use the real pgvector-backed index instead (this is what should run in the deployed dev environment, T0.5):
-
-```bash
-docker run -d --name assistant-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 pgvector/pgvector:pg16
-
-export DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/postgres
-export INDEX_BACKEND=postgres
-
-alembic upgrade head            # creates the faq_embeddings table (migrations/versions/0001_*)
-python scripts/reindex_faq.py   # populates it
-uvicorn app.main:app --reload
-```
-
-This `docker run` line is for local verification only — the real docker-compose / dev-environment setup is T0.3/T0.5 (Dinmukhamed/Nurmek). When that lands, merge `migrations/versions/0001_create_faq_embeddings.py`'s `down_revision` into the shared Alembic history instead of keeping two separate chains.
+- Accuracy report against the 10-question test set: `uv run python scripts/run_accuracy_test.py` (see the T3.7 doc).
+- Retrieval index storage: `INDEX_BACKEND=file` (default, local JSON file) or `INDEX_BACKEND=postgres` (pgvector table from migration 0002, what the deployed dev environment should use). After switching to `postgres`, run `uv run python scripts/reindex_faq.py` to populate the table.
+- Until the catalogue (T1.3) and checklist (T4.2) endpoints are deployed, the assistant reads `app/data/programs_sample.json` / `checklist_sample.json`; set `CATALOG_API_URL` / `CHECKLIST_API_URL` once they are.
 
 ## Environment variables
 
-See [.env.example](.env.example) for the full list (LLM/embedding provider + keys, similarity threshold, timeouts, DB URL). Never commit real API keys — only `.env.example` placeholders are tracked; `.env` is git-ignored.
+See [.env.example](.env.example) for the full list: database URL, CORS origins, LLM/embedding providers and keys, similarity threshold, timeouts. Never commit real API keys — only `.env.example` is tracked; `.env` is git-ignored.

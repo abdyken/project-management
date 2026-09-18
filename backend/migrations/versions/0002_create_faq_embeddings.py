@@ -1,13 +1,11 @@
 """create faq_embeddings table (T3.2, pgvector)
 
-Revision ID: 0001
-Revises:
+Revision ID: 0002
+Revises: 0001
 Create Date: 2026-09-18
 
-Owned by Serdar (AI/IS developer). This is the assistant module's own
-migration; when Dinmukhamed (T0.3) sets up the project-wide Alembic history,
-re-point ``down_revision`` below at his first revision so both live in one
-chain instead of two.
+Owned by Serdar (AI/IS developer). Part of the shared Alembic chain:
+0001 (T0.3 baseline) -> 0002 (this).
 """
 from typing import Sequence, Union
 
@@ -16,8 +14,8 @@ import sqlalchemy as sa
 from pgvector.sqlalchemy import Vector
 
 # revision identifiers, used by Alembic.
-revision: str = "0001"
-down_revision: Union[str, None] = None
+revision: str = "0002"
+down_revision: Union[str, None] = "0001"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
