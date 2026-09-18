@@ -152,4 +152,4 @@ Any change to paths, parameters or fields is announced to Daniyar, Nurmek and Se
 | Who     | For            | Confirmed |
 | ------- | -------------- | --------- |
 | Daniyar | T2.6           | _pending_ |
-| Nurmek  | T4.1, T4.2     | _pending_ |
+| Nurmek  | T4.1, T4.2     | confirmed 2026-09-18 — `program_id` is the checklist foreign key |

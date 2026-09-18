@@ -19,14 +19,14 @@ from app.config import Settings
 
 class DocumentRequirement(BaseModel):
     name: str
-    original_or_copy: str
-    translation_required: bool
-    notarisation_required: bool
+    format: str
+    translation: bool
+    notarisation: bool
     deadline: str
 
 
 class ChecklistResult(BaseModel):
-    documents: list[DocumentRequirement]
+    items: list[DocumentRequirement]
     warning: str | None = None
 
 
@@ -45,10 +45,23 @@ class FileChecklistClient(ChecklistClient):
         program_entry = self._data.get(program_id)
         if program_entry is None or applicant_type not in program_entry:
             return ChecklistResult(
-                documents=[],
+                items=[],
                 warning="No document requirements have been recorded for this program yet.",
             )
-        return ChecklistResult(**program_entry[applicant_type])
+        entry = program_entry[applicant_type]
+        return ChecklistResult(
+            items=[
+                DocumentRequirement(
+                    name=document["name"],
+                    format=document["original_or_copy"],
+                    translation=document["translation_required"],
+                    notarisation=document["notarisation_required"],
+                    deadline=document["deadline"],
+                )
+                for document in entry["documents"]
+            ],
+            warning=entry.get("warning"),
+        )
 
 
 class HttpChecklistClient(ChecklistClient):

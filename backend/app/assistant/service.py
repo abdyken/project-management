@@ -78,11 +78,11 @@ class AssistantService:
             )
 
         document_lines = [
-            f"- {doc.name} ({doc.original_or_copy}"
-            + (", translation required" if doc.translation_required else "")
-            + (", notarisation required" if doc.notarisation_required else "")
+            f"- {doc.name} ({doc.format}"
+            + (", translation required" if doc.translation else "")
+            + (", notarisation required" if doc.notarisation else "")
             + f", deadline {doc.deadline})"
-            for doc in checklist.documents
+            for doc in checklist.items
         ]
         answer_text = f"Required documents for {program.title}:\n" + "\n".join(document_lines)
         return AskResponse(answer=answer_text, source_link=None, faq_id=None, similarity_score=1.0)

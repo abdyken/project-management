@@ -218,6 +218,86 @@
         }
       }
     },
+    "/api/programs/{program_id}/checklist": {
+      "get": {
+        "tags": [
+          "checklist"
+        ],
+        "summary": "Get a programme's document checklist",
+        "operationId": "get_checklist_api_programs__program_id__checklist_get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "title": "Program Id"
+            }
+          },
+          {
+            "name": "applicant_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "local",
+                "international"
+              ],
+              "type": "string",
+              "title": "Applicant Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active program with this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/assistant/ask": {
       "post": {
         "summary": "Ask",
@@ -237,6 +317,84 @@
   },
   "components": {
     "schemas": {
+      "ChecklistResponse": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "applicant_type": {
+            "type": "string",
+            "enum": [
+              "local",
+              "international"
+            ],
+            "title": "Applicant Type"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentRequirementOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "type": "object",
+        "required": [
+          "program_id",
+          "applicant_type",
+          "items"
+        ],
+        "title": "ChecklistResponse"
+      },
+      "DocumentRequirementOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "original",
+              "copy"
+            ],
+            "title": "Format"
+          },
+          "translation": {
+            "type": "boolean",
+            "title": "Translation"
+          },
+          "notarisation": {
+            "type": "boolean",
+            "title": "Notarisation"
+          },
+          "deadline": {
+            "type": "string",
+            "title": "Deadline"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "format",
+          "translation",
+          "notarisation",
+          "deadline"
+        ],
+        "title": "DocumentRequirementOut"
+      },
       "ErrorResponse": {
         "properties": {
           "error_code": {
