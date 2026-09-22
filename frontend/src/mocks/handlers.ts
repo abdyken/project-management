@@ -101,7 +101,7 @@ async function handleAssistant(body: AssistantRequest, signal?: AbortSignal): Pr
       answer: formatChecklistAnswer(program, checklist),
       source_link: checklist.warning ? ADMISSIONS_CONTACT.website : "https://sdu.edu.kz/en/admission-3-2/",
       faq_id: checklist.warning ? null : "faq-documents-from-checklist",
-      similarity: 0.92,
+      similarity_score: 0.92,
     }
   }
 
@@ -111,7 +111,7 @@ async function handleAssistant(body: AssistantRequest, signal?: AbortSignal): Pr
       answer: match.item.answer,
       source_link: match.item.source_link,
       faq_id: match.item.faq_id,
-      similarity: Number(match.similarity.toFixed(2)),
+      similarity_score: Number(match.similarity.toFixed(2)),
     }
   }
 
@@ -119,7 +119,7 @@ async function handleAssistant(body: AssistantRequest, signal?: AbortSignal): Pr
     answer: FALLBACK_MESSAGE,
     source_link: ADMISSIONS_CONTACT.website,
     faq_id: null,
-    similarity: match?.similarity ?? 0,
+    similarity_score: match?.similarity ?? 0,
   }
 }
 
@@ -131,7 +131,7 @@ export async function mockRequest<T>(path: string, init: RequestInit = {}): Prom
   const method = (init.method ?? "GET").toUpperCase()
 
   if (url.pathname === "/api/health" && method === "GET") {
-    return { status: "ok" } satisfies HealthResponse as T
+    return { status: "ok", database: "ok" } satisfies HealthResponse as T
   }
 
   if (url.pathname === "/api/programs" && method === "GET") {
@@ -140,7 +140,7 @@ export async function mockRequest<T>(path: string, init: RequestInit = {}): Prom
     }
 
     if (url.searchParams.get("force") === "empty") {
-      return { items: [], total: 0 } satisfies ProgramListResponse as T
+      return { programs: [], total: 0 } satisfies ProgramListResponse as T
     }
 
     const q = normalize(url.searchParams.get("q") ?? "")
@@ -158,7 +158,7 @@ export async function mockRequest<T>(path: string, init: RequestInit = {}): Prom
       return q.split(" ").every((word) => hay.includes(word))
     })
 
-    return { items, total: items.length } satisfies ProgramListResponse as T
+    return { programs: items, total: items.length } satisfies ProgramListResponse as T
   }
 
   const programMatch = url.pathname.match(/^\/api\/programs\/([^/]+)$/)
@@ -181,7 +181,7 @@ export async function mockRequest<T>(path: string, init: RequestInit = {}): Prom
     return getMockChecklist(programId, applicantType, program.degree_level) as T
   }
 
-  if (url.pathname === "/api/assistant" && method === "POST") {
+  if (url.pathname === "/api/assistant/ask" && method === "POST") {
     const body = JSON.parse(String(init.body ?? "{}")) as AssistantRequest
     if (!body.question?.trim()) {
       throw new ApiError(400, "BAD_REQUEST", "Question is required")

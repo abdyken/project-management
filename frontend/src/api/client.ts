@@ -37,10 +37,10 @@ function mergeSignals(timeoutMs?: number, external?: AbortSignal) {
 }
 
 async function parseError(res: Response) {
-  const body = (await res.json().catch(() => ({}))) as { code?: string; message?: string }
+  const body = (await res.json().catch(() => ({}))) as { error_code?: string; message?: string }
   throw new ApiError(
     res.status,
-    body.code ?? (res.status === 503 ? "SERVICE_UNAVAILABLE" : "HTTP_ERROR"),
+    body.error_code ?? (res.status === 503 ? "SERVICE_UNAVAILABLE" : "HTTP_ERROR"),
     body.message ?? res.statusText,
   )
 }

@@ -81,7 +81,7 @@ export function ProgramsPage() {
               {query.data.total} {query.data.total === 1 ? "program" : "programs"} found
             </p>
             <div className="grid gap-4 md:grid-cols-2">
-              {query.data.items.map((program) => (
+              {query.data.programs.map((program) => (
                 <ProgramCard key={program.program_id} program={program} />
               ))}
             </div>
