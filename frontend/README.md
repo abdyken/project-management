@@ -1,8 +1,6 @@
 # SDU Admissions frontend
 
-Web portal for SDU University (Kaskelen) admissions: programme catalogue, document checklist, and a session chat that answers from a mocked official FAQ.
-
-Sprint 1 talks to mocks by default. The API client already uses the backend contract, so switching later is an env change.
+Web portal for SDU University (Kaskelen) admissions: programme catalogue, document checklist, and a session chat that answers from the backend FAQ.
 
 ## Stack
 
@@ -22,14 +20,14 @@ npm install
 npm run dev
 ```
 
-Open the printed local URL. The app calls `/api/health` on load; with mocks this returns `{ status: "ok" }`.
+Open the printed local URL. Start the API on port 8000 first. The dev server proxies `/api` there, and the footer reports whether `/api/health` is ok.
 
 ## Environment
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `VITE_USE_MOCKS` | `true` | `false` sends requests to the real API |
-| `VITE_API_BASE_URL` | `http://localhost:8000` | Used only when mocks are off |
+| `VITE_USE_MOCKS` | `false` | `true` keeps the in-browser mocks |
+| `VITE_API_BASE_URL` | empty | Leave empty locally (Vite proxies `/api`). Set the deployed origin for a production build. |
 
 ## Routes
 
@@ -47,8 +45,6 @@ The chat widget is mounted on every page.
 - Chat 4xx / 5xx: send `error 400` or `error 500`
 - Missing checklist: open **Management** (master)
 
-## When the backend is ready
+## API
 
-1. Set `VITE_USE_MOCKS=false`
-2. Point `VITE_API_BASE_URL` at the deployed API
-3. Keep the same paths: `GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist`, `POST /api/assistant`
+`GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist?applicant_type=local|international`, `POST /api/assistant/ask`.

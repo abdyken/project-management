@@ -38,7 +38,7 @@ export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
         sourceLink: response.source_link,
       })
     } catch (error) {
-      if (isApiError(error) && error.code === "TIMEOUT") {
+      if (isApiError(error) && (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT" || error.status === 504)) {
         setDraft(question)
         addMessage({ role: "assistant", text: TIMEOUT_MESSAGE, isError: true })
       } else {

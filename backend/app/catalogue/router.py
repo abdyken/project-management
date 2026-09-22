@@ -29,7 +29,7 @@ def _clean(value: str | None) -> str | None:
 )
 def list_programs(
     session: Annotated[Session, Depends(get_db_session)],
-    q: Annotated[str | None, Query(max_length=100, description="Keyword in the program title or faculty")] = None,
+    q: Annotated[str | None, Query(max_length=100, description="Keyword in the program title, faculty, or id")] = None,
     faculty: Annotated[str | None, Query(max_length=255)] = None,
     degree_level: Annotated[DegreeLevel | None, Query()] = None,
     language: Annotated[str | None, Query(max_length=50)] = None,

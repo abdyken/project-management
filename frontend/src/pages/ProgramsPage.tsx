@@ -43,8 +43,8 @@ export function ProgramsPage() {
       <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Catalogue</p>
       <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Study programmes</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        Mock data compiled from public SDU pages. Fees and deadlines should be confirmed with the Admissions
-        Office until the official import lands.
+        Fees and deadlines come from the admissions catalogue. Confirm them with the Admissions Office before
+        you apply.
       </p>
 
       <div className="mt-10">

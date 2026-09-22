@@ -21,10 +21,10 @@ const steps = [
 ]
 
 const questions = [
-  "What is the fall intake deadline?",
-  "What English level is required?",
+  "What is the application deadline for the Fall intake?",
+  "What language are bachelor programs taught in?",
   "Which documents do I need for Computer Science?",
-  "How do local applicants apply after school?",
+  "How can I contact the admissions office?",
 ]
 
 export function HomePage() {

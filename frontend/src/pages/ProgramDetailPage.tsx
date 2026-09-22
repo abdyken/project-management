@@ -5,6 +5,7 @@ import type { ApplicantType } from "@/api/types"
 import { DocumentChecklist } from "@/components/catalog/DocumentChecklist"
 import { Button } from "@/components/ui/button"
 import { DEGREE_LABELS, LANGUAGE_LABELS } from "@/lib/constants"
+import { formatDeadline, formatTuition } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
 export function ProgramDetailPage() {
@@ -68,15 +69,19 @@ export function ProgramDetailPage() {
         </div>
         <div>
           <dt className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Language</dt>
-          <dd className="mt-1">{LANGUAGE_LABELS[program.language]}</dd>
+          <dd className="mt-1">{LANGUAGE_LABELS[program.language] ?? program.language}</dd>
         </div>
         <div>
           <dt className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Tuition</dt>
-          <dd className="mt-1">{program.tuition_fee === null ? "Not specified" : `${program.tuition_fee.toLocaleString()} KZT / year`}</dd>
+          <dd className="mt-1">
+            {formatTuition(program.tuition_fee) === null
+              ? "Not specified"
+              : `${formatTuition(program.tuition_fee)} KZT / year`}
+          </dd>
         </div>
         <div>
           <dt className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Application deadline</dt>
-          <dd className="mt-1">{program.application_deadline ?? "Not specified"}</dd>
+          <dd className="mt-1">{formatDeadline(program.application_deadline)}</dd>
         </div>
       </dl>
 
@@ -109,7 +114,9 @@ export function ProgramDetailPage() {
           className="mt-8"
           variant="outline"
           onClick={() => {
-            setDraft(`Which documents do I need for ${program.title}?`)
+            setDraft(
+              `Which documents do I need for ${program.title} as ${applicant === "local" ? "a local" : "an international"} applicant?`,
+            )
             setOpen(true)
           }}
         >

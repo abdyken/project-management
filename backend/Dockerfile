@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8000
 
 # Apply pending migrations, then start the API. PORT is set by hosts like Render.
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "alembic upgrade head && python scripts/import_catalogue.py && python scripts/reindex_faq.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
