@@ -47,10 +47,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Keyword in the program title or faculty",
+              "description": "Keyword in the program title, faculty, or id",
               "title": "Q"
             },
-            "description": "Keyword in the program title or faculty"
+            "description": "Keyword in the program title, faculty, or id"
           },
           {
             "name": "faculty",

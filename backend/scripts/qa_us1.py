@@ -87,7 +87,7 @@ class US1QA:
         for variant in (keyword, keyword.lower(), keyword.upper()):
             expected = [
                 program for program in self.catalogue
-                if variant.lower() in program["title"].lower() or variant.lower() in program["faculty"].lower()
+                if any(variant.lower() in program[field].lower() for field in ("title", "faculty", "program_id"))
             ]
             total = self.expect_same({"q": variant}, expected)
             checked.append(f"q={variant!r} -> {total}")

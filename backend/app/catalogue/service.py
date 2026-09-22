@@ -20,7 +20,7 @@ def search_programs(
 ) -> list[Program]:
     """Active programs matching every given filter (AND), ordered by title.
 
-    keyword: case-insensitive substring of the title or the faculty.
+    keyword: case-insensitive substring of the title, the faculty, or the program id.
     faculty, language: case-insensitive exact match. degree_level: exact match.
     """
     query = select(Program).where(Program.is_active.is_(True))
@@ -31,6 +31,7 @@ def search_programs(
             or_(
                 Program.title.ilike(pattern, escape="\\"),
                 Program.faculty.ilike(pattern, escape="\\"),
+                Program.program_id.ilike(pattern, escape="\\"),
             )
         )
     if faculty:

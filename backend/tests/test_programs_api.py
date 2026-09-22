@@ -157,3 +157,10 @@ def test_get_unknown_or_inactive_program_returns_404(client, program_id):
 
     assert response.status_code == 404
     assert response.json() == {"error_code": "PROGRAM_NOT_FOUND", "message": "Program not found."}
+
+
+def test_keyword_matches_program_id(client):
+    response = client.get("/api/programs", params={"q": "MSC-EN"})
+
+    assert ids(response) == ["ba-msc-en", "cs-msc-en"]
+    assert response.json()["total"] == 2

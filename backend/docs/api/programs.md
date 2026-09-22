@@ -51,7 +51,7 @@ All parameters are optional and combine with **AND**. Blank values (`?q=`) are i
 
 | Parameter      | Matching                                                                   | Example                          |
 | -------------- | -------------------------------------------------------------------------- | -------------------------------- |
-| `q`            | Case-insensitive substring of the **title or the faculty** (max 100 chars) | `q=computer`                     |
+| `q`            | Case-insensitive substring of the **title, the faculty or the `program_id`** (max 100 chars) | `q=computer`, `q=6B061` |
 | `faculty`      | Case-insensitive **exact** faculty name                                    | `faculty=Faculty of Engineering` |
 | `degree_level` | `bachelor`, `master` or `phd` — anything else returns 422                  | `degree_level=master`            |
 | `language`     | Case-insensitive **exact** language                                        | `language=English`               |
