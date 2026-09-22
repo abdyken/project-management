@@ -1,14 +1,23 @@
-"""Load the admissions catalogue the front-end was built against.
+"""Import the program catalogue from the official source file (T1.2).
 
-Idempotent: a second run updates the same program rows and replaces their
-document requirements. Management (7M04101) is stored without a checklist so
-the API returns the missing-requirements warning.
+Source of truth: app/data/catalogue.json (T0.6). The file is validated before
+anything is written, and the whole import runs in one transaction.
+
+Re-runnable: a second run changes nothing.
+- programs in the file are inserted or updated and set active
+- each program's document requirements are replaced by the ones in the file
+  ("documents": null = none recorded, the API then returns the missing-data warning)
+- programs in the database but no longer in the file are deactivated (not
+  deleted), so they disappear from the catalogue
 
     uv run python scripts/import_catalogue.py
+    uv run python scripts/import_catalogue.py --source path/to/catalogue.json
 """
 from __future__ import annotations
 
+import argparse
 import sys
+from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -16,133 +25,132 @@ from pathlib import Path
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BACKEND_ROOT))
 
-from sqlalchemy import delete  # noqa: E402
+from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, model_validator  # noqa: E402
+from sqlalchemy import delete, select, update  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from app.catalogue.models import Program  # noqa: E402
+from app.catalogue.schemas import DegreeLevel  # noqa: E402
 from app.checklist.models import ProgramDocumentRequirement  # noqa: E402
+from app.checklist.schemas import ApplicantType, DocumentFormat  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.db import get_session  # noqa: E402
 
-BACHELOR_LOCAL = [
-    ("Admission application form (admissions.sdu.edu.kz)", "original", False, False, "Before visiting the Admissions Office"),
-    ("School certificate with transcript", "original", False, False, "Enrolment"),
-    ("UNT certificate", "original", False, False, "Enrolment"),
-    ("Medical certificate (Form 075)", "original", False, False, "Enrolment"),
-    ("Chest fluorography with physician’s report", "original", False, False, "Enrolment"),
-    ("Vaccination record (Form 063)", "original", False, False, "Enrolment"),
-    ("Photographs 3×4 cm, 6 copies", "original", False, False, "Enrolment"),
-    ("IELTS or SDU Language School certificate (if available)", "copy", False, False, "Application"),
-]
-
-BACHELOR_INTERNATIONAL = [
-    ("Passport", "copy", False, True, "31 July 2026 (fall intake)"),
-    ("School diploma / certificate and transcript", "original", True, True, "31 July 2026 (fall intake)"),
-    ("Motivational letter", "copy", False, False, "Application"),
-    ("Letter of recommendation", "copy", False, False, "Application"),
-    ("Electronic photograph 3×4 cm", "copy", False, False, "Application"),
-    ("IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1", "copy", False, False, "Application / placement test waiver"),
-    ("Student fee receipt (200 USD)", "copy", False, False, "Application"),
-    ("Medical Form 075 and X-ray result (upon arrival)", "original", False, False, "20 August 2026"),
-]
-
-MASTER_LOCAL = [
-    ("Bachelor’s diploma and transcript", "original", False, False, "Enrolment"),
-    ("Photographs 3×4 cm, 6 copies", "original", False, False, "Enrolment"),
-    ("Medical card No. 075 and X-ray result", "original", False, False, "Enrolment"),
-    ("Copy of national ID", "copy", False, False, "Enrolment"),
-    ("Complex Test (CT) certificate, if available", "copy", False, False, "Grant competition"),
-]
-
-MASTER_INTERNATIONAL = [
-    ("Passport", "copy", False, True, "Application"),
-    ("Bachelor’s diploma and transcript", "original", True, True, "Application"),
-    ("IELTS 5.5 or SDU Extension Center B1", "copy", False, False, "Application"),
-    ("Student fee receipt (200 USD)", "copy", False, False, "Application"),
-    ("Electronic photograph 3×4 cm", "copy", False, False, "Application"),
-]
-
-PEDAGOGY_EXTRA = ("Pedagogical examination result", "original", False, False, "Application")
-
-# program_id, title, faculty, degree_level, language, tuition_fee, deadline
-PROGRAMS: list[tuple[str, str, str, str, str, int | None, str]] = [
-    ("6B06102", "Computer Science", "School of Engineering and Natural Sciences", "bachelor", "English", 2200000, "2026-07-31"),
-    ("6B06101", "Information Systems", "School of Engineering and Natural Sciences", "bachelor", "English", 2200000, "2026-07-31"),
-    ("6B05402", "Statistics and Data Science", "School of Engineering and Natural Sciences", "bachelor", "English", 2200000, "2026-07-31"),
-    ("6B06103", "Mathematical and Computer Modelling", "School of Engineering and Natural Sciences", "bachelor", "English", 2050000, "2026-07-31"),
-    ("7M06101", "Computer Engineering and Software", "School of Engineering and Natural Sciences", "master", "English", 2100000, "2026-07-08"),
-    ("6B02302", "Translation Studies", "School of Education and Humanities", "bachelor", "English", 1890000, "2026-07-31"),
-    ("6B01701", "Kazakh Language and Literature", "School of Education and Humanities", "bachelor", "Kazakh", 1890000, "2026-07-31"),
-    ("6B01702", "Two Foreign Languages", "School of Education and Humanities", "bachelor", "English", 1890000, "2026-07-31"),
-    ("6B01101", "Pedagogy and Psychology", "School of Education and Humanities", "bachelor", "Kazakh", 1890000, "2026-07-31"),
-    ("6B04201", "Applied Law", "School of Law and Social Sciences", "bachelor", "English", 2000000, "2026-07-31"),
-    ("6B03101", "International Relations", "School of Law and Social Sciences", "bachelor", "English", 2000000, "2026-07-31"),
-    ("7M04101", "Management", "SDU Business School", "master", "English", None, "2026-07-08"),
-]
-
-PROGRAMS_WITHOUT_CHECKLIST = {"7M04101"}
+DEFAULT_SOURCE = BACKEND_ROOT / "app" / "data" / "catalogue.json"
 
 
-def documents_for(program_id: str, degree_level: str) -> dict[str, list[tuple[str, str, bool, bool, str]]] | None:
-    if program_id in PROGRAMS_WITHOUT_CHECKLIST:
-        return None
-    if degree_level == "master":
-        local, international = list(MASTER_LOCAL), list(MASTER_INTERNATIONAL)
-    else:
-        local, international = list(BACHELOR_LOCAL), list(BACHELOR_INTERNATIONAL)
-    if program_id == "6B01101":
-        local.append(PEDAGOGY_EXTRA)
-    return {"local": local, "international": international}
+class SourceDocument(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=1, max_length=255)
+    format: DocumentFormat
+    translation: bool
+    notarisation: bool
+    deadline: str = Field(min_length=1)
 
 
-def import_catalogue(session: Session) -> tuple[int, int]:
+class SourceProgram(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    program_id: str = Field(min_length=1, max_length=64)
+    title: str = Field(min_length=1, max_length=255)
+    faculty: str = Field(min_length=1, max_length=255)
+    degree_level: DegreeLevel
+    language: str = Field(min_length=1, max_length=50)
+    tuition_fee: NonNegativeInt | None
+    application_deadline: date | None
+    source_url: str | None
+    documents: dict[ApplicantType, list[SourceDocument]] | None
+
+
+class SourceFile(BaseModel):
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+    comment: str | None = Field(default=None, alias="_comment")
+    programs: list[SourceProgram]
+
+    @model_validator(mode="after")
+    def unique_program_ids(self) -> SourceFile:
+        ids = [program.program_id for program in self.programs]
+        duplicates = sorted({program_id for program_id in ids if ids.count(program_id) > 1})
+        if duplicates:
+            raise ValueError(f"duplicate program_id in source file: {duplicates}")
+        return self
+
+
+@dataclass
+class ImportResult:
+    programs: int
+    requirements: int
+    deactivated: list[str]
+
+
+def load_source(path: Path) -> SourceFile:
+    return SourceFile.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def import_catalogue(session: Session, source: SourceFile) -> ImportResult:
     requirement_count = 0
-    for program_id, title, faculty, degree_level, language, tuition_fee, deadline in PROGRAMS:
-        program = session.get(Program, program_id)
+    for item in source.programs:
+        program = session.get(Program, item.program_id)
         if program is None:
-            program = Program(program_id=program_id)
+            program = Program(program_id=item.program_id)
             session.add(program)
-        program.title = title
-        program.faculty = faculty
-        program.degree_level = degree_level
-        program.language = language
-        program.tuition_fee = None if tuition_fee is None else Decimal(tuition_fee)
-        program.application_deadline = date.fromisoformat(deadline)
+        program.title = item.title
+        program.faculty = item.faculty
+        program.degree_level = item.degree_level
+        program.language = item.language
+        program.tuition_fee = None if item.tuition_fee is None else Decimal(item.tuition_fee)
+        program.application_deadline = item.application_deadline
         program.is_active = True
 
         session.execute(
-            delete(ProgramDocumentRequirement).where(ProgramDocumentRequirement.program_id == program_id)
+            delete(ProgramDocumentRequirement).where(ProgramDocumentRequirement.program_id == item.program_id)
         )
-        documents = documents_for(program_id, degree_level)
-        if documents is None:
-            continue
-        for applicant_type, items in documents.items():
-            for order, (name, document_format, translation, notarisation, item_deadline) in enumerate(items):
+        for applicant_type, documents in (item.documents or {}).items():
+            for order, document in enumerate(documents):
                 session.add(
                     ProgramDocumentRequirement(
-                        program_id=program_id,
+                        program_id=item.program_id,
                         applicant_type=applicant_type,
-                        name=name,
-                        document_format=document_format,
-                        translation_required=translation,
-                        notarisation_required=notarisation,
-                        deadline=item_deadline,
+                        name=document.name,
+                        document_format=document.format,
+                        translation_required=document.translation,
+                        notarisation_required=document.notarisation,
+                        deadline=document.deadline,
                         display_order=order,
                     )
                 )
                 requirement_count += 1
+
+    source_ids = [item.program_id for item in source.programs]
+    deactivated = list(
+        session.scalars(
+            update(Program)
+            .where(Program.program_id.not_in(source_ids), Program.is_active.is_(True))
+            .values(is_active=False)
+            .returning(Program.program_id)
+        )
+    )
     session.commit()
-    return len(PROGRAMS), requirement_count
+    return ImportResult(programs=len(source.programs), requirements=requirement_count, deactivated=sorted(deactivated))
 
 
 def main() -> int:
-    settings = get_settings()
-    session = get_session(settings)
-    try:
-        programs, requirements = import_catalogue(session)
-    finally:
-        session.close()
-    print(f"Imported {programs} programs and {requirements} document requirements")
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
+    args = parser.parse_args()
+
+    source = load_source(args.source)
+    with get_session(get_settings()) as session:
+        result = import_catalogue(session, source)
+
+    print(f"Imported {result.programs} programs and {result.requirements} document requirements from {args.source.name}")
+    if result.deactivated:
+        print(f"Deactivated (no longer in the source file): {', '.join(result.deactivated)}")
+    missing_links = [item.program_id for item in source.programs if not item.source_url]
+    if missing_links:
+        print(f"Warning: {len(missing_links)} programs have no source_url (T0.6 requires one per record)")
     return 0
 
 

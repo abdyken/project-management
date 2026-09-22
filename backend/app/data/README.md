@@ -1,3 +1,13 @@
+# Data files
+
+## Real data
+
+- `catalogue.json` — the official program catalogue and document requirements
+  (T0.6). Source of truth for `scripts/import_catalogue.py`, which the API
+  container runs on every start: edit this file, never the database by hand.
+  Each program needs a `source_url` to the official page (to be filled by the
+  Product Owner); `null` values mean "unknown in the official data".
+
 # Placeholder data
 
 These fixtures let the `assistant` module run and be tested **before** the
