@@ -4,13 +4,13 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.db import get_session
+from app.db import get_db_session
 
 router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
-def health(session: Session = Depends(get_session)) -> JSONResponse:
+def health(session: Session = Depends(get_db_session)) -> JSONResponse:
     try:
         session.execute(text("SELECT 1"))
     except SQLAlchemyError:

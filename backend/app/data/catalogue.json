@@ -1,0 +1,1389 @@
+{
+  "_comment": "Official catalogue data (T0.6). Source of truth for scripts/import_catalogue.py. tuition_fee: KZT per academic year. null = unknown in the official data. documents: null = no requirements recorded (API returns the missing-data warning). source_url: link to the official page each record was taken from - to be filled by the Product Owner.",
+  "programs": [
+    {
+      "program_id": "6B06102",
+      "title": "Computer Science",
+      "faculty": "School of Engineering and Natural Sciences",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 2200000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B06101",
+      "title": "Information Systems",
+      "faculty": "School of Engineering and Natural Sciences",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 2200000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B05402",
+      "title": "Statistics and Data Science",
+      "faculty": "School of Engineering and Natural Sciences",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 2200000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B06103",
+      "title": "Mathematical and Computer Modelling",
+      "faculty": "School of Engineering and Natural Sciences",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 2050000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "7M06101",
+      "title": "Computer Engineering and Software",
+      "faculty": "School of Engineering and Natural Sciences",
+      "degree_level": "master",
+      "language": "English",
+      "tuition_fee": 2100000,
+      "application_deadline": "2026-07-08",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Bachelor’s diploma and transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical card No. 075 and X-ray result",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Copy of national ID",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Complex Test (CT) certificate, if available",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Grant competition"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "Application"
+          },
+          {
+            "name": "Bachelor’s diploma and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B02302",
+      "title": "Translation Studies",
+      "faculty": "School of Education and Humanities",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 1890000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B01701",
+      "title": "Kazakh Language and Literature",
+      "faculty": "School of Education and Humanities",
+      "degree_level": "bachelor",
+      "language": "Kazakh",
+      "tuition_fee": 1890000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B01702",
+      "title": "Two Foreign Languages",
+      "faculty": "School of Education and Humanities",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 1890000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B01101",
+      "title": "Pedagogy and Psychology",
+      "faculty": "School of Education and Humanities",
+      "degree_level": "bachelor",
+      "language": "Kazakh",
+      "tuition_fee": 1890000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Pedagogical examination result",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B04201",
+      "title": "Applied Law",
+      "faculty": "School of Law and Social Sciences",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 2000000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B03101",
+      "title": "International Relations",
+      "faculty": "School of Law and Social Sciences",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_fee": 2000000,
+      "application_deadline": "2026-07-31",
+      "source_url": null,
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (admissions.sdu.edu.kz)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before visiting the Admissions Office"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Chest fluorography with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "Photographs 3×4 cm, 6 copies",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Enrolment"
+          },
+          {
+            "name": "IELTS or SDU Language School certificate (if available)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "School diploma / certificate and transcript",
+            "format": "original",
+            "translation": true,
+            "notarisation": true,
+            "deadline": "31 July 2026 (fall intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Letter of recommendation",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Electronic photograph 3×4 cm",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "IELTS 5.5 (min 5.0 per section) or SDU Extension Center B1",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application / placement test waiver"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Application"
+          },
+          {
+            "name": "Medical Form 075 and X-ray result (upon arrival)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "20 August 2026"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "7M04101",
+      "title": "Management",
+      "faculty": "SDU Business School",
+      "degree_level": "master",
+      "language": "English",
+      "tuition_fee": null,
+      "application_deadline": "2026-07-08",
+      "source_url": null,
+      "documents": null
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import OperationalError
 
-from app.db import get_session
+from app.db import get_db_session
 from app.main import app
 
 client = TestClient(app)
@@ -19,7 +19,7 @@ def test_health_503_when_database_unavailable():
         def execute(self, *args, **kwargs):
             raise OperationalError("SELECT 1", {}, Exception("connection refused"))
 
-    app.dependency_overrides[get_session] = lambda: BrokenSession()
+    app.dependency_overrides[get_db_session] = lambda: BrokenSession()
     try:
         response = client.get("/api/health")
     finally:

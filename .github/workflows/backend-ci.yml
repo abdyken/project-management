@@ -1,0 +1,49 @@
+name: Backend CI
+
+on:
+  # Every pull request, not only backend changes: "test" is a required check on
+  # main, so a frontend-only PR would otherwise wait forever for it.
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: admissions
+          POSTGRES_PASSWORD: admissions
+          POSTGRES_DB: admissions
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U admissions -d admissions"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://admissions:admissions@localhost:5432/admissions
+      LLM_PROVIDER: mock
+      EMBEDDING_PROVIDER: mock
+      INDEX_BACKEND: file
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install locked dependencies
+        run: uv sync --frozen
+      - name: Rebuild FAQ index
+        run: uv run python scripts/reindex_faq.py
+      - name: Run tests
+        run: uv run pytest

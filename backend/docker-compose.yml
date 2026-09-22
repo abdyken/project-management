@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admissions}
       POSTGRES_DB: ${POSTGRES_DB:-admissions}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -21,7 +21,10 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-admissions}:${POSTGRES_PASSWORD:-admissions}@db:5432/${POSTGRES_DB:-admissions}
       APP_ENV: ${APP_ENV:-local}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000}
+      CATALOG_API_URL: ${CATALOG_API_URL:-db}
+      CHECKLIST_API_URL: ${CHECKLIST_API_URL:-db}
+      ADMISSIONS_OFFICE_CONTACT: "${ADMISSIONS_OFFICE_CONTACT:-SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65}"
     ports:
       - "8000:8000"
     depends_on:

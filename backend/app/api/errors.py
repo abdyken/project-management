@@ -1,0 +1,60 @@
+"""Shared error responses (T1.4).
+
+Error body for every API error the front-end should handle:
+    {"error_code": "<CODE>", "message": "<human-readable text>"}
+"""
+from __future__ import annotations
+
+import logging
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
+
+logger = logging.getLogger(__name__)
+
+DATABASE_UNAVAILABLE = "DATABASE_UNAVAILABLE"
+PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND"
+RETRY_AFTER_SECONDS = 5
+
+
+class ErrorResponse(BaseModel):
+    error_code: str
+    message: str
+
+
+DATABASE_UNAVAILABLE_RESPONSE = {
+    503: {
+        "model": ErrorResponse,
+        "description": "The database is unreachable. The request can be retried; "
+        f"the Retry-After header suggests a delay in seconds (currently {RETRY_AFTER_SECONDS}).",
+        "content": {
+            "application/json": {
+                "example": {
+                    "error_code": DATABASE_UNAVAILABLE,
+                    "message": "The service is temporarily unavailable. Please try again.",
+                }
+            }
+        },
+    }
+}
+
+
+async def database_unavailable_handler(request: Request, exc: Exception) -> JSONResponse:
+    logger.warning("Database unavailable on %s %s: %s", request.method, request.url.path, exc)
+    return JSONResponse(
+        status_code=503,
+        content=ErrorResponse(
+            error_code=DATABASE_UNAVAILABLE,
+            message="The service is temporarily unavailable. Please try again.",
+        ).model_dump(),
+        headers={"Retry-After": str(RETRY_AFTER_SECONDS)},
+    )
+
+
+def register_error_handlers(app: FastAPI) -> None:
+    # OperationalError: connection refused / dropped / timed out.
+    # PoolTimeoutError: no free connection in the pool.
+    app.add_exception_handler(OperationalError, database_unavailable_handler)
+    app.add_exception_handler(PoolTimeoutError, database_unavailable_handler)
