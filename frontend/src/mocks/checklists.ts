@@ -1,5 +1,5 @@
 import { ADMISSIONS_CONTACT } from "@/lib/constants"
-import type { ApplicantType, ChecklistResponse, DocumentRequirement } from "@/api/types"
+import type { ApplicantType, ChecklistResponse, DegreeLevel, DocumentRequirement } from "@/api/types"
 
 const bachelorLocal: DocumentRequirement[] = [
   {
@@ -208,9 +208,10 @@ const PROGRAMS_WITHOUT_CHECKLIST = new Set(["7M04101"])
 export function getMockChecklist(
   programId: string,
   applicantType: ApplicantType,
-  degreeLevel: "bachelor" | "master",
+  degreeLevel: DegreeLevel,
 ): ChecklistResponse {
-  if (PROGRAMS_WITHOUT_CHECKLIST.has(programId)) {
+  // No mock documents exist for PhD programmes: show the missing-data warning, never a guessed list.
+  if (PROGRAMS_WITHOUT_CHECKLIST.has(programId) || degreeLevel === "phd") {
     return {
       program_id: programId,
       applicant_type: applicantType,
