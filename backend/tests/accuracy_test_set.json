@@ -1,0 +1,12 @@
+[
+  {"question": "When is the deadline to apply for the Fall intake?", "expected_faq_id": "faq-001"},
+  {"question": "What documents do international applicants have to send in?", "expected_faq_id": "faq-002"},
+  {"question": "Is there a cost to submit an application?", "expected_faq_id": "faq-003"},
+  {"question": "In what language are bachelor programs delivered?", "expected_faq_id": "faq-004"},
+  {"question": "Can I submit applications to two programs at once?", "expected_faq_id": "faq-005"},
+  {"question": "Do I need a notarised translation of my diploma?", "expected_faq_id": "faq-006"},
+  {"question": "How much are the tuition fees for master's programs?", "expected_faq_id": "faq-007"},
+  {"question": "What is the phone number of the admissions office?", "expected_faq_id": "faq-008"},
+  {"question": "What is the capital of France?", "expected_faq_id": null},
+  {"question": "Can you recommend a good restaurant nearby?", "expected_faq_id": null}
+]
