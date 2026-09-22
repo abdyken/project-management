@@ -57,7 +57,35 @@ class HttpCatalogClient(CatalogClient):
         return [Program(**item) for item in items]
 
 
+class DbCatalogClient(CatalogClient):
+    """Reads the same program table the catalogue API serves."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+
+    def list_programs(self) -> list[Program]:
+        from app.catalogue.service import search_programs
+        from app.db import get_session
+
+        with get_session(self._settings) as session:
+            rows = search_programs(session)
+            return [
+                Program(
+                    program_id=row.program_id,
+                    title=row.title,
+                    faculty=row.faculty,
+                    degree_level=row.degree_level,
+                    language=row.language,
+                    is_active=row.is_active,
+                )
+                for row in rows
+            ]
+
+
 def get_catalog_client(settings: Settings) -> CatalogClient:
-    if settings.catalog_api_url:
-        return HttpCatalogClient(settings.catalog_api_url, timeout=settings.assistant_timeout_seconds)
+    url = settings.catalog_api_url.strip()
+    if url.lower() in {"db", "database", "internal"}:
+        return DbCatalogClient(settings)
+    if url:
+        return HttpCatalogClient(url, timeout=settings.assistant_timeout_seconds)
     return FileCatalogClient(Path(settings.faq_data_path).parent / "programs_sample.json")

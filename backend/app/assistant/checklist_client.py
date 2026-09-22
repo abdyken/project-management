@@ -81,7 +81,41 @@ class HttpChecklistClient(ChecklistClient):
         return ChecklistResult(**response.json())
 
 
+class DbChecklistClient(ChecklistClient):
+    """Reads the same document requirements the checklist API serves."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+
+    def get_checklist(self, program_id: str, applicant_type: str) -> ChecklistResult:
+        from app.checklist.router import MISSING_REQUIREMENTS_WARNING
+        from app.checklist.service import get_requirements
+        from app.db import get_session
+
+        with get_session(self._settings) as session:
+            requirements = get_requirements(session, program_id, applicant_type)
+
+        if not requirements:
+            return ChecklistResult(items=[], warning=MISSING_REQUIREMENTS_WARNING)
+
+        return ChecklistResult(
+            items=[
+                DocumentRequirement(
+                    name=requirement.name,
+                    format=requirement.document_format,
+                    translation=requirement.translation_required,
+                    notarisation=requirement.notarisation_required,
+                    deadline=requirement.deadline,
+                )
+                for requirement in requirements
+            ]
+        )
+
+
 def get_checklist_client(settings: Settings) -> ChecklistClient:
-    if settings.checklist_api_url:
-        return HttpChecklistClient(settings.checklist_api_url, timeout=settings.assistant_timeout_seconds)
+    url = settings.checklist_api_url.strip()
+    if url.lower() in {"db", "database", "internal"}:
+        return DbChecklistClient(settings)
+    if url:
+        return HttpChecklistClient(url, timeout=settings.assistant_timeout_seconds)
     return FileChecklistClient(Path(settings.faq_data_path).parent / "checklist_sample.json")

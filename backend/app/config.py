@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # --- App / shared (T0.3) ---
     app_env: str = "local"
     # Comma-separated list of front-end origins allowed by CORS
-    cors_origins: str = "http://localhost:5173,http://localhost:3000"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
 
     # --- LLM provider (answer generation) ---
     llm_provider: str = "mock"  # mock | anthropic
@@ -33,14 +33,19 @@ class Settings(BaseSettings):
     # --- Assistant behaviour ---
     similarity_threshold: float = 0.72
     assistant_timeout_seconds: float = 4.0
-    admissions_office_contact: str = "admissions@university.example (+7 000 000 00 00)"
+    admissions_office_contact: str = (
+        "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
+    )
 
-    # --- Data / integration (until T1.x / T4.x are deployed, see catalog_client.py /
-    # checklist_client.py — these point at the sample fixtures instead of real services) ---
+    # --- Data / integration ---
+    # catalog_api_url / checklist_api_url:
+    #   ""         — local JSON fixtures (offline tests)
+    #   "db"       — the catalogue tables in DATABASE_URL (same data the front-end reads)
+    #   http(s):// — another deployment of this API
     faq_data_path: str = "app/data/faq_sample.json"
     faq_index_path: str = "app/data/faq_index.json"
-    catalog_api_url: str = ""
-    checklist_api_url: str = ""
+    catalog_api_url: str = "db"
+    checklist_api_url: str = "db"
 
     # --- Storage backend for the retrieval index (T3.2) ---
     # "file"     — local JSON file, no DB needed. Default, used for offline dev/tests.

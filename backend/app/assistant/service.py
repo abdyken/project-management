@@ -7,6 +7,8 @@ app/assistant/router.py wraps this in the HTTP contract from T3.5.
 """
 from __future__ import annotations
 
+import re
+
 from app.assistant.catalog_client import CatalogClient
 from app.assistant.checklist_client import ChecklistClient
 from app.assistant.fallback import build_fallback_response
@@ -17,6 +19,13 @@ from app.assistant.schemas import AskResponse
 from app.config import Settings
 
 DEFAULT_APPLICANT_TYPE = "international"
+
+
+def applicant_type_from_question(question: str) -> str:
+    """Local when the question says so; otherwise the international default."""
+    if re.search(r"\blocal\b", question.lower()):
+        return "local"
+    return DEFAULT_APPLICANT_TYPE
 
 
 class AssistantService:
@@ -64,7 +73,8 @@ class AssistantService:
         if program is None:
             return None
 
-        checklist = self._checklist_client.get_checklist(program.program_id, DEFAULT_APPLICANT_TYPE)
+        applicant_type = applicant_type_from_question(question)
+        checklist = self._checklist_client.get_checklist(program.program_id, applicant_type)
 
         if checklist.warning:
             return AskResponse(
@@ -84,5 +94,7 @@ class AssistantService:
             + f", deadline {doc.deadline})"
             for doc in checklist.items
         ]
-        answer_text = f"Required documents for {program.title}:\n" + "\n".join(document_lines)
+        answer_text = (
+            f"Required documents for {program.title} ({applicant_type} applicant):\n" + "\n".join(document_lines)
+        )
         return AskResponse(answer=answer_text, source_link=None, faq_id=None, similarity_score=1.0)
