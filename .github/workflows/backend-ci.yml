@@ -1,10 +1,9 @@
 name: Backend CI
 
 on:
+  # Every pull request, not only backend changes: "test" is a required check on
+  # main, so a frontend-only PR would otherwise wait forever for it.
   pull_request:
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-ci.yml"
   push:
     branches: [main]
     paths:
