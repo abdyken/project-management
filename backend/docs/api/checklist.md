@@ -49,3 +49,11 @@ Uses the catalogue error contract:
 ```json
 { "error_code": "PROGRAM_NOT_FOUND", "message": "Program not found." }
 ```
+
+## Schema confirmation (T4.1)
+
+Table `program_document_requirement` (migration `0004`): `program_id` → `program.program_id` (on delete cascade), `applicant_type` (`local` / `international`), `name`, `document_format` (`original` / `copy`), `translation_required`, `notarisation_required`, `deadline` (free text), `display_order`.
+
+| Who         | For                              | Confirmed  |
+| ----------- | -------------------------------- | ---------- |
+| Dinmukhamed | T4.1 — part of the US1 program data | confirmed 2026-09-22 |
