@@ -20,8 +20,12 @@ export function listPrograms(query: ProgramQuery = {}) {
   return request<ProgramListResponse>("/api/programs", { query })
 }
 
-export async function getFilterOptions(): Promise<FilterOptions> {
-  const { programs } = await listPrograms()
+export const allProgramsQuery = {
+  queryKey: ["programs", "all"],
+  queryFn: () => listPrograms(),
+}
+
+export function filterOptions(programs: Program[]): FilterOptions {
   const unique = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b))
   const degrees = new Set(programs.map((program) => program.degree_level))
   return {

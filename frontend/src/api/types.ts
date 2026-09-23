@@ -47,5 +47,3 @@ export type AssistantResponse = {
   faq_id: string | null
   similarity_score: number | null
 }
-
-export type HealthResponse = { status: "ok" | "unavailable"; database: "ok" | "unavailable" }

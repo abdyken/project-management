@@ -3,7 +3,7 @@ import { useChatStore } from "@/store/chat"
 
 const links = [
   { to: "/", label: "Overview" },
-  { to: "/programs", label: "Programmes" },
+  { to: "/programs", label: "Programs" },
 ]
 
 export function SiteHeader() {

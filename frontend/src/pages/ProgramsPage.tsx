@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useSearchParams } from "react-router-dom"
-import { getFilterOptions, listPrograms } from "@/api/programs"
+import { allProgramsQuery, filterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
 import { ProgramFilters, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { ConnectionError } from "@/components/common/ConnectionError"
@@ -20,7 +20,7 @@ export function ProgramsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = readFilters(searchParams)
 
-  const optionsQuery = useQuery({ queryKey: ["program-options"], queryFn: getFilterOptions })
+  const optionsQuery = useQuery({ ...allProgramsQuery, select: (data) => filterOptions(data.programs) })
   const query = useQuery({
     queryKey: ["programs", filters],
     queryFn: () => listPrograms(filters),

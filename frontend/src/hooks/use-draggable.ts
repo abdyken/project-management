@@ -1,45 +1,45 @@
-import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react"
+import { useEffect, useEffectEvent, useRef, type PointerEvent as ReactPointerEvent } from "react"
 import type { ChatPosition } from "@/store/chat"
 
-type Size = {
+export type Size = {
   width: number
   height: number
 }
+
+const MARGIN = 8
+const DRAG_THRESHOLD = 3
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
 
 export function clampPosition(position: ChatPosition, size: Size): ChatPosition {
-  const margin = 8
-  const maxX = Math.max(margin, window.innerWidth - size.width - margin)
-  const maxY = Math.max(margin, window.innerHeight - size.height - margin)
+  const maxX = Math.max(MARGIN, window.innerWidth - size.width - MARGIN)
+  const maxY = Math.max(MARGIN, window.innerHeight - size.height - MARGIN)
   return {
-    x: clamp(position.x, margin, maxX),
-    y: clamp(position.y, margin, maxY),
+    x: clamp(position.x, MARGIN, maxX),
+    y: clamp(position.y, MARGIN, maxY),
   }
 }
 
-export function useDraggable(position: ChatPosition, size: Size, onMove: (next: ChatPosition) => void) {
-  const drag = useRef<{
-    pointerId: number
-    startX: number
-    startY: number
-    originX: number
-    originY: number
-    moved: boolean
-  } | null>(null)
+type DragSession = {
+  pointerId: number
+  startX: number
+  startY: number
+  originX: number
+  originY: number
+  moved: boolean
+}
 
-  const latest = useRef({ position, size, onMove })
-  latest.current = { position, size, onMove }
+export function useDraggable(position: ChatPosition, size: Size, onMove: (next: ChatPosition) => void) {
+  const drag = useRef<DragSession | null>(null)
+  const lastDragMoved = useRef(false)
+
+  const keepInViewport = useEffectEvent(() => onMove(clampPosition(position, size)))
 
   useEffect(() => {
-    const onResize = () => {
-      const { position: current, size: currentSize, onMove: move } = latest.current
-      move(clampPosition(current, currentSize))
-    }
-    window.addEventListener("resize", onResize)
-    return () => window.removeEventListener("resize", onResize)
+    window.addEventListener("resize", keepInViewport)
+    return () => window.removeEventListener("resize", keepInViewport)
   }, [])
 
   function onPointerDown(event: ReactPointerEvent<HTMLElement>) {
@@ -52,6 +52,7 @@ export function useDraggable(position: ChatPosition, size: Size, onMove: (next: 
       originY: position.y,
       moved: false,
     }
+    lastDragMoved.current = false
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
@@ -60,27 +61,28 @@ export function useDraggable(position: ChatPosition, size: Size, onMove: (next: 
     if (!session || session.pointerId !== event.pointerId) return
     const dx = event.clientX - session.startX
     const dy = event.clientY - session.startY
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) session.moved = true
-    if (!session.moved) return
-    onMove(
-      clampPosition(
-        {
-          x: session.originX + dx,
-          y: session.originY + dy,
-        },
-        size,
-      ),
-    )
+    if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) session.moved = true
+    if (session.moved) onMove(clampPosition({ x: session.originX + dx, y: session.originY + dy }, size))
   }
 
-  function onPointerUp(event: ReactPointerEvent<HTMLElement>) {
+  function endDrag(event: ReactPointerEvent<HTMLElement>) {
     const session = drag.current
     if (!session || session.pointerId !== event.pointerId) return
-    event.currentTarget.releasePointerCapture(event.pointerId)
-    const moved = session.moved
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    lastDragMoved.current = session.moved
     drag.current = null
+  }
+
+  function consumeDrag() {
+    const moved = lastDragMoved.current
+    lastDragMoved.current = false
     return moved
   }
 
-  return { onPointerDown, onPointerMove, onPointerUp }
+  return {
+    handlers: { onPointerDown, onPointerMove, onPointerUp: endDrag, onPointerCancel: endDrag },
+    consumeDrag,
+  }
 }
