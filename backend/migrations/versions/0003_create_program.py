@@ -1,9 +1,3 @@
-"""create program table (T1.1, US1 catalogue)
-
-Revision ID: 0003
-Revises: 0002
-Create Date: 2026-09-18
-"""
 from collections.abc import Sequence
 
 import sqlalchemy as sa

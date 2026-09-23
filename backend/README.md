@@ -7,7 +7,6 @@ Stack (T0.1): **Python 3.12 + FastAPI**, **SQLAlchemy 2 + Alembic**, **PostgreSQ
 ```bash
 cd backend
 cp .env.example .env
-uv run python scripts/reindex_faq.py   # builds the FAQ index file used by the assistant (INDEX_BACKEND=file)
 docker compose up --build
 ```
 
@@ -16,7 +15,7 @@ docker compose up --build
 - Interactive API docs (Swagger): http://localhost:8000/docs
 - Catalogue API contract (for the front-end and checklist): [docs/api/programs.md](docs/api/programs.md), full OpenAPI file: [docs/api/openapi.json](docs/api/openapi.json) (`uv run python scripts/export_openapi.py` after changing endpoints)
 
-Migrations are applied automatically on API start (`alembic upgrade head`).
+On start the API container applies migrations, imports `app/data/catalogue.json` and rebuilds the FAQ index.
 
 ## Run the API on your machine (database still in Docker)
 
@@ -26,6 +25,7 @@ cp .env.example .env
 docker compose up -d db
 uv sync
 uv run alembic upgrade head
+uv run python scripts/import_catalogue.py
 uv run python scripts/reindex_faq.py
 uv run uvicorn app.main:app --reload
 ```
@@ -34,7 +34,6 @@ uv run uvicorn app.main:app --reload
 
 ```bash
 docker compose up -d db
-uv run python scripts/reindex_faq.py   # the assistant router tests need the FAQ index
 uv run pytest
 ```
 
@@ -46,6 +45,9 @@ One shared Alembic chain for all modules (`migrations/versions/`):
 | -------- | ----- | ---- |
 | 0001 | Dinmukhamed (T0.3) | Baseline |
 | 0002 | Serdar (T3.2) | `faq_embeddings` table + `vector` extension |
+| 0003 | Dinmukhamed (T1.1) | `program` table |
+| 0004 | Nurmek (T4.1) | `program_document_requirement` table |
+| 0005 | T3.2 | `faq_embeddings` resized to 384 dimensions |
 
 ```bash
 uv run alembic revision --autogenerate -m "describe the change"   # after changing models
@@ -66,16 +68,16 @@ app/
   catalogue/     US1 - programs, search and filter API (Dinmukhamed)
   checklist/     US4 - document requirements and checklist endpoint (Nurmek)
   assistant/     US3 - FAQ assistant, POST /api/assistant/ask (Serdar)
-  data/          sample FAQ / program / checklist fixtures used by the assistant
+  data/          catalogue.json and the FAQ base
 migrations/      Alembic migrations (one chain)
-scripts/         reindex_faq.py, run_accuracy_test.py, smoke_test_provider.py
+scripts/         import_catalogue.py, reindex_faq.py, run_accuracy_test.py, qa_us1.py, export_*.py
 tests/
 docs/            task notes (docs/serdar-ai-tasks/ - assistant tasks T0.7, T3.2-T3.7)
 ```
 
 ## Assistant module (US3, Serdar)
 
-See [docs/serdar-ai-tasks/](docs/serdar-ai-tasks/). Defaults use mock LLM and embedding providers, so no API keys are needed locally.
+See [docs/serdar-ai-tasks/](docs/serdar-ai-tasks/). Answers are the text of the closest FAQ item, found with a local multilingual embedding model (no API key). The model is downloaded once into `FASTEMBED_CACHE_PATH`.
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/assistant/ask \
@@ -83,10 +85,9 @@ curl -X POST http://127.0.0.1:8000/api/assistant/ask \
   -d '{"question": "When is the application deadline?", "session_id": "demo"}'
 ```
 
-- Accuracy report against the 10-question test set: `uv run python scripts/run_accuracy_test.py` (see the T3.7 doc).
-- Retrieval index storage: `INDEX_BACKEND=file` (default, local JSON file) or `INDEX_BACKEND=postgres` (pgvector table from migration 0002, what the deployed dev environment should use). After switching to `postgres`, run `uv run python scripts/reindex_faq.py` to populate the table.
-- Until the catalogue (T1.3) and checklist (T4.2) endpoints are deployed, the assistant reads `app/data/programs_sample.json` / `checklist_sample.json`; set `CATALOG_API_URL` / `CHECKLIST_API_URL` once they are.
+- Accuracy report against a running API: `uv run python scripts/run_accuracy_test.py` (see the T3.7 doc).
+- After editing the FAQ file, run `uv run python scripts/reindex_faq.py` (or restart the container).
 
 ## Environment variables
 
-See [.env.example](.env.example) for the full list: database URL, CORS origins, LLM/embedding providers and keys, similarity threshold, timeouts. Never commit real API keys — only `.env.example` is tracked; `.env` is git-ignored.
+See [.env.example](.env.example): database URL, CORS origins, FAQ file, similarity threshold, timeout and the admissions contact. Only `.env.example` is tracked; `.env` is git-ignored.

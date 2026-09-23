@@ -1,4 +1,3 @@
-"""T1.4: error and empty-result contract of GET /api/programs."""
 from __future__ import annotations
 
 import pytest
@@ -12,7 +11,6 @@ from app.main import app
 
 @pytest.fixture
 def client_without_database():
-    """Real connection attempt to a port where no database listens."""
     engine = create_engine(
         "postgresql+psycopg://nobody:nothing@127.0.0.1:1/none",
         connect_args={"connect_timeout": 1},

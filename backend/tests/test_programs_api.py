@@ -1,4 +1,3 @@
-"""T1.3: GET /api/programs - keyword search, combinable filters, total (needs the database)."""
 from __future__ import annotations
 
 from datetime import date

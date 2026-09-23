@@ -1,4 +1,3 @@
-"""T1.1: program table - migration applied and model constraints (needs the database)."""
 from __future__ import annotations
 
 from datetime import date

@@ -88,7 +88,6 @@ def test_international_checklist_returns_type_specific_requirements(client):
 
 def test_missing_requirements_returns_warning_not_an_ambiguous_empty_list(client):
     response = client.get("/api/programs/cs-bsc/checklist", params={"applicant_type": "local"})
-    # Remove requirements after exercising the populated route through the same test database.
     session = app.dependency_overrides[get_db_session]()
     session.query(ProgramDocumentRequirement).delete()
     session.flush()

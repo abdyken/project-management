@@ -1,4 +1,3 @@
-"""Public API schemas for US4."""
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict

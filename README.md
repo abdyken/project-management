@@ -19,7 +19,7 @@ npm ci
 npm run dev
 ```
 
-The API is available at `http://localhost:8000`; the frontend URL is printed by Vite. For local frontend-to-backend integration set `VITE_USE_MOCKS=false` in `frontend/.env`.
+The API is available at `http://localhost:8000`; the frontend URL is printed by Vite.
 
 ## Tests
 
@@ -27,7 +27,6 @@ The API is available at `http://localhost:8000`; the frontend URL is printed by 
 cd backend
 docker compose up -d db
 uv sync --frozen
-uv run python scripts/reindex_faq.py
 uv run pytest
 ```
 

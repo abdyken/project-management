@@ -1,4 +1,3 @@
-"""T1.2: catalogue import from app/data/catalogue.json (needs the database)."""
 from __future__ import annotations
 
 import sys
@@ -16,7 +15,7 @@ from app.main import app
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from import_catalogue import DEFAULT_SOURCE, SourceFile, import_catalogue, load_source  # noqa: E402
+from import_catalogue import DEFAULT_SOURCE, SourceFile, import_catalogue, load_source
 
 
 def program(program_id: str, **overrides) -> dict:

@@ -6,15 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
 from app.checklist.schemas import ApplicantType, ChecklistResponse, DocumentRequirementOut
-from app.checklist.service import get_active_program, get_requirements
+from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_active_program, get_requirements
 from app.db import get_db_session
 
 router = APIRouter(tags=["checklist"])
-
-MISSING_REQUIREMENTS_WARNING = (
-    "Document requirements for this programme are not recorded yet. "
-    "Please contact the Admissions Office."
-)
 
 
 @router.get(

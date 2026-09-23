@@ -1,4 +1,3 @@
-"""T1.6: catalogue export for the Product Owner (needs the database)."""
 from __future__ import annotations
 
 import csv
@@ -11,7 +10,7 @@ from app.catalogue.models import Program
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from export_catalogue import COLUMNS, export_catalogue  # noqa: E402
+from export_catalogue import COLUMNS, export_catalogue
 
 
 def test_export_includes_all_programs_with_unknown_values_blank(catalogue_session, tmp_path):
@@ -30,7 +29,7 @@ def test_export_includes_all_programs_with_unknown_values_blank(catalogue_sessio
     count = export_catalogue(catalogue_session, out)
 
     assert count == 2
-    assert out.read_bytes().startswith(b"\xef\xbb\xbf")  # BOM, so Excel reads UTF-8
+    assert out.read_bytes().startswith(b"\xef\xbb\xbf")
     with out.open(encoding="utf-8-sig", newline="") as file:
         rows = list(csv.DictReader(file))
     assert list(rows[0].keys()) == COLUMNS

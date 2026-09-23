@@ -4,6 +4,11 @@ from sqlalchemy.orm import Session
 from app.checklist.models import ProgramDocumentRequirement
 from app.catalogue.models import Program
 
+MISSING_REQUIREMENTS_WARNING = (
+    "Document requirements for this programme are not recorded yet. "
+    "Please contact the Admissions Office."
+)
+
 
 def get_active_program(session: Session, program_id: str) -> Program | None:
     program = session.get(Program, program_id)

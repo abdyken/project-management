@@ -1,16 +1,3 @@
-"""US1 QA run (T1.6): execute the catalogue scenarios against a running API.
-
-The checks are data-driven: expected results are computed from the full
-catalogue returned by the API, so the script works with whatever programs
-are imported, without hardcoded titles.
-
-Usage:
-    uv run python scripts/qa_us1.py --base-url https://<dev-api>
-    uv run python scripts/qa_us1.py --base-url https://<dev-api> --report docs/qa/us1-results-dev.md
-
-Database-unavailable scenario (stop the database first, see docs/qa/US1-QA.md):
-    uv run python scripts/qa_us1.py --base-url https://<dev-api> --db-down
-"""
 from __future__ import annotations
 
 import argparse
@@ -28,7 +15,7 @@ NO_MATCH_KEYWORD = "zzz-qa-no-such-program"
 @dataclass
 class Result:
     scenario: str
-    status: str  # PASS | FAIL | SKIP
+    status: str
     details: str
 
 
@@ -73,7 +60,6 @@ class US1QA:
         )
         return body["total"]
 
-    # --- scenarios -------------------------------------------------------
 
     def full_catalogue(self) -> str:
         programs = self.catalogue
@@ -179,8 +165,11 @@ def render_report(base_url: str, results: list[Result]) -> str:
     return "\n".join(lines) + "\n"
 
 
+DESCRIPTION = "Run the US1 QA scenarios against a running API."
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument("--base-url", default="http://localhost:8000")
     parser.add_argument("--db-down", action="store_true", help="only run the database-unavailable scenario")
     parser.add_argument("--report", type=Path, help="write the results as a Markdown table")

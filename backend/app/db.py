@@ -1,10 +1,3 @@
-"""SQLAlchemy engine/session setup shared by all modules (T0.3).
-
-- ``Base``: declarative base for every ORM model; Alembic reads ``Base.metadata``.
-- ``get_db_session``: FastAPI dependency for request handlers.
-- ``get_engine`` / ``get_session``: for scripts and non-request code (e.g. the
-  assistant's reindex script) that pass their own ``Settings``.
-"""
 from __future__ import annotations
 
 from collections.abc import Iterator

@@ -15,7 +15,6 @@ router = APIRouter(prefix="/programs", tags=["catalogue"])
 
 
 def _clean(value: str | None) -> str | None:
-    """Treat blank or whitespace-only query values as 'no filter'."""
     if value is None:
         return None
     return value.strip() or None
@@ -34,10 +33,6 @@ def list_programs(
     degree_level: Annotated[DegreeLevel | None, Query()] = None,
     language: Annotated[str | None, Query(max_length=50)] = None,
 ) -> ProgramListResponse:
-    """Active programs matching every given filter (AND), ordered by title.
-
-    `total` is always present. No match returns 200 with `{"total": 0, "programs": []}`.
-    """
     programs = search_programs(
         session,
         keyword=_clean(q),
@@ -72,7 +67,6 @@ def get_program(
     session: Annotated[Session, Depends(get_db_session)],
     program_id: Annotated[str, Path(max_length=64)],
 ) -> ProgramOut | JSONResponse:
-    """One active program by its id, for the program detail page."""
     program = get_active_program(session, program_id)
     if program is None:
         return JSONResponse(

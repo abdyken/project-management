@@ -1,9 +1,3 @@
-"""Pydantic models mirroring the contract published in
-docs/serdar-ai-tasks/T3.5-chat-api-contract.md (T3.5).
-
-Keep this file and that markdown contract in sync — the markdown is what
-gets signed off with Daniyar, this is its executable form.
-"""
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
@@ -29,6 +23,3 @@ class AskResponse(BaseModel):
     faq_id: str | None
     similarity_score: float
 
-
-class ErrorResponse(BaseModel):
-    error_code: str

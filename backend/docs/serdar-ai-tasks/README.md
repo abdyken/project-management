@@ -1,6 +1,6 @@
 # Serdar — AI/IS developer: планы реализации (Sprint 1)
 
-Источник: [`../sprint-1-tasks (1).md`](../sprint-1-tasks%20%281%29.md). Здесь — по одному файлу с планом реализации на каждую задачу, закреплённую за Сердаром, чтобы бэкенд и фронтенд могли увидеть, какие контракты/эндпоинты/переменные окружения им нужно принять или отдать.
+Источник: [`../sprint-1-tasks.md`](../sprint-1-tasks.md). Здесь — по одному файлу с планом реализации на каждую задачу, закреплённую за Сердаром, чтобы бэкенд и фронтенд могли увидеть, какие контракты/эндпоинты/переменные окружения им нужно принять или отдать.
 
 **Код реализован** в [`backend/app/`](../../app/), запуск и тесты — см. [`backend/README.md`](../../README.md). Стек подтверждён T0.1 (Dimash, бэкенд): Python 3.12 + FastAPI, SQLAlchemy/Alembic, PostgreSQL 16 + pgvector.
 
@@ -8,25 +8,23 @@
 
 | Task | Story | Название | Est., h | Зависит от | Статус | Файл плана |
 | ---- | ----- | -------- | ------- | ---------- | ------ | ---------- |
-| T0.7 | US3 (foundation) | LLM and embedding provider setup | 2 | T0.1 | ✅ реализовано (mock-провайдеры; реальные ключи — до деплоя) | [T0.7-llm-embedding-provider-setup.md](T0.7-llm-embedding-provider-setup.md) |
-| T3.2 | US3 | Retrieval index | 5 | T3.1, T0.7 | ✅ реализовано и проверено (file + pgvector), ждёт реальной FAQ-базы (T3.1) | [T3.2-retrieval-index.md](T3.2-retrieval-index.md) |
+| T0.7 | US3 (foundation) | LLM and embedding provider setup | 2 | T0.1 | ✅ локальная мультиязычная модель эмбеддингов (fastembed), без ключей и расходов; LLM не используется — ответ всегда текст FAQ | [`app/assistant/embeddings.py`](../../app/assistant/embeddings.py) |
+| T3.2 | US3 | Retrieval index | 5 | T3.1, T0.7 | ✅ реализовано (pgvector), ждёт реальной FAQ-базы (T3.1) | [T3.2-retrieval-index.md](T3.2-retrieval-index.md) |
 | T3.3 | US3 | Answer service endpoint | 5 | T3.2 | ✅ реализовано и проверено локально | [T3.3-answer-service-endpoint.md](T3.3-answer-service-endpoint.md) |
 | T3.4 | US3 | Below-threshold fallback | 2 | T3.3 | ✅ реализовано | [T3.4-below-threshold-fallback.md](T3.4-below-threshold-fallback.md) |
 | T3.5 | US3 | Chat API contract with the front-end | 1 | T3.3 | ✅ контракт реализован в коде; ⏳ подтверждение Daniyar — вне моего контроля | [T3.5-chat-api-contract.md](T3.5-chat-api-contract.md) |
-| T3.6 | US4 | Document question in the chat | 3 | T3.3, T4.3 | ✅ реализовано на демо-данных, ждёт реального T4.2/T4.3 | [T3.6-document-question-in-chat.md](T3.6-document-question-in-chat.md) |
+| T3.6 | US4 | Document question in the chat | 3 | T3.3, T4.3 | ✅ реализовано, читает каталог и чек-листы из БД | [T3.6-document-question-in-chat.md](T3.6-document-question-in-chat.md) |
 | T3.7 | US3 | Accuracy test set | 3 | T3.4, T0.5 | ⏳ локальный прогон готов (40% на mock-эмбеддингах, все FAQ-фейлы уходят в безопасный fallback); формальный US3QATest ждёт дев-окружения (T0.5) | [T3.7-accuracy-test-set.md](T3.7-accuracy-test-set.md) |
 
 **Итого: 21 ч.**
 
 ## Что осталось не мной
 
-Всё, что можно было сделать без внешних зависимостей, сделано и покрыто тестами (19 pytest, все зелёные — `python -m pytest tests/ -v` в `backend/`). Что реально блокирует переход из "демо-заглушка" в "прод":
+Код покрыт тестами на реальной БД (`uv run pytest` в `backend/`). Что ещё осталось:
 
 1. **T3.1 (Askhat)** — реальная FAQ-база на 30 пунктов вместо демо-заглушки на 12 (`app/data/faq_sample.json`) → перегенерировать индекс (`scripts/reindex_faq.py`).
-2. **T1.3 / T4.2 (Dinmukhamed / Nurmek)** — реальные `/api/programs` и `/api/programs/{id}/checklist` вместо файловых заглушек → указать `CATALOG_API_URL` / `CHECKLIST_API_URL` в `.env`, код клиентов уже это поддерживает без изменений.
-3. **Реальные ключи** LLM/embedding-провайдера + лимит расходов в дашборде провайдера (ручной шаг, не код).
-4. **T0.5 (Nurmek)** — дев-окружение, на котором нужно официально прогнать `scripts/run_accuracy_test.py` с `ASSISTANT_BASE_URL` и выполнить US3QATest (приёмка требует деплоя, не локального прогона).
-5. **T3.5** — фактическое подтверждение контракта от Daniyar (сам контракт и код готовы).
+2. **T0.5 (Nurmek)** — дев-окружение, на котором нужно официально прогнать `scripts/run_accuracy_test.py` с `ASSISTANT_BASE_URL` и выполнить US3QATest (приёмка требует деплоя, не локального прогона).
+3. **T3.5** — фактическое подтверждение контракта от Daniyar (сам контракт и код готовы).
 
 ## Кто от кого зависит
 
@@ -41,7 +39,6 @@
 **Serdar отдаёт другим:**
 - T3.5 — контракт `/api/assistant/ask` для Daniyar → разблокирует T2.5.
 - T3.6 — при готовности часть ответа в чате зависит от T4.3, но сама логика распознавания "какие документы нужны" — вклад Serdar в US4.
-- Переменные окружения и ключи из T0.7 — должны попасть в `.env.example` (T0.2/T0.3, Dinmukhamed/Nurmek) и в секреты CI/CD (T0.5, Nurmek), сам ключ никогда не коммитится.
 
 ## Рекомендуемый порядок выполнения
 

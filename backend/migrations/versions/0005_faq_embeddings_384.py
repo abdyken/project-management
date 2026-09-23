@@ -1,19 +1,16 @@
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from pgvector.sqlalchemy import Vector
 
-revision: str = "0002"
-down_revision: Union[str, None] = "0001"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
-
-EMBEDDING_DIMENSIONS = 256
+revision: str = "0005"
+down_revision: str | None = "0004"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
-def upgrade() -> None:
-    op.execute("CREATE EXTENSION IF NOT EXISTS vector")
+def _create_table(dimensions: int) -> None:
     op.create_table(
         "faq_embeddings",
         sa.Column("faq_id", sa.String(), primary_key=True),
@@ -22,7 +19,7 @@ def upgrade() -> None:
         sa.Column("category", sa.String(), nullable=False),
         sa.Column("source_link", sa.String(), nullable=False),
         sa.Column("last_update", sa.String(), nullable=False),
-        sa.Column("embedding", Vector(EMBEDDING_DIMENSIONS), nullable=False),
+        sa.Column("embedding", Vector(dimensions), nullable=False),
     )
     op.execute(
         "CREATE INDEX faq_embeddings_embedding_idx ON faq_embeddings "
@@ -30,6 +27,11 @@ def upgrade() -> None:
     )
 
 
-def downgrade() -> None:
-    op.drop_index("faq_embeddings_embedding_idx", table_name="faq_embeddings")
+def upgrade() -> None:
     op.drop_table("faq_embeddings")
+    _create_table(384)
+
+
+def downgrade() -> None:
+    op.drop_table("faq_embeddings")
+    _create_table(256)

@@ -18,11 +18,6 @@ def search_programs(
     degree_level: str | None = None,
     language: str | None = None,
 ) -> list[Program]:
-    """Active programs matching every given filter (AND), ordered by title.
-
-    keyword: case-insensitive substring of the title, the faculty, or the program id.
-    faculty, language: case-insensitive exact match. degree_level: exact match.
-    """
     query = select(Program).where(Program.is_active.is_(True))
 
     if keyword:

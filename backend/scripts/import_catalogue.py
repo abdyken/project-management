@@ -1,18 +1,3 @@
-"""Import the program catalogue from the official source file (T1.2).
-
-Source of truth: app/data/catalogue.json (T0.6). The file is validated before
-anything is written, and the whole import runs in one transaction.
-
-Re-runnable: a second run changes nothing.
-- programs in the file are inserted or updated and set active
-- each program's document requirements are replaced by the ones in the file
-  ("documents": null = none recorded, the API then returns the missing-data warning)
-- programs in the database but no longer in the file are deactivated (not
-  deleted), so they disappear from the catalogue
-
-    uv run python scripts/import_catalogue.py
-    uv run python scripts/import_catalogue.py --source path/to/catalogue.json
-"""
 from __future__ import annotations
 
 import argparse
@@ -25,16 +10,16 @@ from pathlib import Path
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BACKEND_ROOT))
 
-from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, model_validator  # noqa: E402
-from sqlalchemy import delete, select, update  # noqa: E402
-from sqlalchemy.orm import Session  # noqa: E402
+from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, model_validator
+from sqlalchemy import delete, select, update
+from sqlalchemy.orm import Session
 
-from app.catalogue.models import Program  # noqa: E402
-from app.catalogue.schemas import DegreeLevel  # noqa: E402
-from app.checklist.models import ProgramDocumentRequirement  # noqa: E402
-from app.checklist.schemas import ApplicantType, DocumentFormat  # noqa: E402
-from app.config import get_settings  # noqa: E402
-from app.db import get_session  # noqa: E402
+from app.catalogue.models import Program
+from app.catalogue.schemas import DegreeLevel
+from app.checklist.models import ProgramDocumentRequirement
+from app.checklist.schemas import ApplicantType, DocumentFormat
+from app.config import get_settings
+from app.db import get_session
 
 DEFAULT_SOURCE = BACKEND_ROOT / "app" / "data" / "catalogue.json"
 
@@ -136,8 +121,11 @@ def import_catalogue(session: Session, source: SourceFile) -> ImportResult:
     return ImportResult(programs=len(source.programs), requirements=requirement_count, deactivated=sorted(deactivated))
 
 
+DESCRIPTION = "Import app/data/catalogue.json into the database. Safe to re-run."
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
     args = parser.parse_args()
 

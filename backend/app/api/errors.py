@@ -1,8 +1,3 @@
-"""Shared error responses (T1.4).
-
-Error body for every API error the front-end should handle:
-    {"error_code": "<CODE>", "message": "<human-readable text>"}
-"""
 from __future__ import annotations
 
 import logging
@@ -54,7 +49,5 @@ async def database_unavailable_handler(request: Request, exc: Exception) -> JSON
 
 
 def register_error_handlers(app: FastAPI) -> None:
-    # OperationalError: connection refused / dropped / timed out.
-    # PoolTimeoutError: no free connection in the pool.
     app.add_exception_handler(OperationalError, database_unavailable_handler)
     app.add_exception_handler(PoolTimeoutError, database_unavailable_handler)

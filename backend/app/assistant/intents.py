@@ -1,14 +1,8 @@
-"""T3.6 — recognise "which documents do I need for <program>" questions.
-
-Demo-scope heuristic (10-15 programs, per the sprint's scope assumption): a
-keyword check for document-intent plus fuzzy name matching against the known
-program list, instead of a full NLU/slot-filling pipeline.
-"""
 from __future__ import annotations
 
 from difflib import SequenceMatcher
 
-from app.assistant.catalog_client import Program
+from app.catalogue.models import Program
 
 _DOCUMENT_KEYWORDS = (
     "document",
@@ -29,7 +23,6 @@ def is_document_question(question: str) -> bool:
 
 
 def resolve_program(question: str, programs: list[Program]) -> Program | None:
-    """Best-effort program match: exact substring first, then fuzzy."""
     lowered = question.lower()
 
     for program in programs:
