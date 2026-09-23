@@ -1,7 +1,5 @@
 import { ApiError } from "@/api/errors"
-import { mockRequest } from "@/mocks/handlers"
 
-const USE_MOCKS = import.meta.env.VITE_USE_MOCKS !== "false"
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "")
 
 type RequestOptions = RequestInit & {
@@ -51,17 +49,6 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   const { signal, cleanup } = mergeSignals(timeoutMs, init.signal ?? undefined)
 
   try {
-    if (USE_MOCKS) {
-      try {
-        return await mockRequest<T>(url, { ...init, signal })
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          throw new ApiError(0, "TIMEOUT", "Request aborted")
-        }
-        throw error
-      }
-    }
-
     const res = await fetch(`${BASE_URL}${url}`, {
       ...init,
       signal,
@@ -87,5 +74,3 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     cleanup()
   }
 }
-
-export const useMocks = USE_MOCKS

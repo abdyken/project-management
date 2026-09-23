@@ -26,7 +26,6 @@ Open the printed local URL. Start the API on port 8000 first. The dev server pro
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `VITE_USE_MOCKS` | `false` | `true` keeps the in-browser mocks |
 | `VITE_API_BASE_URL` | empty | Leave empty locally (Vite proxies `/api`). Set the deployed origin for a production build. |
 
 ## Routes
@@ -36,14 +35,6 @@ Open the printed local URL. Start the API on port 8000 first. The dev server pro
 - `/programs/:id` — programme + document checklist
 
 The chat widget is mounted on every page.
-
-## Mock QA helpers
-
-- Empty catalogue: `/programs?force=empty`
-- Connection error: `/programs?force=503` (filters stay; **Try again** refetches)
-- Chat timeout: send a question containing `timeout`
-- Chat 4xx / 5xx: send `error 400` or `error 500`
-- Missing checklist: open **Management** (master)
 
 ## API
 

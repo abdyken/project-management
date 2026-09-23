@@ -6,13 +6,12 @@ import { ProgramCard } from "@/components/catalog/ProgramCard"
 import { ProgramFilters, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { Button } from "@/components/ui/button"
 
-function readFilters(params: URLSearchParams): FilterValues & { force: string } {
+function readFilters(params: URLSearchParams): FilterValues {
   return {
     q: params.get("q") ?? "",
     faculty: params.get("faculty") ?? "",
     degree_level: params.get("degree_level") ?? "",
     language: params.get("language") ?? "",
-    force: params.get("force") ?? "",
   }
 }
 
@@ -32,7 +31,6 @@ export function ProgramsPage() {
     if (next.faculty) params.set("faculty", next.faculty)
     if (next.degree_level) params.set("degree_level", next.degree_level)
     if (next.language) params.set("language", next.language)
-    if (filters.force) params.set("force", filters.force)
     setSearchParams(params)
   }
 

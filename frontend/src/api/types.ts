@@ -24,7 +24,6 @@ export type ProgramQuery = {
   faculty?: string
   degree_level?: string
   language?: string
-  force?: string
 }
 
 export type DocumentRequirement = {
@@ -48,11 +47,6 @@ export type ChecklistResponse = {
   items: DocumentRequirement[]
   warning?: string | null
   contact?: AdmissionsContact
-}
-
-export type AssistantRequest = {
-  question: string
-  session_id: string
 }
 
 export type AssistantResponse = {
