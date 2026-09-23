@@ -38,7 +38,7 @@ async function parseError(res: Response) {
   const body = (await res.json().catch(() => ({}))) as { error_code?: string; message?: string }
   throw new ApiError(
     res.status,
-    body.error_code ?? (res.status === 503 ? "SERVICE_UNAVAILABLE" : "HTTP_ERROR"),
+    body.error_code ?? "HTTP_ERROR",
     body.message ?? res.statusText,
   )
 }

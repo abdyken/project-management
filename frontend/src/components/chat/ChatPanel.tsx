@@ -1,10 +1,10 @@
 import { useEffect, useRef, type FormEvent, type KeyboardEvent } from "react"
 import { askAssistant } from "@/api/assistant"
-import { isApiError, toReadableError } from "@/api/errors"
+import { chatErrorMessage } from "@/api/errors"
 import { Button } from "@/components/ui/button"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { TypingIndicator } from "@/components/chat/TypingIndicator"
-import { MESSAGE_MAX_LENGTH, TIMEOUT_MESSAGE } from "@/lib/constants"
+import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { useChatStore } from "@/store/chat"
 
 export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
@@ -38,16 +38,8 @@ export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
         sourceLink: response.source_link,
       })
     } catch (error) {
-      if (isApiError(error) && (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT" || error.status === 504)) {
-        setDraft(question)
-        addMessage({ role: "assistant", text: TIMEOUT_MESSAGE, isError: true })
-      } else {
-        addMessage({
-          role: "assistant",
-          text: toReadableError(error),
-          isError: true,
-        })
-      }
+      setDraft(question)
+      addMessage({ role: "assistant", text: chatErrorMessage(error), isError: true })
     } finally {
       setSending(false)
     }

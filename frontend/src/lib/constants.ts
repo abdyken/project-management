@@ -1,3 +1,5 @@
+import type { DegreeLevel } from "@/api/types"
+
 export const ADMISSIONS_CONTACT = {
   name: "SDU Admissions Office",
   address: "Abylai Khan 1/1, 040900 Kaskelen, Almaty Region",
@@ -5,29 +7,10 @@ export const ADMISSIONS_CONTACT = {
   website: "https://sdu.edu.kz/en/admission-3-2/",
 } as const
 
-export const FACULTIES = [
-  "School of Engineering and Natural Sciences",
-  "School of Education and Humanities",
-  "School of Law and Social Sciences",
-  "SDU Business School",
-] as const
-
-export const DEGREE_LEVELS = ["bachelor", "master", "phd"] as const
-export const PROGRAM_LANGUAGES = ["English", "Kazakh", "Russian"] as const
-
 export const MESSAGE_MAX_LENGTH = 500
 export const ASSISTANT_TIMEOUT_MS = 10_000
 
-export const TIMEOUT_MESSAGE =
-  "The assistant is not responding, please try again or contact the admissions office"
-
-export const LANGUAGE_LABELS: Record<(typeof PROGRAM_LANGUAGES)[number], string> = {
-  English: "English",
-  Kazakh: "Kazakh",
-  Russian: "Russian",
-}
-
-export const DEGREE_LABELS: Record<(typeof DEGREE_LEVELS)[number], string> = {
+export const DEGREE_LABELS: Record<DegreeLevel, string> = {
   bachelor: "Bachelor",
   master: "Master",
   phd: "PhD",

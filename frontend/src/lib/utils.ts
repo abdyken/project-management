@@ -20,9 +20,7 @@ export function formatDeadline(value: string | null | undefined) {
   return deadlineFormat.format(date)
 }
 
-export function formatTuition(fee: number | string | null | undefined) {
-  if (fee === null || fee === undefined || fee === "") return null
-  const amount = typeof fee === "number" ? fee : Number(fee)
-  if (Number.isNaN(amount)) return null
-  return amount.toLocaleString("en-US")
+export function formatTuition(fee: number | null) {
+  if (fee === null) return "Not specified"
+  return `${fee.toLocaleString("en-US")} KZT / year`
 }

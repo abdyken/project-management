@@ -1,10 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useSearchParams } from "react-router-dom"
-import { isApiError } from "@/api/errors"
-import { listPrograms } from "@/api/programs"
+import { getFilterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
 import { ProgramFilters, type FilterValues } from "@/components/catalog/ProgramFilters"
-import { Button } from "@/components/ui/button"
+import { ConnectionError } from "@/components/common/ConnectionError"
+
+const NO_OPTIONS = { faculties: [], degreeLevels: [], languages: [] }
 
 function readFilters(params: URLSearchParams): FilterValues {
   return {
@@ -19,53 +20,54 @@ export function ProgramsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = readFilters(searchParams)
 
+  const optionsQuery = useQuery({ queryKey: ["program-options"], queryFn: getFilterOptions })
   const query = useQuery({
     queryKey: ["programs", filters],
     queryFn: () => listPrograms(filters),
-    retry: false,
+    placeholderData: keepPreviousData,
   })
 
   function updateFilters(next: FilterValues) {
     const params = new URLSearchParams()
-    if (next.q) params.set("q", next.q)
-    if (next.faculty) params.set("faculty", next.faculty)
-    if (next.degree_level) params.set("degree_level", next.degree_level)
-    if (next.language) params.set("language", next.language)
+    for (const [key, value] of Object.entries(next)) {
+      if (value) params.set(key, value)
+    }
     setSearchParams(params)
   }
 
-  const unavailable = query.isError && isApiError(query.error) && (query.error.status === 503 || query.error.code === "SERVICE_UNAVAILABLE")
+  function retry() {
+    void query.refetch()
+    if (optionsQuery.isError) void optionsQuery.refetch()
+  }
+
+  const data = query.isError ? undefined : query.data
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Catalogue</p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Study programmes</h1>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Study programs</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
         Fees and deadlines come from the admissions catalogue. Confirm them with the Admissions Office before
         you apply.
       </p>
 
       <div className="mt-10">
-        <ProgramFilters values={filters} onChange={updateFilters} />
+        <ProgramFilters values={filters} options={optionsQuery.data ?? NO_OPTIONS} onChange={updateFilters} />
       </div>
 
-      <div className="mt-8">
-        {query.isLoading ? <p className="text-sm text-muted-foreground">Loading programmes…</p> : null}
+      <div className="mt-8" aria-busy={query.isFetching}>
+        {query.isPending ? <p className="text-sm text-muted-foreground">Loading programs…</p> : null}
 
-        {unavailable ? (
-          <div className="border border-border bg-card p-6">
-            <p className="text-2xl font-semibold tracking-tight">Connection error</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              The catalogue is temporarily unavailable. Your search and filters are still here.
-            </p>
-            <Button className="mt-5" onClick={() => void query.refetch()}>
-              Try again
-            </Button>
-          </div>
+        {query.isError ? (
+          <ConnectionError
+            message="The catalogue is temporarily unavailable. Your search and filters are still here."
+            retrying={query.isFetching}
+            onRetry={retry}
+          />
         ) : null}
 
-        {query.data && query.data.total === 0 ? (
-          <div className="border border-border bg-card p-6">
+        {data && data.total === 0 ? (
+          <div role="status" className="border border-border bg-card p-6">
             <p className="text-2xl font-semibold tracking-tight">No programs found</p>
             <p className="mt-2 text-sm text-muted-foreground">
               Nothing matches this combination. Clear a filter or try another keyword.
@@ -73,17 +75,17 @@ export function ProgramsPage() {
           </div>
         ) : null}
 
-        {query.data && query.data.total > 0 ? (
-          <>
-            <p className="mb-4 text-sm text-muted-foreground">
-              {query.data.total} {query.data.total === 1 ? "program" : "programs"} found
+        {data && data.total > 0 ? (
+          <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
+            <p role="status" className="mb-4 text-sm text-muted-foreground">
+              {data.total} {data.total === 1 ? "program" : "programs"} found
             </p>
             <div className="grid gap-4 md:grid-cols-2">
-              {query.data.programs.map((program) => (
+              {data.programs.map((program) => (
                 <ProgramCard key={program.program_id} program={program} />
               ))}
             </div>
-          </>
+          </div>
         ) : null}
       </div>
     </div>

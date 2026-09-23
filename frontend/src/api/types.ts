@@ -1,5 +1,4 @@
 export type DegreeLevel = "bachelor" | "master" | "phd"
-export type ProgramLanguage = "English" | "Kazakh" | "Russian"
 export type ApplicantType = "local" | "international"
 export type DocumentFormat = "original" | "copy"
 
@@ -8,7 +7,7 @@ export type Program = {
   title: string
   faculty: string
   degree_level: DegreeLevel
-  language: ProgramLanguage
+  language: string
   tuition_fee: number | null
   application_deadline: string | null
   is_active: boolean
@@ -34,26 +33,19 @@ export type DocumentRequirement = {
   deadline: string
 }
 
-export type AdmissionsContact = {
-  name: string
-  address: string
-  phone: string
-  website: string
-}
-
 export type ChecklistResponse = {
   program_id: string
   applicant_type: ApplicantType
   items: DocumentRequirement[]
-  warning?: string | null
-  contact?: AdmissionsContact
+  warning: string | null
+  contact: string | null
 }
 
 export type AssistantResponse = {
   answer: string
   source_link: string | null
   faq_id: string | null
-  similarity_score: number
+  similarity_score: number | null
 }
 
 export type HealthResponse = { status: "ok" | "unavailable"; database: "ok" | "unavailable" }

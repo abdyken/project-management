@@ -1,22 +1,11 @@
 import type { ChecklistResponse } from "@/api/types"
-import { ADMISSIONS_CONTACT } from "@/lib/constants"
 
 export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse }) {
-  const contact = checklist.contact ?? (checklist.warning ? ADMISSIONS_CONTACT : null)
-
   if (checklist.warning) {
     return (
-      <div className="border border-gold/50 bg-gold/10 p-5">
+      <div role="status" className="border border-gold/50 bg-gold/10 p-5">
         <p className="text-sm">{checklist.warning}</p>
-        {contact ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            {contact.name}
-            <br />
-            {contact.address}
-            <br />
-            {contact.phone}
-          </p>
-        ) : null}
+        {checklist.contact ? <p className="mt-3 text-sm text-muted-foreground">{checklist.contact}</p> : null}
       </div>
     )
   }
