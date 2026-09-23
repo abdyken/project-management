@@ -88,6 +88,12 @@ def test_applicant_words_do_not_select_a_program(service, faq_items):
     assert response.faq_id == "faq-007"
 
 
+def test_faq_item_about_another_degree_is_not_used(service, assistant_session):
+    response = service.answer("Master degree deadline 2026", "s1")
+    assert response.faq_id is None
+    assert followups(assistant_session) == [(UNANSWERED_QUESTION, None)]
+
+
 def test_russian_applicant_type_is_recognised(service):
     response = service.answer("Какие документы нужны на Computer Science для иностранцев?", "s1")
     assert response.answer.startswith("Required documents for Computer Science (international applicant)")

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { MapPin } from "lucide-react"
 import { Link } from "react-router-dom"
-import { allProgramsQuery } from "@/api/programs"
+import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { Program } from "@/api/types"
 import { ADMISSIONS_CONTACT } from "@/lib/constants"
 import { formatDeadline } from "@/lib/utils"
@@ -37,7 +37,7 @@ export function CatalogueSnapshot() {
           <dl className="mt-6 grid grid-cols-3 gap-4">
             <Stat value={data.total} label="programs" />
             <Stat value={new Set(programs.map((program) => program.faculty)).size} label="schools" />
-            <Stat value={new Set(programs.map((program) => program.language)).size} label="languages" />
+            <Stat value={new Set(programs.flatMap(programLanguages)).size} label="languages" />
           </dl>
           {deadline ? (
             <p className="mt-6 border-t border-border pt-5 text-sm">

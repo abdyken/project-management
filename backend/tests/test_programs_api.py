@@ -170,3 +170,25 @@ def test_keyword_matches_program_id(client):
 
     assert ids(response) == ["ba-msc-en", "cs-msc-en"]
     assert response.json()["total"] == 2
+
+
+def test_language_filter_matches_one_of_several_languages(catalogue_session):
+    from app.catalogue.service import search_programs
+
+    catalogue_session.add_all(
+        [
+            Program(program_id="ped", title="Pedagogy", faculty="Education", degree_level="bachelor", language="Kazakh, English"),
+            Program(program_id="law", title="Law", faculty="Law", degree_level="bachelor", language="Kazakh, Russian"),
+            Program(program_id="cs", title="Computer Science", faculty="IT", degree_level="bachelor", language="English"),
+        ]
+    )
+    catalogue_session.flush()
+
+    def ids(language: str) -> list[str]:
+        return sorted(program.program_id for program in search_programs(catalogue_session, language=language))
+
+    assert ids("kazakh") == ["law", "ped"]
+    assert ids("English") == ["cs", "ped"]
+    assert ids("Russian") == ["law"]
+    assert ids("Kazakh, English") == []
+    assert ids("eng") == []

@@ -25,13 +25,17 @@ export const allProgramsQuery = {
   queryFn: () => listPrograms(),
 }
 
+export function programLanguages(program: Program) {
+  return program.language.split(",").map((language) => language.trim())
+}
+
 export function filterOptions(programs: Program[]): FilterOptions {
   const unique = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b))
   const degrees = new Set(programs.map((program) => program.degree_level))
   return {
     faculties: unique(programs.map((program) => program.faculty)),
     degreeLevels: DEGREE_ORDER.filter((level) => degrees.has(level)),
-    languages: unique(programs.map((program) => program.language)),
+    languages: unique(programs.flatMap(programLanguages)),
   }
 }
 

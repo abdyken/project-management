@@ -34,7 +34,8 @@ def search_programs(
     if degree_level:
         query = query.where(Program.degree_level == degree_level)
     if language:
-        query = query.where(func.lower(Program.language) == language.lower())
+        languages = func.concat(",", func.replace(func.lower(Program.language), ", ", ","), ",")
+        query = query.where(languages.like(f"%,{_escape_like(language.lower())},%", escape="\\"))
 
     return list(session.scalars(query.order_by(Program.title, Program.program_id)))
 

@@ -4,7 +4,12 @@ from sqlalchemy.orm import Session
 
 from app.assistant import retrieval
 from app.assistant.fallback import build_fallback_response
-from app.assistant.intents import applicant_type_from_question, is_document_question, resolve_program
+from app.assistant.intents import (
+    applicant_type_from_question,
+    degrees_mentioned,
+    is_document_question,
+    resolve_program,
+)
 from app.assistant.schemas import AskResponse
 from app.catalogue.models import Program
 from app.catalogue.service import search_programs
@@ -25,7 +30,12 @@ class AssistantService:
                 return self._answer_document_question(question, session_id, program)
 
         result = retrieval.search(self._session, question)
-        if result is None or result.similarity_score < self._settings.similarity_threshold:
+        answered = (
+            result is not None
+            and result.similarity_score >= self._settings.similarity_threshold
+            and not _other_degree(question, result)
+        )
+        if not answered:
             score = result.similarity_score if result else None
             log_unanswered_question(self._session, question, score, session_id)
             return build_fallback_response(self._settings, score)
@@ -61,6 +71,12 @@ class AssistantService:
         return _text_answer(
             f"Required documents for {program.title} ({applicant_type} applicant):\n" + "\n".join(lines)
         )
+
+
+def _other_degree(question: str, result: retrieval.SearchResult) -> bool:
+    asked = degrees_mentioned(question)
+    covered = degrees_mentioned(f"{result.faq_item.question} {result.faq_item.answer}")
+    return bool(asked and covered and not asked & covered)
 
 
 def _text_answer(text: str) -> AskResponse:

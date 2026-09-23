@@ -18,7 +18,11 @@ _APPLICANT_STEMS = _LOCAL_STEMS + _INTERNATIONAL_STEMS
 _STOPWORDS = {"and", "of", "the", "in", "for", "a", "an"}
 _TOKEN = re.compile(r"[a-zа-яёәғқңөұүһі0-9]+")
 _SUFFIXES = ("ational", "ical", "ics", "ing", "ies", "ed", "es", "er", "al", "e", "s", "y")
-_DEGREE_STEMS = {"bachelor": ("bachelor", "undergraduate", "бакалавр"), "master": ("master", "магистр")}
+_DEGREE_STEMS = {
+    "bachelor": ("bachelor", "undergraduate", "бакалавр"),
+    "master": ("master", "магистр"),
+    "phd": ("phd", "doctoral", "докторант"),
+}
 _PARTIAL_TITLE_MIN_WORDS = 3
 _PARTIAL_TITLE_SHARE = 2 / 3
 
@@ -49,11 +53,9 @@ def _title_matches(program: Program, question: str, question_stems: set[str]) ->
     return len(title_stems) >= _PARTIAL_TITLE_MIN_WORDS and matched / len(title_stems) >= _PARTIAL_TITLE_SHARE
 
 
-def _degree_from_question(tokens: list[str]) -> str | None:
-    for degree, stems in _DEGREE_STEMS.items():
-        if any(token.startswith(stems) for token in tokens):
-            return degree
-    return None
+def degrees_mentioned(text: str) -> set[str]:
+    tokens = _tokens(text)
+    return {degree for degree, stems in _DEGREE_STEMS.items() if any(token.startswith(stems) for token in tokens)}
 
 
 def resolve_program(question: str, programs: list[Program]) -> Program | None:
@@ -64,9 +66,9 @@ def resolve_program(question: str, programs: list[Program]) -> Program | None:
 
     stems = {_stem(token) for token in tokens if not token.startswith(_APPLICANT_STEMS)}
     candidates = [program for program in programs if _title_matches(program, question, stems)]
-    degree = _degree_from_question(tokens)
-    if degree and len(candidates) > 1:
-        candidates = [program for program in candidates if program.degree_level == degree]
+    degrees = degrees_mentioned(question)
+    if degrees and len(candidates) > 1:
+        candidates = [program for program in candidates if program.degree_level in degrees]
     return candidates[0] if len(candidates) == 1 else None
 
 

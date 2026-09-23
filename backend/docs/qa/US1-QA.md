@@ -70,3 +70,9 @@ CSV with every program (inactive ones too), one row per program, empty cell = un
 ### Local dry run — 2026-09-18
 
 Against `http://localhost:8000` (docker compose) with 5 temporary sample programs (4 active, 1 inactive): US1-1, US1-2, US1-3, US1-4, US1-6 PASS; US1-5 PASS with the database container stopped; export produced 5 rows with blank unknown values. This only checks the tooling — it does not replace the run on dev.
+
+## Local run — 2026-09-24
+
+Run against the Docker stack (`docker compose up --build`, official catalogue imported). All six scenarios **PASS**: [us1-results-local.md](us1-results-local.md). UI counterparts checked in Chrome: "12 programs found", filters narrow the list and stay in the URL, "No programs found", and "Connection error" with **Try again** (filters kept) while the API was down.
+
+This does not replace the run on the deployed dev environment required above.

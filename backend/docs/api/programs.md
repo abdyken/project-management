@@ -23,7 +23,7 @@ Every endpoint below returns programs in this shape.
 | `title`                | string                                  | yes        | e.g. `"Computer Science"`                                                  |
 | `faculty`              | string                                  | yes        | School, e.g. `"School of Information Technologies and Applied Mathematics"` |
 | `degree_level`         | `"bachelor"` \| `"master"` \| `"phd"`   | yes        | Lower-case code — the front-end chooses the display label                 |
-| `language`             | string                                  | yes        | Language of instruction as written in the source, e.g. `"English"`        |
+| `language`             | string                                  | yes        | Language(s) of instruction, comma-separated, e.g. `"English"`, `"Kazakh, Russian"` |
 | `tuition_per_ects_kzt` | integer \| `null`                       | no         | Program course fee in KZT per ECTS credit (2026-2027 fee order)           |
 | `tuition_per_ects_usd` | integer \| `null`                       | no         | Same for international students, in USD per ECTS credit                   |
 | `deadline_local`       | string `YYYY-MM-DD` \| `null`           | no         | Application deadline for local applicants                                 |
@@ -60,7 +60,7 @@ All parameters are optional and combine with **AND**. Blank values (`?q=`) are i
 | `q`            | Case-insensitive substring of the **title, the faculty or the `program_id`** (max 100 chars) | `q=computer`, `q=6B061` |
 | `faculty`      | Case-insensitive **exact** faculty name                                    | `faculty=School of Social Sciences, Business and Law` |
 | `degree_level` | `bachelor`, `master` or `phd` — anything else returns 422                  | `degree_level=master`            |
-| `language`     | Case-insensitive **exact** language                                        | `language=English`               |
+| `language`     | Case-insensitive; matches programs taught in this language (one of the comma-separated values) | `language=Kazakh`                |
 
 Results: only active programs, ordered by title. No pagination — the whole result is returned (10–15 programs in iteration 1).
 
@@ -95,7 +95,7 @@ GET /api/programs?q=science&degree_level=master&language=English
 
 ### Filter options for the dropdowns
 
-There is no separate endpoint for the list of faculties / languages. Call `GET /api/programs` once without filters and take the distinct `faculty`, `degree_level` and `language` values from the result. With the iteration-1 catalogue size this is one small request. (If this becomes a problem, ask backend for a `/api/programs/filters` endpoint.)
+There is no separate endpoint for the list of faculties / languages. Call `GET /api/programs` once without filters and take the distinct `faculty` and `degree_level` values and the distinct languages (split `language` on `, `) from the result. With the iteration-1 catalogue size this is one small request. (If this becomes a problem, ask backend for a `/api/programs/filters` endpoint.)
 
 ---
 
