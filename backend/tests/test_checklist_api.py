@@ -2,10 +2,14 @@ from datetime import date
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
-from app.checklist.models import ProgramDocumentRequirement
 from app.catalogue.models import Program
+from app.checklist.models import ProgramDocumentRequirement
+from app.checklist.service import MISSING_REQUIREMENTS_WARNING
+from app.config import get_settings
 from app.db import get_db_session
+from app.followups.models import MISSING_DOCUMENTS, AdmissionsFollowup
 from app.main import app
 
 
@@ -74,6 +78,7 @@ def test_local_checklist_returns_requirements_in_display_order(client):
             {"name": "National ID", "format": "copy", "translation": False, "notarisation": False, "deadline": "Enrolment"},
         ],
         "warning": None,
+        "contact": None,
     }
 
 
@@ -95,8 +100,20 @@ def test_missing_requirements_returns_warning_not_an_ambiguous_empty_list(client
     response = client.get("/api/programs/cs-bsc/checklist", params={"applicant_type": "local"})
 
     assert response.status_code == 200
-    assert response.json()["items"] == []
-    assert response.json()["warning"]
+    body = response.json()
+    assert body["items"] == []
+    assert body["warning"] == MISSING_REQUIREMENTS_WARNING
+    assert body["contact"] == get_settings().admissions_office_contact
+    logged = session.scalars(select(AdmissionsFollowup)).all()
+    assert [(f.kind, f.program_id, f.applicant_type) for f in logged] == [(MISSING_DOCUMENTS, "cs-bsc", "local")]
+
+
+def test_invalid_applicant_type_returns_422_error_contract(client):
+    response = client.get("/api/programs/cs-bsc/checklist", params={"applicant_type": "alien"})
+
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "INVALID_REQUEST"
+    assert response.json()["message"].startswith("applicant_type:")
 
 
 def test_unknown_program_returns_the_catalogue_404_contract(client):

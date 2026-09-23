@@ -3,44 +3,45 @@ from __future__ import annotations
 import asyncio
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from app.assistant.schemas import AskRequest
+from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
+from app.assistant.schemas import AskRequest, AskResponse
 from app.assistant.service import AssistantService
 from app.config import get_settings
 from app.db import get_db_session
 
-router = APIRouter()
+router = APIRouter(prefix="/assistant", tags=["assistant"])
+
+ASSISTANT_TIMEOUT = "ASSISTANT_TIMEOUT"
 
 
-@router.post("/api/assistant/ask")
-async def ask(request: Request, session: Annotated[Session, Depends(get_db_session)]) -> JSONResponse:
+@router.post(
+    "/ask",
+    response_model=AskResponse,
+    responses={
+        504: {"model": ErrorResponse, "description": "No answer within the time budget."},
+        **INVALID_REQUEST_RESPONSE,
+        **DATABASE_UNAVAILABLE_RESPONSE,
+    },
+    summary="Answer an applicant question from the official FAQ",
+)
+async def ask(
+    body: AskRequest, session: Annotated[Session, Depends(get_db_session)]
+) -> AskResponse | JSONResponse:
     settings = get_settings()
-
+    service = AssistantService(session, settings)
     try:
-        body = await request.json()
-        ask_request = AskRequest(**body)
-    except (ValidationError, ValueError, TypeError) as exc:
-        return JSONResponse(status_code=400, content={"error_code": _validation_error_code(exc)})
-
-    try:
-        response = await asyncio.wait_for(
-            asyncio.to_thread(AssistantService(session, settings).answer, ask_request.question),
+        return await asyncio.wait_for(
+            asyncio.to_thread(service.answer, body.question, body.session_id),
             timeout=settings.assistant_timeout_seconds,
         )
-    except asyncio.TimeoutError:
-        return JSONResponse(status_code=504, content={"error_code": "ASSISTANT_TIMEOUT"})
-
-    return JSONResponse(status_code=200, content=response.model_dump())
-
-
-def _validation_error_code(exc: Exception) -> str:
-    message = str(exc)
-    if "session_id" in message:
-        return "MISSING_SESSION_ID"
-    if "question" in message and "at most" in message:
-        return "QUESTION_TOO_LONG"
-    return "EMPTY_QUESTION"
+    except TimeoutError:
+        return JSONResponse(
+            status_code=504,
+            content=ErrorResponse(
+                error_code=ASSISTANT_TIMEOUT, message="The assistant did not answer in time. Please try again."
+            ).model_dump(),
+        )

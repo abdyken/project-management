@@ -14,6 +14,7 @@ from app.catalogue.models import Program
 from app.checklist.models import ProgramDocumentRequirement
 from app.config import get_settings
 from app.db import Base
+from app.followups.models import AdmissionsFollowup
 
 config = context.config
 if config.config_file_name is not None:

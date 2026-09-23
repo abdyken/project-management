@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
@@ -11,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 DATABASE_UNAVAILABLE = "DATABASE_UNAVAILABLE"
 PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND"
+INVALID_REQUEST = "INVALID_REQUEST"
 RETRY_AFTER_SECONDS = 5
 
 
@@ -35,6 +37,18 @@ DATABASE_UNAVAILABLE_RESPONSE = {
     }
 }
 
+INVALID_REQUEST_RESPONSE = {
+    422: {
+        "model": ErrorResponse,
+        "description": "A parameter or the request body is invalid.",
+        "content": {
+            "application/json": {
+                "example": {"error_code": INVALID_REQUEST, "message": "question: String should have at least 1 character"}
+            }
+        },
+    }
+}
+
 
 async def database_unavailable_handler(request: Request, exc: Exception) -> JSONResponse:
     logger.warning("Database unavailable on %s %s: %s", request.method, request.url.path, exc)
@@ -48,6 +62,16 @@ async def database_unavailable_handler(request: Request, exc: Exception) -> JSON
     )
 
 
+async def invalid_request_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    error = exc.errors()[0]
+    field = ".".join(str(part) for part in error["loc"] if part not in ("body", "query", "path"))
+    return JSONResponse(
+        status_code=422,
+        content=ErrorResponse(error_code=INVALID_REQUEST, message=f"{field}: {error['msg']}").model_dump(),
+    )
+
+
 def register_error_handlers(app: FastAPI) -> None:
+    app.add_exception_handler(RequestValidationError, invalid_request_handler)
     app.add_exception_handler(OperationalError, database_unavailable_handler)
     app.add_exception_handler(PoolTimeoutError, database_unavailable_handler)

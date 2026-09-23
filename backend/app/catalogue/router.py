@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
+from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
 from app.catalogue.schemas import DegreeLevel, ProgramListResponse, ProgramOut
 from app.catalogue.service import get_active_program, search_programs
 from app.db import get_db_session
@@ -23,7 +23,7 @@ def _clean(value: str | None) -> str | None:
 @router.get(
     "",
     response_model=ProgramListResponse,
-    responses=DATABASE_UNAVAILABLE_RESPONSE,
+    responses={**INVALID_REQUEST_RESPONSE, **DATABASE_UNAVAILABLE_RESPONSE},
     summary="Search and filter study programs",
 )
 def list_programs(

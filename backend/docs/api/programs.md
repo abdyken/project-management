@@ -120,9 +120,7 @@ Build the UI on `error_code` (stable), not on `message` (wording may change).
 | ------ | ---------------------- | -------------------------------------- | ----------------------------------------------------------------------- |
 | 503    | `DATABASE_UNAVAILABLE` | Database unreachable                   | Show the connection error with **Try again**; keep the entered text and filters. Response has a `Retry-After: 5` header. |
 | 404    | `PROGRAM_NOT_FOUND`    | Detail endpoint, unknown/inactive id   | Show "Program not found" with a link back to the catalogue              |
-| 422    | — (FastAPI format)     | Invalid parameter, e.g. `degree_level=diploma` or `q` longer than 100 | Should not happen from the UI — dropdowns only send valid values |
-
-422 uses FastAPI's standard validation body (`{"detail": [...]}`), not the `error_code` shape.
+| 422    | `INVALID_REQUEST`      | Invalid parameter, e.g. `degree_level=diploma` or `q` longer than 100; `message` names the field | Should not happen from the UI — dropdowns only send valid values |
 
 Mapping for the catalogue page (US1QATest):
 
@@ -130,7 +128,7 @@ Mapping for the catalogue page (US1QATest):
 | ---------------------------- | -------------------------------------- |
 | 200 and `total > 0`          | "`total` programs found" + list        |
 | 200 and `total == 0`         | "No programs found"                    |
-| 503 / network error          | Connection error + Try again           |
+| 5xx / network error          | Connection error + Try again           |
 
 ---
 

@@ -13,7 +13,7 @@ docker compose up --build
 - API: http://localhost:8000
 - Health check: http://localhost:8000/api/health → `{"status": "ok", "database": "ok"}` (503 when the database is unreachable)
 - Interactive API docs (Swagger): http://localhost:8000/docs
-- Catalogue API contract (for the front-end and checklist): [docs/api/programs.md](docs/api/programs.md), full OpenAPI file: [docs/api/openapi.json](docs/api/openapi.json) (`uv run python scripts/export_openapi.py` after changing endpoints)
+- API contracts: [programs](docs/api/programs.md), [checklist](docs/api/checklist.md), [assistant](docs/api/assistant.md); full OpenAPI file: [docs/api/openapi.json](docs/api/openapi.json) (`uv run python scripts/export_openapi.py` after changing endpoints)
 
 On start the API container applies migrations, imports `app/data/catalogue.json` and rebuilds the FAQ index.
 
@@ -48,6 +48,7 @@ One shared Alembic chain for all modules (`migrations/versions/`):
 | 0003 | Dinmukhamed (T1.1) | `program` table |
 | 0004 | Nurmek (T4.1) | `program_document_requirement` table |
 | 0005 | T3.2 | `faq_embeddings` resized to 384 dimensions |
+| 0006 | US3/US4 | `admissions_followup` log of unanswered questions and missing checklists |
 
 ```bash
 uv run alembic revision --autogenerate -m "describe the change"   # after changing models
@@ -68,6 +69,7 @@ app/
   catalogue/     US1 - programs, search and filter API (Dinmukhamed)
   checklist/     US4 - document requirements and checklist endpoint (Nurmek)
   assistant/     US3 - FAQ assistant, POST /api/assistant/ask (Serdar)
+  followups/     unanswered questions and missing checklists for the admissions office
   data/          catalogue.json and the FAQ base
 migrations/      Alembic migrations (one chain)
 scripts/         import_catalogue.py, reindex_faq.py, run_accuracy_test.py, qa_us1.py, export_*.py

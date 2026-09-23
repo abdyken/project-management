@@ -4,10 +4,18 @@ from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
+from app.api.errors import (
+    DATABASE_UNAVAILABLE_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
+    PROGRAM_NOT_FOUND,
+    ErrorResponse,
+)
+from app.catalogue.service import get_active_program
 from app.checklist.schemas import ApplicantType, ChecklistResponse, DocumentRequirementOut
-from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_active_program, get_requirements
+from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_requirements
+from app.config import get_settings
 from app.db import get_db_session
+from app.followups.service import log_missing_documents
 
 router = APIRouter(tags=["checklist"])
 
@@ -17,6 +25,7 @@ router = APIRouter(tags=["checklist"])
     response_model=ChecklistResponse,
     responses={
         404: {"model": ErrorResponse, "description": "No active program with this id."},
+        **INVALID_REQUEST_RESPONSE,
         **DATABASE_UNAVAILABLE_RESPONSE,
     },
     summary="Get a programme's document checklist",
@@ -34,11 +43,13 @@ def get_checklist(
 
     requirements = get_requirements(session, program_id, applicant_type)
     if not requirements:
+        log_missing_documents(session, program_id, applicant_type)
         return ChecklistResponse(
             program_id=program_id,
             applicant_type=applicant_type,
             items=[],
             warning=MISSING_REQUIREMENTS_WARNING,
+            contact=get_settings().admissions_office_contact,
         )
 
     return ChecklistResponse(

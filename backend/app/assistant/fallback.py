@@ -4,12 +4,12 @@ from app.assistant.schemas import AskResponse
 from app.config import Settings
 
 FALLBACK_TEMPLATE = (
-    "I could not find this in our official FAQ. "
-    "Please contact the admissions office for an accurate answer: {contact}"
+    "I could not find this information in the official FAQ. "
+    "Please contact the admissions office: {contact}"
 )
 
 
-def build_fallback_response(settings: Settings, similarity_score: float) -> AskResponse:
+def build_fallback_response(settings: Settings, similarity_score: float | None) -> AskResponse:
     return AskResponse(
         answer=FALLBACK_TEMPLATE.format(contact=settings.admissions_office_contact),
         source_link=None,

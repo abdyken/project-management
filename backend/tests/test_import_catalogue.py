@@ -87,7 +87,7 @@ def test_program_without_documents_gets_the_missing_data_warning(catalogue_sessi
 
     assert response.status_code == 200
     assert response.json()["items"] == []
-    assert "Admissions Office" in response.json()["warning"]
+    assert "admissions office" in response.json()["warning"]
 
 
 def test_changed_values_update_the_program_and_replace_its_documents(catalogue_session):

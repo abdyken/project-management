@@ -1,20 +1,31 @@
 from __future__ import annotations
 
-from difflib import SequenceMatcher
+import re
 
 from app.catalogue.models import Program
 
 _DOCUMENT_KEYWORDS = (
     "document",
-    "documents",
     "paperwork",
     "checklist",
     "what do i need",
-    "required documents",
     "документ",
+    "құжат",
 )
+_LOCAL_STEMS = ("local", "kazakhstan", "citizen", "resident", "местн", "казахстан", "гражданин")
+_INTERNATIONAL_STEMS = ("international", "foreign", "abroad", "overseas", "иностран", "международ", "зарубеж")
+_STOPWORDS = {"and", "of", "the", "in", "for", "a", "an"}
+_TOKEN = re.compile(r"[a-zа-яёәғқңөұүһі0-9]+")
+_PREFIX = 5
+_MIN_TITLE_SHARE = 0.5
 
-_FUZZY_MATCH_CUTOFF = 0.6
+
+def _tokens(text: str) -> list[str]:
+    return _TOKEN.findall(text.lower())
+
+
+def _same_word(a: str, b: str) -> bool:
+    return a == b or (len(a) >= _PREFIX and len(b) >= _PREFIX and a[:_PREFIX] == b[:_PREFIX])
 
 
 def is_document_question(question: str) -> bool:
@@ -22,18 +33,31 @@ def is_document_question(question: str) -> bool:
     return any(keyword in lowered for keyword in _DOCUMENT_KEYWORDS)
 
 
-def resolve_program(question: str, programs: list[Program]) -> Program | None:
-    lowered = question.lower()
+def _title_share(program: Program, question_tokens: list[str]) -> float:
+    title_tokens = [token for token in _tokens(program.title) if token not in _STOPWORDS]
+    matched = sum(any(_same_word(t, q) for q in question_tokens) for t in title_tokens)
+    return matched / len(title_tokens) if title_tokens else 0.0
 
+
+def resolve_program(question: str, programs: list[Program]) -> Program | None:
+    question_tokens = _tokens(question)
     for program in programs:
-        if program.title.lower() in lowered:
+        if program.program_id.lower() in question_tokens:
             return program
 
-    best_program: Program | None = None
-    best_ratio = 0.0
-    for program in programs:
-        ratio = SequenceMatcher(None, program.title.lower(), lowered).ratio()
-        if ratio > best_ratio:
-            best_ratio, best_program = ratio, program
+    scored = sorted(((_title_share(p, question_tokens), p) for p in programs), key=lambda pair: -pair[0])
+    if not scored or scored[0][0] < _MIN_TITLE_SHARE:
+        return None
+    if len(scored) > 1 and scored[1][0] == scored[0][0]:
+        return None
+    return scored[0][1]
 
-    return best_program if best_ratio >= _FUZZY_MATCH_CUTOFF else None
+
+def applicant_type_from_question(question: str, program: Program) -> str | None:
+    title_tokens = set(_tokens(program.title))
+    tokens = [token for token in _tokens(question) if token not in title_tokens]
+    is_local = any(token.startswith(_LOCAL_STEMS) for token in tokens)
+    is_international = any(token.startswith(_INTERNATIONAL_STEMS) for token in tokens)
+    if is_local == is_international:
+        return None
+    return "local" if is_local else "international"

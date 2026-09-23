@@ -10,6 +10,7 @@ def test_fallback_response_has_no_faq_reference():
 
     assert response.faq_id is None
     assert response.source_link is None
+    assert response.answer.startswith("I could not find this information in the official FAQ.")
     assert "office@example.com" in response.answer
     assert response.similarity_score == 0.1
 
