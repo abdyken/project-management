@@ -15,12 +15,13 @@ Web portal for SDU University (Kaskelen) admissions: programme catalogue, docume
 
 ```bash
 cd frontend
-cp .env.example .env
-npm install
+npm ci
 npm run dev
 ```
 
-Open the printed local URL. Start the API on port 8000 first. The dev server proxies `/api` there, and the footer reports whether `/api/health` is ok.
+Start the API on port 8000 first (see the root README). The dev server proxies `/api` there.
+
+`docker compose up --build` in the repository root builds this app into an nginx image (`Dockerfile`, `nginx.conf`) that serves it on http://localhost:8080 and forwards `/api` to the API container.
 
 ## Environment
 

@@ -2,27 +2,19 @@
 
 Stack (T0.1): **Python 3.12 + FastAPI**, **SQLAlchemy 2 + Alembic**, **PostgreSQL 16 + pgvector** (FAQ embeddings live in the same database, no separate vector store). Dependencies are managed with [uv](https://docs.astral.sh/uv/) (`pyproject.toml` + `uv.lock`).
 
-## Run with Docker (recommended)
+## Run
 
-```bash
-cd backend
-cp .env.example .env
-docker compose up --build
-```
+`docker compose up --build` in the repository root starts the database, this API and the web app (see the root README). The API container applies migrations, imports `app/data/catalogue.json` and rebuilds the FAQ index on start.
 
-- API: http://localhost:8000
-- Health check: http://localhost:8000/api/health → `{"status": "ok", "database": "ok"}` (503 when the database is unreachable)
-- Interactive API docs (Swagger): http://localhost:8000/docs
+- API: http://localhost:8000, Swagger: http://localhost:8000/docs
+- Health check: `/api/health` → `{"status": "ok", "database": "ok"}` (503 when the database is unreachable)
 - API contracts: [programs](docs/api/programs.md), [checklist](docs/api/checklist.md), [assistant](docs/api/assistant.md); full OpenAPI file: [docs/api/openapi.json](docs/api/openapi.json) (`uv run python scripts/export_openapi.py` after changing endpoints)
 
-On start the API container applies migrations, imports `app/data/catalogue.json` and rebuilds the FAQ index.
-
-## Run the API on your machine (database still in Docker)
+To run the API on your machine instead, start only the database from the root (`docker compose up -d db`), then:
 
 ```bash
 cd backend
 cp .env.example .env
-docker compose up -d db
 uv sync
 uv run alembic upgrade head
 uv run python scripts/import_catalogue.py
@@ -33,7 +25,8 @@ uv run uvicorn app.main:app --reload
 ## Tests
 
 ```bash
-docker compose up -d db
+docker compose up -d db   # from the repository root
+cd backend
 uv run pytest
 ```
 

@@ -17,4 +17,4 @@
 
 ## GitHub setup required once by Nurmek
 
-In **Settings → Branches**, protect `main`: require a pull request, one approving review, and the `Backend CI / test` status check. GitHub cannot be configured from repository code alone.
+In **Settings → Branches**, protect `main`: require a pull request, one approving review, and the `Backend CI / test` and `Frontend CI / build` status checks. GitHub cannot be configured from repository code alone.
