@@ -4,7 +4,6 @@ import argparse
 import sys
 from dataclasses import dataclass
 from datetime import date
-from decimal import Decimal
 from pathlib import Path
 
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
@@ -42,9 +41,11 @@ class SourceProgram(BaseModel):
     faculty: str = Field(min_length=1, max_length=255)
     degree_level: DegreeLevel
     language: str = Field(min_length=1, max_length=50)
-    tuition_fee: NonNegativeInt | None
-    application_deadline: date | None
-    source_url: str | None
+    tuition_per_ects_kzt: NonNegativeInt | None
+    tuition_per_ects_usd: NonNegativeInt | None
+    deadline_local: date | None
+    deadline_international: date | None
+    source_url: str = Field(min_length=1, max_length=500)
     documents: dict[ApplicantType, list[SourceDocument]] | None
 
 
@@ -85,8 +86,11 @@ def import_catalogue(session: Session, source: SourceFile) -> ImportResult:
         program.faculty = item.faculty
         program.degree_level = item.degree_level
         program.language = item.language
-        program.tuition_fee = None if item.tuition_fee is None else Decimal(item.tuition_fee)
-        program.application_deadline = item.application_deadline
+        program.tuition_per_ects_kzt = item.tuition_per_ects_kzt
+        program.tuition_per_ects_usd = item.tuition_per_ects_usd
+        program.deadline_local = item.deadline_local
+        program.deadline_international = item.deadline_international
+        program.source_url = item.source_url
         program.is_active = True
 
         session.execute(
@@ -136,9 +140,6 @@ def main() -> int:
     print(f"Imported {result.programs} programs and {result.requirements} document requirements from {args.source.name}")
     if result.deactivated:
         print(f"Deactivated (no longer in the source file): {', '.join(result.deactivated)}")
-    missing_links = [item.program_id for item in source.programs if not item.source_url]
-    if missing_links:
-        print(f"Warning: {len(missing_links)} programs have no source_url (T0.6 requires one per record)")
     return 0
 
 

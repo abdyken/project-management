@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import date
-from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
@@ -14,7 +13,9 @@ def make_programs() -> list[Program]:
     return [
         Program(program_id="cs-bsc-en", title="Computer Science", faculty="Engineering",
                 degree_level="bachelor", language="English",
-                tuition_fee=Decimal("2500000"), application_deadline=date(2026, 8, 1)),
+                tuition_per_ects_kzt=33000, tuition_per_ects_usd=90,
+                deadline_local=date(2026, 8, 25), deadline_international=date(2026, 7, 31),
+                source_url="https://sdu.edu.kz/en/computer-science-3/"),
         Program(program_id="cs-msc-en", title="Computer Science", faculty="Engineering",
                 degree_level="master", language="English"),
         Program(program_id="cs-bsc-kk", title="Computer Science", faculty="Engineering",
@@ -70,8 +71,11 @@ def test_program_fields_in_response(client):
             "faculty": "Engineering",
             "degree_level": "bachelor",
             "language": "English",
-            "tuition_fee": 2500000.0,
-            "application_deadline": "2026-08-01",
+            "tuition_per_ects_kzt": 33000,
+            "tuition_per_ects_usd": 90,
+            "deadline_local": "2026-08-25",
+            "deadline_international": "2026-07-31",
+            "source_url": "https://sdu.edu.kz/en/computer-science-3/",
             "is_active": True,
         }
     ]
@@ -144,8 +148,11 @@ def test_get_program_by_id(client):
         "faculty": "Engineering",
         "degree_level": "bachelor",
         "language": "English",
-        "tuition_fee": 2500000.0,
-        "application_deadline": "2026-08-01",
+        "tuition_per_ects_kzt": 33000,
+        "tuition_per_ects_usd": 90,
+        "deadline_local": "2026-08-25",
+        "deadline_international": "2026-07-31",
+        "source_url": "https://sdu.edu.kz/en/computer-science-3/",
         "is_active": True,
     }
 

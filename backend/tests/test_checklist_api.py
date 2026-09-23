@@ -22,7 +22,7 @@ def client(catalogue_session):
             faculty="Engineering",
             degree_level="bachelor",
             language="English",
-            application_deadline=date(2026, 8, 1),
+            deadline_local=date(2026, 8, 25),
         )
     )
     catalogue_session.add_all(

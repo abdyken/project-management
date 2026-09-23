@@ -25,8 +25,10 @@ def program(program_id: str, **overrides) -> dict:
         "faculty": "School of Engineering",
         "degree_level": "bachelor",
         "language": "English",
-        "tuition_fee": 2000000,
-        "application_deadline": "2026-07-31",
+        "tuition_per_ects_kzt": 33000,
+        "tuition_per_ects_usd": 90,
+        "deadline_local": "2026-08-25",
+        "deadline_international": "2026-07-31",
         "source_url": "https://sdu.edu.kz/example",
         "documents": {
             "local": [{"name": "UNT certificate", "format": "original", "translation": False,
@@ -50,21 +52,24 @@ def snapshot(session) -> tuple[list, list]:
         )
     ).scalars().all()
     return (
-        [(p.program_id, p.title, p.faculty, p.degree_level, p.language, p.tuition_fee,
-          p.application_deadline, p.is_active) for p in programs],
+        [(p.program_id, p.title, p.faculty, p.degree_level, p.language, p.tuition_per_ects_kzt,
+          p.deadline_local, p.is_active) for p in programs],
         [(r.program_id, r.applicant_type, r.display_order, r.name, r.document_format,
           r.translation_required, r.notarisation_required, r.deadline) for r in requirements],
     )
 
 
 def test_official_source_file_imports(catalogue_session):
-    result = import_catalogue(catalogue_session, load_source(DEFAULT_SOURCE))
+    data = load_source(DEFAULT_SOURCE)
+    result = import_catalogue(catalogue_session, data)
 
-    assert result.programs == 12
-    assert result.requirements == 171
+    documents = sum(len(docs) for item in data.programs for docs in (item.documents or {}).values())
+    assert result.programs == len(data.programs) >= 10
+    assert result.requirements == documents
     assert result.deactivated == []
     active = catalogue_session.scalar(select(func.count()).select_from(Program).where(Program.is_active))
-    assert active == 12
+    assert active == len(data.programs)
+    assert all(item.source_url.startswith("https://sdu.edu.kz/") for item in data.programs)
 
 
 def test_second_run_changes_nothing(catalogue_session):
@@ -95,7 +100,7 @@ def test_changed_values_update_the_program_and_replace_its_documents(catalogue_s
 
     import_catalogue(
         catalogue_session,
-        source(program("P1", title="Renamed", tuition_fee=None, application_deadline=None, documents={
+        source(program("P1", title="Renamed", tuition_per_ects_kzt=None, deadline_local=None, documents={
             "international": [{"name": "Passport", "format": "copy", "translation": False,
                                "notarisation": True, "deadline": "Application"}],
         })),
@@ -124,8 +129,9 @@ def test_programs_removed_from_the_source_are_deactivated_and_come_back(catalogu
     "bad_program",
     [
         program("P1", degree_level="diploma"),
-        program("P1", tuition_fee=-1),
-        program("P1", application_deadline="31.07.2026"),
+        program("P1", tuition_per_ects_kzt=-1),
+        program("P1", deadline_international="31.07.2026"),
+        program("P1", source_url=""),
         program("P1", documents={"local": [{"name": "X", "format": "scan", "translation": False,
                                              "notarisation": False, "deadline": "Enrolment"}]}),
         program("P1", documents={"refugee": []}),

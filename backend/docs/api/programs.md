@@ -19,26 +19,32 @@ Every endpoint below returns programs in this shape.
 
 | Field                  | Type                                    | Always set | Notes                                                                     |
 | ---------------------- | --------------------------------------- | ---------- | ------------------------------------------------------------------------- |
-| `program_id`           | string (max 64)                         | yes        | Stable text id from the source data, e.g. `"prog-cs-bsc"`. Use it in URLs. |
+| `program_id`           | string (max 64)                         | yes        | Official program code, e.g. `"6B06102"`. Use it in URLs.                  |
 | `title`                | string                                  | yes        | e.g. `"Computer Science"`                                                  |
-| `faculty`              | string                                  | yes        | e.g. `"Faculty of Engineering"`                                            |
+| `faculty`              | string                                  | yes        | School, e.g. `"School of Information Technologies and Applied Mathematics"` |
 | `degree_level`         | `"bachelor"` \| `"master"` \| `"phd"`   | yes        | Lower-case code — the front-end chooses the display label                 |
 | `language`             | string                                  | yes        | Language of instruction as written in the source, e.g. `"English"`        |
-| `tuition_fee`          | number \| `null`                        | no         | KZT per academic year. `null` = unknown in the official data              |
-| `application_deadline` | string `YYYY-MM-DD` \| `null`           | no         | `null` = unknown in the official data                                     |
+| `tuition_per_ects_kzt` | integer \| `null`                       | no         | Program course fee in KZT per ECTS credit (2026-2027 fee order)           |
+| `tuition_per_ects_usd` | integer \| `null`                       | no         | Same for international students, in USD per ECTS credit                   |
+| `deadline_local`       | string `YYYY-MM-DD` \| `null`           | no         | Application deadline for local applicants                                 |
+| `deadline_international` | string `YYYY-MM-DD` \| `null`         | no         | Application deadline for international applicants                         |
+| `source_url`           | string \| `null`                        | no         | Official sdu.edu.kz page the record was taken from                        |
 | `is_active`            | boolean                                 | yes        | Always `true` in responses — inactive programs are never returned         |
 
-Show `null` as "not specified" (or similar) — never as `0` or an empty date.
+`null` means "not published" in the official data — show it that way, never as `0` or an empty date.
 
 ```json
 {
-  "program_id": "prog-cs-bsc",
+  "program_id": "6B06102",
   "title": "Computer Science",
-  "faculty": "Faculty of Engineering",
+  "faculty": "School of Information Technologies and Applied Mathematics",
   "degree_level": "bachelor",
   "language": "English",
-  "tuition_fee": 2500000.0,
-  "application_deadline": "2026-08-01",
+  "tuition_per_ects_kzt": 33000,
+  "tuition_per_ects_usd": 90,
+  "deadline_local": "2026-08-25",
+  "deadline_international": "2026-07-31",
+  "source_url": "https://sdu.edu.kz/en/computer-science-3/",
   "is_active": true
 }
 ```
@@ -52,7 +58,7 @@ All parameters are optional and combine with **AND**. Blank values (`?q=`) are i
 | Parameter      | Matching                                                                   | Example                          |
 | -------------- | -------------------------------------------------------------------------- | -------------------------------- |
 | `q`            | Case-insensitive substring of the **title, the faculty or the `program_id`** (max 100 chars) | `q=computer`, `q=6B061` |
-| `faculty`      | Case-insensitive **exact** faculty name                                    | `faculty=Faculty of Engineering` |
+| `faculty`      | Case-insensitive **exact** faculty name                                    | `faculty=School of Social Sciences, Business and Law` |
 | `degree_level` | `bachelor`, `master` or `phd` — anything else returns 422                  | `degree_level=master`            |
 | `language`     | Case-insensitive **exact** language                                        | `language=English`               |
 
@@ -67,7 +73,7 @@ Results: only active programs, ordered by title. No pagination — the whole res
   "total": 2,
   "programs": [
     { "program_id": "prog-arch-bsc", "title": "Architecture", "...": "..." },
-    { "program_id": "prog-cs-bsc", "title": "Computer Science", "...": "..." }
+    { "program_id": "6B06102", "title": "Computer Science", "...": "..." }
   ]
 }
 ```

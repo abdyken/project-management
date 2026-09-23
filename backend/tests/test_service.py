@@ -55,14 +55,37 @@ def test_document_question_without_applicant_type_asks_for_it(service):
     assert not response.answer.startswith("Required documents")
 
 
-def test_program_is_matched_by_part_of_its_title(service):
-    response = service.answer("Which documents do I need for law as a foreign student?", "s1")
+def test_program_title_is_matched_case_insensitively(service):
+    response = service.answer("Which documents do I need for applied law as a foreign student?", "s1")
     assert response.answer.startswith("Required documents for Applied Law (international applicant)")
+
+
+def test_long_program_title_is_matched_by_most_of_its_words(service):
+    response = service.answer("Which documents do I need for kazakh literature as a local applicant?", "s1")
+    assert response.answer.startswith("Required documents for Kazakh Language and Literature (local applicant)")
+
+
+def test_one_shared_word_does_not_select_a_program(service):
+    response = service.answer("What do I need to submit for doctoral studies?", "s1")
+    assert "Translation Studies" not in response.answer
+
+
+def test_degree_word_picks_between_programs_with_the_same_title(service, assistant_session):
+    response = service.answer("Which documents do I need for a master's in Information Systems as a local applicant?", "s1")
+    master_documents = get_requirements(assistant_session, "7M06101", "local")
+    assert response.answer.startswith("Required documents for Information Systems (local applicant)")
+    assert response.answer.splitlines()[1].startswith(f"- {master_documents[0].name}")
 
 
 def test_international_in_program_title_is_not_read_as_applicant_type(service):
     response = service.answer("Documents for International Relations for a local applicant?", "s1")
     assert response.answer.startswith("Required documents for International Relations (local applicant)")
+
+
+def test_applicant_words_do_not_select_a_program(service, faq_items):
+    item = next(item for item in faq_items if item.faq_id == "faq-007")
+    response = service.answer(item.question, "s1")
+    assert response.faq_id == "faq-007"
 
 
 def test_russian_applicant_type_is_recognised(service):
@@ -71,10 +94,10 @@ def test_russian_applicant_type_is_recognised(service):
 
 
 def test_program_without_requirements_warns_once_and_is_logged(service, assistant_session):
-    response = service.answer("What documents do I need for Management as a local applicant?", "s1")
+    response = service.answer("What documents do I need for Management as an international applicant?", "s1")
     assert response.answer == f"{MISSING_REQUIREMENTS_WARNING} {get_settings().admissions_office_contact}"
     assert response.answer.lower().count("contact the admissions office") == 1
-    assert followups(assistant_session) == [(MISSING_DOCUMENTS, "7M04101")]
+    assert followups(assistant_session) == [(MISSING_DOCUMENTS, "7M04115")]
 
 
 def test_document_question_for_unknown_program_falls_back_to_faq_search(service):

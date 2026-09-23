@@ -31,11 +31,15 @@ def db_engine():
 
 @pytest.fixture
 def db_session(db_engine):
+    from sqlalchemy import delete
     from sqlalchemy.orm import Session
+
+    from app.followups.models import AdmissionsFollowup
 
     with db_engine.connect() as connection:
         transaction = connection.begin()
         with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
+            session.execute(delete(AdmissionsFollowup))
             yield session
         transaction.rollback()
 

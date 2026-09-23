@@ -14,18 +14,24 @@ _DOCUMENT_KEYWORDS = (
 )
 _LOCAL_STEMS = ("local", "kazakhstan", "citizen", "resident", "местн", "казахстан", "гражданин")
 _INTERNATIONAL_STEMS = ("international", "foreign", "abroad", "overseas", "иностран", "международ", "зарубеж")
+_APPLICANT_STEMS = _LOCAL_STEMS + _INTERNATIONAL_STEMS
 _STOPWORDS = {"and", "of", "the", "in", "for", "a", "an"}
 _TOKEN = re.compile(r"[a-zа-яёәғқңөұүһі0-9]+")
-_PREFIX = 5
-_MIN_TITLE_SHARE = 0.5
+_SUFFIXES = ("ational", "ical", "ics", "ing", "ies", "ed", "es", "er", "al", "e", "s", "y")
+_DEGREE_STEMS = {"bachelor": ("bachelor", "undergraduate", "бакалавр"), "master": ("master", "магистр")}
+_PARTIAL_TITLE_MIN_WORDS = 3
+_PARTIAL_TITLE_SHARE = 2 / 3
 
 
 def _tokens(text: str) -> list[str]:
     return _TOKEN.findall(text.lower())
 
 
-def _same_word(a: str, b: str) -> bool:
-    return a == b or (len(a) >= _PREFIX and len(b) >= _PREFIX and a[:_PREFIX] == b[:_PREFIX])
+def _stem(word: str) -> str:
+    for suffix in _SUFFIXES:
+        if word.endswith(suffix) and len(word) - len(suffix) >= 3:
+            return word[: -len(suffix)]
+    return word
 
 
 def is_document_question(question: str) -> bool:
@@ -33,24 +39,35 @@ def is_document_question(question: str) -> bool:
     return any(keyword in lowered for keyword in _DOCUMENT_KEYWORDS)
 
 
-def _title_share(program: Program, question_tokens: list[str]) -> float:
-    title_tokens = [token for token in _tokens(program.title) if token not in _STOPWORDS]
-    matched = sum(any(_same_word(t, q) for q in question_tokens) for t in title_tokens)
-    return matched / len(title_tokens) if title_tokens else 0.0
+def _title_matches(program: Program, question: str, question_stems: set[str]) -> bool:
+    if program.title.lower() in question.lower():
+        return True
+    title_stems = [_stem(token) for token in _tokens(program.title) if token not in _STOPWORDS]
+    matched = sum(stem in question_stems for stem in title_stems)
+    if title_stems and matched == len(title_stems):
+        return True
+    return len(title_stems) >= _PARTIAL_TITLE_MIN_WORDS and matched / len(title_stems) >= _PARTIAL_TITLE_SHARE
+
+
+def _degree_from_question(tokens: list[str]) -> str | None:
+    for degree, stems in _DEGREE_STEMS.items():
+        if any(token.startswith(stems) for token in tokens):
+            return degree
+    return None
 
 
 def resolve_program(question: str, programs: list[Program]) -> Program | None:
-    question_tokens = _tokens(question)
+    tokens = _tokens(question)
     for program in programs:
-        if program.program_id.lower() in question_tokens:
+        if program.program_id.lower() in tokens:
             return program
 
-    scored = sorted(((_title_share(p, question_tokens), p) for p in programs), key=lambda pair: -pair[0])
-    if not scored or scored[0][0] < _MIN_TITLE_SHARE:
-        return None
-    if len(scored) > 1 and scored[1][0] == scored[0][0]:
-        return None
-    return scored[0][1]
+    stems = {_stem(token) for token in tokens if not token.startswith(_APPLICANT_STEMS)}
+    candidates = [program for program in programs if _title_matches(program, question, stems)]
+    degree = _degree_from_question(tokens)
+    if degree and len(candidates) > 1:
+        candidates = [program for program in candidates if program.degree_level == degree]
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def applicant_type_from_question(question: str, program: Program) -> str | None:

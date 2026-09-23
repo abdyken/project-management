@@ -9,12 +9,12 @@
 | Task | Story | Название | Est., h | Зависит от | Статус | Файл плана |
 | ---- | ----- | -------- | ------- | ---------- | ------ | ---------- |
 | T0.7 | US3 (foundation) | LLM and embedding provider setup | 2 | T0.1 | ✅ локальная мультиязычная модель эмбеддингов (fastembed), без ключей и расходов; LLM не используется — ответ всегда текст FAQ | [`app/assistant/embeddings.py`](../../app/assistant/embeddings.py) |
-| T3.2 | US3 | Retrieval index | 5 | T3.1, T0.7 | ✅ реализовано (pgvector), ждёт реальной FAQ-базы (T3.1) | [T3.2-retrieval-index.md](T3.2-retrieval-index.md) |
+| T3.2 | US3 | Retrieval index | 5 | T3.1, T0.7 | ✅ реализовано (pgvector), 35 официальных FAQ-пунктов | [T3.2-retrieval-index.md](T3.2-retrieval-index.md) |
 | T3.3 | US3 | Answer service endpoint | 5 | T3.2 | ✅ реализовано и проверено локально | [T3.3-answer-service-endpoint.md](T3.3-answer-service-endpoint.md) |
 | T3.4 | US3 | Below-threshold fallback | 2 | T3.3 | ✅ реализовано | [T3.4-below-threshold-fallback.md](T3.4-below-threshold-fallback.md) |
 | T3.5 | US3 | Chat API contract with the front-end | 1 | T3.3 | ✅ контракт реализован в коде; ⏳ подтверждение Daniyar — вне моего контроля | [T3.5-chat-api-contract.md](T3.5-chat-api-contract.md) |
 | T3.6 | US4 | Document question in the chat | 3 | T3.3, T4.3 | ✅ реализовано, читает каталог и чек-листы из БД | [T3.6-document-question-in-chat.md](T3.6-document-question-in-chat.md) |
-| T3.7 | US3 | Accuracy test set | 3 | T3.4, T0.5 | ⏳ локальный прогон готов (40% на mock-эмбеддингах, все FAQ-фейлы уходят в безопасный fallback); формальный US3QATest ждёт дев-окружения (T0.5) | [T3.7-accuracy-test-set.md](T3.7-accuracy-test-set.md) |
+| T3.7 | US3 | Accuracy test set | 3 | T3.4, T0.5 | ✅ локально 24/26 (92%) на реальной FAQ-базе, 1 неверный ответ; US3QATest ждёт дев-окружения (T0.5) | [T3.7-accuracy-test-set.md](T3.7-accuracy-test-set.md) |
 
 **Итого: 21 ч.**
 
@@ -22,7 +22,7 @@
 
 Код покрыт тестами на реальной БД (`uv run pytest` в `backend/`). Что ещё осталось:
 
-1. **T3.1 (Askhat)** — реальная FAQ-база на 30 пунктов вместо демо-заглушки на 12 (`app/data/faq_sample.json`) → перегенерировать индекс (`scripts/reindex_faq.py`).
+1. **T3.1 (Askhat)** — FAQ-база (`app/data/faq.json`, 35 пунктов с sdu.edu.kz) ждёт проверки приёмной комиссией.
 2. **T0.5 (Nurmek)** — дев-окружение, на котором нужно официально прогнать `scripts/run_accuracy_test.py` с `ASSISTANT_BASE_URL` и выполнить US3QATest (приёмка требует деплоя, не локального прогона).
 3. **T3.5** — фактическое подтверждение контракта от Daniyar (сам контракт и код готовы).
 

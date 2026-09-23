@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://admissions:admissions@localhost:5432/admissions"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
 
-    faq_data_path: str = "app/data/faq_sample.json"
+    faq_data_path: str = "app/data/faq.json"
     similarity_threshold: float = 0.5
     assistant_timeout_seconds: float = 4.0
     admissions_office_contact: str = (

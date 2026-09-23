@@ -13,8 +13,8 @@ def main() -> int:
     base_url = os.environ.get("ASSISTANT_BASE_URL", "http://localhost:8000")
     cases = json.loads(TEST_SET_PATH.read_text(encoding="utf-8"))
 
-    correct = 0
-    print(f"{'question':<60} {'expected':<10} {'actual':<10} {'score':<6} OK")
+    correct = wrong = 0
+    print(f"{'question':<60} {'expected':<10} {'actual':<10} {'score':<6} result")
     with httpx.Client(base_url=base_url, timeout=10.0) as client:
         for case in cases:
             response = client.post(
@@ -22,16 +22,20 @@ def main() -> int:
             )
             response.raise_for_status()
             body = response.json()
-            is_correct = body["faq_id"] == case["expected_faq_id"]
-            correct += is_correct
-            print(
-                f"{case['question'][:58]:<60} {str(case['expected_faq_id']):<10} "
-                f"{str(body['faq_id']):<10} {body['similarity_score']:.3f}  {'PASS' if is_correct else 'FAIL'}"
-            )
+            expected, actual = case["expected_faq_id"], body["faq_id"]
+            score = "-" if body["similarity_score"] is None else f"{body['similarity_score']:.3f}"
+            if actual == expected:
+                result = "PASS"
+                correct += 1
+            elif actual is None:
+                result = "FALLBACK"
+            else:
+                result = "WRONG"
+                wrong += 1
+            print(f"{case['question'][:58]:<60} {str(expected):<10} {str(actual):<10} {score:<6} {result}")
 
-    print(f"\nAccuracy: {correct}/{len(cases)} ({correct / len(cases):.0%}) against {base_url}")
+    print(f"\nAccuracy: {correct}/{len(cases)} ({correct / len(cases):.0%}), wrong answers: {wrong}, against {base_url}")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -24,7 +24,7 @@ def load_faq_base(path: str | Path) -> list[FaqItem]:
 
 
 def rebuild_index(session: Session, faq_items: list[FaqItem]) -> None:
-    vectors = embeddings.embed([item.question for item in faq_items])
+    vectors = embeddings.embed([f"{item.question} {item.answer}" for item in faq_items])
     session.execute(delete(FaqEmbeddingRecord))
     session.add_all(
         FaqEmbeddingRecord(**item.model_dump(), embedding=vector)

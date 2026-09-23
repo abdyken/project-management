@@ -49,6 +49,7 @@ One shared Alembic chain for all modules (`migrations/versions/`):
 | 0004 | Nurmek (T4.1) | `program_document_requirement` table |
 | 0005 | T3.2 | `faq_embeddings` resized to 384 dimensions |
 | 0006 | US3/US4 | `admissions_followup` log of unanswered questions and missing checklists |
+| 0007 | T0.6 | Fees per ECTS credit (KZT/USD), local and international deadlines, `source_url` |
 
 ```bash
 uv run alembic revision --autogenerate -m "describe the change"   # after changing models

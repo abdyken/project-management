@@ -21,8 +21,11 @@ COLUMNS = [
     "faculty",
     "degree_level",
     "language",
-    "tuition_fee",
-    "application_deadline",
+    "tuition_per_ects_kzt",
+    "tuition_per_ects_usd",
+    "deadline_local",
+    "deadline_international",
+    "source_url",
     "is_active",
 ]
 

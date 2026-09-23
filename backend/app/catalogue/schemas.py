@@ -16,8 +16,11 @@ class ProgramOut(BaseModel):
     faculty: str
     degree_level: DegreeLevel
     language: str
-    tuition_fee: float | None
-    application_deadline: date | None
+    tuition_per_ects_kzt: int | None
+    tuition_per_ects_usd: int | None
+    deadline_local: date | None
+    deadline_international: date | None
+    source_url: str | None
     is_active: bool
 
 
