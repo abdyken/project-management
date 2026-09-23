@@ -1,5 +1,9 @@
-import { useEffect, useEffectEvent, useRef, type PointerEvent as ReactPointerEvent } from "react"
-import type { ChatPosition } from "@/store/chat"
+import { useRef, type PointerEvent as ReactPointerEvent } from "react"
+
+export type Point = {
+  x: number
+  y: number
+}
 
 export type Size = {
   width: number
@@ -13,7 +17,7 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
 
-export function clampPosition(position: ChatPosition, size: Size): ChatPosition {
+export function clampPosition(position: Point, size: Size): Point {
   const maxX = Math.max(MARGIN, window.innerWidth - size.width - MARGIN)
   const maxY = Math.max(MARGIN, window.innerHeight - size.height - MARGIN)
   return {
@@ -31,16 +35,9 @@ type DragSession = {
   moved: boolean
 }
 
-export function useDraggable(position: ChatPosition, size: Size, onMove: (next: ChatPosition) => void) {
+export function useDraggable(position: Point, size: Size, onMove: (next: Point) => void) {
   const drag = useRef<DragSession | null>(null)
   const lastDragMoved = useRef(false)
-
-  const keepInViewport = useEffectEvent(() => onMove(clampPosition(position, size)))
-
-  useEffect(() => {
-    window.addEventListener("resize", keepInViewport)
-    return () => window.removeEventListener("resize", keepInViewport)
-  }, [])
 
   function onPointerDown(event: ReactPointerEvent<HTMLElement>) {
     if (event.button !== 0) return

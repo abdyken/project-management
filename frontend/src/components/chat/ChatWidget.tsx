@@ -2,10 +2,10 @@ import { MessageCircle, Minus, X } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { ChatPanel } from "@/components/chat/ChatPanel"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { clampPosition, useDraggable, type Size } from "@/hooks/use-draggable"
+import { clampPosition, useDraggable, type Point, type Size } from "@/hooks/use-draggable"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useWindowSize } from "@/hooks/use-window-size"
-import { useChatStore, type ChatPosition } from "@/store/chat"
+import { useChatStore, type CornerOffset } from "@/store/chat"
 
 const FAB_SIZE: Size = { width: 56, height: 56 }
 const MINI_SIZE: Size = { width: 260, height: 48 }
@@ -15,8 +15,17 @@ const iconButton = "rounded p-1 text-muted-foreground hover:bg-secondary focus-v
 const fabClass =
   "fixed z-50 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md outline-none focus-visible:ring-4 focus-visible:ring-ring/30"
 
-function bottomRight(viewport: { width: number; height: number }, size: Size): ChatPosition {
-  return { x: viewport.width - size.width - EDGE, y: viewport.height - size.height - EDGE }
+type Viewport = { width: number; height: number }
+
+const DEFAULT_OFFSET: CornerOffset = { right: EDGE, bottom: EDGE }
+
+function fromCorner(viewport: Viewport, size: Size, offset: CornerOffset | null): Point {
+  const { right, bottom } = offset ?? DEFAULT_OFFSET
+  return clampPosition({ x: viewport.width - size.width - right, y: viewport.height - size.height - bottom }, size)
+}
+
+function toCorner(viewport: Viewport, size: Size, point: Point): CornerOffset {
+  return { right: viewport.width - size.width - point.x, bottom: viewport.height - size.height - point.y }
 }
 
 function MobileChat() {
@@ -48,12 +57,12 @@ function MobileChat() {
 function DesktopChat() {
   const open = useChatStore((state) => state.open)
   const minimized = useChatStore((state) => state.minimized)
-  const position = useChatStore((state) => state.position)
-  const fabPosition = useChatStore((state) => state.fabPosition)
+  const panelOffset = useChatStore((state) => state.panelOffset)
+  const fabOffset = useChatStore((state) => state.fabOffset)
   const setOpen = useChatStore((state) => state.setOpen)
   const setMinimized = useChatStore((state) => state.setMinimized)
-  const setPosition = useChatStore((state) => state.setPosition)
-  const setFabPosition = useChatStore((state) => state.setFabPosition)
+  const setPanelOffset = useChatStore((state) => state.setPanelOffset)
+  const setFabOffset = useChatStore((state) => state.setFabOffset)
   const viewport = useWindowSize()
 
   const panelSize: Size = {
@@ -61,11 +70,11 @@ function DesktopChat() {
     height: Math.min(560, Math.round(viewport.height * 0.7)),
   }
   const panelBox = minimized ? MINI_SIZE : panelSize
-  const panelPos = clampPosition(position ?? bottomRight(viewport, panelSize), panelBox)
-  const fabPos = clampPosition(fabPosition ?? bottomRight(viewport, FAB_SIZE), FAB_SIZE)
+  const panelPos = fromCorner(viewport, panelBox, panelOffset)
+  const fabPos = fromCorner(viewport, FAB_SIZE, fabOffset)
 
-  const panelDrag = useDraggable(panelPos, panelBox, setPosition)
-  const fabDrag = useDraggable(fabPos, FAB_SIZE, setFabPosition)
+  const panelDrag = useDraggable(panelPos, panelBox, (point) => setPanelOffset(toCorner(viewport, panelBox, point)))
+  const fabDrag = useDraggable(fabPos, FAB_SIZE, (point) => setFabOffset(toCorner(viewport, FAB_SIZE, point)))
   const panelRef = useRef<HTMLElement>(null)
   const showPanel = open && !minimized
 

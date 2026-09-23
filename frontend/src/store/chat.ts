@@ -13,24 +13,24 @@ export type ChatMessage = {
   isError?: boolean
 }
 
-export type ChatPosition = {
-  x: number
-  y: number
+export type CornerOffset = {
+  right: number
+  bottom: number
 }
 
 type ChatState = {
   open: boolean
   minimized: boolean
-  position: ChatPosition | null
-  fabPosition: ChatPosition | null
+  panelOffset: CornerOffset | null
+  fabOffset: CornerOffset | null
   sessionId: string
   messages: ChatMessage[]
   draft: string
   sending: boolean
   setOpen: (open: boolean) => void
   setMinimized: (minimized: boolean) => void
-  setPosition: (position: ChatPosition) => void
-  setFabPosition: (position: ChatPosition) => void
+  setPanelOffset: (offset: CornerOffset) => void
+  setFabOffset: (offset: CornerOffset) => void
   setDraft: (draft: string) => void
   setSending: (sending: boolean) => void
   addMessage: (message: Omit<ChatMessage, "id" | "createdAt">) => void
@@ -41,16 +41,16 @@ export const useChatStore = create<ChatState>()(
     (set) => ({
       open: false,
       minimized: false,
-      position: null,
-      fabPosition: null,
+      panelOffset: null,
+      fabOffset: null,
       sessionId: crypto.randomUUID(),
       messages: [],
       draft: "",
       sending: false,
       setOpen: (open) => set({ open, minimized: false }),
       setMinimized: (minimized) => set({ minimized, open: !minimized }),
-      setPosition: (position) => set({ position }),
-      setFabPosition: (fabPosition) => set({ fabPosition }),
+      setPanelOffset: (panelOffset) => set({ panelOffset }),
+      setFabOffset: (fabOffset) => set({ fabOffset }),
       setDraft: (draft) => set({ draft: draft.slice(0, MESSAGE_MAX_LENGTH) }),
       setSending: (sending) => set({ sending }),
       addMessage: (message) =>
@@ -60,14 +60,19 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: "sdu-admissions-chat",
+      version: 1,
       storage: createJSONStorage(() => sessionStorage),
+      migrate: (persisted) => {
+        const { sessionId, messages, draft } = persisted as Partial<ChatState>
+        return { sessionId, messages, draft } as ChatState
+      },
       partialize: (state) => ({
         sessionId: state.sessionId,
         messages: state.messages,
         draft: state.draft,
         minimized: state.minimized,
-        position: state.position,
-        fabPosition: state.fabPosition,
+        panelOffset: state.panelOffset,
+        fabOffset: state.fabOffset,
       }),
     },
   ),
