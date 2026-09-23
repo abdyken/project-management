@@ -22,10 +22,11 @@ const steps = [
 ]
 
 const questions = [
-  "What is the application deadline for the Fall intake?",
-  "What language are bachelor programs taught in?",
+  "When can I apply for a bachelor's program in 2026?",
+  "What English level do I need for bachelor's admission?",
   "Which documents do I need for Computer Science as an international applicant?",
-  "How can I contact the admissions office?",
+  "How much does the dormitory cost?",
+  "How can I contact the SDU Admissions Office?",
 ]
 
 export function HomePage() {

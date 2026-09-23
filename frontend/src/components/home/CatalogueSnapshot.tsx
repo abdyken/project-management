@@ -9,7 +9,7 @@ import { formatDeadline } from "@/lib/utils"
 function nextDeadline(programs: Program[]) {
   const today = new Date().toISOString().slice(0, 10)
   const upcoming = programs
-    .map((program) => program.application_deadline)
+    .flatMap((program) => [program.deadline_local, program.deadline_international])
     .filter((deadline): deadline is string => deadline !== null && deadline >= today)
     .sort()
   return upcoming[0] ?? null

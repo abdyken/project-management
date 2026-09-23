@@ -88,13 +88,27 @@ export function ProgramDetailPage() {
         </div>
         <div>
           <dt className={labelClass}>Tuition</dt>
-          <dd className="mt-1">{formatTuition(program.tuition_fee)}</dd>
+          <dd className="mt-1">{formatTuition(program.tuition_per_ects_kzt, program.tuition_per_ects_usd)}</dd>
         </div>
         <div>
           <dt className={labelClass}>Application deadline</dt>
-          <dd className="mt-1">{formatDeadline(program.application_deadline)}</dd>
+          <dd className="mt-1">
+            Local: {formatDeadline(program.deadline_local)}
+            <br />
+            International: {formatDeadline(program.deadline_international)}
+          </dd>
         </div>
       </dl>
+      {program.source_url ? (
+        <a
+          href={program.source_url}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Official program page
+        </a>
+      ) : null}
 
       <section className="mt-12" aria-labelledby="documents-heading">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

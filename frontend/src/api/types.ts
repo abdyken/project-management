@@ -8,8 +8,11 @@ export type Program = {
   faculty: string
   degree_level: DegreeLevel
   language: string
-  tuition_fee: number | null
-  application_deadline: string | null
+  tuition_per_ects_kzt: number | null
+  tuition_per_ects_usd: number | null
+  deadline_local: string | null
+  deadline_international: string | null
+  source_url: string | null
   is_active: boolean
 }
 

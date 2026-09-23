@@ -31,6 +31,8 @@ type FilterSelectProps = {
 }
 
 function FilterSelect({ id, label, allLabel, value, options, onChange }: FilterSelectProps) {
+  const items = value && !options.some((option) => option.value === value) ? [...options, { value, label: value }] : options
+
   return (
     <div>
       <label className={labelClass} htmlFor={id}>
@@ -42,7 +44,7 @@ function FilterSelect({ id, label, allLabel, value, options, onChange }: FilterS
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL}>{allLabel}</SelectItem>
-          {options.map((option) => (
+          {items.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
