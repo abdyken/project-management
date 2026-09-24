@@ -31,16 +31,28 @@ function toCorner(viewport: Viewport, size: Size, point: Point): CornerOffset {
 function MobileChat() {
   const open = useChatStore((state) => state.open)
   const setOpen = useChatStore((state) => state.setOpen)
+  const fabRef = useRef<HTMLButtonElement>(null)
 
   return (
     <>
-      {open ? null : (
-        <button type="button" onClick={() => setOpen(true)} aria-label="Open admissions chat" className={`${fabClass} right-4 bottom-4`}>
-          <MessageCircle className="size-5" />
-        </button>
-      )}
+      <button
+        ref={fabRef}
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label="Open admissions chat"
+        className={`${fabClass} right-4 bottom-4`}
+      >
+        <MessageCircle className="size-5" />
+      </button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="flex flex-col">
+        <SheetContent
+          side="bottom"
+          className="flex flex-col"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault()
+            fabRef.current?.focus()
+          }}
+        >
           <SheetHeader className="pr-12">
             <SheetTitle>Admissions desk</SheetTitle>
             <SheetDescription>Answers come from the official FAQ</SheetDescription>
@@ -76,7 +88,15 @@ function DesktopChat() {
   const panelDrag = useDraggable(panelPos, panelBox, (point) => setPanelOffset(toCorner(viewport, panelBox, point)))
   const fabDrag = useDraggable(fabPos, FAB_SIZE, (point) => setFabOffset(toCorner(viewport, FAB_SIZE, point)))
   const panelRef = useRef<HTMLElement>(null)
+  const fabRef = useRef<HTMLButtonElement>(null)
+  const restoreRef = useRef<HTMLButtonElement>(null)
   const showPanel = open && !minimized
+  const wasShowingPanel = useRef(showPanel)
+
+  useEffect(() => {
+    if (wasShowingPanel.current && !showPanel) (minimized ? restoreRef : fabRef).current?.focus()
+    wasShowingPanel.current = showPanel
+  }, [showPanel, minimized])
 
   useEffect(() => {
     if (!showPanel) return
@@ -98,8 +118,9 @@ function DesktopChat() {
         <button
           type="button"
           {...panelDrag.handlers}
-          onClick={() => {
-            if (!panelDrag.consumeDrag()) setMinimized(false)
+          ref={restoreRef}
+          onClick={(event) => {
+            if (!panelDrag.wasDragged(event)) setMinimized(false)
           }}
           className="flex h-full min-w-0 flex-1 cursor-grab touch-none items-center gap-2 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/40 active:cursor-grabbing"
           aria-label="Restore admissions chat"
@@ -119,8 +140,9 @@ function DesktopChat() {
       <button
         type="button"
         {...fabDrag.handlers}
-        onClick={() => {
-          if (!fabDrag.consumeDrag()) setOpen(true)
+        ref={fabRef}
+        onClick={(event) => {
+          if (!fabDrag.wasDragged(event)) setOpen(true)
         }}
         aria-label="Open admissions chat"
         className={`${fabClass} cursor-grab touch-none active:cursor-grabbing`}

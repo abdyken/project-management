@@ -193,6 +193,20 @@
               }
             }
           },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "503": {
             "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
             "content": {
@@ -203,16 +217,6 @@
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -554,19 +558,6 @@
         ],
         "title": "ErrorResponse"
       },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
       "ProgramListResponse": {
         "properties": {
           "total": {
@@ -615,18 +606,29 @@
             "type": "string",
             "title": "Language"
           },
-          "tuition_fee": {
+          "tuition_per_ects_kzt": {
             "anyOf": [
               {
-                "type": "number"
+                "type": "integer"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Tuition Fee"
+            "title": "Tuition Per Ects Kzt"
           },
-          "application_deadline": {
+          "tuition_per_ects_usd": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Usd"
+          },
+          "deadline_local": {
             "anyOf": [
               {
                 "type": "string",
@@ -636,7 +638,30 @@
                 "type": "null"
               }
             ],
-            "title": "Application Deadline"
+            "title": "Deadline Local"
+          },
+          "deadline_international": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline International"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
           },
           "is_active": {
             "type": "boolean",
@@ -650,51 +675,14 @@
           "faculty",
           "degree_level",
           "language",
-          "tuition_fee",
-          "application_deadline",
+          "tuition_per_ects_kzt",
+          "tuition_per_ects_usd",
+          "deadline_local",
+          "deadline_international",
+          "source_url",
           "is_active"
         ],
         "title": "ProgramOut"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
-          }
-        },
-        "type": "object",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
-        "title": "ValidationError"
       }
     }
   }

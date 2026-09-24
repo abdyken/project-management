@@ -28,13 +28,16 @@
 | ---- | -------- | ------------------------ | ------------------ |
 | FAQ match (score ≥ `SIMILARITY_THRESHOLD`) | The FAQ item's answer, verbatim | set | cosine similarity |
 | No FAQ match (T3.4) | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `null` | best score, or `null` when the FAQ is empty |
-| Document question (T3.6), applicant type given | `Required documents for <Program> (<local\|international> applicant):` and one line per document | `null` | `null` |
+| Document question (T3.6), one program, applicant type given | `Required documents for <Program> (<degree>, <code>), <local\|international> applicant:` and one line per document | `null` | `null` |
 | Document question, applicant type not given | Asks the applicant to say "local" or "international" | `null` | `null` |
+| Document question matching several programs (e.g. the bachelor and master Information Systems) | Lists the programs with degree and code and asks for the code | `null` | `null` |
 | Document question, no requirements stored (T4.3) | `The document list for this program is not published yet, please contact the admissions office. <contact>` | `null` | `null` |
 
 Unanswered questions and programs without requirements are recorded in the `admissions_followup` table for the admissions office.
 
-A document question is recognised by words like "documents", "checklist", "документы" plus a program title (or part of it, e.g. "law") or program code. The applicant type is read from words like "local", "citizen", "international", "foreign", "иностранец".
+A document question contains "document", "paperwork", "checklist", "документ" or "құжат" and names a program by its code (`6B06102`), its full title, or at least two thirds of the words of a title with three or more words. A degree word (bachelor, master, PhD, магистр…) narrows the match to that degree. The applicant type is read from "local", "Kazakhstani", "citizen(s) of Kazakhstan", "местный" (local) or "international", "foreign", "abroad", "иностранец", "шетел" (international); words that are part of the program title ("International Relations") do not count.
+
+Each FAQ item has an audience (`degrees`, `applicant_types` in `faq.json`; empty means everyone). When the question names a degree or applicant type, the best FAQ match must be written for it. Otherwise the assistant uses the best match from the same category that is, or answers with the fallback. The answer is used only when its cosine similarity is at least `SIMILARITY_THRESHOLD` (default 0.5).
 
 ### Errors
 

@@ -1,4 +1,4 @@
-import type { FormEvent } from "react"
+import { useState, type FormEvent } from "react"
 import type { FilterOptions } from "@/api/programs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,54 +55,65 @@ function FilterSelect({ id, label, allLabel, value, options, onChange }: FilterS
   )
 }
 
+export const SEARCH_MAX_LENGTH = 100
+
 export function ProgramFilters({ values, options, onChange }: ProgramFiltersProps) {
+  const [q, setQ] = useState(values.q)
+  const current = { ...values, q: q.trim() }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    onChange({ ...values, q: String(form.get("q") ?? "").trim() })
+    onChange(current)
   }
 
   return (
-    <div className="grid gap-3 md:grid-cols-12">
-      <form onSubmit={handleSubmit} role="search" className="md:col-span-5">
+    <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-12">
+      <form onSubmit={handleSubmit} role="search" className="md:col-span-3 lg:col-span-5">
         <label className={labelClass} htmlFor="q">
           Search
         </label>
         <div className="flex gap-2">
-          <Input id="q" name="q" type="search" defaultValue={values.q} key={values.q} placeholder="Title, school, or code" />
+          <Input
+            id="q"
+            type="search"
+            value={q}
+            maxLength={SEARCH_MAX_LENGTH}
+            onChange={(event) => setQ(event.target.value)}
+            placeholder="Title, school, or code"
+          />
           <Button type="submit" variant="outline">
             Search
           </Button>
         </div>
       </form>
-      <div className="md:col-span-3">
+      <div className="lg:col-span-3">
         <FilterSelect
           id="filter-faculty"
           label="School"
           allLabel="All schools"
           value={values.faculty}
           options={options.faculties.map((faculty) => ({ value: faculty, label: faculty }))}
-          onChange={(faculty) => onChange({ ...values, faculty })}
+          onChange={(faculty) => onChange({ ...current, faculty })}
         />
       </div>
-      <div className="md:col-span-2">
+      <div className="lg:col-span-2">
         <FilterSelect
           id="filter-degree"
           label="Degree"
           allLabel="All degrees"
           value={values.degree_level}
           options={options.degreeLevels.map((level) => ({ value: level, label: DEGREE_LABELS[level] }))}
-          onChange={(degree_level) => onChange({ ...values, degree_level })}
+          onChange={(degree_level) => onChange({ ...current, degree_level })}
         />
       </div>
-      <div className="md:col-span-2">
+      <div className="lg:col-span-2">
         <FilterSelect
           id="filter-language"
           label="Language"
           allLabel="All languages"
           value={values.language}
           options={options.languages.map((language) => ({ value: language, label: language }))}
-          onChange={(language) => onChange({ ...values, language })}
+          onChange={(language) => onChange({ ...current, language })}
         />
       </div>
     </div>

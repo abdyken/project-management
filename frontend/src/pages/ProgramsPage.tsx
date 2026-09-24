@@ -1,9 +1,11 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useSearchParams } from "react-router-dom"
+import { isInvalidRequest } from "@/api/errors"
 import { allProgramsQuery, filterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
 import { ProgramFilters, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { ConnectionError } from "@/components/common/ConnectionError"
+import { Button } from "@/components/ui/button"
 
 const NO_OPTIONS = { faculties: [], degreeLevels: [], languages: [] }
 
@@ -52,13 +54,30 @@ export function ProgramsPage() {
       </p>
 
       <div className="mt-10">
-        <ProgramFilters values={filters} options={optionsQuery.data ?? NO_OPTIONS} onChange={updateFilters} />
+        <ProgramFilters
+          key={filters.q}
+          values={filters}
+          options={optionsQuery.data ?? NO_OPTIONS}
+          onChange={updateFilters}
+        />
       </div>
 
       <div className="mt-8" aria-busy={query.isFetching}>
         {query.isPending ? <p className="text-sm text-muted-foreground">Loading programs…</p> : null}
 
-        {query.isError ? (
+        {query.isError && isInvalidRequest(query.error) ? (
+          <div role="alert" className="border border-border bg-card p-6">
+            <p className="text-2xl font-semibold tracking-tight">Invalid search</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              The search text or a filter in the link is not valid. Clear the search and try again.
+            </p>
+            <Button className="mt-5" onClick={() => setSearchParams(new URLSearchParams())}>
+              Clear search
+            </Button>
+          </div>
+        ) : null}
+
+        {query.isError && !isInvalidRequest(query.error) ? (
           <ConnectionError
             message="The catalogue is temporarily unavailable. Your search and filters are still here."
             retrying={query.isFetching}

@@ -7,9 +7,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
 
-DEGREE_LEVELS = ("bachelor", "master", "phd")
-
-
 class Program(Base):
     __tablename__ = "program"
     __table_args__ = (

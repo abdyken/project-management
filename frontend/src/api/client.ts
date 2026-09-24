@@ -43,8 +43,10 @@ async function parseError(res: Response) {
   )
 }
 
+const DEFAULT_TIMEOUT_MS = 10_000
+
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { query, timeoutMs, headers, ...init } = options
+  const { query, timeoutMs = DEFAULT_TIMEOUT_MS, headers, ...init } = options
   const url = withQuery(path, query)
   const { signal, cleanup } = mergeSignals(timeoutMs, init.signal ?? undefined)
 

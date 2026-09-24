@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function randomId() {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID()
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) => byte.toString(16).padStart(2, "0")).join("")
+}
+
 const deadlineFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "long",
@@ -20,8 +25,10 @@ export function formatDeadline(value: string | null | undefined) {
   return deadlineFormat.format(date)
 }
 
-export function formatTuition(kzt: number | null, usd: number | null) {
-  const parts = [kzt === null ? null : `${kzt.toLocaleString("en-US")} KZT`, usd === null ? null : `${usd} USD`]
-  const known = parts.filter(Boolean)
-  return known.length ? `${known.join(" · ")} per ECTS credit` : "Not published"
+export function formatTuitionLocal(kzt: number | null) {
+  return kzt === null ? "Not published" : `${kzt.toLocaleString("en-US")} KZT per ECTS credit`
+}
+
+export function formatTuitionInternational(usd: number | null) {
+  return usd === null ? "Not published" : `${usd} USD per ECTS credit`
 }

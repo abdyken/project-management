@@ -5,7 +5,7 @@
 Returns requirements for one active programme and one applicant type.
 
 ```text
-GET /api/programs/cs-bsc-en/checklist?applicant_type=international
+GET /api/programs/6B06102/checklist?applicant_type=international
 ```
 
 `applicant_type` is required and is either `local` or `international`. Invalid or missing values return `422` with `{"error_code": "INVALID_REQUEST", "message": "applicant_type: …"}`.
@@ -14,7 +14,7 @@ GET /api/programs/cs-bsc-en/checklist?applicant_type=international
 
 ```json
 {
-  "program_id": "cs-bsc-en",
+  "program_id": "6B06102",
   "applicant_type": "international",
   "items": [
     {
@@ -36,7 +36,7 @@ This is intentionally not an unexplained empty list. The frontend and assistant 
 
 ```json
 {
-  "program_id": "cs-bsc-en",
+  "program_id": "6B06102",
   "applicant_type": "local",
   "items": [],
   "warning": "The document list for this program is not published yet, please contact the admissions office.",

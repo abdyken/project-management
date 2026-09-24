@@ -1,4 +1,5 @@
-import { useRef, type PointerEvent as ReactPointerEvent } from "react"
+import { useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react"
+import { viewportSize } from "@/hooks/use-window-size"
 
 export type Point = {
   x: number
@@ -18,8 +19,9 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export function clampPosition(position: Point, size: Size): Point {
-  const maxX = Math.max(MARGIN, window.innerWidth - size.width - MARGIN)
-  const maxY = Math.max(MARGIN, window.innerHeight - size.height - MARGIN)
+  const viewport = viewportSize()
+  const maxX = Math.max(MARGIN, viewport.width - size.width - MARGIN)
+  const maxY = Math.max(MARGIN, viewport.height - size.height - MARGIN)
   return {
     x: clamp(position.x, MARGIN, maxX),
     y: clamp(position.y, MARGIN, maxY),
@@ -72,14 +74,14 @@ export function useDraggable(position: Point, size: Size, onMove: (next: Point) 
     drag.current = null
   }
 
-  function consumeDrag() {
+  function wasDragged(event: ReactMouseEvent) {
     const moved = lastDragMoved.current
     lastDragMoved.current = false
-    return moved
+    return event.detail !== 0 && moved
   }
 
   return {
     handlers: { onPointerDown, onPointerMove, onPointerUp: endDrag, onPointerCancel: endDrag },
-    consumeDrag,
+    wasDragged,
   }
 }

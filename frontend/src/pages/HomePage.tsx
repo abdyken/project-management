@@ -89,7 +89,7 @@ export function HomePage() {
                 onClick={() => ask(question)}
                 className="flex w-full items-baseline gap-6 py-5 text-left hover:bg-secondary/40"
               >
-                <span className="w-6 text-sm text-muted-foreground">{index + 1}</span>
+                <span className="w-6 shrink-0 text-sm text-muted-foreground">{index + 1}</span>
                 <span className="text-sm sm:text-base">{question}</span>
               </button>
             </li>

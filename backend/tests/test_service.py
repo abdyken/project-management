@@ -41,7 +41,9 @@ def test_document_answer_matches_the_checklist(service, assistant_session, appli
         f"What documents do I need for Computer Science as a {applicant_type} applicant?", "s1"
     )
     requirements = get_requirements(assistant_session, "6B06102", applicant_type)
-    assert response.answer.startswith(f"Required documents for Computer Science ({applicant_type} applicant)")
+    assert response.answer.startswith(
+        f"Required documents for Computer Science (bachelor, 6B06102), {applicant_type} applicant"
+    )
     lines = response.answer.splitlines()[1:]
     assert len(lines) == len(requirements)
     for line, requirement in zip(lines, requirements, strict=True):
@@ -52,17 +54,20 @@ def test_document_answer_matches_the_checklist(service, assistant_session, appli
 def test_document_question_without_applicant_type_asks_for_it(service):
     response = service.answer("What documents do I need for Computer Science?", "s1")
     assert "local and international" in response.answer
+    assert "Computer Science (6B06102)" in response.answer
     assert not response.answer.startswith("Required documents")
 
 
 def test_program_title_is_matched_case_insensitively(service):
     response = service.answer("Which documents do I need for applied law as a foreign student?", "s1")
-    assert response.answer.startswith("Required documents for Applied Law (international applicant)")
+    assert response.answer.startswith("Required documents for Applied Law (bachelor, 6B04201), international applicant")
 
 
 def test_long_program_title_is_matched_by_most_of_its_words(service):
     response = service.answer("Which documents do I need for kazakh literature as a local applicant?", "s1")
-    assert response.answer.startswith("Required documents for Kazakh Language and Literature (local applicant)")
+    assert response.answer.startswith(
+        "Required documents for Kazakh Language and Literature (bachelor, 6B01701), local applicant"
+    )
 
 
 def test_one_shared_word_does_not_select_a_program(service):
@@ -70,16 +75,44 @@ def test_one_shared_word_does_not_select_a_program(service):
     assert "Translation Studies" not in response.answer
 
 
-def test_degree_word_picks_between_programs_with_the_same_title(service, assistant_session):
+def test_degree_word_picks_between_programs_with_the_same_title(service):
     response = service.answer("Which documents do I need for a master's in Information Systems as a local applicant?", "s1")
-    master_documents = get_requirements(assistant_session, "7M06101", "local")
-    assert response.answer.startswith("Required documents for Information Systems (local applicant)")
-    assert response.answer.splitlines()[1].startswith(f"- {master_documents[0].name}")
+    assert response.answer.startswith("Required documents for Information Systems (master, 7M06101), local applicant")
+
+
+def test_program_code_picks_the_program(service):
+    response = service.answer("Which documents do I need for Information Systems (7M06101) as a local applicant?", "s1")
+    assert response.answer.startswith("Required documents for Information Systems (master, 7M06101), local applicant")
+
+
+def test_shared_title_without_degree_asks_which_program(service):
+    response = service.answer("Which documents do I need for Information Systems as a local applicant?", "s1")
+    assert response.answer.startswith("Your question matches several programs:")
+    assert "Information Systems (bachelor, 6B06101)" in response.answer
+    assert "Information Systems (master, 7M06101)" in response.answer
+    assert response.faq_id is None
+
+
+def test_degree_word_filters_a_single_title_match(service):
+    response = service.answer("What documents do I need for a master's in Computer Science as a local applicant?", "s1")
+    assert "6B06102" not in response.answer
 
 
 def test_international_in_program_title_is_not_read_as_applicant_type(service):
     response = service.answer("Documents for International Relations for a local applicant?", "s1")
-    assert response.answer.startswith("Required documents for International Relations (local applicant)")
+    assert response.answer.startswith("Required documents for International Relations (bachelor, 6B03101), local applicant")
+
+
+def test_international_relations_for_international_applicants(service):
+    response = service.answer("Which documents do I need for International Relations as an international applicant?", "s1")
+    assert response.answer.startswith(
+        "Required documents for International Relations (bachelor, 6B03101), international applicant"
+    )
+
+
+def test_citizenship_alone_does_not_mean_local(service):
+    response = service.answer("Which documents do I need for Computer Science as a citizen of Uzbekistan?", "s1")
+    assert "local and international" in response.answer
 
 
 def test_applicant_words_do_not_select_a_program(service, faq_items):
@@ -88,15 +121,33 @@ def test_applicant_words_do_not_select_a_program(service, faq_items):
     assert response.faq_id == "faq-007"
 
 
-def test_faq_item_about_another_degree_is_not_used(service, assistant_session):
-    response = service.answer("Master degree deadline 2026", "s1")
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Master degree deadline 2026",
+        "What is the application deadline for the master program?",
+        "Which documents do I need for a master program as an international applicant?",
+    ],
+)
+def test_faq_item_for_another_degree_is_not_used(service, assistant_session, question):
+    response = service.answer(question, "s1")
     assert response.faq_id is None
     assert followups(assistant_session) == [(UNANSWERED_QUESTION, None)]
 
 
+def test_same_topic_item_for_the_asked_applicant_type_is_used(service):
+    response = service.answer("When is the application deadline for local applicants?", "s1")
+    assert response.faq_id == "faq-002"
+
+
+def test_local_deadline_question_gets_the_local_deadlines(service):
+    response = service.answer("Until when can citizens of Kazakhstan apply for a bachelor's program?", "s1")
+    assert response.faq_id == "faq-002"
+
+
 def test_russian_applicant_type_is_recognised(service):
     response = service.answer("Какие документы нужны на Computer Science для иностранцев?", "s1")
-    assert response.answer.startswith("Required documents for Computer Science (international applicant)")
+    assert response.answer.startswith("Required documents for Computer Science (bachelor, 6B06102), international applicant")
 
 
 def test_program_without_requirements_warns_once_and_is_logged(service, assistant_session):

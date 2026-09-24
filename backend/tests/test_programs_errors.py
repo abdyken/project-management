@@ -67,3 +67,19 @@ def test_503_is_documented_in_openapi():
 
     assert "503" in operation["responses"]
     assert operation["responses"]["503"]["content"]["application/json"]["schema"]["$ref"].endswith("/ErrorResponse")
+
+
+def test_nul_character_in_query_returns_422(catalogue_session):
+    from fastapi.testclient import TestClient
+
+    from app.db import get_db_session
+    from app.main import app
+
+    app.dependency_overrides[get_db_session] = lambda: catalogue_session
+    try:
+        response = TestClient(app).get("/api/programs", params={"q": "a" + chr(0) + "b"})
+    finally:
+        app.dependency_overrides.pop(get_db_session, None)
+
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "INVALID_REQUEST"

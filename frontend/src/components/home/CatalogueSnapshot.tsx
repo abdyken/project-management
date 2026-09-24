@@ -25,7 +25,7 @@ function Stat({ value, label }: { value: number; label: string }) {
 }
 
 export function CatalogueSnapshot() {
-  const { data } = useQuery(allProgramsQuery)
+  const { data, isError } = useQuery(allProgramsQuery)
   const programs = data?.programs ?? []
   const deadline = nextDeadline(programs)
 
@@ -49,6 +49,14 @@ export function CatalogueSnapshot() {
             Browse all programs
           </Link>
         </>
+      ) : isError ? (
+        <p className="mt-6 text-sm text-muted-foreground">
+          The catalogue is unavailable right now.{" "}
+          <Link to="/programs" className="underline underline-offset-4">
+            Open the programs page
+          </Link>{" "}
+          to try again.
+        </p>
       ) : (
         <div className="mt-6 h-24 animate-pulse bg-secondary/60" aria-hidden />
       )}

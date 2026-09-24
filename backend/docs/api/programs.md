@@ -5,7 +5,7 @@ For: Daniyar (catalogue and program pages, T2.6), Nurmek (document checklist, T4
 
 **Status:** published 2026-09-18 — waiting for confirmation from Daniyar and Nurmek (see the end of this file).
 
-- Base URL, local: `http://localhost:8000` (run `docker compose up` in `backend/`)
+- Base URL, local: `http://localhost:8000` (run `docker compose up --build` in the repository root)
 - Base URL, dev environment: _set when T0.5 is deployed_
 - Interactive docs: `<base URL>/docs` (Swagger UI)
 - Machine-readable description: [`openapi.json`](openapi.json) — regenerate with `uv run python scripts/export_openapi.py`
@@ -72,7 +72,7 @@ Results: only active programs, ordered by title. No pagination — the whole res
 {
   "total": 2,
   "programs": [
-    { "program_id": "prog-arch-bsc", "title": "Architecture", "...": "..." },
+    { "program_id": "6B06103", "title": "Mathematical and Computer Modelling", "...": "..." },
     { "program_id": "6B06102", "title": "Computer Science", "...": "..." }
   ]
 }
@@ -89,7 +89,7 @@ No match is **not** an error:
 ```
 GET /api/programs
 GET /api/programs?q=law
-GET /api/programs?faculty=Faculty%20of%20Engineering&degree_level=bachelor
+GET /api/programs?faculty=School%20of%20Information%20Technologies%20and%20Applied%20Mathematics&degree_level=bachelor
 GET /api/programs?q=science&degree_level=master&language=English
 ```
 
@@ -141,7 +141,7 @@ Mapping for the catalogue page (US1QATest):
 ## For Nurmek — document requirements (T4.1 / T4.2)
 
 - Reference programs by `program.program_id` (`VARCHAR(64)`, primary key of table `program`) — a foreign key from your requirements table, e.g. `program_document_requirement.program_id → program.program_id`.
-- The `program` table is created by migration `0003`; add your migration on top (`down_revision = "0003"`, check with `uv run alembic heads`).
+- The `program` table is created by migration `0003` and changed by `0007`; new migrations go on top of the current head (`uv run alembic heads`).
 - Suggested path for the checklist endpoint, so it sits next to the catalogue: `GET /api/programs/{program_id}/checklist?applicant_type=...` — your call.
 - Reuse `ErrorResponse` and the 503 handling from `app/api/errors.py` so errors look the same across the API.
 

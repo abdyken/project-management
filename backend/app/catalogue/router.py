@@ -59,6 +59,7 @@ def list_programs(
                 }
             },
         },
+        **INVALID_REQUEST_RESPONSE,
         **DATABASE_UNAVAILABLE_RESPONSE,
     },
     summary="Get one study program",

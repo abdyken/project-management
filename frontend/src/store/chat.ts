@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
+import { randomId } from "@/lib/utils"
 
 export type ChatRole = "applicant" | "assistant"
 
@@ -43,7 +44,7 @@ export const useChatStore = create<ChatState>()(
       minimized: false,
       panelOffset: null,
       fabOffset: null,
-      sessionId: crypto.randomUUID(),
+      sessionId: randomId(),
       messages: [],
       draft: "",
       sending: false,
@@ -55,7 +56,7 @@ export const useChatStore = create<ChatState>()(
       setSending: (sending) => set({ sending }),
       addMessage: (message) =>
         set((state) => ({
-          messages: [...state.messages, { ...message, id: crypto.randomUUID(), createdAt: Date.now() }],
+          messages: [...state.messages, { ...message, id: randomId(), createdAt: Date.now() }],
         })),
     }),
     {

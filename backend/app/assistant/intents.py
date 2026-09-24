@@ -8,12 +8,22 @@ _DOCUMENT_KEYWORDS = (
     "document",
     "paperwork",
     "checklist",
-    "what do i need",
     "документ",
     "құжат",
 )
-_LOCAL_STEMS = ("local", "kazakhstan", "citizen", "resident", "местн", "казахстан", "гражданин")
-_INTERNATIONAL_STEMS = ("international", "foreign", "abroad", "overseas", "иностран", "международ", "зарубеж")
+_LOCAL_STEMS = ("local", "kazakhstani", "местн", "жергілікт")
+_LOCAL_PHRASES = re.compile(r"citizens? of kazakhstan|граждан\w* (?:рк|республики казахстан|казахстана)|қазақстан азамат")
+_INTERNATIONAL_STEMS = (
+    "international",
+    "foreign",
+    "abroad",
+    "overseas",
+    "иностран",
+    "международ",
+    "зарубеж",
+    "шетел",
+    "халықаралық",
+)
 _APPLICANT_STEMS = _LOCAL_STEMS + _INTERNATIONAL_STEMS
 _STOPWORDS = {"and", "of", "the", "in", "for", "a", "an"}
 _TOKEN = re.compile(r"[a-zа-яёәғқңөұүһі0-9]+")
@@ -58,25 +68,38 @@ def degrees_mentioned(text: str) -> set[str]:
     return {degree for degree, stems in _DEGREE_STEMS.items() if any(token.startswith(stems) for token in tokens)}
 
 
-def resolve_program(question: str, programs: list[Program]) -> Program | None:
+def resolve_programs(question: str, programs: list[Program]) -> list[Program]:
     tokens = _tokens(question)
-    for program in programs:
-        if program.program_id.lower() in tokens:
-            return program
+    by_code = [program for program in programs if program.program_id.lower() in tokens]
+    if by_code:
+        return by_code
 
     stems = {_stem(token) for token in tokens if not token.startswith(_APPLICANT_STEMS)}
     candidates = [program for program in programs if _title_matches(program, question, stems)]
     degrees = degrees_mentioned(question)
-    if degrees and len(candidates) > 1:
+    if degrees:
         candidates = [program for program in candidates if program.degree_level in degrees]
-    return candidates[0] if len(candidates) == 1 else None
+    return candidates
 
 
-def applicant_type_from_question(question: str, program: Program) -> str | None:
-    title_tokens = set(_tokens(program.title))
-    tokens = [token for token in _tokens(question) if token not in title_tokens]
+def _without_title(question: str, title: str) -> str:
+    text = " ".join(_tokens(question))
+    title_tokens = _tokens(title)
+    phrases = [" ".join(title_tokens)] + [" ".join(pair) for pair in zip(title_tokens, title_tokens[1:])]
+    for phrase in phrases:
+        text = text.replace(phrase, " ")
+    return text
+
+
+def applicant_type_mentioned(text: str) -> str | None:
+    tokens = _tokens(text)
     is_local = any(token.startswith(_LOCAL_STEMS) for token in tokens)
+    is_local = is_local or bool(_LOCAL_PHRASES.search(" ".join(tokens)))
     is_international = any(token.startswith(_INTERNATIONAL_STEMS) for token in tokens)
     if is_local == is_international:
         return None
     return "local" if is_local else "international"
+
+
+def applicant_type_from_question(question: str, program: Program) -> str | None:
+    return applicant_type_mentioned(_without_title(question, program.title))

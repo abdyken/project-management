@@ -22,7 +22,7 @@ Open http://localhost:8080. The first start takes a few minutes (it downloads th
 
 ## Develop
 
-Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/) and Node.js 20+.
+Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/) and Node.js 20.19+ or 22.12+.
 
 ```bash
 docker compose up -d db

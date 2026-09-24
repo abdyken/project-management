@@ -79,22 +79,29 @@ class US1QA:
             checked.append(f"q={variant!r} -> {total}")
         return "; ".join(checked)
 
+    @staticmethod
+    def matches(program: dict, field: str, value: str) -> bool:
+        if field == "language":
+            return value.lower() in [language.strip().lower() for language in program["language"].split(",")]
+        return program[field].lower() == value.lower()
+
     def combined_filters(self) -> str:
         sample = self.catalogue[0]
+        language = sample["language"].split(",")[0].strip()
         combinations = [
             {"faculty": sample["faculty"]},
             {"degree_level": sample["degree_level"]},
-            {"language": sample["language"]},
+            {"language": language},
             {"faculty": sample["faculty"], "degree_level": sample["degree_level"]},
-            {"faculty": sample["faculty"], "language": sample["language"]},
-            {"degree_level": sample["degree_level"], "language": sample["language"]},
-            {"faculty": sample["faculty"], "degree_level": sample["degree_level"], "language": sample["language"]},
+            {"faculty": sample["faculty"], "language": language},
+            {"degree_level": sample["degree_level"], "language": language},
+            {"faculty": sample["faculty"], "degree_level": sample["degree_level"], "language": language},
         ]
         checked = []
         for params in combinations:
             expected = [
                 program for program in self.catalogue
-                if all(program[field].lower() == value.lower() for field, value in params.items())
+                if all(self.matches(program, field, value) for field, value in params.items())
             ]
             check(expected, f"{params} should match at least {sample['program_id']}")
             total = self.expect_same(params, expected)

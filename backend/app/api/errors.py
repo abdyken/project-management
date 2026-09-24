@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
+from sqlalchemy.exc import DataError, OperationalError, TimeoutError as PoolTimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,16 @@ async def invalid_request_handler(request: Request, exc: RequestValidationError)
     )
 
 
+async def invalid_data_handler(request: Request, exc: DataError) -> JSONResponse:
+    logger.info("Rejected data on %s %s: %s", request.method, request.url.path, exc.orig)
+    return JSONResponse(
+        status_code=422,
+        content=ErrorResponse(error_code=INVALID_REQUEST, message="The request contains invalid characters.").model_dump(),
+    )
+
+
 def register_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(RequestValidationError, invalid_request_handler)
+    app.add_exception_handler(DataError, invalid_data_handler)
     app.add_exception_handler(OperationalError, database_unavailable_handler)
     app.add_exception_handler(PoolTimeoutError, database_unavailable_handler)

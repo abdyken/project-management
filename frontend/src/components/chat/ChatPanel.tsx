@@ -43,7 +43,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         sourceLink: response.source_link,
       })
     } catch (error) {
-      setDraft(question)
+      if (!useChatStore.getState().draft.trim()) setDraft(question)
       addMessage({ role: "assistant", text: chatErrorMessage(error), isError: true })
     } finally {
       setSending(false)

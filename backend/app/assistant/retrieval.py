@@ -33,13 +33,14 @@ def rebuild_index(session: Session, faq_items: list[FaqItem]) -> None:
     session.commit()
 
 
-def search(session: Session, question: str) -> SearchResult | None:
+def search(session: Session, question: str, limit: int = 5) -> list[SearchResult]:
     query_vector = embeddings.embed([question])[0]
     distance = FaqEmbeddingRecord.embedding.cosine_distance(query_vector)
-    row = session.execute(select(FaqEmbeddingRecord, distance).order_by(distance).limit(1)).first()
-    if row is None:
-        return None
-    record, record_distance = row
+    rows = session.execute(select(FaqEmbeddingRecord, distance).order_by(distance).limit(limit))
+    return [_to_result(record, record_distance) for record, record_distance in rows]
+
+
+def _to_result(record: FaqEmbeddingRecord, record_distance: float) -> SearchResult:
     return SearchResult(
         faq_item=FaqItem(
             faq_id=record.faq_id,
@@ -48,6 +49,8 @@ def search(session: Session, question: str) -> SearchResult | None:
             category=record.category,
             source_link=record.source_link,
             last_update=record.last_update,
+            degrees=record.degrees,
+            applicant_types=record.applicant_types,
         ),
         similarity_score=1.0 - float(record_distance),
     )

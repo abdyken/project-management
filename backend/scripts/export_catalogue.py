@@ -40,7 +40,7 @@ def export_catalogue(session: Session, out: Path) -> int:
     return len(programs)
 
 
-DESCRIPTION = "Export the active catalogue to CSV for comparison with the official list."
+DESCRIPTION = "Export every program (active and inactive) to CSV for comparison with the official list."
 
 
 def main() -> int:

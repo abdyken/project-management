@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import httpx
@@ -10,6 +11,7 @@ TEST_SET_PATH = Path(__file__).resolve().parent.parent / "tests" / "accuracy_tes
 
 
 def main() -> int:
+    sys.stdout.reconfigure(encoding="utf-8")
     base_url = os.environ.get("ASSISTANT_BASE_URL", "http://localhost:8000")
     cases = json.loads(TEST_SET_PATH.read_text(encoding="utf-8"))
 

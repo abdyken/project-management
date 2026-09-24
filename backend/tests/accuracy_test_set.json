@@ -19,10 +19,14 @@
   {"question": "What is the email of the admissions office?", "expected_faq_id": "faq-035"},
   {"question": "Сколько стоит проживание в общежитии?", "expected_faq_id": "faq-022"},
   {"question": "Жатақхана қанша тұрады?", "expected_faq_id": "faq-022"},
+  {"question": "When is the application deadline for local applicants?", "expected_faq_id": "faq-002"},
+  {"question": "Until when can citizens of Kazakhstan apply for a bachelor's program?", "expected_faq_id": "faq-002"},
   {"question": "What is the capital of France?", "expected_faq_id": null},
   {"question": "Who won the football world cup?", "expected_faq_id": null},
   {"question": "Can you write my motivation letter for me?", "expected_faq_id": null},
   {"question": "What is the weather in Almaty today?", "expected_faq_id": null},
   {"question": "Recommend a good laptop for programming", "expected_faq_id": null},
-  {"question": "How do I cook plov?", "expected_faq_id": null}
+  {"question": "How do I cook plov?", "expected_faq_id": null},
+  {"question": "What is the application deadline for the master program?", "expected_faq_id": null},
+  {"question": "Which documents do I need for a master program as an international applicant?", "expected_faq_id": null}
 ]

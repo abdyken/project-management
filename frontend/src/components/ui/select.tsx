@@ -33,7 +33,7 @@ function SelectContent({ className, children, ...props }: ComponentProps<typeof 
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          "relative z-50 max-h-72 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md",
+          "relative z-50 max-h-72 w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-content-available-width)] min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md",
           className,
         )}
         position="popper"

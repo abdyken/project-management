@@ -7,7 +7,7 @@ import { DocumentChecklist } from "@/components/catalog/DocumentChecklist"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
 import { DEGREE_LABELS } from "@/lib/constants"
-import { formatDeadline, formatTuition } from "@/lib/utils"
+import { formatDeadline, formatTuitionInternational, formatTuitionLocal } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
 const APPLICANT_TYPES: { value: ApplicantType; label: string }[] = [
@@ -87,8 +87,12 @@ export function ProgramDetailPage() {
           <dd className="mt-1">{program.language}</dd>
         </div>
         <div>
-          <dt className={labelClass}>Tuition</dt>
-          <dd className="mt-1">{formatTuition(program.tuition_per_ects_kzt, program.tuition_per_ects_usd)}</dd>
+          <dt className={labelClass}>Tuition, program courses</dt>
+          <dd className="mt-1">
+            Local: {formatTuitionLocal(program.tuition_per_ects_kzt)}
+            <br />
+            International: {formatTuitionInternational(program.tuition_per_ects_usd)}
+          </dd>
         </div>
         <div>
           <dt className={labelClass}>Application deadline</dt>
@@ -150,7 +154,7 @@ export function ProgramDetailPage() {
           variant="outline"
           onClick={() => {
             setDraft(
-              `Which documents do I need for ${program.title} as ${applicant === "local" ? "a local" : "an international"} applicant?`,
+              `Which documents do I need for ${program.title} (${program.program_id}) as ${applicant === "local" ? "a local" : "an international"} applicant?`,
             )
             setOpen(true)
           }}

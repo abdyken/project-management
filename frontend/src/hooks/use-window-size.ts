@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 
-function read() {
-  return { width: window.innerWidth, height: window.innerHeight }
+export function viewportSize() {
+  return { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }
 }
 
 export function useWindowSize() {
-  const [size, setSize] = useState(read)
+  const [size, setSize] = useState(viewportSize)
 
   useEffect(() => {
-    const onResize = () => setSize(read())
+    const onResize = () => setSize(viewportSize())
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)
   }, [])

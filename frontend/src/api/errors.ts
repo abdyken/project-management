@@ -18,6 +18,10 @@ export function isNotFound(error: unknown) {
   return isApiError(error) && error.status === 404
 }
 
+export function isInvalidRequest(error: unknown) {
+  return isApiError(error) && error.status === 422
+}
+
 export const ASSISTANT_TIMEOUT_MESSAGE =
   "The assistant is not responding, please try again or contact the admissions office"
 

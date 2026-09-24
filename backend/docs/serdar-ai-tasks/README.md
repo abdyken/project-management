@@ -14,7 +14,7 @@
 | T3.4 | US3 | Below-threshold fallback | 2 | T3.3 | ✅ реализовано | [T3.4-below-threshold-fallback.md](T3.4-below-threshold-fallback.md) |
 | T3.5 | US3 | Chat API contract with the front-end | 1 | T3.3 | ✅ контракт реализован в коде; ⏳ подтверждение Daniyar — вне моего контроля | [T3.5-chat-api-contract.md](T3.5-chat-api-contract.md) |
 | T3.6 | US4 | Document question in the chat | 3 | T3.3, T4.3 | ✅ реализовано, читает каталог и чек-листы из БД | [T3.6-document-question-in-chat.md](T3.6-document-question-in-chat.md) |
-| T3.7 | US3 | Accuracy test set | 3 | T3.4, T0.5 | ✅ локально 24/26 (92%) на реальной FAQ-базе, 1 неверный ответ; US3QATest ждёт дев-окружения (T0.5) | [T3.7-accuracy-test-set.md](T3.7-accuracy-test-set.md) |
+| T3.7 | US3 | Accuracy test set | 3 | T3.4, T0.5 | ✅ локально 28/30 (93%) на реальной FAQ-базе, 1 неверный ответ; US3QATest ждёт дев-окружения (T0.5) | [T3.7-accuracy-test-set.md](T3.7-accuracy-test-set.md) |
 
 **Итого: 21 ч.**
 

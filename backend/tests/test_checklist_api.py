@@ -108,6 +108,17 @@ def test_missing_requirements_returns_warning_not_an_ambiguous_empty_list(client
     assert [(f.kind, f.program_id, f.applicant_type) for f in logged] == [(MISSING_DOCUMENTS, "cs-bsc", "local")]
 
 
+def test_repeated_page_views_are_logged_once(client):
+    session = app.dependency_overrides[get_db_session]()
+    session.query(ProgramDocumentRequirement).delete()
+    session.flush()
+
+    for _ in range(3):
+        client.get("/api/programs/cs-bsc/checklist", params={"applicant_type": "local"})
+
+    assert len(session.scalars(select(AdmissionsFollowup)).all()) == 1
+
+
 def test_invalid_applicant_type_returns_422_error_contract(client):
     response = client.get("/api/programs/cs-bsc/checklist", params={"applicant_type": "alien"})
 

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import type { Program } from "@/api/types"
 import { DEGREE_LABELS } from "@/lib/constants"
-import { formatDeadline, formatTuition } from "@/lib/utils"
+import { formatDeadline, formatTuitionLocal } from "@/lib/utils"
 
 export function ProgramCard({ program }: { program: Program }) {
   return (
@@ -16,7 +16,7 @@ export function ProgramCard({ program }: { program: Program }) {
       <p className="mt-3 text-sm text-muted-foreground">{program.faculty}</p>
       <div className="mt-6 flex flex-wrap items-end justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span>Local deadline: {formatDeadline(program.deadline_local)}</span>
-        <span className="text-right">{formatTuition(program.tuition_per_ects_kzt, program.tuition_per_ects_usd)}</span>
+        <span className="text-right">Local tuition: {formatTuitionLocal(program.tuition_per_ects_kzt)}</span>
       </div>
     </Link>
   )

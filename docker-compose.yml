@@ -19,7 +19,6 @@ services:
     build: ./backend
     environment:
       DATABASE_URL: postgresql+psycopg://admissions:admissions@db:5432/admissions
-      APP_ENV: local
       CORS_ORIGINS: http://localhost:8080
     ports:
       - "8000:8000"
