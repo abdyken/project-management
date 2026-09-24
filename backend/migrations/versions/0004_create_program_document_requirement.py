@@ -1,9 +1,3 @@
-"""create program document requirement table (T4.1, US4)
-
-Revision ID: 0004
-Revises: 0003
-Create Date: 2026-09-18
-"""
 from collections.abc import Sequence
 
 import sqlalchemy as sa

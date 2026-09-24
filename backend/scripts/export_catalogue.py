@@ -1,13 +1,3 @@
-"""Export the program catalogue to CSV for the Product Owner (T1.6).
-
-Reads the database directly (DATABASE_URL), so inactive programs are included
-and can be compared with the official list too. The file is UTF-8 with BOM so
-Excel shows non-Latin characters correctly.
-
-Usage:
-    uv run python scripts/export_catalogue.py
-    DATABASE_URL=<dev database url> uv run python scripts/export_catalogue.py --out catalogue-dev.csv
-"""
 from __future__ import annotations
 
 import argparse
@@ -18,12 +8,12 @@ from pathlib import Path
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BACKEND_ROOT))
 
-from sqlalchemy import select  # noqa: E402
-from sqlalchemy.orm import Session  # noqa: E402
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from app.catalogue.models import Program  # noqa: E402
-from app.config import get_settings  # noqa: E402
-from app.db import get_session  # noqa: E402
+from app.catalogue.models import Program
+from app.config import get_settings
+from app.db import get_session
 
 COLUMNS = [
     "program_id",
@@ -31,8 +21,11 @@ COLUMNS = [
     "faculty",
     "degree_level",
     "language",
-    "tuition_fee",
-    "application_deadline",
+    "tuition_per_ects_kzt",
+    "tuition_per_ects_usd",
+    "deadline_local",
+    "deadline_international",
+    "source_url",
     "is_active",
 ]
 
@@ -47,8 +40,11 @@ def export_catalogue(session: Session, out: Path) -> int:
     return len(programs)
 
 
+DESCRIPTION = "Export every program (active and inactive) to CSV for comparison with the official list."
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument("--out", type=Path, default=Path("catalogue-export.csv"))
     args = parser.parse_args()
 

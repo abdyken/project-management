@@ -1,8 +1,6 @@
-"""T1.3: GET /api/programs - keyword search, combinable filters, total (needs the database)."""
 from __future__ import annotations
 
 from datetime import date
-from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
@@ -15,7 +13,9 @@ def make_programs() -> list[Program]:
     return [
         Program(program_id="cs-bsc-en", title="Computer Science", faculty="Engineering",
                 degree_level="bachelor", language="English",
-                tuition_fee=Decimal("2500000"), application_deadline=date(2026, 8, 1)),
+                tuition_per_ects_kzt=33000, tuition_per_ects_usd=90,
+                deadline_local=date(2026, 8, 25), deadline_international=date(2026, 7, 31),
+                source_url="https://sdu.edu.kz/en/computer-science-3/"),
         Program(program_id="cs-msc-en", title="Computer Science", faculty="Engineering",
                 degree_level="master", language="English"),
         Program(program_id="cs-bsc-kk", title="Computer Science", faculty="Engineering",
@@ -71,8 +71,11 @@ def test_program_fields_in_response(client):
             "faculty": "Engineering",
             "degree_level": "bachelor",
             "language": "English",
-            "tuition_fee": 2500000.0,
-            "application_deadline": "2026-08-01",
+            "tuition_per_ects_kzt": 33000,
+            "tuition_per_ects_usd": 90,
+            "deadline_local": "2026-08-25",
+            "deadline_international": "2026-07-31",
+            "source_url": "https://sdu.edu.kz/en/computer-science-3/",
             "is_active": True,
         }
     ]
@@ -145,8 +148,11 @@ def test_get_program_by_id(client):
         "faculty": "Engineering",
         "degree_level": "bachelor",
         "language": "English",
-        "tuition_fee": 2500000.0,
-        "application_deadline": "2026-08-01",
+        "tuition_per_ects_kzt": 33000,
+        "tuition_per_ects_usd": 90,
+        "deadline_local": "2026-08-25",
+        "deadline_international": "2026-07-31",
+        "source_url": "https://sdu.edu.kz/en/computer-science-3/",
         "is_active": True,
     }
 
@@ -164,3 +170,25 @@ def test_keyword_matches_program_id(client):
 
     assert ids(response) == ["ba-msc-en", "cs-msc-en"]
     assert response.json()["total"] == 2
+
+
+def test_language_filter_matches_one_of_several_languages(catalogue_session):
+    from app.catalogue.service import search_programs
+
+    catalogue_session.add_all(
+        [
+            Program(program_id="ped", title="Pedagogy", faculty="Education", degree_level="bachelor", language="Kazakh, English"),
+            Program(program_id="law", title="Law", faculty="Law", degree_level="bachelor", language="Kazakh, Russian"),
+            Program(program_id="cs", title="Computer Science", faculty="IT", degree_level="bachelor", language="English"),
+        ]
+    )
+    catalogue_session.flush()
+
+    def ids(language: str) -> list[str]:
+        return sorted(program.program_id for program in search_programs(catalogue_session, language=language))
+
+    assert ids("kazakh") == ["law", "ped"]
+    assert ids("English") == ["cs", "ped"]
+    assert ids("Russian") == ["law"]
+    assert ids("Kazakh, English") == []
+    assert ids("eng") == []

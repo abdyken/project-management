@@ -5,16 +5,16 @@
 Returns requirements for one active programme and one applicant type.
 
 ```text
-GET /api/programs/cs-bsc-en/checklist?applicant_type=international
+GET /api/programs/6B06102/checklist?applicant_type=international
 ```
 
-`applicant_type` is required and is either `local` or `international`. Invalid or missing values return FastAPI's standard `422` validation response.
+`applicant_type` is required and is either `local` or `international`. Invalid or missing values return `422` with `{"error_code": "INVALID_REQUEST", "message": "applicant_type: …"}`.
 
 ### Populated checklist — 200
 
 ```json
 {
-  "program_id": "cs-bsc-en",
+  "program_id": "6B06102",
   "applicant_type": "international",
   "items": [
     {
@@ -25,20 +25,22 @@ GET /api/programs/cs-bsc-en/checklist?applicant_type=international
       "deadline": "Application"
     }
   ],
-  "warning": null
+  "warning": null,
+  "contact": null
 }
 ```
 
 ### No stored requirements — 200
 
-This is intentionally not an unexplained empty list. The frontend and assistant must display `warning` and direct the applicant to the Admissions Office.
+This is intentionally not an unexplained empty list. The frontend and assistant show `warning` and `contact`. The case is recorded in the `admissions_followup` table.
 
 ```json
 {
-  "program_id": "cs-bsc-en",
+  "program_id": "6B06102",
   "applicant_type": "local",
   "items": [],
-  "warning": "Document requirements for this programme are not recorded yet. Please contact the Admissions Office."
+  "warning": "The document list for this program is not published yet, please contact the admissions office.",
+  "contact": "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
 }
 ```
 

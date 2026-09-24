@@ -2,12 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.checklist.models import ProgramDocumentRequirement
-from app.catalogue.models import Program
 
-
-def get_active_program(session: Session, program_id: str) -> Program | None:
-    program = session.get(Program, program_id)
-    return program if program is not None and program.is_active else None
+MISSING_REQUIREMENTS_WARNING = (
+    "The document list for this program is not published yet, please contact the admissions office."
+)
 
 
 def get_requirements(

@@ -1,7 +1,3 @@
-"""Every table created by the migrations must be registered in migrations/env.py.
-
-Otherwise `alembic revision --autogenerate` proposes dropping that table.
-"""
 from __future__ import annotations
 
 import json
@@ -15,8 +11,6 @@ BACKEND_ROOT = Path(__file__).resolve().parent.parent
 
 
 def tables_known_to_env_py() -> set[str]:
-    """Tables on Base.metadata after only migrations/env.py's imports - in a fresh
-    interpreter, because the test session has already imported the whole app."""
     env_source = (BACKEND_ROOT / "migrations" / "env.py").read_text()
     imports = [line for line in env_source.splitlines() if line.startswith("from app.")]
     script = "\n".join(

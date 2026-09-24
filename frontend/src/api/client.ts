@@ -1,7 +1,5 @@
 import { ApiError } from "@/api/errors"
-import { mockRequest } from "@/mocks/handlers"
 
-const USE_MOCKS = import.meta.env.VITE_USE_MOCKS !== "false"
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "")
 
 type RequestOptions = RequestInit & {
@@ -40,28 +38,19 @@ async function parseError(res: Response) {
   const body = (await res.json().catch(() => ({}))) as { error_code?: string; message?: string }
   throw new ApiError(
     res.status,
-    body.error_code ?? (res.status === 503 ? "SERVICE_UNAVAILABLE" : "HTTP_ERROR"),
+    body.error_code ?? "HTTP_ERROR",
     body.message ?? res.statusText,
   )
 }
 
+const DEFAULT_TIMEOUT_MS = 10_000
+
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { query, timeoutMs, headers, ...init } = options
+  const { query, timeoutMs = DEFAULT_TIMEOUT_MS, headers, ...init } = options
   const url = withQuery(path, query)
   const { signal, cleanup } = mergeSignals(timeoutMs, init.signal ?? undefined)
 
   try {
-    if (USE_MOCKS) {
-      try {
-        return await mockRequest<T>(url, { ...init, signal })
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          throw new ApiError(0, "TIMEOUT", "Request aborted")
-        }
-        throw error
-      }
-    }
-
     const res = await fetch(`${BASE_URL}${url}`, {
       ...init,
       signal,
@@ -87,5 +76,3 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     cleanup()
   }
 }
-
-export const useMocks = USE_MOCKS

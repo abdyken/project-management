@@ -9,18 +9,17 @@ from sqlalchemy import engine_from_config, pool
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.assistant.models import FaqEmbeddingRecord  # noqa: E402,F401 — registers the table on Base.metadata
-from app.catalogue.models import Program  # noqa: E402,F401
-from app.checklist.models import ProgramDocumentRequirement  # noqa: E402,F401
-from app.config import get_settings  # noqa: E402
-from app.db import Base  # noqa: E402
+from app.assistant.models import FaqEmbeddingRecord
+from app.catalogue.models import Program
+from app.checklist.models import ProgramDocumentRequirement
+from app.config import get_settings
+from app.db import Base
+from app.followups.models import AdmissionsFollowup
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Real DB URL comes from app settings (env vars / .env), not from alembic.ini,
-# so local dev and CI only need to configure DATABASE_URL once.
 config.set_main_option("sqlalchemy.url", get_settings().database_url)
 
 target_metadata = Base.metadata

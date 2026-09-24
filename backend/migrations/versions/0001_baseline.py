@@ -1,11 +1,3 @@
-"""Baseline: empty schema, proves the migration pipeline works (T0.3).
-
-The program table follows in the next migration (T1.1).
-
-Revision ID: 0001
-Revises:
-Create Date: 2026-09-18
-"""
 from collections.abc import Sequence
 
 revision: str = "0001"

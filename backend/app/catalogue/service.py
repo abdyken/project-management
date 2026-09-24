@@ -18,11 +18,6 @@ def search_programs(
     degree_level: str | None = None,
     language: str | None = None,
 ) -> list[Program]:
-    """Active programs matching every given filter (AND), ordered by title.
-
-    keyword: case-insensitive substring of the title, the faculty, or the program id.
-    faculty, language: case-insensitive exact match. degree_level: exact match.
-    """
     query = select(Program).where(Program.is_active.is_(True))
 
     if keyword:
@@ -39,7 +34,8 @@ def search_programs(
     if degree_level:
         query = query.where(Program.degree_level == degree_level)
     if language:
-        query = query.where(func.lower(Program.language) == language.lower())
+        languages = func.concat(",", func.replace(func.lower(Program.language), ", ", ","), ",")
+        query = query.where(languages.like(f"%,{_escape_like(language.lower())},%", escape="\\"))
 
     return list(session.scalars(query.order_by(Program.title, Program.program_id)))
 

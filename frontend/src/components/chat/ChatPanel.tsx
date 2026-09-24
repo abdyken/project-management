@@ -1,13 +1,13 @@
 import { useEffect, useRef, type FormEvent, type KeyboardEvent } from "react"
 import { askAssistant } from "@/api/assistant"
-import { isApiError, toReadableError } from "@/api/errors"
+import { chatErrorMessage } from "@/api/errors"
 import { Button } from "@/components/ui/button"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { TypingIndicator } from "@/components/chat/TypingIndicator"
-import { MESSAGE_MAX_LENGTH, TIMEOUT_MESSAGE } from "@/lib/constants"
+import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { useChatStore } from "@/store/chat"
 
-export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
+export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
   const messages = useChatStore((state) => state.messages)
   const draft = useChatStore((state) => state.draft)
   const sending = useChatStore((state) => state.sending)
@@ -16,11 +16,16 @@ export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
   const setSending = useChatStore((state) => state.setSending)
   const addMessage = useChatStore((state) => state.addMessage)
   const listRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const canSend = draft.trim().length > 0 && draft.trim().length <= MESSAGE_MAX_LENGTH && !sending
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
   }, [messages, sending])
+
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus()
+  }, [autoFocus])
 
   async function submitQuestion() {
     const question = draft.trim()
@@ -38,16 +43,8 @@ export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
         sourceLink: response.source_link,
       })
     } catch (error) {
-      if (isApiError(error) && (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT" || error.status === 504)) {
-        setDraft(question)
-        addMessage({ role: "assistant", text: TIMEOUT_MESSAGE, isError: true })
-      } else {
-        addMessage({
-          role: "assistant",
-          text: toReadableError(error),
-          isError: true,
-        })
-      }
+      if (!useChatStore.getState().draft.trim()) setDraft(question)
+      addMessage({ role: "assistant", text: chatErrorMessage(error), isError: true })
     } finally {
       setSending(false)
     }
@@ -67,25 +64,27 @@ export function ChatPanel({ showTitle = true }: { showTitle?: boolean }) {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {showTitle ? (
-        <div className="border-b border-border px-4 py-3">
-          <p className="text-lg font-semibold tracking-tight">Admissions desk</p>
-          <p className="text-xs text-muted-foreground">Official FAQ only. Session stays while you browse.</p>
-        </div>
-      ) : null}
-      <div ref={listRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div
+        ref={listRef}
+        role="log"
+        aria-live="polite"
+        aria-label="Conversation"
+        className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4"
+      >
         {messages.length === 0 ? (
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Ask about deadlines, UNT, English requirements, or which documents you need for a programme — for
-            example, “Which documents do I need for Computer Science?”
+            Ask about deadlines, UNT, English requirements, or which documents you need for a program — for
+            example, “Which documents do I need for Computer Science as an international applicant?”
           </p>
         ) : (
           messages.map((message) => <ChatMessage key={message.id} message={message} />)
         )}
         {sending ? <TypingIndicator /> : null}
       </div>
-      <form onSubmit={onSubmit} className="border-t border-border p-3">
+      <form onSubmit={onSubmit} className="border-t border-border p-3 transition-colors focus-within:bg-card">
         <textarea
+          ref={inputRef}
+          aria-label="Your question"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={onKeyDown}

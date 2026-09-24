@@ -1,8 +1,9 @@
-import type { FormEvent } from "react"
+import { useState, type FormEvent } from "react"
+import type { FilterOptions } from "@/api/programs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DEGREE_LABELS, FACULTIES, LANGUAGE_LABELS } from "@/lib/constants"
+import { DEGREE_LABELS } from "@/lib/constants"
 
 export type FilterValues = {
   q: string
@@ -13,92 +14,108 @@ export type FilterValues = {
 
 type ProgramFiltersProps = {
   values: FilterValues
+  options: FilterOptions
   onChange: (values: FilterValues) => void
 }
 
-export function ProgramFilters({ values, onChange }: ProgramFiltersProps) {
+const ALL = "all"
+const labelClass = "mb-1.5 block text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
+
+type FilterSelectProps = {
+  id: string
+  label: string
+  allLabel: string
+  value: string
+  options: { value: string; label: string }[]
+  onChange: (value: string) => void
+}
+
+function FilterSelect({ id, label, allLabel, value, options, onChange }: FilterSelectProps) {
+  const items = value && !options.some((option) => option.value === value) ? [...options, { value, label: value }] : options
+
+  return (
+    <div>
+      <label className={labelClass} htmlFor={id}>
+        {label}
+      </label>
+      <Select value={value || ALL} onValueChange={(next) => onChange(next === ALL ? "" : next)}>
+        <SelectTrigger id={id}>
+          <SelectValue placeholder={allLabel} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL}>{allLabel}</SelectItem>
+          {items.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
+export const SEARCH_MAX_LENGTH = 100
+
+export function ProgramFilters({ values, options, onChange }: ProgramFiltersProps) {
+  const [q, setQ] = useState(values.q)
+  const current = { ...values, q: q.trim() }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    onChange({
-      ...values,
-      q: String(form.get("q") ?? ""),
-    })
+    onChange(current)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-3 md:grid-cols-12">
-      <div className="md:col-span-5">
-        <label className="mb-1.5 block text-[11px] tracking-[0.14em] text-muted-foreground uppercase" htmlFor="q">
+    <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-12">
+      <form onSubmit={handleSubmit} role="search" className="md:col-span-3 lg:col-span-5">
+        <label className={labelClass} htmlFor="q">
           Search
         </label>
-        <Input
-          id="q"
-          name="q"
-          defaultValue={values.q}
-          key={values.q}
-          placeholder="Title, school, or code"
+        <div className="flex gap-2">
+          <Input
+            id="q"
+            type="search"
+            value={q}
+            maxLength={SEARCH_MAX_LENGTH}
+            onChange={(event) => setQ(event.target.value)}
+            placeholder="Title, school, or code"
+          />
+          <Button type="submit" variant="outline">
+            Search
+          </Button>
+        </div>
+      </form>
+      <div className="lg:col-span-3">
+        <FilterSelect
+          id="filter-faculty"
+          label="School"
+          allLabel="All schools"
+          value={values.faculty}
+          options={options.faculties.map((faculty) => ({ value: faculty, label: faculty }))}
+          onChange={(faculty) => onChange({ ...current, faculty })}
         />
       </div>
-      <div className="md:col-span-3">
-        <p className="mb-1.5 text-[11px] tracking-[0.14em] text-muted-foreground uppercase">School</p>
-        <Select value={values.faculty || "all"} onValueChange={(faculty) => onChange({ ...values, faculty: faculty === "all" ? "" : faculty })}>
-          <SelectTrigger aria-label="School">
-            <SelectValue placeholder="All schools" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All schools</SelectItem>
-            {FACULTIES.map((faculty) => (
-              <SelectItem key={faculty} value={faculty}>
-                {faculty.replace("School of ", "").replace("SDU ", "")}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="lg:col-span-2">
+        <FilterSelect
+          id="filter-degree"
+          label="Degree"
+          allLabel="All degrees"
+          value={values.degree_level}
+          options={options.degreeLevels.map((level) => ({ value: level, label: DEGREE_LABELS[level] }))}
+          onChange={(degree_level) => onChange({ ...current, degree_level })}
+        />
       </div>
-      <div className="md:col-span-2">
-        <p className="mb-1.5 text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Degree</p>
-        <Select
-          value={values.degree_level || "all"}
-          onValueChange={(degree) => onChange({ ...values, degree_level: degree === "all" ? "" : degree })}
-        >
-          <SelectTrigger aria-label="Degree">
-            <SelectValue placeholder="All" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All degrees</SelectItem>
-            {Object.entries(DEGREE_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="lg:col-span-2">
+        <FilterSelect
+          id="filter-language"
+          label="Language"
+          allLabel="All languages"
+          value={values.language}
+          options={options.languages.map((language) => ({ value: language, label: language }))}
+          onChange={(language) => onChange({ ...current, language })}
+        />
       </div>
-      <div className="md:col-span-2">
-        <p className="mb-1.5 text-[11px] tracking-[0.14em] text-muted-foreground uppercase">Language</p>
-        <Select
-          value={values.language || "all"}
-          onValueChange={(language) => onChange({ ...values, language: language === "all" ? "" : language })}
-        >
-          <SelectTrigger aria-label="Language">
-            <SelectValue placeholder="All" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All languages</SelectItem>
-            {Object.entries(LANGUAGE_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="md:col-span-12">
-        <Button type="submit" variant="outline" size="sm">
-          Apply search
-        </Button>
-      </div>
-    </form>
+    </div>
   )
 }

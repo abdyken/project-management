@@ -1,33 +1,55 @@
 # SDU Admissions Portal
 
-Sprint 1 demo: a programme catalogue, document checklist and FAQ assistant.
+Sprint 1 demo: a program catalogue, document checklist and FAQ assistant for SDU University admissions.
 
-## Local start
+## Start everything
 
-Requirements: Docker Desktop, Python 3.12 with [uv](https://docs.astral.sh/uv/), and Node.js 20+ with npm.
+Requirement: Docker Desktop.
 
 ```bash
+docker compose up --build
+```
+
+Open http://localhost:8080. The first start takes a few minutes (it downloads the embedding model into the API image). On every start the API applies migrations, imports `backend/app/data/catalogue.json` and indexes `backend/app/data/faq.json`.
+
+| Service | URL |
+| --- | --- |
+| Web app | http://localhost:8080 |
+| API | http://localhost:8000 (docs at `/docs`) |
+| Postgres | `localhost:5432`, user/password/db `admissions` |
+
+`docker compose down -v` removes the database volume.
+
+## Develop
+
+Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/) and Node.js 20.19+ or 22.12+.
+
+```bash
+docker compose up -d db
+
 # terminal 1
 cd backend
 cp .env.example .env
-docker compose up --build
+uv sync
+uv run alembic upgrade head
+uv run python scripts/import_catalogue.py
+uv run python scripts/reindex_faq.py
+uv run uvicorn app.main:app --reload
 
 # terminal 2
 cd frontend
-cp .env.example .env
 npm ci
 npm run dev
 ```
 
-The API is available at `http://localhost:8000`; the frontend URL is printed by Vite. For local frontend-to-backend integration set `VITE_USE_MOCKS=false` in `frontend/.env`.
+Vite serves the app at http://localhost:5173 and proxies `/api` to port 8000.
 
 ## Tests
 
 ```bash
-cd backend
 docker compose up -d db
+cd backend
 uv sync --frozen
-uv run python scripts/reindex_faq.py
 uv run pytest
 ```
 

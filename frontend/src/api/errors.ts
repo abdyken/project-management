@@ -14,33 +14,29 @@ export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
 }
 
-const ASSISTANT_TIMEOUT =
+export function isNotFound(error: unknown) {
+  return isApiError(error) && error.status === 404
+}
+
+export function isInvalidRequest(error: unknown) {
+  return isApiError(error) && error.status === 422
+}
+
+export const ASSISTANT_TIMEOUT_MESSAGE =
   "The assistant is not responding, please try again or contact the admissions office"
 
-export function toReadableError(error: unknown): string {
-  if (isApiError(error)) {
-    if (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT" || error.status === 504) {
-      return ASSISTANT_TIMEOUT
-    }
-    if (error.code === "ASSISTANT_UNAVAILABLE") {
-      return "The assistant is temporarily unavailable. Please try again or contact the admissions office."
-    }
-    if (error.code === "EMPTY_QUESTION") {
-      return "Write a question before sending."
-    }
-    if (error.code === "QUESTION_TOO_LONG") {
-      return "That question is too long. Shorten it and try again."
-    }
-    if (error.status === 503 || error.code === "SERVICE_UNAVAILABLE" || error.code === "DATABASE_UNAVAILABLE") {
-      return "The catalogue is temporarily unavailable. Please try again."
-    }
-    if (error.status >= 500) {
-      return "The service is unavailable right now. Please try again or contact the admissions office."
-    }
-    if (error.status >= 400) {
-      return error.message || "The request could not be processed. Please rephrase and try again."
-    }
-    return error.message
+export function chatErrorMessage(error: unknown): string {
+  if (!isApiError(error)) {
+    return "Something went wrong. Please try again or contact the admissions office."
   }
-  return "Something went wrong. Please try again or contact the admissions office."
+  if (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT") {
+    return ASSISTANT_TIMEOUT_MESSAGE
+  }
+  if (error.code === "NETWORK") {
+    return "Could not reach the assistant. Check your connection and try again."
+  }
+  if (error.code === "INVALID_REQUEST") {
+    return "This question can't be sent. Keep it under 500 characters and try again."
+  }
+  return "The assistant is unavailable right now. Please try again or contact the admissions office."
 }

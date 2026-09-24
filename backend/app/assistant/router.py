@@ -1,84 +1,55 @@
-"""T3.3 / T3.5 — POST /api/assistant/ask.
-
-HTTP wrapper around AssistantService, enforcing exactly the contract in
-docs/serdar-ai-tasks/T3.5-chat-api-contract.md:
-  - 400 on invalid input (empty question / missing session_id / too long)
-  - 503 when the LLM/embedding provider is unavailable
-  - 504 when the internal timeout budget is exceeded
-  - 200 otherwise, including the below-threshold fallback (T3.4), which
-    uses the same response shape so the front-end needs no special case.
-"""
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable
+from contextlib import AbstractContextManager
+from typing import Annotated
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from sqlalchemy.orm import Session
 
-from app.assistant.catalog_client import get_catalog_client
-from app.assistant.checklist_client import get_checklist_client
-from app.assistant.index_factory import load_retrieval_index
-from app.assistant.providers import ProviderError, get_embedding_provider
+from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
 from app.assistant.schemas import AskRequest, AskResponse
 from app.assistant.service import AssistantService
 from app.config import Settings, get_settings
+from app.db import get_session_factory
 
-router = APIRouter()
+router = APIRouter(prefix="/assistant", tags=["assistant"])
 
-_service_instance: AssistantService | None = None
+ASSISTANT_TIMEOUT = "ASSISTANT_TIMEOUT"
 
-
-def get_assistant_service(settings: Settings | None = None) -> AssistantService:
-    global _service_instance
-    if _service_instance is None:
-        settings = settings or get_settings()
-        _service_instance = AssistantService(
-            settings=settings,
-            index=load_retrieval_index(settings),
-            embedder=get_embedding_provider(settings),
-            catalog_client=get_catalog_client(settings),
-            checklist_client=get_checklist_client(settings),
-        )
-    return _service_instance
+SessionFactory = Callable[[], AbstractContextManager[Session]]
 
 
-def reset_assistant_service_cache() -> None:
-    """Test helper — clears the singleton so a fresh service (e.g. pointing
-    at a temp FAQ index) is built on next use."""
-    global _service_instance
-    _service_instance = None
+def _answer(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse:
+    with open_session() as session:
+        return AssistantService(session, settings).answer(body.question, body.session_id)
 
 
-@router.post("/api/assistant/ask")
-async def ask(request: Request) -> JSONResponse:
+@router.post(
+    "/ask",
+    response_model=AskResponse,
+    responses={
+        504: {"model": ErrorResponse, "description": "No answer within the time budget."},
+        **INVALID_REQUEST_RESPONSE,
+        **DATABASE_UNAVAILABLE_RESPONSE,
+    },
+    summary="Answer an applicant question from the official FAQ",
+)
+async def ask(
+    body: AskRequest, open_session: Annotated[SessionFactory, Depends(get_session_factory)]
+) -> AskResponse | JSONResponse:
     settings = get_settings()
-
     try:
-        body = await request.json()
-        ask_request = AskRequest(**body)
-    except (ValidationError, ValueError, TypeError) as exc:
-        return JSONResponse(status_code=400, content={"error_code": _validation_error_code(exc)})
-
-    service = get_assistant_service(settings)
-
-    try:
-        response: AskResponse = await asyncio.wait_for(
-            asyncio.to_thread(service.answer, ask_request.question, ask_request.session_id),
+        return await asyncio.wait_for(
+            asyncio.to_thread(_answer, open_session, settings, body),
             timeout=settings.assistant_timeout_seconds,
         )
-    except asyncio.TimeoutError:
-        return JSONResponse(status_code=504, content={"error_code": "ASSISTANT_TIMEOUT"})
-    except ProviderError:
-        return JSONResponse(status_code=503, content={"error_code": "ASSISTANT_UNAVAILABLE"})
-
-    return JSONResponse(status_code=200, content=response.model_dump())
-
-
-def _validation_error_code(exc: Exception) -> str:
-    message = str(exc)
-    if "session_id" in message:
-        return "MISSING_SESSION_ID"
-    if "question" in message and "at most" in message:
-        return "QUESTION_TOO_LONG"
-    return "EMPTY_QUESTION"
+    except TimeoutError:
+        return JSONResponse(
+            status_code=504,
+            content=ErrorResponse(
+                error_code=ASSISTANT_TIMEOUT, message="The assistant did not answer in time. Please try again."
+            ).model_dump(),
+        )

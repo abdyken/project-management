@@ -1,4 +1,3 @@
-"""Public API schemas for US4."""
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
@@ -22,3 +21,4 @@ class ChecklistResponse(BaseModel):
     applicant_type: ApplicantType
     items: list[DocumentRequirementOut]
     warning: str | None = None
+    contact: str | None = None

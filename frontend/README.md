@@ -15,18 +15,18 @@ Web portal for SDU University (Kaskelen) admissions: programme catalogue, docume
 
 ```bash
 cd frontend
-cp .env.example .env
-npm install
+npm ci
 npm run dev
 ```
 
-Open the printed local URL. Start the API on port 8000 first. The dev server proxies `/api` there, and the footer reports whether `/api/health` is ok.
+Start the API on port 8000 first (see the root README). The dev server proxies `/api` there.
+
+`docker compose up --build` in the repository root builds this app into an nginx image (`Dockerfile`, `nginx.conf`) that serves it on http://localhost:8080 and forwards `/api` to the API container.
 
 ## Environment
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `VITE_USE_MOCKS` | `false` | `true` keeps the in-browser mocks |
 | `VITE_API_BASE_URL` | empty | Leave empty locally (Vite proxies `/api`). Set the deployed origin for a production build. |
 
 ## Routes
@@ -36,14 +36,6 @@ Open the printed local URL. Start the API on port 8000 first. The dev server pro
 - `/programs/:id` — programme + document checklist
 
 The chat widget is mounted on every page.
-
-## Mock QA helpers
-
-- Empty catalogue: `/programs?force=empty`
-- Connection error: `/programs?force=503` (filters stay; **Try again** refetches)
-- Chat timeout: send a question containing `timeout`
-- Chat 4xx / 5xx: send `error 400` or `error 500`
-- Missing checklist: open **Management** (master)
 
 ## API
 

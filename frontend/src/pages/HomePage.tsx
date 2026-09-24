@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom"
-import { HeroGlobe } from "@/components/home/HeroGlobe"
+import { CatalogueSnapshot } from "@/components/home/CatalogueSnapshot"
+import { Button } from "@/components/ui/button"
 import { useChatStore } from "@/store/chat"
 
 const steps = [
   {
     n: "01",
-    title: "Find a programme",
+    title: "Find a program",
     text: "Search by title or filter by school, degree and language of instruction.",
   },
   {
@@ -21,10 +22,11 @@ const steps = [
 ]
 
 const questions = [
-  "What is the application deadline for the Fall intake?",
-  "What language are bachelor programs taught in?",
-  "Which documents do I need for Computer Science?",
-  "How can I contact the admissions office?",
+  "When can I apply for a bachelor's program in 2026?",
+  "What English level do I need for bachelor's admission?",
+  "Which documents do I need for Computer Science as an international applicant?",
+  "How much does the dormitory cost?",
+  "How can I contact the SDU Admissions Office?",
 ]
 
 export function HomePage() {
@@ -44,7 +46,7 @@ export function HomePage() {
             SDU University · Kaskelen
           </p>
           <h1 className="mt-4 max-w-xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
-            Look up a programme.
+            Look up a program.
             <br />
             Ask the office.
           </h1>
@@ -52,20 +54,16 @@ export function HomePage() {
             A public catalogue and a session chat for admissions questions that already have an official answer.
             Nothing here invents a rule.
           </p>
-          <div className="mt-10 flex items-center gap-4">
-            <Link
-              to="/programs"
-              className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground"
-              aria-label="Browse programmes"
-            >
-              <span className="text-lg leading-none">→</span>
-            </Link>
-            <button type="button" onClick={() => setOpen(true)} className="text-sm underline-offset-4 hover:underline">
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Button asChild size="lg">
+              <Link to="/programs">Browse programs</Link>
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => setOpen(true)}>
               Ask a question
-            </button>
+            </Button>
           </div>
         </div>
-        <HeroGlobe />
+        <CatalogueSnapshot />
       </section>
 
       <section className="border-y border-border/80">
@@ -91,7 +89,7 @@ export function HomePage() {
                 onClick={() => ask(question)}
                 className="flex w-full items-baseline gap-6 py-5 text-left hover:bg-secondary/40"
               >
-                <span className="w-6 text-sm text-muted-foreground">{index + 1}</span>
+                <span className="w-6 shrink-0 text-sm text-muted-foreground">{index + 1}</span>
                 <span className="text-sm sm:text-base">{question}</span>
               </button>
             </li>

@@ -1,4 +1,3 @@
-"""Database model for US4 document requirements."""
 from __future__ import annotations
 
 from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, String, Text

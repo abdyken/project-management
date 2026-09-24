@@ -1,12 +1,22 @@
-"""Pydantic models mirroring the contract published in
-docs/serdar-ai-tasks/T3.5-chat-api-contract.md (T3.5).
-
-Keep this file and that markdown contract in sync — the markdown is what
-gets signed off with Daniyar, this is its executable form.
-"""
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from typing import Annotated
+
+from pydantic import AfterValidator, BaseModel, StringConstraints
+
+
+def _no_nul(value: str) -> str:
+    if chr(0) in value:
+        raise ValueError("must not contain NUL characters")
+    return value
+
+
+Question = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=1, max_length=500),
+    AfterValidator(_no_nul),
+]
+SessionId = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 
 
 class FaqItem(BaseModel):
@@ -16,19 +26,17 @@ class FaqItem(BaseModel):
     category: str
     source_link: str
     last_update: str
+    degrees: list[str] = []
+    applicant_types: list[str] = []
 
 
 class AskRequest(BaseModel):
-    question: str = Field(min_length=1, max_length=500)
-    session_id: str = Field(min_length=1)
+    question: Question
+    session_id: SessionId
 
 
 class AskResponse(BaseModel):
     answer: str
     source_link: str | None
     faq_id: str | None
-    similarity_score: float
-
-
-class ErrorResponse(BaseModel):
-    error_code: str
+    similarity_score: float | None

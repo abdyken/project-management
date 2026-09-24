@@ -1,27 +1,14 @@
-"""create faq_embeddings table (T3.2, pgvector)
-
-Revision ID: 0002
-Revises: 0001
-Create Date: 2026-09-18
-
-Owned by Serdar (AI/IS developer). Part of the shared Alembic chain:
-0001 (T0.3 baseline) -> 0002 (this).
-"""
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
 from pgvector.sqlalchemy import Vector
 
-# revision identifiers, used by Alembic.
 revision: str = "0002"
 down_revision: Union[str, None] = "0001"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
-# Must match app/assistant/models.py::EMBEDDING_DIMENSIONS (256, the mock
-# provider's size). If the real embedding provider has a different output
-# size, add a follow-up migration to alter the column before switching.
 EMBEDDING_DIMENSIONS = 256
 
 
