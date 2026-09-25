@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { CatalogueSnapshot } from "@/components/home/CatalogueSnapshot"
+import { HeroGlobe } from "@/components/home/HeroGlobe"
 import { Button } from "@/components/ui/button"
 import { useChatStore } from "@/store/chat"
 
@@ -63,7 +64,10 @@ export function HomePage() {
             </Button>
           </div>
         </div>
-        <CatalogueSnapshot />
+        <div className="space-y-8">
+          <HeroGlobe />
+          <CatalogueSnapshot />
+        </div>
       </section>
 
       <section className="border-y border-border/80">
