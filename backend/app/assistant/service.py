@@ -9,6 +9,7 @@ from app.assistant.intents import (
     applicant_type_mentioned,
     degrees_mentioned,
     is_document_question,
+    is_tuition_question,
     resolve_programs,
 )
 from app.assistant.schemas import AskResponse, FaqItem
@@ -17,6 +18,10 @@ from app.catalogue.service import search_programs
 from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_requirements
 from app.config import Settings
 from app.followups.service import log_missing_documents, log_unanswered_question
+
+
+_DOCUMENT_EXAMPLE = "Which documents do I need for {title} ({program_id}) as a local applicant?"
+_TUITION_EXAMPLE = "How much is tuition for {title} ({program_id})?"
 
 
 class AssistantService:
@@ -30,7 +35,13 @@ class AssistantService:
             if len(programs) == 1:
                 return self._answer_document_question(question, session_id, programs[0])
             if len(programs) > 1:
-                return _choose_program(programs)
+                return _choose_program(programs, _DOCUMENT_EXAMPLE)
+        elif is_tuition_question(question):
+            programs = resolve_programs(question, search_programs(self._session))
+            if len(programs) == 1:
+                return self._answer_tuition_question(programs[0])
+            if len(programs) > 1:
+                return _choose_program(programs, _TUITION_EXAMPLE)
 
         results = retrieval.search(self._session, question)
         result = _best_for_audience(question, results)
@@ -71,17 +82,39 @@ class AssistantService:
             f"Required documents for {_label(program)}, {applicant_type} applicant:\n" + "\n".join(lines)
         )
 
+    def _answer_tuition_question(self, program: Program) -> AskResponse:
+        if program.tuition_per_ects_kzt is None and program.tuition_per_ects_usd is None:
+            return _text_answer(
+                f"The catalogue does not publish a tuition fee for {_label(program)}. "
+                f"{self._settings.admissions_office_contact}"
+            )
+
+        return _text_answer(
+            f"{_label(program)} costs {_fees(program)} per ECTS credit. "
+            "The total depends on how many ECTS credits you take per semester, so confirm the final amount with "
+            f"the Admissions Office. {self._settings.admissions_office_contact}",
+            source_link=program.source_url,
+        )
+
+
+def _fees(program: Program) -> str:
+    if program.tuition_per_ects_kzt is None:
+        return f"about USD {program.tuition_per_ects_usd:,}"
+    if program.tuition_per_ects_usd is None:
+        return f"{program.tuition_per_ects_kzt:,} KZT"
+    return f"{program.tuition_per_ects_kzt:,} KZT (about USD {program.tuition_per_ects_usd:,})"
+
 
 def _label(program: Program) -> str:
     return f"{program.title} ({program.degree_level}, {program.program_id})"
 
 
-def _choose_program(programs: list[Program]) -> AskResponse:
+def _choose_program(programs: list[Program], example_question: str) -> AskResponse:
     example = programs[0]
     return _text_answer(
         f"Your question matches several programs: {'; '.join(_label(program) for program in programs)}. "
         f'Ask again with the program code, for example: '
-        f'"Which documents do I need for {example.title} ({example.program_id}) as a local applicant?"'
+        f'"{example_question.format(title=example.title, program_id=example.program_id)}"'
     )
 
 
@@ -103,5 +136,5 @@ def _written_for(question: str, item: FaqItem) -> bool:
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
 
 
-def _text_answer(text: str) -> AskResponse:
-    return AskResponse(answer=text, source_link=None, faq_id=None, similarity_score=None)
+def _text_answer(text: str, source_link: str | None = None) -> AskResponse:
+    return AskResponse(answer=text, source_link=source_link, faq_id=None, similarity_score=None)

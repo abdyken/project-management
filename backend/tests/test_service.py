@@ -160,3 +160,48 @@ def test_program_without_requirements_warns_once_and_is_logged(service, assistan
 def test_document_question_for_unknown_program_falls_back_to_faq_search(service):
     response = service.answer("What documents do I need for Astrophysics?", "s1")
     assert not response.answer.startswith("Required documents")
+
+
+def test_tuition_answer_uses_the_catalogue_figures(service):
+    response = service.answer("How much is tuition for Computer Science?", "s1")
+    assert "33,000 KZT (about USD 90) per ECTS credit" in response.answer
+    assert response.source_link == "https://sdu.edu.kz/en/computer-science-3/"
+    assert response.faq_id is None
+    assert response.similarity_score is None
+
+
+def test_tuition_question_with_a_degree_picks_that_program(service):
+    response = service.answer("How much does a master's in Information Systems cost?", "s1")
+    assert response.answer.startswith("Information Systems (master, 7M06101) costs 27,000 KZT")
+
+
+def test_tuition_question_for_a_shared_title_asks_which_program(service):
+    response = service.answer("What is the price of Information Systems?", "s1")
+    assert "matches several programs" in response.answer
+    assert "How much is tuition for Information Systems (6B06101)?" in response.answer
+
+
+def test_tuition_without_a_published_fee_points_to_the_office(service, assistant_session):
+    from app.catalogue.models import Program
+
+    program = assistant_session.get(Program, "6B06102")
+    program.tuition_per_ects_kzt = None
+    program.tuition_per_ects_usd = None
+    assistant_session.flush()
+
+    response = service.answer("How much is tuition for Computer Science?", "s1")
+    assert response.answer == (
+        "The catalogue does not publish a tuition fee for Computer Science (bachelor, 6B06102). "
+        f"{get_settings().admissions_office_contact}"
+    )
+    assert response.source_link is None
+
+
+def test_tuition_question_without_a_program_still_uses_the_faq(service):
+    response = service.answer("How are tuition fees calculated at SDU?", "s1")
+    assert response.faq_id == "faq-017"
+
+
+def test_dormitory_cost_question_is_not_answered_from_the_catalogue(service):
+    response = service.answer("How much does the dormitory cost?", "s1")
+    assert response.faq_id == "faq-022"

@@ -11,6 +11,20 @@ _DOCUMENT_KEYWORDS = (
     "документ",
     "құжат",
 )
+_TUITION_KEYWORDS = (
+    "tuition",
+    "fee",
+    "cost",
+    "price",
+    "how much",
+    "стоимост",
+    "стоит",
+    "цена",
+    "оплат",
+    "ақы",
+    "құны",
+    "баға",
+)
 _LOCAL_STEMS = ("local", "kazakhstani", "местн", "жергілікт")
 _LOCAL_PHRASES = re.compile(r"citizens? of kazakhstan|граждан\w* (?:рк|республики казахстан|казахстана)|қазақстан азамат")
 _INTERNATIONAL_STEMS = (
@@ -51,6 +65,11 @@ def _stem(word: str) -> str:
 def is_document_question(question: str) -> bool:
     lowered = question.lower()
     return any(keyword in lowered for keyword in _DOCUMENT_KEYWORDS)
+
+
+def is_tuition_question(question: str) -> bool:
+    lowered = question.lower()
+    return any(keyword in lowered for keyword in _TUITION_KEYWORDS)
 
 
 def _title_matches(program: Program, question: str, question_stems: set[str]) -> bool:
