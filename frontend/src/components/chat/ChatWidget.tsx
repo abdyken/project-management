@@ -1,4 +1,4 @@
-import { MessageCircle, Minus, X } from "lucide-react"
+import { MessageCircle, Minus, SquarePen, X } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { ChatPanel } from "@/components/chat/ChatPanel"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
@@ -14,6 +14,15 @@ const TITLE_ID = "chat-title"
 const iconButton = "rounded p-1 text-muted-foreground hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/40"
 const fabClass =
   "fixed z-50 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md outline-none focus-visible:ring-4 focus-visible:ring-ring/30"
+
+function NewConversationButton() {
+  const startNewConversation = useChatStore((state) => state.startNewConversation)
+  return (
+    <button type="button" aria-label="New conversation" className={iconButton} onClick={startNewConversation}>
+      <SquarePen className="size-4" />
+    </button>
+  )
+}
 
 type Viewport = { width: number; height: number }
 
@@ -54,8 +63,13 @@ function MobileChat() {
           }}
         >
           <SheetHeader className="pr-12">
-            <SheetTitle>Admissions desk</SheetTitle>
-            <SheetDescription>Answers come from the official FAQ</SheetDescription>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <SheetTitle>Admissions desk</SheetTitle>
+                <SheetDescription>Answers come from the official FAQ</SheetDescription>
+              </div>
+              <NewConversationButton />
+            </div>
           </SheetHeader>
           <div className="min-h-0 flex-1">
             <ChatPanel />
@@ -172,6 +186,7 @@ function DesktopChat() {
           <p className="text-xs text-muted-foreground">Answers come from the official FAQ</p>
         </div>
         <div className="flex items-center gap-1" onPointerDown={(event) => event.stopPropagation()}>
+          <NewConversationButton />
           <button type="button" aria-label="Minimise chat" className={iconButton} onClick={() => setMinimized(true)}>
             <Minus className="size-4" />
           </button>

@@ -40,3 +40,7 @@ class AskResponse(BaseModel):
     source_link: str | None
     faq_id: str | None
     similarity_score: float | None
+
+
+class SuggestionsResponse(BaseModel):
+    suggestions: list[str]

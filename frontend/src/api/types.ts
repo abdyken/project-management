@@ -50,3 +50,31 @@ export type AssistantResponse = {
   faq_id: string | null
   similarity_score: number | null
 }
+
+export type AnswerSource = {
+  faq_id?: string | null
+  question?: string | null
+  link?: string | null
+}
+
+export type StreamDone = {
+  answer_id: string
+  sources: AnswerSource[]
+  faq_id: string | null
+  source_link: string | null
+  similarity_score: number | null
+}
+
+export type SuggestionsResponse = {
+  suggestions: string[]
+}
+
+export type FeedbackRating = "up" | "down"
+
+export type FeedbackReason = "outdated" | "incorrect" | "incomplete" | "unclear"
+
+export type FeedbackRequest = {
+  answer_id: string
+  rating: FeedbackRating
+  reason?: FeedbackReason
+}

@@ -49,4 +49,35 @@ Same shape as the rest of the API: `{ "error_code": "...", "message": "..." }`.
 | 503    | `DATABASE_UNAVAILABLE` | Database unreachable                          |
 | 504    | `ASSISTANT_TIMEOUT`    | No answer within `ASSISTANT_TIMEOUT_SECONDS` (default 4 s) |
 
-Latency budget: 5 s end to end. The chat widget gives up after 10 s (T2.4).
+Latency budget: 5 s end to end. The chat widget gives up after 10 s (T2.4), counted until the first streamed chunk (`POST /api/assistant/ask/stream`, see [assistant-stream.md](assistant-stream.md)).
+
+## `GET /api/assistant/suggestions`
+
+Suggested questions for the chat widget (US14). Four starters when the session has no turns yet, and up to three follow-ups once it does. Each suggestion is an official FAQ question: sending it to `/ask` or `/ask/stream` returns that item and its source.
+
+```
+GET /api/assistant/suggestions?session_id=3f0c…
+```
+
+| Field | Rules |
+| ----- | ----- |
+| `session_id` | Required, 1–100 characters; the chat's session id |
+
+### 200
+
+```json
+{
+  "suggestions": [
+    "What are the application deadlines for international applicants?",
+    "Is the UNT required for admission to bachelor's programmes?",
+    "What English level do I need for bachelor's admission?",
+    "What documents do I need for tuition-based (paid) bachelor's enrollment?"
+  ]
+}
+```
+
+A session that already has a user turn gets at most three questions, and never one the applicant already asked in that session. A new `session_id` (the widget's *New conversation*) gets the four starters again.
+
+### Errors
+
+Same shape as `/ask`: `422 INVALID_REQUEST` when `session_id` is missing or too long, `503 DATABASE_UNAVAILABLE` when the database is unreachable.

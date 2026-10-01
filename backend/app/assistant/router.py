@@ -6,14 +6,15 @@ from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
-from app.assistant.schemas import AskRequest, AskResponse
+from app.assistant.schemas import AskRequest, AskResponse, SessionId, SuggestionsResponse
 from app.assistant.service import AssistantService
 from app.assistant.streaming import STREAM_HEADERS, answer_events
+from app.assistant.suggestions import suggest
 from app.catalogue.service import search_programs
 from app.conversation.context import standalone_question
 from app.conversation.service import recent_turns, record_answer, record_question
@@ -71,6 +72,21 @@ def _sources(response: AskResponse) -> list[dict[str, str]] | None:
     if response.faq_id is None and response.source_link is None:
         return None
     return [{"faq_id": response.faq_id, "link": response.source_link}]
+
+
+@router.get(
+    "/suggestions",
+    response_model=SuggestionsResponse,
+    responses={**INVALID_REQUEST_RESPONSE, **DATABASE_UNAVAILABLE_RESPONSE},
+    summary="Suggested questions for the chat widget",
+)
+def suggestions(
+    open_session: Annotated[SessionFactory, Depends(get_session_factory)],
+    session_id: Annotated[SessionId, Query(description="The chat session id")],
+) -> SuggestionsResponse:
+    """Four starter questions, or up to three follow-ups once the session has a turn."""
+    with open_session() as session:
+        return SuggestionsResponse(suggestions=suggest(session, session_id))
 
 
 @router.post(
