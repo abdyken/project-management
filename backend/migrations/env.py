@@ -10,6 +10,7 @@ from sqlalchemy import engine_from_config, pool
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.assistant.models import FaqEmbeddingRecord
+from app.assistant.feedback import AnswerFeedback
 from app.catalogue.models import Program
 from app.checklist.models import ProgramDocumentRequirement
 from app.config import get_settings

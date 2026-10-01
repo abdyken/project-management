@@ -78,6 +78,26 @@ GET /api/assistant/suggestions?session_id=3f0c…
 
 A session that already has a user turn gets at most three questions, and never one the applicant already asked in that session. A new `session_id` (the widget's *New conversation*) gets the four starters again.
 
+## `POST /api/assistant/feedback` (US13)
+
+Rate a stored assistant answer once. The `answer_id` comes from the `done` event of `/ask/stream`.
+
+```json
+{ "answer_id": "42", "rating": "down", "reason": "outdated" }
+```
+
+| Field | Rules |
+| ----- | ----- |
+| `answer_id` | Required positive decimal id of a stored assistant turn |
+| `rating` | Required: `up` or `down` |
+| `reason` | Optional for `down`: `outdated`, `incorrect`, `incomplete`, `unclear`, `wrong`, `other`; omit for `up` |
+
+**201:** `{"answer_id":"42","rating":"down","reason":"outdated"}`. The server stores the rating with the anonymous session id, preceding question, answer, and answer sources. A database unique constraint allows only one rating per answer. Feedback is deleted when its chat answer is purged after 30 days.
+
+**Errors:** `404 ANSWER_NOT_FOUND` for an unknown id or a user turn; `409 ALREADY_RATED` for a second rating; `422 INVALID_REQUEST` for invalid fields; `503 DATABASE_UNAVAILABLE` as for the other assistant endpoints.
+
+The Product Owner can export negative ratings with `uv run python scripts/export_negative_feedback.py --days 7 --output feedback.csv` from `backend/`. The CSV contains timestamp, question, answer, sources and reason, but no session id or answer id. Email addresses and phone numbers in free text are redacted. Review the CSV before sharing because free text may contain other personal details.
+
 ### Errors
 
 Same shape as `/ask`: `422 INVALID_REQUEST` when `session_id` is missing or too long, `503 DATABASE_UNAVAILABLE` when the database is unreachable.

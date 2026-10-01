@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, StringConstraints
+from pydantic import AfterValidator, BaseModel, StringConstraints, model_validator
 
 
 def _no_nul(value: str) -> str:
@@ -44,3 +44,21 @@ class AskResponse(BaseModel):
 
 class SuggestionsResponse(BaseModel):
     suggestions: list[str]
+
+
+class FeedbackRequest(BaseModel):
+    answer_id: Annotated[str, StringConstraints(pattern=r"^[1-9][0-9]{0,17}$")]
+    rating: Literal["up", "down"]
+    reason: Literal["outdated", "incorrect", "incomplete", "unclear", "wrong", "other"] | None = None
+
+    @model_validator(mode="after")
+    def reason_requires_thumbs_down(self) -> "FeedbackRequest":
+        if self.rating == "up" and self.reason is not None:
+            raise ValueError("reason is only allowed for thumbs down")
+        return self
+
+
+class FeedbackResponse(BaseModel):
+    answer_id: str
+    rating: Literal["up", "down"]
+    reason: str | None
