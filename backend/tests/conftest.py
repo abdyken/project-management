@@ -68,6 +68,12 @@ def assistant_session(db_session, faq_items):
 
     from app.assistant.retrieval import rebuild_index
 
+    from sqlalchemy import delete
+
+    from app.conversation.models import ChatTurn
+
     import_catalogue(db_session, load_source(DEFAULT_SOURCE))
     rebuild_index(db_session, faq_items)
+    # Chat turns typed into the local dev database must not become context here.
+    db_session.execute(delete(ChatTurn))
     return db_session

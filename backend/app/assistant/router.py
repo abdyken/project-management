@@ -12,6 +12,9 @@ from sqlalchemy.orm import Session
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
 from app.assistant.schemas import AskRequest, AskResponse
 from app.assistant.service import AssistantService
+from app.catalogue.service import search_programs
+from app.conversation.context import standalone_question
+from app.conversation.service import recent_turns, record_answer, record_question
 from app.config import Settings, get_settings
 from app.db import get_session_factory
 
@@ -24,7 +27,20 @@ SessionFactory = Callable[[], AbstractContextManager[Session]]
 
 def _answer(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse:
     with open_session() as session:
-        return AssistantService(session, settings).answer(body.question, body.session_id)
+        # US11: answer follow-ups ("and as an international applicant?") in the
+        # context of the last turns of this session only.
+        history = recent_turns(session, body.session_id)
+        question = standalone_question(body.question, history, search_programs(session)) if history else body.question
+        response = AssistantService(session, settings).answer(question, body.session_id)
+        record_question(session, body.session_id, body.question)
+        record_answer(session, body.session_id, response.answer, _sources(response))
+        return response
+
+
+def _sources(response: AskResponse) -> list[dict[str, str]] | None:
+    if response.faq_id is None and response.source_link is None:
+        return None
+    return [{"faq_id": response.faq_id, "link": response.source_link}]
 
 
 @router.post(
