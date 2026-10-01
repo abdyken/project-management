@@ -376,6 +376,71 @@
           }
         }
       }
+    },
+    "/api/assistant/ask/stream": {
+      "post": {
+        "tags": [
+          "assistant"
+        ],
+        "summary": "Answer an applicant question as a stream of server-sent events",
+        "operationId": "ask_stream_api_assistant_ask_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Server-sent events: `chunk` events with the answer text, then one `done` event with answer_id and sources. See docs/api/assistant-stream.md.",
+            "content": {
+              "text/event-stream": {}
+            }
+          },
+          "504": {
+            "description": "No answer within the time budget.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     faq_data_path: str = "app/data/faq.json"
     similarity_threshold: float = 0.5
     assistant_timeout_seconds: float = 4.0
+    # US14: pause between streamed chunks of a ready answer, so it visibly appears while
+    # "being written". Replaced by the model's own token stream once answers are generated (US10).
+    stream_chunk_delay_seconds: float = 0.02
     admissions_office_contact: str = (
         "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
     )
