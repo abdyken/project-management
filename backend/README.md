@@ -45,6 +45,7 @@ One shared Alembic chain for all modules (`migrations/versions/`):
 | 0007 | T0.6 | Fees per ECTS credit (KZT/USD), local and international deadlines, `source_url` |
 | 0008 | US3 | FAQ audience fields (`degrees`, `applicant_types`) |
 | 0009 | Dinmukhamed (US11) | `chat_turn` table - stored turns of a chat session |
+| 0010 | US3 fix | Drop the approximate HNSW index on `faq_embeddings`: exact search, no missed FAQ items |
 
 ```bash
 uv run alembic revision --autogenerate -m "describe the change"   # after changing models
