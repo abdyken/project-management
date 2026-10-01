@@ -52,19 +52,27 @@ function Sources({ sources }: { sources: ChatSource[] }) {
 function RatingControls({ message }: { message: ChatMessageType }) {
   const rateMessage = useChatStore((state) => state.rateMessage)
   const [picking, setPicking] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState(false)
   if (!message.answerId || message.isError || message.interrupted || message.streaming) return null
 
-  function commit(rating: "up" | "down", reason: FeedbackReason | null) {
-    if (!message.answerId || message.rating) return
-    rateMessage(message.id, { rating, reason })
-    setPicking(false)
-    void sendFeedback({
-      answer_id: message.answerId,
-      rating,
-      ...(reason ? { reason } : {}),
-    }).catch(() => {
-      // The rating stays in the session store even when the feedback endpoint is unavailable.
-    })
+  async function commit(rating: "up" | "down", reason: FeedbackReason | null) {
+    if (!message.answerId || message.rating || sending) return
+    setSending(true)
+    setError(false)
+    try {
+      await sendFeedback({
+        answer_id: message.answerId,
+        rating,
+        ...(reason ? { reason } : {}),
+      })
+      rateMessage(message.id, { rating, reason })
+      setPicking(false)
+    } catch {
+      setError(true)
+    } finally {
+      setSending(false)
+    }
   }
 
   const selected = message.rating
@@ -76,7 +84,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
           type="button"
           aria-label="Helpful"
           aria-pressed={selected?.rating === "up"}
-          disabled={Boolean(selected)}
+          disabled={Boolean(selected) || sending}
           onClick={() => commit("up", null)}
           className={cn(
             "rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
@@ -89,7 +97,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
           type="button"
           aria-label="Not helpful"
           aria-pressed={selected?.rating === "down"}
-          disabled={Boolean(selected)}
+          disabled={Boolean(selected) || sending}
           onClick={() => {
             if (selected) return
             setPicking(true)
@@ -113,6 +121,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
             <button
               key={reason.id}
               type="button"
+              disabled={sending}
               onClick={() => commit("down", reason.id)}
               className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
@@ -121,6 +130,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
           ))}
         </div>
       ) : null}
+      {error ? <p className="text-[11px] text-destructive">Could not save your rating. Please try again.</p> : null}
     </div>
   )
 }
