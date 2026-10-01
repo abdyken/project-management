@@ -13,6 +13,7 @@ from app.assistant.models import FaqEmbeddingRecord
 from app.catalogue.models import Program
 from app.checklist.models import ProgramDocumentRequirement
 from app.config import get_settings
+from app.conversation.models import ChatTurn
 from app.db import Base
 from app.followups.models import AdmissionsFollowup
 
