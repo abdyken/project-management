@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.assistant import retrieval
 from app.assistant.fallback import build_fallback_response
+from app.assistant.generation import generate_grounded_answer
 from app.assistant.intents import (
     applicant_type_from_question,
     applicant_type_mentioned,
@@ -12,6 +13,7 @@ from app.assistant.intents import (
     is_tuition_question,
     resolve_programs,
 )
+from app.assistant.llm import Llm, get_llm
 from app.assistant.schemas import Answer, AnswerSource, FaqItem
 from app.catalogue.models import Program
 from app.catalogue.service import search_programs
@@ -25,9 +27,11 @@ _TUITION_EXAMPLE = "How much is tuition for {title} ({program_id})?"
 
 
 class AssistantService:
-    def __init__(self, session: Session, settings: Settings):
+    def __init__(self, session: Session, settings: Settings, llm: Llm | None = None):
         self._session = session
         self._settings = settings
+        # None without GEMINI_API_KEY: every FAQ answer is then the item's answer, word for word.
+        self._llm = llm if llm is not None else get_llm(settings)
 
     def answer(self, question: str, session_id: str) -> Answer:
         if is_document_question(question):
@@ -43,16 +47,32 @@ class AssistantService:
             if len(programs) > 1:
                 return _choose_program(programs, _TUITION_EXAMPLE)
 
-        results = retrieval.search(self._session, question)
+        results = retrieval.search(self._session, question, limit=self._settings.grounding_top_k)
         result = _best_for_audience(question, results)
+        # The threshold fallback comes before any model call (US10): a question the FAQ
+        # does not cover never reaches the model.
         if result is None or result.similarity_score < self._settings.similarity_threshold:
             score = results[0].similarity_score if results else None
             log_unanswered_question(self._session, question, score, session_id)
             return build_fallback_response(self._settings, score)
 
+        if self._llm is not None:
+            sources = [result.faq_item] + [
+                r.faq_item
+                for r in results
+                if r is not result
+                and r.similarity_score >= self._settings.similarity_threshold
+                and _written_for(question, r.faq_item)
+            ]
+            generated = generate_grounded_answer(self._llm, question, sources, result.similarity_score)
+            if generated is not None:
+                return generated
+
+        # Sprint 1 answer: the best FAQ item word for word. Also used whenever the model
+        # is unavailable or its answer fails the grounding check (US10 / T10.3).
         return Answer(
             answer=result.faq_item.answer,
-            sources=[faq_source(result.faq_item)],
+            sources=[AnswerSource.from_faq(result.faq_item)],
             source_link=result.faq_item.source_link,
             faq_id=result.faq_item.faq_id,
             similarity_score=result.similarity_score,
@@ -135,10 +155,6 @@ def _written_for(question: str, item: FaqItem) -> bool:
         return False
     applicant_type = applicant_type_mentioned(question)
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
-
-
-def faq_source(item: FaqItem) -> AnswerSource:
-    return AnswerSource(faq_id=item.faq_id, question=item.question, link=item.source_link)
 
 
 def _text_answer(text: str, source_link: str | None = None) -> Answer:

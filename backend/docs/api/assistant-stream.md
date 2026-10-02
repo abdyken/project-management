@@ -66,7 +66,7 @@ A stream that ends without `done` was interrupted (network, closed tab): treat i
 ## Timing
 
 - The first `chunk` arrives as soon as the answer is ready (well under the 5 s budget); the widget's 10 s timeout counts to the first chunk.
-- Chunks are paced by `STREAM_CHUNK_DELAY_SECONDS` (default 0.02 s, 0 = no pause) and a long answer always finishes within 2 s. Once answers come from a model (US10), the model's own token stream replaces the pacing.
+- Chunks are paced by `STREAM_CHUNK_DELAY_SECONDS` (default 0.02 s, 0 = no pause) and a long answer always finishes within 2 s. Model answers (US10) are streamed the same way, not token by token: the grounding check needs the whole answer before any of it is shown, so an invented number is never on screen.
 - The response sends `X-Accel-Buffering: no` and `Cache-Control: no-cache`, so nginx (the `web` container) passes chunks through instead of buffering the whole answer.
 
 ## Reading it in the browser

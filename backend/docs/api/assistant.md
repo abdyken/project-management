@@ -37,7 +37,8 @@
 
 | Case | `answer` | `source_link` / `faq_id` | `similarity_score` |
 | ---- | -------- | ------------------------ | ------------------ |
-| FAQ match (score ≥ `SIMILARITY_THRESHOLD`) | The FAQ item's answer, verbatim | set | cosine similarity |
+| FAQ match (score ≥ `SIMILARITY_THRESHOLD`), model answer passes the grounding check (US10) | Gemini's answer in its own words, from the cited FAQ items only; a combined question gets one answer | first cited item; `sources` lists every cited item | best item's cosine similarity |
+| FAQ match, but no model answer: no `GEMINI_API_KEY`, every free model at its limit, API error, model timeout, or the answer fails the grounding check | The best FAQ item's answer, verbatim (Sprint 1) | set | cosine similarity |
 | Tuition question (US12), one program | Fee per ECTS credit from the catalogue | `source_link` is the program page, `faq_id` `null` | `null` |
 | No FAQ match (T3.4) | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `null` | best score, or `null` when the FAQ is empty |
 | Document question (T3.6), one program, applicant type given | `Required documents for <Program> (<degree>, <code>), <local\|international> applicant:` and one line per document | `null` | `null` |
@@ -49,6 +50,8 @@ Unanswered questions and programs without requirements are recorded in the `admi
 
 A document question contains "document", "paperwork", "checklist", "документ" or "құжат" and names a program by its code (`6B06102`), its full title, or at least two thirds of the words of a title with three or more words. A degree word (bachelor, master, PhD, магистр…) narrows the match to that degree. The applicant type is read from "local", "Kazakhstani", "citizen(s) of Kazakhstan", "местный" (local) or "international", "foreign", "abroad", "иностранец", "шетел" (international); words that are part of the program title ("International Relations") do not count.
 
+**Grounded answers (US10).** The model gets the best FAQ item and the other items of the top `GROUNDING_TOP_K` (default 5) that are above the threshold and written for the applicant's audience, and the rule: answer only from these items, cite every `faq_id` used, otherwise answer nothing. Its answer is used only when it cites at least one given item, cites nothing that was not given, and every number in it (dates, fees, scores) is found in the cited items or in the question; anything else gets the verbatim answer. Questions below the threshold, document checklists and catalogue (tuition) answers never reach the model. Free Gemini models are tried in `GEMINI_MODELS` order: a model at its free limit (429) is replaced by the next one; any other error or a timeout (`GEMINI_TIMEOUT_SECONDS`, default 5 s) ends in the verbatim answer. Every call logs model, tokens and latency.
+
 Each FAQ item has an audience (`degrees`, `applicant_types` in `faq.json`; empty means everyone). When the question names a degree or applicant type, the best FAQ match must be written for it. Otherwise the assistant uses the best match from the same category that is, or answers with the fallback. The answer is used only when its cosine similarity is at least `SIMILARITY_THRESHOLD` (default 0.5).
 
 ### Errors
@@ -59,9 +62,9 @@ Same shape as the rest of the API: `{ "error_code": "...", "message": "..." }`.
 | ------ | ---------------------- | --------------------------------------------- |
 | 422    | `INVALID_REQUEST`      | Empty/too long question or missing session id |
 | 503    | `DATABASE_UNAVAILABLE` | Database unreachable                          |
-| 504    | `ASSISTANT_TIMEOUT`    | No answer within `ASSISTANT_TIMEOUT_SECONDS` (default 4 s) |
+| 504    | `ASSISTANT_TIMEOUT`    | No answer within `ASSISTANT_TIMEOUT_SECONDS` (default 8 s, above the 5 s model timeout so a slow model ends in the verbatim answer, not in 504) |
 
-Latency budget: 5 s end to end. The chat widget gives up after 10 s (T2.4), counted until the first streamed chunk (`POST /api/assistant/ask/stream`, see [assistant-stream.md](assistant-stream.md)).
+Latency budget: 5 s end to end for a model answer in normal operation, 8 s at most. The chat widget gives up after 10 s (T2.4), counted until the first streamed chunk (`POST /api/assistant/ask/stream`, see [assistant-stream.md](assistant-stream.md)).
 
 ## `GET /api/assistant/suggestions`
 

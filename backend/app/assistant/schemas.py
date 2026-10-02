@@ -46,6 +46,10 @@ class AnswerSource(BaseModel):
     question: str | None
     link: str
 
+    @classmethod
+    def from_faq(cls, item: FaqItem) -> "AnswerSource":
+        return cls(faq_id=item.faq_id, question=item.question, link=item.source_link)
+
 
 class Answer(BaseModel):
     """What the answer service returns, before the answer is stored."""

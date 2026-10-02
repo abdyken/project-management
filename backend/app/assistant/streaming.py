@@ -14,8 +14,8 @@ Event stream contract (docs/api/assistant-stream.md):
     data: {"error_code": "...", "message": "..."}
 
 The answer is produced first (same service, fallbacks and time budget as
-/ask) and then sent in chunks. When answers come from a model (US10), the
-model's own token stream replaces `chunk_text` as the source of chunks.
+/ask) and then sent in chunks. Model answers (US10) too: the grounding check
+needs the whole answer before any of it may be shown.
 """
 from __future__ import annotations
 
