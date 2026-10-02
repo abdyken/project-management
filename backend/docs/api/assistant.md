@@ -1,4 +1,4 @@
-# FAQ assistant API (US3 / T3.5)
+# FAQ assistant API (US3 / T3.5, contract v2: US10 / T10.4)
 
 ## `POST /api/assistant/ask`
 
@@ -16,17 +16,29 @@
 ```json
 {
   "answer": "Text of the matching official FAQ item",
+  "sources": [
+    { "faq_id": "faq-004", "question": "What are the steps of the admission process for international applicants?", "link": "https://sdu.edu.kz/en/…" }
+  ],
+  "answer_id": "42",
   "source_link": "https://sdu.edu.kz/en/…",
   "faq_id": "faq-004",
   "similarity_score": 0.83
 }
 ```
 
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `answer` | string | The answer text. Document lists are one line per document, separated by `\n`. |
+| `sources` | `[{faq_id, question, link}]` | Official sources of the answer, in the order they are used; `[]` when there is none (fallback, document checklist, "which program?" questions). A FAQ source has all three fields. A catalogue answer (tuition) cites the program page: `faq_id` and `question` are `null`, `link` is the page. Once answers are generated (US10), one answer can cite several FAQ items. |
+| `answer_id` | string | Id of the stored answer, the same as in the stream's `done` event. Use it to rate the answer (`POST /api/assistant/feedback`). |
+| `source_link`, `faq_id`, `similarity_score` | as in contract v1 | **Deprecated, kept for Sprint 2 only.** `source_link` and `faq_id` are the first source. Read `sources` instead; they are removed in Sprint 3. |
+
 `answer` is always one of:
 
 | Case | `answer` | `source_link` / `faq_id` | `similarity_score` |
 | ---- | -------- | ------------------------ | ------------------ |
 | FAQ match (score ≥ `SIMILARITY_THRESHOLD`) | The FAQ item's answer, verbatim | set | cosine similarity |
+| Tuition question (US12), one program | Fee per ECTS credit from the catalogue | `source_link` is the program page, `faq_id` `null` | `null` |
 | No FAQ match (T3.4) | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `null` | best score, or `null` when the FAQ is empty |
 | Document question (T3.6), one program, applicant type given | `Required documents for <Program> (<degree>, <code>), <local\|international> applicant:` and one line per document | `null` | `null` |
 | Document question, applicant type not given | Asks the applicant to say "local" or "international" | `null` | `null` |
@@ -80,7 +92,7 @@ A session that already has a user turn gets at most three questions, and never o
 
 ## `POST /api/assistant/feedback` (US13)
 
-Rate a stored assistant answer once. The `answer_id` comes from the `done` event of `/ask/stream`.
+Rate a stored assistant answer once. The `answer_id` comes from the `/ask` response or the `done` event of `/ask/stream`.
 
 ```json
 { "answer_id": "42", "rating": "down", "reason": "outdated" }

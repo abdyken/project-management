@@ -589,6 +589,44 @@
   },
   "components": {
     "schemas": {
+      "AnswerSource": {
+        "properties": {
+          "faq_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Faq Id"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "link": {
+            "type": "string",
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "required": [
+          "faq_id",
+          "question",
+          "link"
+        ],
+        "title": "AnswerSource",
+        "description": "One official source of an answer (contract v2, US10).\n\nFAQ answers cite FAQ items; catalogue answers cite the program page, with\n`faq_id` and `question` null."
+      },
       "AskRequest": {
         "properties": {
           "question": {
@@ -616,6 +654,14 @@
           "answer": {
             "type": "string",
             "title": "Answer"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerSource"
+            },
+            "type": "array",
+            "title": "Sources",
+            "default": []
           },
           "source_link": {
             "anyOf": [
@@ -649,6 +695,10 @@
               }
             ],
             "title": "Similarity Score"
+          },
+          "answer_id": {
+            "type": "string",
+            "title": "Answer Id"
           }
         },
         "type": "object",
@@ -656,7 +706,8 @@
           "answer",
           "source_link",
           "faq_id",
-          "similarity_score"
+          "similarity_score",
+          "answer_id"
         ],
         "title": "AskResponse"
       },

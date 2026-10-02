@@ -12,7 +12,7 @@ from app.assistant.intents import (
     is_tuition_question,
     resolve_programs,
 )
-from app.assistant.schemas import AskResponse, FaqItem
+from app.assistant.schemas import Answer, AnswerSource, FaqItem
 from app.catalogue.models import Program
 from app.catalogue.service import search_programs
 from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_requirements
@@ -29,7 +29,7 @@ class AssistantService:
         self._session = session
         self._settings = settings
 
-    def answer(self, question: str, session_id: str) -> AskResponse:
+    def answer(self, question: str, session_id: str) -> Answer:
         if is_document_question(question):
             programs = resolve_programs(question, search_programs(self._session))
             if len(programs) == 1:
@@ -50,14 +50,15 @@ class AssistantService:
             log_unanswered_question(self._session, question, score, session_id)
             return build_fallback_response(self._settings, score)
 
-        return AskResponse(
+        return Answer(
             answer=result.faq_item.answer,
+            sources=[faq_source(result.faq_item)],
             source_link=result.faq_item.source_link,
             faq_id=result.faq_item.faq_id,
             similarity_score=result.similarity_score,
         )
 
-    def _answer_document_question(self, question: str, session_id: str, program: Program) -> AskResponse:
+    def _answer_document_question(self, question: str, session_id: str, program: Program) -> Answer:
         applicant_type = applicant_type_from_question(question, program)
         if applicant_type is None:
             return _text_answer(
@@ -82,7 +83,7 @@ class AssistantService:
             f"Required documents for {_label(program)}, {applicant_type} applicant:\n" + "\n".join(lines)
         )
 
-    def _answer_tuition_question(self, program: Program) -> AskResponse:
+    def _answer_tuition_question(self, program: Program) -> Answer:
         if program.tuition_per_ects_kzt is None and program.tuition_per_ects_usd is None:
             return _text_answer(
                 f"The catalogue does not publish a tuition fee for {_label(program)}. "
@@ -109,7 +110,7 @@ def _label(program: Program) -> str:
     return f"{program.title} ({program.degree_level}, {program.program_id})"
 
 
-def _choose_program(programs: list[Program], example_question: str) -> AskResponse:
+def _choose_program(programs: list[Program], example_question: str) -> Answer:
     example = programs[0]
     return _text_answer(
         f"Your question matches several programs: {'; '.join(_label(program) for program in programs)}. "
@@ -136,5 +137,10 @@ def _written_for(question: str, item: FaqItem) -> bool:
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
 
 
-def _text_answer(text: str, source_link: str | None = None) -> AskResponse:
-    return AskResponse(answer=text, source_link=source_link, faq_id=None, similarity_score=None)
+def faq_source(item: FaqItem) -> AnswerSource:
+    return AnswerSource(faq_id=item.faq_id, question=item.question, link=item.source_link)
+
+
+def _text_answer(text: str, source_link: str | None = None) -> Answer:
+    sources = [AnswerSource(faq_id=None, question=None, link=source_link)] if source_link else []
+    return Answer(answer=text, sources=sources, source_link=source_link, faq_id=None, similarity_score=None)

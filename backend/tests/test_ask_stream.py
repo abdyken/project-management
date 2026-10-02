@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
-from app.assistant.schemas import AskResponse
+from app.assistant.schemas import Answer
 from app.assistant.service import AssistantService
 from app.assistant.streaming import MAX_STREAM_SECONDS, chunk_text, pacing, sse_event
 from app.conversation.models import ASSISTANT, ChatTurn
@@ -121,7 +121,7 @@ def test_done_event_carries_the_stored_answer_id_and_sources(client, assistant_s
     ).one()
     assert done["answer_id"] == str(answer_turn.id)
     assert done["faq_id"] == item.faq_id
-    assert done["sources"] == [{"faq_id": item.faq_id, "link": done["source_link"]}]
+    assert done["sources"] == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link}]
     assert set(done) == {"answer_id", "sources", "faq_id", "source_link", "similarity_score"}
 
 
@@ -161,8 +161,8 @@ def test_invalid_request_returns_the_same_error_as_ask(client):
 
 
 def test_fallback_answers_stream_like_any_other(client, monkeypatch):
-    fallback = AskResponse(answer="I could not find this. Contact the office.", source_link=None, faq_id=None,
-                           similarity_score=0.1)
+    fallback = Answer(answer="I could not find this. Contact the office.", source_link=None, faq_id=None,
+                      similarity_score=0.1)
     monkeypatch.setattr(AssistantService, "answer", lambda self, question, session_id: fallback)
 
     events = read_events(stream(client, "something unrelated", "s1"))

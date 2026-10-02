@@ -3,8 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable
 from contextlib import AbstractContextManager
-from dataclasses import dataclass
-from typing import Annotated, Any
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -34,28 +33,21 @@ ALREADY_RATED = "ALREADY_RATED"
 SessionFactory = Callable[[], AbstractContextManager[Session]]
 
 
-@dataclass(frozen=True)
-class _Answered:
-    response: AskResponse
-    answer_id: str
-    sources: list[dict[str, Any]] | None
-
-
-def _answer(open_session: SessionFactory, settings: Settings, body: AskRequest) -> _Answered:
+def _answer(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse:
     """The one answer path behind /ask and /ask/stream: same context, fallbacks and storage."""
     with open_session() as session:
         # US11: answer follow-ups ("and as an international applicant?") in the
         # context of the last turns of this session only.
         history = recent_turns(session, body.session_id)
         question = standalone_question(body.question, history, search_programs(session)) if history else body.question
-        response = AssistantService(session, settings).answer(question, body.session_id)
-        sources = _sources(response)
+        answer = AssistantService(session, settings).answer(question, body.session_id)
+        sources = [source.model_dump() for source in answer.sources] or None
         record_question(session, body.session_id, body.question)
-        answer_turn = record_answer(session, body.session_id, response.answer, sources)
-        return _Answered(response, str(answer_turn.id), sources)
+        answer_turn = record_answer(session, body.session_id, answer.answer, sources)
+        return AskResponse(**answer.model_dump(), answer_id=str(answer_turn.id))
 
 
-async def _answer_in_time(open_session: SessionFactory, settings: Settings, body: AskRequest) -> _Answered | None:
+async def _answer_in_time(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse | None:
     try:
         return await asyncio.wait_for(
             asyncio.to_thread(_answer, open_session, settings, body),
@@ -72,12 +64,6 @@ def _timeout_response() -> JSONResponse:
             error_code=ASSISTANT_TIMEOUT, message="The assistant did not answer in time. Please try again."
         ).model_dump(),
     )
-
-
-def _sources(response: AskResponse) -> list[dict[str, str]] | None:
-    if response.faq_id is None and response.source_link is None:
-        return None
-    return [{"faq_id": response.faq_id, "link": response.source_link}]
 
 
 @router.post(
@@ -164,7 +150,7 @@ async def ask(
     body: AskRequest, open_session: Annotated[SessionFactory, Depends(get_session_factory)]
 ) -> AskResponse | JSONResponse:
     answered = await _answer_in_time(open_session, get_settings(), body)
-    return _timeout_response() if answered is None else answered.response
+    return _timeout_response() if answered is None else answered
 
 
 @router.post(
@@ -191,7 +177,7 @@ async def ask_stream(
     if answered is None:
         return _timeout_response()
     return StreamingResponse(
-        answer_events(answered.response, answered.answer_id, answered.sources, settings.stream_chunk_delay_seconds),
+        answer_events(answered, settings.stream_chunk_delay_seconds),
         media_type="text/event-stream",
         headers=STREAM_HEADERS,
     )

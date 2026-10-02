@@ -8,7 +8,7 @@ Event stream contract (docs/api/assistant-stream.md):
     ... more chunks, in order; concatenated they are the full answer ...
 
     event: done
-    data: {"answer_id": "42", "sources": [...], "faq_id": ..., "source_link": ..., "similarity_score": ...}
+    data: {"answer_id": "42", "sources": [{"faq_id", "question", "link"}], "faq_id": ..., "source_link": ..., "similarity_score": ...}
 
     event: error            (only if the answer breaks off after streaming started)
     data: {"error_code": "...", "message": "..."}
@@ -55,14 +55,9 @@ def sse_event(event: str, data: dict[str, Any]) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
-def done_payload(response: AskResponse, answer_id: str, sources: list[dict[str, Any]] | None) -> dict[str, Any]:
-    return {
-        "answer_id": answer_id,
-        "sources": sources or [],
-        "faq_id": response.faq_id,
-        "source_link": response.source_link,
-        "similarity_score": response.similarity_score,
-    }
+def done_payload(response: AskResponse) -> dict[str, Any]:
+    """Everything of the /ask response except the answer text, which went out as chunks."""
+    return response.model_dump(exclude={"answer"})
 
 
 def pacing(chunk_count: int, chunk_delay_seconds: float, max_seconds: float = MAX_STREAM_SECONDS) -> float:
@@ -75,8 +70,6 @@ def pacing(chunk_count: int, chunk_delay_seconds: float, max_seconds: float = MA
 
 async def answer_events(
     response: AskResponse,
-    answer_id: str,
-    sources: list[dict[str, Any]] | None,
     chunk_delay_seconds: float,
 ) -> AsyncIterator[str]:
     pieces = list(chunk_text(response.answer))
@@ -85,4 +78,4 @@ async def answer_events(
         yield sse_event("chunk", {"text": piece})
         if delay > 0:
             await asyncio.sleep(delay)
-    yield sse_event("done", done_payload(response, answer_id, sources))
+    yield sse_event("done", done_payload(response))
