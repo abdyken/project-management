@@ -95,7 +95,7 @@ curl -X POST http://127.0.0.1:8000/api/assistant/ask \
   -d '{"question": "When is the application deadline?", "session_id": "demo"}'
 ```
 
-- Accuracy report against a running API: `uv run python scripts/run_accuracy_test.py` (see the T3.7 doc).
+- Evaluation set v2 (40 questions) against a running API: `ASSISTANT_BASE_URL=<url> uv run python scripts/run_accuracy_test.py` (see the T10.5 doc).
 - After editing the FAQ file, run `uv run python scripts/reindex_faq.py` (or restart the container).
 
 ## Environment variables
