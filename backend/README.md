@@ -22,6 +22,8 @@ uv run python scripts/reindex_faq.py
 uv run uvicorn app.main:app --reload
 ```
 
+Grounded answers (US10) need `GEMINI_API_KEY` in `.env` (a free Google AI Studio key); `uv run python scripts/gemini_smoke.py` makes one test call. Without it the assistant answers word for word from the FAQ. Tests never call Gemini.
+
 ## Tests
 
 ```bash

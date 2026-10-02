@@ -12,6 +12,13 @@ from app.config import get_settings
 
 
 @pytest.fixture(autouse=True)
+def _no_gemini_key(monkeypatch):
+    # Tests never call Gemini, even with a key in a developer's .env: the env var wins.
+    # Tests of model answers pass a fake Llm to AssistantService instead.
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+
+
+@pytest.fixture(autouse=True)
 def _clear_settings_cache():
     get_settings.cache_clear()
     yield
