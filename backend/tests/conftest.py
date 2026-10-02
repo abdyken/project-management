@@ -12,6 +12,13 @@ from app.config import get_settings
 
 
 @pytest.fixture(autouse=True)
+def _no_gemini_key(monkeypatch):
+    # Tests never call Gemini, even with a key in a developer's .env: the env var wins.
+    # Tests of model answers pass a fake Llm to AssistantService instead.
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+
+
+@pytest.fixture(autouse=True)
 def _clear_settings_cache():
     get_settings.cache_clear()
     yield
@@ -68,6 +75,12 @@ def assistant_session(db_session, faq_items):
 
     from app.assistant.retrieval import rebuild_index
 
+    from sqlalchemy import delete
+
+    from app.conversation.models import ChatTurn
+
     import_catalogue(db_session, load_source(DEFAULT_SOURCE))
     rebuild_index(db_session, faq_items)
+    # Chat turns typed into the local dev database must not become context here.
+    db_session.execute(delete(ChatTurn))
     return db_session

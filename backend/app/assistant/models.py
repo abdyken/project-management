@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import ARRAY, Index, String, Text, text
+from sqlalchemy import ARRAY, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.assistant.embeddings import DIMENSIONS
@@ -9,15 +9,9 @@ from app.db import Base
 
 
 class FaqEmbeddingRecord(Base):
+    # No approximate (HNSW) index: exact search is always correct and instant for
+    # a FAQ base of this size - see migration 0010.
     __tablename__ = "faq_embeddings"
-    __table_args__ = (
-        Index(
-            "faq_embeddings_embedding_idx",
-            "embedding",
-            postgresql_using="hnsw",
-            postgresql_ops={"embedding": "vector_cosine_ops"},
-        ),
-    )
 
     faq_id: Mapped[str] = mapped_column(String, primary_key=True)
     question: Mapped[str] = mapped_column(Text, nullable=False)

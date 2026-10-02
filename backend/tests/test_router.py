@@ -25,8 +25,17 @@ def test_valid_question_returns_200_with_contract_shape(client: TestClient, faq_
     response = client.post("/api/assistant/ask", json={"question": item.question, "session_id": "s1"})
     assert response.status_code == 200
     body = response.json()
-    assert set(body) == {"answer", "source_link", "faq_id", "similarity_score"}
+    assert set(body) == {"answer", "sources", "answer_id", "source_link", "faq_id", "similarity_score"}
     assert body["faq_id"] == item.faq_id
+
+
+def test_fallback_answer_has_no_sources(client: TestClient):
+    body = client.post(
+        "/api/assistant/ask", json={"question": "What is the capital of France?", "session_id": "s1"}
+    ).json()
+
+    assert body["sources"] == []
+    assert body["answer_id"]
 
 
 @pytest.mark.parametrize(

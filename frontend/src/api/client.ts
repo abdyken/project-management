@@ -34,13 +34,17 @@ function mergeSignals(timeoutMs?: number, external?: AbortSignal) {
   }
 }
 
-async function parseError(res: Response) {
+export function apiUrl(path: string) {
+  return `${BASE_URL}${path}`
+}
+
+export async function errorFromResponse(res: Response) {
   const body = (await res.json().catch(() => ({}))) as { error_code?: string; message?: string }
-  throw new ApiError(
-    res.status,
-    body.error_code ?? "HTTP_ERROR",
-    body.message ?? res.statusText,
-  )
+  return new ApiError(res.status, body.error_code ?? "HTTP_ERROR", body.message ?? res.statusText)
+}
+
+async function parseError(res: Response) {
+  throw await errorFromResponse(res)
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000

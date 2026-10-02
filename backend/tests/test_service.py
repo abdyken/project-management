@@ -166,6 +166,9 @@ def test_tuition_answer_uses_the_catalogue_figures(service):
     response = service.answer("How much is tuition for Computer Science?", "s1")
     assert "33,000 KZT (about USD 90) per ECTS credit" in response.answer
     assert response.source_link == "https://sdu.edu.kz/en/computer-science-3/"
+    assert [source.model_dump() for source in response.sources] == [
+        {"faq_id": None, "question": None, "link": "https://sdu.edu.kz/en/computer-science-3/"}
+    ]
     assert response.faq_id is None
     assert response.similarity_score is None
 

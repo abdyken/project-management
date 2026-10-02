@@ -10,15 +10,18 @@ from sqlalchemy import engine_from_config, pool
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.assistant.models import FaqEmbeddingRecord
+from app.assistant.feedback import AnswerFeedback
 from app.catalogue.models import Program
 from app.checklist.models import ProgramDocumentRequirement
 from app.config import get_settings
+from app.conversation.models import ChatTurn
 from app.db import Base
 from app.followups.models import AdmissionsFollowup
 
 config = context.config
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # Keep loggers created before migrations run in-process (tests), e.g. app.assistant.llm.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 config.set_main_option("sqlalchemy.url", get_settings().database_url)
 

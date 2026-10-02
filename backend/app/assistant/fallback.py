@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from app.assistant.schemas import AskResponse
+from app.assistant.schemas import Answer
 from app.config import Settings
 
 FALLBACK_TEMPLATE = (
@@ -9,8 +9,8 @@ FALLBACK_TEMPLATE = (
 )
 
 
-def build_fallback_response(settings: Settings, similarity_score: float | None) -> AskResponse:
-    return AskResponse(
+def build_fallback_response(settings: Settings, similarity_score: float | None) -> Answer:
+    return Answer(
         answer=FALLBACK_TEMPLATE.format(contact=settings.admissions_office_contact),
         source_link=None,
         faq_id=None,

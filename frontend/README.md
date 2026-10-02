@@ -39,4 +39,4 @@ The chat widget is mounted on every page.
 
 ## API
 
-`GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist?applicant_type=local|international`, `POST /api/assistant/ask`.
+`GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist?applicant_type=local|international`, `POST /api/assistant/ask/stream`, `GET /api/assistant/suggestions`. Ratings are kept in the session store and sent to `POST /api/assistant/feedback`.
