@@ -1,9 +1,10 @@
 """Gemini calls for grounded answers (US10), free tier only.
 
 Free limits are per model, so the configured models are tried in order and the
-next one is asked when a model answers 429 (limit reached). Any other failure -
-no key, API error, timeout, every limit reached - raises LlmUnavailable, and the
-caller answers with the word-for-word FAQ answer of Sprint 1.
+next one is asked when a model answers 429 (limit reached) or 503 (free models
+are often overloaded). Any other failure - no key, API error, timeout, every
+model busy - raises LlmUnavailable, and the caller answers with the
+word-for-word FAQ answer of Sprint 1.
 """
 from __future__ import annotations
 
@@ -20,7 +21,9 @@ from app.config import Settings
 
 logger = logging.getLogger(__name__)
 
-RATE_LIMITED = 429
+# 429: the model's free limit is reached; 503: the model is overloaded ("high demand").
+# Both come back fast, and another model can still answer in time.
+TRY_NEXT_MODEL = {429: "rate_limited", 503: "overloaded"}
 
 
 class LlmUnavailable(Exception):
@@ -70,10 +73,16 @@ class GeminiLlm:
                 response = self._client.models.generate_content(model=model, contents=prompt, config=config)
             except errors.APIError as error:
                 latency_ms = _elapsed_ms(started)
-                if error.code == RATE_LIMITED:
-                    logger.warning("gemini model=%s outcome=rate_limited latency_ms=%d", model, latency_ms)
+                if error.code in TRY_NEXT_MODEL:
+                    logger.warning("gemini model=%s outcome=%s latency_ms=%d", model, TRY_NEXT_MODEL[error.code], latency_ms)
                     continue
-                logger.warning("gemini model=%s outcome=api_error code=%s latency_ms=%d", model, error.code, latency_ms)
+                logger.warning(
+                    "gemini model=%s outcome=api_error code=%s latency_ms=%d message=%s",
+                    model,
+                    error.code,
+                    latency_ms,
+                    error.message,
+                )
                 raise LlmUnavailable(f"{model}: API error {error.code}") from error
             except Exception as error:  # timeouts and network errors from the HTTP client
                 logger.warning(
@@ -97,7 +106,7 @@ class GeminiLlm:
                 generation.latency_ms,
             )
             return generation
-        raise LlmUnavailable("every model reached its free limit")
+        raise LlmUnavailable("every model is at its free limit or overloaded")
 
 
 def get_llm(settings: Settings) -> Llm | None:

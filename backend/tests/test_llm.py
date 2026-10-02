@@ -54,6 +54,10 @@ def test_first_model_answers_and_its_model_tokens_and_latency_are_logged(caplog)
     assert "model=model-a outcome=ok prompt_tokens=120 output_tokens=15 latency_ms=" in caplog.text
 
 
+def overloaded() -> errors.ServerError:
+    return errors.ServerError(503, {"error": {"code": 503, "message": "high demand", "status": "UNAVAILABLE"}})
+
+
 def test_model_at_its_free_limit_is_replaced_by_the_next_one():
     client = FakeClient(rate_limited(), ok())
 
@@ -63,10 +67,19 @@ def test_model_at_its_free_limit_is_replaced_by_the_next_one():
     assert generation.model == "model-b"
 
 
+def test_overloaded_model_is_replaced_by_the_next_one():
+    client = FakeClient(overloaded(), rate_limited(), ok())
+
+    generation = llm(client).generate("system", "prompt", SCHEMA)
+
+    assert client.models_called == MODELS
+    assert generation.model == "model-c"
+
+
 def test_all_models_at_their_limit_is_unavailable():
     client = FakeClient(rate_limited(), rate_limited(), rate_limited())
 
-    with pytest.raises(LlmUnavailable, match="free limit"):
+    with pytest.raises(LlmUnavailable, match="free limit or overloaded"):
         llm(client).generate("system", "prompt", SCHEMA)
     assert client.models_called == MODELS
 

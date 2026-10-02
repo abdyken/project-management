@@ -8,7 +8,9 @@ export const ADMISSIONS_CONTACT = {
 } as const
 
 export const MESSAGE_MAX_LENGTH = 500
-export const ASSISTANT_TIMEOUT_MS = 10_000
+// Counted to the first streamed chunk. The API answers within 15 s (ASSISTANT_TIMEOUT_SECONDS);
+// a Gemini answer (US10) takes about 6-8 s on the free tier.
+export const ASSISTANT_TIMEOUT_MS = 20_000
 
 export const DEGREE_LABELS: Record<DegreeLevel, string> = {
   bachelor: "Bachelor",
