@@ -20,9 +20,11 @@ class Program(Base):
 
     program_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
+    title_ru: Mapped[str | None] = mapped_column(String(255))
+    title_kk: Mapped[str | None] = mapped_column(String(255))
     faculty: Mapped[str] = mapped_column(String(255), nullable=False)
     degree_level: Mapped[str] = mapped_column(String(20), nullable=False)
-    language: Mapped[str] = mapped_column(String(50), nullable=False)
+    language: Mapped[str | None] = mapped_column(String(50))
     tuition_per_ects_kzt: Mapped[int | None] = mapped_column(Integer)
     tuition_per_ects_usd: Mapped[int | None] = mapped_column(Integer)
     deadline_local: Mapped[date | None] = mapped_column(Date)

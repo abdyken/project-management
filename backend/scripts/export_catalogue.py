@@ -18,6 +18,8 @@ from app.db import get_session
 COLUMNS = [
     "program_id",
     "title",
+    "title_ru",
+    "title_kk",
     "faculty",
     "degree_level",
     "language",

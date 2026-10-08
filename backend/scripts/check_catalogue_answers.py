@@ -68,8 +68,8 @@ def cases(programs: list[dict]) -> list[Case]:
                 program["program_id"],
                 "language",
                 f"What is the language of instruction for {name}?",
-                tuple(language.strip() for language in program["language"].split(",")),
-                False,
+                tuple(language.strip() for language in (program["language"] or "").split(",") if language.strip()),
+                program["language"] is None,
             )
         )
     return result
@@ -81,6 +81,8 @@ def numbers(text: str) -> set[str]:
 
 def check(case: Case, answer: str, program: dict) -> str | None:
     if case.topic == "language":
+        if case.unpublished:
+            return None if "not publish" in answer.lower() else "unpublished language not reported as not published"
         missing = [language for language in case.expected if language.lower() not in answer.lower()]
         return f"missing language {missing}" if missing else None
 

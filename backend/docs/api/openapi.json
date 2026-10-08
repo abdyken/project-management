@@ -835,6 +835,28 @@
             "type": "string",
             "title": "Title"
           },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
           "faculty": {
             "type": "string",
             "title": "Faculty"
@@ -849,7 +871,14 @@
             "title": "Degree Level"
           },
           "language": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Language"
           },
           "tuition_per_ects_kzt": {
@@ -926,6 +955,8 @@
         "required": [
           "program_id",
           "title",
+          "title_ru",
+          "title_kk",
           "faculty",
           "degree_level",
           "language",
@@ -1109,6 +1140,28 @@
             "type": "string",
             "title": "Title"
           },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
           "faculty": {
             "type": "string",
             "title": "Faculty"
@@ -1123,7 +1176,14 @@
             "title": "Degree Level"
           },
           "language": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Language"
           },
           "tuition_per_ects_kzt": {
@@ -1192,6 +1252,8 @@
         "required": [
           "program_id",
           "title",
+          "title_ru",
+          "title_kk",
           "faculty",
           "degree_level",
           "language",

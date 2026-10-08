@@ -21,8 +21,8 @@ def test_every_program_is_checked_for_fee_deadline_and_language():
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda case: f"{case.program_id}-{case.topic}")
-def test_catalogue_answer_matches_the_catalogue(assistant_session, case):
-    response = AssistantService(assistant_session, get_settings()).answer(case.question, "s1")
+def test_catalogue_answer_matches_the_catalogue(full_catalogue_session, case):
+    response = AssistantService(full_catalogue_session, get_settings()).answer(case.question, "s1")
 
     assert check(case, response.answer, PROGRAMS[case.program_id]) is None, response.answer
     if not case.unpublished:

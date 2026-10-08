@@ -15,7 +15,7 @@ const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
 const labelClass = "text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
 
 export function ProgramDetailPage() {
-  const { t, degree, languages, deadline, tuitionKzt, tuitionUsd } = useI18n()
+  const { t, degree, languages, deadline, tuitionKzt, tuitionUsd, programTitle } = useI18n()
   const { id = "" } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const applicant: ApplicantType = searchParams.get("applicant") === "international" ? "international" : "local"
@@ -74,14 +74,14 @@ export function ProgramDetailPage() {
         {program.program_id} · {degree(program.degree_level)}
       </p>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{program.title}</h1>
-        <CompareToggle programId={program.program_id} title={program.title} />
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{programTitle(program)}</h1>
+        <CompareToggle programId={program.program_id} title={programTitle(program)} />
       </div>
 
       <dl className="mt-10 grid gap-6 border-y border-border py-8 sm:grid-cols-2">
         <div>
           <dt className={labelClass}>{t("detail.school")}</dt>
-          <dd className="mt-1">{program.faculty}</dd>
+          <dd className="mt-1" lang="en">{program.faculty}</dd>
         </div>
         <div>
           <dt className={labelClass}>{t("detail.language")}</dt>
@@ -154,7 +154,7 @@ export function ProgramDetailPage() {
           className="mt-8"
           variant="outline"
           onClick={() => {
-            setDraft(t(`detail.askDocuments.${applicant}`, { title: program.title, code: program.program_id }))
+            setDraft(t(`detail.askDocuments.${applicant}`, { title: programTitle(program), code: program.program_id }))
             setOpen(true)
           }}
         >

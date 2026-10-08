@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import type { DegreeLevel } from "@/api/types"
+import type { DegreeLevel, Program } from "@/api/types"
 import { MESSAGES, type MessageKey } from "@/i18n/messages"
 
 export type Language = "kk" | "ru" | "en"
@@ -48,11 +48,29 @@ export function translate(language: Language, key: MessageKey, params?: Params) 
   return template.replace(/\{(\w+)\}/g, (match, name: string) => (name in params ? String(params[name]) : match))
 }
 
+const KAZAKH_MONTHS = [
+  "қаңтар",
+  "ақпан",
+  "наурыз",
+  "сәуір",
+  "мамыр",
+  "маусым",
+  "шілде",
+  "тамыз",
+  "қыркүйек",
+  "қазан",
+  "қараша",
+  "желтоқсан",
+]
+
 function makeI18n(language: Language) {
   const locale = LOCALES[language]
   const plural = new Intl.PluralRules(locale)
-  const numbers = new Intl.NumberFormat(locale)
-  const dates = new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+  const numbers = new Intl.NumberFormat(language === "kk" ? LOCALES.ru : locale)
+  const dates =
+    language === "kk"
+      ? { format: (date: Date) => `${date.getUTCDate()} ${KAZAKH_MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()} ж.` }
+      : new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
   const t = (key: MessageKey, params?: Params) => translate(language, key, params)
   const notPublished = t("format.notPublished")
 
@@ -76,15 +94,19 @@ function makeI18n(language: Language) {
     tuitionUsd: (usd: number | null) =>
       usd === null ? notPublished : t("format.tuitionUsd", { amount: numbers.format(usd) }),
     degree: (level: DegreeLevel) => t(`degree.${level}`),
-    languages: (value: string) =>
-      value
-        .split(",")
-        .map((name) => name.trim())
-        .map((name) => {
-          const key = `languageName.${name}` as MessageKey
-          return key in MESSAGES.en ? t(key) : name
-        })
-        .join(", "),
+    programTitle: (program: Pick<Program, "title" | "title_ru" | "title_kk">) =>
+      (language === "kk" ? program.title_kk : language === "ru" ? program.title_ru : null) || program.title,
+    languages: (value: string | null) =>
+      value === null
+        ? notPublished
+        : value
+            .split(",")
+            .map((name) => name.trim())
+            .map((name) => {
+              const key = `languageName.${name}` as MessageKey
+              return key in MESSAGES.en ? t(key) : name
+            })
+            .join(", "),
   }
 }
 

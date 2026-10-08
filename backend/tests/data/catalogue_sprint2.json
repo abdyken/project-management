@@ -1,19 +1,17 @@
 {
-  "_comment": "Official SDU catalogue data (T0.6, US16): every 2026-2027 bachelor, master and PhD program from the fee orders and program pages on sdu.edu.kz, collected 2026-09-23 (12 programs) and 2026-10-08 (full list), pending admissions office review. Fees are per ECTS credit from the 2026-2027 fee orders. null = not published. title_ru / title_kk are the official Russian and Kazakh page titles. documents_from: the program uses the official document list of the named program (one list per degree level and applicant type on the admission pages). Open questions for the office: catalogue_review.md.",
+  "_comment": "Official SDU catalogue data (T0.6), collected from sdu.edu.kz on 2026-09-23 and pending admissions office review. Fees are per ECTS credit from the 2026-2027 fee orders. null = not published.",
   "programs": [
     {
-      "program_id": "6B01101",
-      "title": "Pedagogy and Psychology",
-      "title_ru": "Педагогика и Психология",
-      "title_kk": "Педагогика және Психология",
-      "faculty": "School of Education and Humanities",
+      "program_id": "6B06102",
+      "title": "Computer Science",
+      "faculty": "School of Information Technologies and Applied Mathematics",
       "degree_level": "bachelor",
-      "language": "Kazakh, English",
-      "tuition_per_ects_kzt": 25000,
-      "tuition_per_ects_usd": 70,
+      "language": "English",
+      "tuition_per_ects_kzt": 33000,
+      "tuition_per_ects_usd": 90,
       "deadline_local": "2026-08-25",
       "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/pedagogy-and-psychology/",
+      "source_url": "https://sdu.edu.kz/en/computer-science-3/",
       "documents": {
         "local": [
           {
@@ -78,13 +76,6 @@
             "translation": false,
             "notarisation": false,
             "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Pedagogical examination result (teacher-education programmes)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Take the exam between 20 June and 20 August 2026; submit the result before 25 August 2026"
           },
           {
             "name": "Interview protocol (college graduates applying for tuition-based places only)",
@@ -232,100 +223,957 @@
       }
     },
     {
-      "program_id": "6B01301",
-      "title": "Pedagogy & Methods of primary education",
-      "title_ru": "Педагогика и методика начального обучения",
-      "title_kk": "Бастауышта оқыту педагогикасы мен әдістемесі",
+      "program_id": "6B06101",
+      "title": "Information Systems",
+      "faculty": "School of Information Technologies and Applied Mathematics",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_per_ects_kzt": 40000,
+      "tuition_per_ects_usd": 90,
+      "deadline_local": "2026-08-25",
+      "deadline_international": "2026-07-31",
+      "source_url": "https://sdu.edu.kz/en/information-system-example/",
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Chest fluorography image with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Photographs (3×4 cm, 6 copies)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "State educational grant certificate (state-grant recipients only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Interview protocol (college graduates applying for tuition-based places only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before 25 August 2026"
+          },
+          {
+            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "Copy of military ID (citizens who have completed compulsory military service)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Residence permit, if applicable (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Diploma (school certificate) & transcript (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Electronic photo (3×4 cm)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Original passport",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Original diploma (school certificate) & transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
+          },
+          {
+            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "6 photos (3×4 cm)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B05402",
+      "title": "Statistics and Data Science",
+      "faculty": "School of Information Technologies and Applied Mathematics",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_per_ects_kzt": 28500,
+      "tuition_per_ects_usd": 90,
+      "deadline_local": "2026-08-25",
+      "deadline_international": "2026-07-31",
+      "source_url": "https://sdu.edu.kz/en/statistics-and-data-science/",
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Chest fluorography image with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Photographs (3×4 cm, 6 copies)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "State educational grant certificate (state-grant recipients only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Interview protocol (college graduates applying for tuition-based places only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before 25 August 2026"
+          },
+          {
+            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "Copy of military ID (citizens who have completed compulsory military service)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Residence permit, if applicable (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Diploma (school certificate) & transcript (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Electronic photo (3×4 cm)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Original passport",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Original diploma (school certificate) & transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
+          },
+          {
+            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "6 photos (3×4 cm)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B06103",
+      "title": "Mathematical and Computer Modelling",
+      "faculty": "School of Information Technologies and Applied Mathematics",
+      "degree_level": "bachelor",
+      "language": "English",
+      "tuition_per_ects_kzt": 33000,
+      "tuition_per_ects_usd": 90,
+      "deadline_local": "2026-08-25",
+      "deadline_international": "2026-07-31",
+      "source_url": "https://sdu.edu.kz/en/mathematical-and-computer-modelling/",
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Chest fluorography image with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Photographs (3×4 cm, 6 copies)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "State educational grant certificate (state-grant recipients only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Interview protocol (college graduates applying for tuition-based places only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before 25 August 2026"
+          },
+          {
+            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "Copy of military ID (citizens who have completed compulsory military service)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Residence permit, if applicable (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Diploma (school certificate) & transcript (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Electronic photo (3×4 cm)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Original passport",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Original diploma (school certificate) & transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
+          },
+          {
+            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "6 photos (3×4 cm)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "7M06101",
+      "title": "Information Systems",
+      "faculty": "School of Information Technologies and Applied Mathematics",
+      "degree_level": "master",
+      "language": "English",
+      "tuition_per_ects_kzt": 27000,
+      "tuition_per_ects_usd": 90,
+      "deadline_local": null,
+      "deadline_international": null,
+      "source_url": "https://sdu.edu.kz/en/information-systems/",
+      "documents": {
+        "local": [
+          {
+            "name": "Bachelor’s diploma (original)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+          },
+          {
+            "name": "Photographs 3×4 cm (6)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+          },
+          {
+            "name": "Medical card №075 and X-ray result",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+          },
+          {
+            "name": "Copy of national ID",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+          },
+          {
+            "name": "Copy of the test certificate for the chosen programme (if you have one)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+          },
+          {
+            "name": "Complex testing (CT) certificate (state-grant applicants only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "State-grant competition: between 28 August and 5 September (as stated on the master's page; year not given, not confirmed for 2026)"
+          },
+          {
+            "name": "Photographs 3×4 cm (4) (state-grant applicants only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "State-grant competition: between 28 August and 5 September (as stated on the master's page; year not given, not confirmed for 2026)"
+          }
+        ]
+      }
+    },
+    {
+      "program_id": "6B02302",
+      "title": "Translation Studies",
       "faculty": "School of Education and Humanities",
       "degree_level": "bachelor",
-      "language": "Kazakh",
-      "tuition_per_ects_kzt": 19000,
+      "language": "English",
+      "tuition_per_ects_kzt": 35000,
       "tuition_per_ects_usd": 70,
       "deadline_local": "2026-08-25",
       "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/pedagogy-methods-of-primary-education/",
-      "documents_from": "6B01701"
-    },
-    {
-      "program_id": "6B01501",
-      "title": "Mathematics (pedagogy)",
-      "title_ru": "Математика",
-      "title_kk": "Математика (педагогика)",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 28000,
-      "tuition_per_ects_usd": 75,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/mathematics/",
-      "documents_from": "6B01702"
-    },
-    {
-      "program_id": "6B01504",
-      "title": "Informatics",
-      "title_ru": "Информатика",
-      "title_kk": "Информатика",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 25000,
-      "tuition_per_ects_usd": 75,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/informatics/",
-      "documents_from": "6B01702"
-    },
-    {
-      "program_id": "6B01505",
-      "title": "Physics",
-      "title_ru": "Физика",
-      "title_kk": "Физика",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 25000,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/physics/",
-      "documents_from": "6B01702"
-    },
-    {
-      "program_id": "6B01506",
-      "title": "Chemistry",
-      "title_ru": "Химия",
-      "title_kk": "Химия",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 25000,
-      "tuition_per_ects_usd": 75,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/chemistry-4/",
-      "documents_from": "6B01702"
-    },
-    {
-      "program_id": "6B01601",
-      "title": "History",
-      "title_ru": "История",
-      "title_kk": "Тарих",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "Kazakh",
-      "tuition_per_ects_kzt": 22000,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/history/",
-      "documents_from": "6B01701"
+      "source_url": "https://sdu.edu.kz/en/translation-studies/",
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Chest fluorography image with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Photographs (3×4 cm, 6 copies)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "State educational grant certificate (state-grant recipients only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Interview protocol (college graduates applying for tuition-based places only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before 25 August 2026"
+          },
+          {
+            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "Copy of military ID (citizens who have completed compulsory military service)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Residence permit, if applicable (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Diploma (school certificate) & transcript (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Electronic photo (3×4 cm)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Original passport",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Original diploma (school certificate) & transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
+          },
+          {
+            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "6 photos (3×4 cm)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          }
+        ]
+      }
     },
     {
       "program_id": "6B01701",
       "title": "Kazakh Language and Literature",
-      "title_ru": "Казахский язык и литература",
-      "title_kk": "Қазақ тілі және әдебиеті",
       "faculty": "School of Education and Humanities",
       "degree_level": "bachelor",
       "language": "Kazakh",
@@ -554,8 +1402,6 @@
     {
       "program_id": "6B01702",
       "title": "Two Foreign Languages",
-      "title_ru": "Два иностранных языка",
-      "title_kk": "Шет тілі: екі шет тілі",
       "faculty": "School of Education and Humanities",
       "degree_level": "bachelor",
       "language": "English",
@@ -782,1573 +1628,236 @@
       }
     },
     {
-      "program_id": "6B01703",
-      "title": "Foreign language: two foreign languages (Double degree)",
-      "title_ru": "Иностранный язык: два иностранных языка (Двудипломная)",
-      "title_kk": "Шетел тілі: Екі шетел тілі (Екі дипломды)",
+      "program_id": "6B01101",
+      "title": "Pedagogy and Psychology",
       "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "Korean",
-      "tuition_per_ects_kzt": null,
-      "tuition_per_ects_usd": null,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/education-and-humanities/programms/bachelor/foreign-language-two-foreign-languages/",
-      "documents_from": "6B01701"
-    },
-    {
-      "program_id": "6B01707",
-      "title": "Russian language and literature in schools with Russian and non-Russian languages of instruction (IP)",
-      "title_ru": "Русский язык и литература в школах с русским и нерусским языками обучения (IP)",
-      "title_kk": "Орыс және орыс емес тілдерде оқытатын мектептердегі орыс тілі мен әдебиеті (IP)",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "Russian",
-      "tuition_per_ects_kzt": 21500,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/russian-language-and-literature-in-schools-with-russian-and-non-russian-languages-of-instruction-ip/",
-      "documents_from": "6B01701"
-    },
-    {
-      "program_id": "6B01802",
-      "title": "Social Pedagogy",
-      "title_ru": "Социальная педагогика",
-      "title_kk": "Әлеуметтік педагогика",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "Kazakh",
-      "tuition_per_ects_kzt": 20000,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/social-pedagogy/",
-      "documents_from": "6B01701"
-    },
-    {
-      "program_id": "6B02302",
-      "title": "Translation Studies",
-      "title_ru": "Переводческое дело",
-      "title_kk": "Аударма ісі",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/translation-studies/",
-      "documents": {
-        "local": [
-          {
-            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
-          },
-          {
-            "name": "School certificate with transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "UNT certificate",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Medical certificate (Form 075)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Chest fluorography image with physician’s report",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Vaccination record (Form 063)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Photographs (3×4 cm, 6 copies)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "State educational grant certificate (state-grant recipients only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Interview protocol (college graduates applying for tuition-based places only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Before 25 August 2026"
-          },
-          {
-            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "Copy of military ID (citizens who have completed compulsory military service)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
-          }
-        ],
-        "international": [
-          {
-            "name": "Passport (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Residence permit, if applicable (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Diploma (school certificate) & transcript (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Motivational letter",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Electronic photo (3×4 cm)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Student fee receipt (200 USD)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Original passport",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Original diploma (school certificate) & transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
-          },
-          {
-            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "6 photos (3×4 cm)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          }
-        ]
-      }
-    },
-    {
-      "program_id": "6B02304",
-      "title": "Applied philology",
-      "title_ru": "Прикладная филология",
-      "title_kk": "Қолданбалы филология",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "bachelor",
-      "language": "Kazakh",
-      "tuition_per_ects_kzt": 21500,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/applied-philology/",
-      "documents_from": "6B04201"
-    },
-    {
-      "program_id": "6B05401",
-      "title": "Mathematics (science)",
-      "title_ru": "Математика (научная)",
-      "title_kk": "Математика (ғылыми)",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 24000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/mathematics-3/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B05402",
-      "title": "Statistics and Data Science",
-      "title_ru": "Статистика и наука о данных",
-      "title_kk": "Статистика және деректер ғылымы",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 28500,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/statistics-and-data-science/",
-      "documents": {
-        "local": [
-          {
-            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
-          },
-          {
-            "name": "School certificate with transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "UNT certificate",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Medical certificate (Form 075)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Chest fluorography image with physician’s report",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Vaccination record (Form 063)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Photographs (3×4 cm, 6 copies)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "State educational grant certificate (state-grant recipients only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Interview protocol (college graduates applying for tuition-based places only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Before 25 August 2026"
-          },
-          {
-            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "Copy of military ID (citizens who have completed compulsory military service)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
-          }
-        ],
-        "international": [
-          {
-            "name": "Passport (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Residence permit, if applicable (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Diploma (school certificate) & transcript (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Motivational letter",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Electronic photo (3×4 cm)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Student fee receipt (200 USD)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Original passport",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Original diploma (school certificate) & transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
-          },
-          {
-            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "6 photos (3×4 cm)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          }
-        ]
-      }
-    },
-    {
-      "program_id": "6B06101",
-      "title": "Information Systems",
-      "title_ru": "Информационные системы",
-      "title_kk": "Ақпараттық жүйелер",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 40000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/information-system-example/",
-      "documents": {
-        "local": [
-          {
-            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
-          },
-          {
-            "name": "School certificate with transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "UNT certificate",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Medical certificate (Form 075)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Chest fluorography image with physician’s report",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Vaccination record (Form 063)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Photographs (3×4 cm, 6 copies)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "State educational grant certificate (state-grant recipients only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Interview protocol (college graduates applying for tuition-based places only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Before 25 August 2026"
-          },
-          {
-            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "Copy of military ID (citizens who have completed compulsory military service)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
-          }
-        ],
-        "international": [
-          {
-            "name": "Passport (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Residence permit, if applicable (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Diploma (school certificate) & transcript (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Motivational letter",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Electronic photo (3×4 cm)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Student fee receipt (200 USD)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Original passport",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Original diploma (school certificate) & transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
-          },
-          {
-            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "6 photos (3×4 cm)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          }
-        ]
-      }
-    },
-    {
-      "program_id": "6B06102",
-      "title": "Computer Science",
-      "title_ru": "Компьютерные науки",
-      "title_kk": "Компьютерлік ғылымдар",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 33000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/computer-science-3/",
-      "documents": {
-        "local": [
-          {
-            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
-          },
-          {
-            "name": "School certificate with transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "UNT certificate",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Medical certificate (Form 075)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Chest fluorography image with physician’s report",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Vaccination record (Form 063)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Photographs (3×4 cm, 6 copies)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "State educational grant certificate (state-grant recipients only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Interview protocol (college graduates applying for tuition-based places only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Before 25 August 2026"
-          },
-          {
-            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "Copy of military ID (citizens who have completed compulsory military service)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
-          }
-        ],
-        "international": [
-          {
-            "name": "Passport (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Residence permit, if applicable (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Diploma (school certificate) & transcript (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Motivational letter",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Electronic photo (3×4 cm)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Student fee receipt (200 USD)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Original passport",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Original diploma (school certificate) & transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
-          },
-          {
-            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "6 photos (3×4 cm)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          }
-        ]
-      }
-    },
-    {
-      "program_id": "6B06103",
-      "title": "Mathematical and Computer Modelling",
-      "title_ru": "Математическое и компьютерное моделирование",
-      "title_kk": "Математикалық және компьютерлік модельдеу",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 33000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/mathematical-and-computer-modelling/",
-      "documents": {
-        "local": [
-          {
-            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
-          },
-          {
-            "name": "School certificate with transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "UNT certificate",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Medical certificate (Form 075)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Chest fluorography image with physician’s report",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Vaccination record (Form 063)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Photographs (3×4 cm, 6 copies)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "State educational grant certificate (state-grant recipients only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Interview protocol (college graduates applying for tuition-based places only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Before 25 August 2026"
-          },
-          {
-            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "Copy of military ID (citizens who have completed compulsory military service)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
-          }
-        ],
-        "international": [
-          {
-            "name": "Passport (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Residence permit, if applicable (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Diploma (school certificate) & transcript (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Motivational letter",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Electronic photo (3×4 cm)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Student fee receipt (200 USD)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Original passport",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Original diploma (school certificate) & transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
-          },
-          {
-            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "6 photos (3×4 cm)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          }
-        ]
-      }
-    },
-    {
-      "program_id": "6B06104",
-      "title": "Multimedia Sciences",
-      "title_ru": "Мультимедийные науки",
-      "title_kk": "Мультимедиялық ғылымдар",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 36500,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/multimedia-sciences/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B06105",
-      "title": "Software Engineering",
-      "title_ru": "Программная инженерия",
-      "title_kk": "Бағдарламалық қамтамасыз ету",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 33000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/software-engineering-2/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B06107",
-      "title": "Business information systems",
-      "title_ru": "Информационные системы для бизнеса",
-      "title_kk": "Бизнестік ақпараттық жүйелер",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 38500,
-      "tuition_per_ects_usd": null,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/business-information-systems/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B03101",
-      "title": "International Relations",
-      "title_ru": "Международные отношения",
-      "title_kk": "Халықаралық қатынастар",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 37500,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/international-relations/",
-      "documents": {
-        "local": [
-          {
-            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
-          },
-          {
-            "name": "School certificate with transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "UNT certificate",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Medical certificate (Form 075)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Chest fluorography image with physician’s report",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Vaccination record (Form 063)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Photographs (3×4 cm, 6 copies)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "State educational grant certificate (state-grant recipients only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
-          },
-          {
-            "name": "Interview protocol (college graduates applying for tuition-based places only)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Before 25 August 2026"
-          },
-          {
-            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On admission, when signing the contract; before 25 August 2026"
-          },
-          {
-            "name": "Copy of military ID (citizens who have completed compulsory military service)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
-          }
-        ],
-        "international": [
-          {
-            "name": "Passport (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Residence permit, if applicable (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Diploma (school certificate) & transcript (scanned copy)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Motivational letter",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Electronic photo (3×4 cm)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Student fee receipt (200 USD)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
-          },
-          {
-            "name": "Original passport",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Original diploma (school certificate) & transcript",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
-          },
-          {
-            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
-            "format": "copy",
-            "translation": false,
-            "notarisation": true,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          },
-          {
-            "name": "6 photos (3×4 cm)",
-            "format": "original",
-            "translation": false,
-            "notarisation": false,
-            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
-          }
-        ]
-      }
-    },
-    {
-      "program_id": "6B03103",
-      "title": "Applied psychology",
-      "title_ru": "Прикладная психология",
-      "title_kk": "Қолданбалы психология",
-      "faculty": "School of Social Sciences, Business and Law",
       "degree_level": "bachelor",
       "language": "Kazakh, English",
-      "tuition_per_ects_kzt": null,
+      "tuition_per_ects_kzt": 25000,
       "tuition_per_ects_usd": 70,
       "deadline_local": "2026-08-25",
       "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/applied-psychology/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B03205",
-      "title": "Multimedia and AI journalism",
-      "title_ru": "Мультимедиа и ИИ-журналистика",
-      "title_kk": "Мультимедиа және ЖИ журналистика",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "Kazakh, English",
-      "tuition_per_ects_kzt": null,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/multimedia-and-ai-journalism/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B04101",
-      "title": "Economics",
-      "title_ru": "Экономика",
-      "title_kk": "Экономика",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 37500,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/economics-example/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B04102",
-      "title": "Management",
-      "title_ru": "Менеджмент",
-      "title_kk": "Менеджмент",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 38500,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/management-3/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B04103",
-      "title": "Accounting and Audit",
-      "title_ru": "Учет и Аудит",
-      "title_kk": "Есеп және Аудит",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 40500,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/accounting-audit/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B04104",
-      "title": "Finance",
-      "title_ru": "Финансы",
-      "title_kk": "Қаржы",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 41500,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/finance/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B04105",
-      "title": "Digital Marketing",
-      "title_ru": "Диджитал маркетинг",
-      "title_kk": "Диджитал маркетинг",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "English",
-      "tuition_per_ects_kzt": 37500,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/digital-marketing/",
-      "documents_from": "6B06102"
+      "source_url": "https://sdu.edu.kz/en/pedagogy-and-psychology/",
+      "documents": {
+        "local": [
+          {
+            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
+          },
+          {
+            "name": "School certificate with transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "UNT certificate",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Chest fluorography image with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Photographs (3×4 cm, 6 copies)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "State educational grant certificate (state-grant recipients only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Pedagogical examination result (teacher-education programmes)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Take the exam between 20 June and 20 August 2026; submit the result before 25 August 2026"
+          },
+          {
+            "name": "Interview protocol (college graduates applying for tuition-based places only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before 25 August 2026"
+          },
+          {
+            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "Copy of military ID (citizens who have completed compulsory military service)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
+          }
+        ],
+        "international": [
+          {
+            "name": "Passport (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Residence permit, if applicable (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Diploma (school certificate) & transcript (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Electronic photo (3×4 cm)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Original passport",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Original diploma (school certificate) & transcript",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
+          },
+          {
+            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "6 photos (3×4 cm)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          }
+        ]
+      }
     },
     {
       "program_id": "6B04201",
       "title": "Applied Law",
-      "title_ru": "Прикладное право",
-      "title_kk": "Қолданбалы құқық",
       "faculty": "School of Social Sciences, Business and Law",
       "degree_level": "bachelor",
       "language": "Kazakh, Russian",
@@ -2568,388 +2077,229 @@
       }
     },
     {
-      "program_id": "6B04202",
-      "title": "International law",
-      "title_ru": "Международное право",
-      "title_kk": "Халықаралық құқық",
+      "program_id": "6B03101",
+      "title": "International Relations",
       "faculty": "School of Social Sciences, Business and Law",
       "degree_level": "bachelor",
       "language": "English",
-      "tuition_per_ects_kzt": 28000,
-      "tuition_per_ects_usd": 70,
+      "tuition_per_ects_kzt": 37500,
+      "tuition_per_ects_usd": 90,
       "deadline_local": "2026-08-25",
       "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/international-law/",
-      "documents_from": "6B06102"
-    },
-    {
-      "program_id": "6B04203",
-      "title": "Law of Public Administration",
-      "title_ru": "Право государственного управления",
-      "title_kk": "Мемлекеттік басқару құқығы",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "bachelor",
-      "language": "Kazakh",
-      "tuition_per_ects_kzt": 26500,
-      "tuition_per_ects_usd": 70,
-      "deadline_local": "2026-08-25",
-      "deadline_international": "2026-07-31",
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/law-of-public-administartion/",
-      "documents_from": "6B04201"
-    },
-    {
-      "program_id": "7M01501",
-      "title": "Mathematics pedagogy",
-      "title_ru": "Математика педагогика",
-      "title_kk": "Математика педагогика",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 20000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/mathematics-pedagogy-master/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M01502",
-      "title": "Chemistry (Pedagogy)",
-      "title_ru": "Химия (педагогика)",
-      "title_kk": "Химия (педагогика)",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 20000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/chemistry/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M01503",
-      "title": "Physics",
-      "title_ru": "Физика",
-      "title_kk": "Физика",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 20000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/physics-pedagogy/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M01504",
-      "title": "Biology",
-      "title_ru": "Биология",
-      "title_kk": "Биология",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 20000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/master/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M01505",
-      "title": "Informatics and digital pedagogy",
-      "title_ru": "Информатика и цифровая педагогика",
-      "title_kk": "Информатика және цифрлық педагогика",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 20000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/informatics-master/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M01701",
-      "title": "Kazakh language and literature",
-      "title_ru": "Казахский язык и литература",
-      "title_kk": "Қазақ тілі және әдебиеті",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 19000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/kazakh-language-literature-5/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M01702",
-      "title": "Foreign Language: Two Foreign Languages",
-      "title_ru": "Иностранный язык: два иностранных языка",
-      "title_kk": "Шет тілі: екі шет тілі",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 22000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/two-foreign-languages/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M04112",
-      "title": "Management in education",
-      "title_ru": "Менеджмент в образовании",
-      "title_kk": "Білім беру менеджменті",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "master",
-      "language": "Russian, Kazakh",
-      "tuition_per_ects_kzt": 19000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/management-in-education/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M06101",
-      "title": "Information Systems",
-      "title_ru": "Информационные системы",
-      "title_kk": "Ақпараттық жүйелер",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 27000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/information-systems/",
+      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/bachelor-bslaw/international-relations/",
       "documents": {
         "local": [
           {
-            "name": "Bachelor’s diploma (original)",
+            "name": "Admission application form (register and submit the application on admissions.sdu.edu.kz, then download and print the form)",
             "format": "original",
             "translation": false,
             "notarisation": false,
-            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+            "deadline": "Complete the online application before visiting the Admissions Office; submit the printed form before 25 August 2026"
           },
           {
-            "name": "Photographs 3×4 cm (6)",
+            "name": "School certificate with transcript",
             "format": "original",
             "translation": false,
             "notarisation": false,
-            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
           },
           {
-            "name": "Medical card №075 and X-ray result",
+            "name": "UNT certificate",
             "format": "original",
             "translation": false,
             "notarisation": false,
-            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
           },
           {
-            "name": "Copy of national ID",
+            "name": "Medical certificate (Form 075)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Chest fluorography image with physician’s report",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Vaccination record (Form 063)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Photographs (3×4 cm, 6 copies)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "IELTS (min 5.5 overall, at least 5.0 in each component) or SDU Language School (min B1) certificate, if available; otherwise the result of the SDU English language exam",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "State educational grant certificate (state-grant recipients only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scan uploaded with the online application; original and copy to the Admissions Office before 25 August 2026"
+          },
+          {
+            "name": "Interview protocol (college graduates applying for tuition-based places only)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Before 25 August 2026"
+          },
+          {
+            "name": "Student fee payment receipt (60,000 KZT, paid once for the whole study period; grant holders also pay)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "First-semester tuition fee payment receipt (tuition-based enrolment only; at least 50% of the annual fee)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On admission, when signing the contract; before 25 August 2026"
+          },
+          {
+            "name": "Copy of military ID (citizens who have completed compulsory military service)",
             "format": "copy",
             "translation": false,
             "notarisation": false,
-            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
-          },
+            "deadline": "With the standard set of enrolment documents, before 25 August 2026"
+          }
+        ],
+        "international": [
           {
-            "name": "Copy of the test certificate for the chosen programme (if you have one)",
+            "name": "Passport (scanned copy)",
             "format": "copy",
             "translation": false,
             "notarisation": false,
-            "deadline": "Not published for 2026 (the master's page still shows the 2025 admission dates)"
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
           },
           {
-            "name": "Complex testing (CT) certificate (state-grant applicants only)",
+            "name": "Residence permit, if applicable (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Diploma (school certificate) & transcript (scanned copy)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Letter of recommendation (written by a teacher, employer or academic representative)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Motivational letter",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Electronic photo (3×4 cm)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "IELTS (min 5.5) or SDU Extension Center (min B1) certificate, if available; IELTS 5.5 with at least 5.0 in each section waives the placement test",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Student fee receipt (200 USD)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Optional: any additional documents (ISPT certificate, achievements, supporting documents, etc.)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "Scanned copy uploaded to the admissions portal with the online application: by 31 July 2026 (fall intake) / 30 November 2026 (spring intake)"
+          },
+          {
+            "name": "Original passport",
             "format": "original",
             "translation": false,
             "notarisation": false,
-            "deadline": "State-grant competition: between 28 August and 5 September (as stated on the master's page; year not given, not confirmed for 2026)"
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
           },
           {
-            "name": "Photographs 3×4 cm (4) (state-grant applicants only)",
+            "name": "Copy of passport verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Original diploma (school certificate) & transcript",
             "format": "original",
             "translation": false,
             "notarisation": false,
-            "deadline": "State-grant competition: between 28 August and 5 September (as stated on the master's page; year not given, not confirmed for 2026)"
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake); recognition (nostrification) of the diploma must be completed within the first semester of study"
+          },
+          {
+            "name": "Copy of school diploma (certificate) verified by notary (2 copies; recommended to be issued in Kazakhstan)",
+            "format": "copy",
+            "translation": false,
+            "notarisation": true,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Medical Form №075 and X-ray result (recommended to be issued in Kazakhstan)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "Valid English language proficiency certificate: IELTS (min 5.5) or SDU Extension Center certificate (min B1)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
+          },
+          {
+            "name": "6 photos (3×4 cm)",
+            "format": "original",
+            "translation": false,
+            "notarisation": false,
+            "deadline": "On arrival, before 20 August 2026 (fall intake) / 20 December 2026 (spring intake)"
           }
         ]
       }
     },
     {
-      "program_id": "7M06102",
-      "title": "Computer Science",
-      "title_ru": "Компьютерные науки",
-      "title_kk": "Компьютер ғылымдары",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 27000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/computer-science-4/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M06104",
-      "title": "Data science",
-      "title_ru": "Наука о данных",
-      "title_kk": "Деректер ғылымдары",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 25000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/data-science-example/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M06105",
-      "title": "Software Engineering",
-      "title_ru": "Программный инжиниринг",
-      "title_kk": "Бағдарламалық инжиниринг",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 25000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/software-engineering/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M03201",
-      "title": "Media studies and Journalism",
-      "title_ru": "Медиа исследования и Журналистика",
-      "title_kk": "Медиа зерттеулері және журналистика",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 19000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/media-studies-and-journalism/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M03205",
-      "title": "Media Management and PR",
-      "title_ru": "Медиаменеджмент и PR",
-      "title_kk": "Медиаменеджмент және PR",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "Kazakh, English",
-      "tuition_per_ects_kzt": 33000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/media-management-and-pr/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M04104",
-      "title": "MBA Management in Healthcare",
-      "title_ru": "MBA Менеджмент в здравоохранении",
-      "title_kk": "Денсаулық сақтау саласындағы менеджмент бойынша MBA",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "Russian, English",
-      "tuition_per_ects_kzt": 27917,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/mba-management-in-healthcare/"
-    },
-    {
-      "program_id": "7M04105",
-      "title": "EMBA Management in Healthcare",
-      "title_ru": "EMBA Менеджмент в здравоохранении",
-      "title_kk": "Денсаулық сақтау саласындағы менеджмент бойынша EMBA",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "Kazakh, English",
-      "tuition_per_ects_kzt": 33333,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/e%D0%BC%D0%B2%D0%B0-management-in-healthcare-2/"
-    },
-    {
-      "program_id": "7M04109",
-      "title": "Project Management",
-      "title_ru": "Проектное Управление",
-      "title_kk": "Жобаларды Басқару",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 23000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/project-management/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M04110",
-      "title": "Economics and Business Analytics",
-      "title_ru": "Экономика и Бизнес Аналитика",
-      "title_kk": "Экономика және Бизнес Аналитика",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "English",
-      "tuition_per_ects_kzt": 23000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/economy-and-business-analytics/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M04113",
-      "title": "MBA in Management",
-      "title_ru": "MBA Менеджмент",
-      "title_kk": "Менеджмент бойынша MBA",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "Kazakh, English",
-      "tuition_per_ects_kzt": 32085,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/mba-management/"
-    },
-    {
-      "program_id": "7M04114",
-      "title": "EMBA in Management",
-      "title_ru": "EMBA Менеджмент",
-      "title_kk": "Менеджмент бойынша EMBA",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": "Kazakh, English",
-      "tuition_per_ects_kzt": 41667,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/emba-management/"
-    },
-    {
       "program_id": "7M04115",
       "title": "Management",
-      "title_ru": "Менеджмент",
-      "title_kk": "Менеджмент",
       "faculty": "School of Social Sciences, Business and Law",
       "degree_level": "master",
       "language": "English",
@@ -3011,149 +2361,6 @@
           }
         ]
       }
-    },
-    {
-      "program_id": "7M04201",
-      "title": "Private Law",
-      "title_ru": "Частное право",
-      "title_kk": "Жеке құқық",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 19000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/private-law-2/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M04202",
-      "title": "Information technology law",
-      "title_ru": "Право информационных технологий",
-      "title_kk": "Ақпараттық технологиялар құқығы",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 19000,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/information-technology-law-it-law/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "7M04204",
-      "title": "International business law",
-      "title_ru": "Международное бизнес право",
-      "title_kk": "Халықаралық бизнес құқық",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "master",
-      "language": null,
-      "tuition_per_ects_kzt": 32500,
-      "tuition_per_ects_usd": 90,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/master-bslaw/international-business-law/",
-      "documents_from": "7M06101"
-    },
-    {
-      "program_id": "8D01501",
-      "title": "Pedagogical Mathematics",
-      "title_ru": "Математика (педагогика)",
-      "title_kk": "Математика (педагогика)",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "phd",
-      "language": null,
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/pedagogical-mathematics-example/"
-    },
-    {
-      "program_id": "8D01701",
-      "title": "Kazakh language & literature",
-      "title_ru": "Казахский язык и литература",
-      "title_kk": "Қазақ тілі мен әдебиеті",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "phd",
-      "language": null,
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/kazakh-language-literature-6/"
-    },
-    {
-      "program_id": "8D01702",
-      "title": "Two Foreign Languages",
-      "title_ru": "Иностранный язык: два иностранных языка",
-      "title_kk": "Шет тілі: екі шет тілі",
-      "faculty": "School of Education and Humanities",
-      "degree_level": "phd",
-      "language": "English",
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/two-foreign-languages-2/"
-    },
-    {
-      "program_id": "8D05401",
-      "title": "Mathematics",
-      "title_ru": "Математика",
-      "title_kk": "Математика",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "phd",
-      "language": null,
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/mathematics-6/"
-    },
-    {
-      "program_id": "8D06102",
-      "title": "Computer science",
-      "title_ru": "Компьютерные науки",
-      "title_kk": "Компьютерлік ғылымдар",
-      "faculty": "School of Information Technologies and Applied Mathematics",
-      "degree_level": "phd",
-      "language": null,
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/computer-science-example/"
-    },
-    {
-      "program_id": "8D04101",
-      "title": "Management",
-      "title_ru": "Менеджмент",
-      "title_kk": "Менеджмент",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "phd",
-      "language": null,
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/phd-bslaw/management-example/"
-    },
-    {
-      "program_id": "8D04201",
-      "title": "Applied law",
-      "title_ru": "Прикладное право",
-      "title_kk": "Қолданбалы құқық",
-      "faculty": "School of Social Sciences, Business and Law",
-      "degree_level": "phd",
-      "language": null,
-      "tuition_per_ects_kzt": 35000,
-      "tuition_per_ects_usd": 100,
-      "deadline_local": null,
-      "deadline_international": null,
-      "source_url": "https://sdu.edu.kz/en/school-of-social-sciences-business-and-law/phd-bslaw/phd-applied-law-example/"
     }
   ]
 }

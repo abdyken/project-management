@@ -38,15 +38,24 @@ class SourceProgram(BaseModel):
 
     program_id: str = Field(min_length=1, max_length=64)
     title: str = Field(min_length=1, max_length=255)
+    title_ru: str | None = Field(default=None, min_length=1, max_length=255)
+    title_kk: str | None = Field(default=None, min_length=1, max_length=255)
     faculty: str = Field(min_length=1, max_length=255)
     degree_level: DegreeLevel
-    language: str = Field(min_length=1, max_length=50)
+    language: str | None = Field(min_length=1, max_length=50)
     tuition_per_ects_kzt: NonNegativeInt | None
     tuition_per_ects_usd: NonNegativeInt | None
     deadline_local: date | None
     deadline_international: date | None
     source_url: str = Field(min_length=1, max_length=500)
-    documents: dict[ApplicantType, list[SourceDocument]] | None
+    documents: dict[ApplicantType, list[SourceDocument]] | None = None
+    documents_from: str | None = None
+
+    @model_validator(mode="after")
+    def one_document_source(self) -> SourceProgram:
+        if self.documents is not None and self.documents_from is not None:
+            raise ValueError(f"{self.program_id}: give documents or documents_from, not both")
+        return self
 
 
 class SourceFile(BaseModel):
@@ -61,7 +70,21 @@ class SourceFile(BaseModel):
         duplicates = sorted({program_id for program_id in ids if ids.count(program_id) > 1})
         if duplicates:
             raise ValueError(f"duplicate program_id in source file: {duplicates}")
+        owners = {program.program_id for program in self.programs if program.documents}
+        unknown = sorted(
+            f"{program.program_id} -> {program.documents_from}"
+            for program in self.programs
+            if program.documents_from is not None and program.documents_from not in owners
+        )
+        if unknown:
+            raise ValueError(f"documents_from must name a program with its own documents: {unknown}")
         return self
+
+    def documents_of(self, program: SourceProgram) -> dict[ApplicantType, list[SourceDocument]]:
+        if program.documents_from is None:
+            return program.documents or {}
+        owner = next(item for item in self.programs if item.program_id == program.documents_from)
+        return owner.documents or {}
 
 
 @dataclass
@@ -83,6 +106,8 @@ def import_catalogue(session: Session, source: SourceFile) -> ImportResult:
             program = Program(program_id=item.program_id)
             session.add(program)
         program.title = item.title
+        program.title_ru = item.title_ru
+        program.title_kk = item.title_kk
         program.faculty = item.faculty
         program.degree_level = item.degree_level
         program.language = item.language
@@ -96,7 +121,7 @@ def import_catalogue(session: Session, source: SourceFile) -> ImportResult:
         session.execute(
             delete(ProgramDocumentRequirement).where(ProgramDocumentRequirement.program_id == item.program_id)
         )
-        for applicant_type, documents in (item.documents or {}).items():
+        for applicant_type, documents in source.documents_of(item).items():
             for order, document in enumerate(documents):
                 session.add(
                     ProgramDocumentRequirement(

@@ -200,6 +200,10 @@ def _single(request: CatalogueRequest, contact: str) -> CatalogueAnswer:
         return CatalogueAnswer(_with_contact(text, missing, contact), _page(facts) if published else [])
 
     if request.fields == (LANGUAGE,):
+        if facts["language"] == NOT_PUBLISHED:
+            return CatalogueAnswer(
+                f"The catalogue does not publish the language of instruction of {name} yet. {contact}", []
+            )
         return CatalogueAnswer(f"{name} is taught in {facts['language']}.", _page(facts))
 
     if request.fields == (FACULTY,):

@@ -26,6 +26,8 @@ def search_programs(
         query = query.where(
             or_(
                 Program.title.ilike(pattern, escape="\\"),
+                Program.title_ru.ilike(pattern, escape="\\"),
+                Program.title_kk.ilike(pattern, escape="\\"),
                 Program.faculty.ilike(pattern, escape="\\"),
                 Program.program_id.ilike(pattern, escape="\\"),
             )

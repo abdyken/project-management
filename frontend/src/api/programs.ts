@@ -27,7 +27,10 @@ export const allProgramsQuery = {
 }
 
 export function programLanguages(program: Program) {
-  return program.language.split(",").map((language) => language.trim())
+  return (program.language ?? "")
+    .split(",")
+    .map((language) => language.trim())
+    .filter(Boolean)
 }
 
 export function filterOptions(programs: Program[]): FilterOptions {
