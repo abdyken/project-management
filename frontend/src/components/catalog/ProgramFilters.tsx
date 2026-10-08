@@ -3,7 +3,7 @@ import type { FilterOptions } from "@/api/programs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DEGREE_LABELS } from "@/lib/constants"
+import { useI18n } from "@/i18n"
 
 export type FilterValues = {
   q: string
@@ -58,6 +58,7 @@ function FilterSelect({ id, label, allLabel, value, options, onChange }: FilterS
 export const SEARCH_MAX_LENGTH = 100
 
 export function ProgramFilters({ values, options, onChange }: ProgramFiltersProps) {
+  const { t, degree, languages } = useI18n()
   const [q, setQ] = useState(values.q)
   const current = { ...values, q: q.trim() }
 
@@ -70,7 +71,7 @@ export function ProgramFilters({ values, options, onChange }: ProgramFiltersProp
     <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-12">
       <form onSubmit={handleSubmit} role="search" className="md:col-span-3 lg:col-span-5">
         <label className={labelClass} htmlFor="q">
-          Search
+          {t("filters.search")}
         </label>
         <div className="flex gap-2">
           <Input
@@ -79,18 +80,18 @@ export function ProgramFilters({ values, options, onChange }: ProgramFiltersProp
             value={q}
             maxLength={SEARCH_MAX_LENGTH}
             onChange={(event) => setQ(event.target.value)}
-            placeholder="Title, school, or code"
+            placeholder={t("filters.placeholder")}
           />
           <Button type="submit" variant="outline">
-            Search
+            {t("filters.searchButton")}
           </Button>
         </div>
       </form>
       <div className="lg:col-span-3">
         <FilterSelect
           id="filter-faculty"
-          label="School"
-          allLabel="All schools"
+          label={t("filters.school")}
+          allLabel={t("filters.allSchools")}
           value={values.faculty}
           options={options.faculties.map((faculty) => ({ value: faculty, label: faculty }))}
           onChange={(faculty) => onChange({ ...current, faculty })}
@@ -99,20 +100,20 @@ export function ProgramFilters({ values, options, onChange }: ProgramFiltersProp
       <div className="lg:col-span-2">
         <FilterSelect
           id="filter-degree"
-          label="Degree"
-          allLabel="All degrees"
+          label={t("filters.degree")}
+          allLabel={t("filters.allDegrees")}
           value={values.degree_level}
-          options={options.degreeLevels.map((level) => ({ value: level, label: DEGREE_LABELS[level] }))}
+          options={options.degreeLevels.map((level) => ({ value: level, label: degree(level) }))}
           onChange={(degree_level) => onChange({ ...current, degree_level })}
         />
       </div>
       <div className="lg:col-span-2">
         <FilterSelect
           id="filter-language"
-          label="Language"
-          allLabel="All languages"
+          label={t("filters.language")}
+          allLabel={t("filters.allLanguages")}
           value={values.language}
-          options={options.languages.map((language) => ({ value: language, label: language }))}
+          options={options.languages.map((language) => ({ value: language, label: languages(language) }))}
           onChange={(language) => onChange({ ...current, language })}
         />
       </div>

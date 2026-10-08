@@ -6,6 +6,7 @@ import { ProgramCard } from "@/components/catalog/ProgramCard"
 import { ProgramFilters, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/i18n"
 
 const NO_OPTIONS = { faculties: [], degreeLevels: [], languages: [] }
 
@@ -19,6 +20,7 @@ function readFilters(params: URLSearchParams): FilterValues {
 }
 
 export function ProgramsPage() {
+  const { t, tn } = useI18n()
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = readFilters(searchParams)
 
@@ -46,11 +48,10 @@ export function ProgramsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Catalogue</p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Study programs</h1>
+      <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">{t("programs.kicker")}</p>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{t("programs.title")}</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        Fees and deadlines come from the admissions catalogue. Confirm them with the Admissions Office before
-        you apply.
+        {t("programs.lead")}
       </p>
 
       <div className="mt-10">
@@ -63,23 +64,23 @@ export function ProgramsPage() {
       </div>
 
       <div className="mt-8" aria-busy={query.isFetching}>
-        {query.isPending ? <p className="text-sm text-muted-foreground">Loading programs…</p> : null}
+        {query.isPending ? <p className="text-sm text-muted-foreground">{t("programs.loading")}</p> : null}
 
         {query.isError && isInvalidRequest(query.error) ? (
           <div role="alert" className="border border-border bg-card p-6">
-            <p className="text-2xl font-semibold tracking-tight">Invalid search</p>
+            <p className="text-2xl font-semibold tracking-tight">{t("programs.invalidTitle")}</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              The search text or a filter in the link is not valid. Clear the search and try again.
+              {t("programs.invalidText")}
             </p>
             <Button className="mt-5" onClick={() => setSearchParams(new URLSearchParams())}>
-              Clear search
+              {t("programs.clearSearch")}
             </Button>
           </div>
         ) : null}
 
         {query.isError && !isInvalidRequest(query.error) ? (
           <ConnectionError
-            message="The catalogue is temporarily unavailable. Your search and filters are still here."
+            message={t("programs.unavailable")}
             retrying={query.isFetching}
             onRetry={retry}
           />
@@ -87,9 +88,9 @@ export function ProgramsPage() {
 
         {data && data.total === 0 ? (
           <div role="status" className="border border-border bg-card p-6">
-            <p className="text-2xl font-semibold tracking-tight">No programs found</p>
+            <p className="text-2xl font-semibold tracking-tight">{t("programs.noneTitle")}</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Nothing matches this combination. Clear a filter or try another keyword.
+              {t("programs.noneText")}
             </p>
           </div>
         ) : null}
@@ -97,7 +98,7 @@ export function ProgramsPage() {
         {data && data.total > 0 ? (
           <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
             <p role="status" className="mb-4 text-sm text-muted-foreground">
-              {data.total} {data.total === 1 ? "program" : "programs"} found
+              {tn("programs.found", data.total)}
             </p>
             <div className="grid gap-4 md:grid-cols-2">
               {data.programs.map((program) => (

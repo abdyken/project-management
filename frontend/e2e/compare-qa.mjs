@@ -49,6 +49,7 @@ async function run(browserType, name, width) {
     await page.locator('text="Tuition, local" >> visible=true').first().waitFor()
     await page.locator('button[aria-label="Remove Management from comparison"] >> visible=true').click()
     await page.waitForURL((url) => !url.search.includes("7M04115"))
+    await page.waitForFunction(() => !document.querySelector("main").innerText.includes("Management"), null, { timeout: 5000 }).catch(() => {})
     const afterRemove = await page.locator("main").innerText()
     record(name, width, "17.2 remove keeps the other two", !afterRemove.includes("Management") && afterRemove.includes("Computer Science"))
 

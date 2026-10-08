@@ -1,3 +1,5 @@
+import type { MessageKey } from "@/i18n/messages"
+
 export class ApiError extends Error {
   status: number
   code: string
@@ -22,21 +24,10 @@ export function isInvalidRequest(error: unknown) {
   return isApiError(error) && error.status === 422
 }
 
-export const ASSISTANT_TIMEOUT_MESSAGE =
-  "The assistant is not responding, please try again or contact the admissions office"
-
-export function chatErrorMessage(error: unknown): string {
-  if (!isApiError(error)) {
-    return "Something went wrong. Please try again or contact the admissions office."
-  }
-  if (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT") {
-    return ASSISTANT_TIMEOUT_MESSAGE
-  }
-  if (error.code === "NETWORK") {
-    return "Could not reach the assistant. Check your connection and try again."
-  }
-  if (error.code === "INVALID_REQUEST") {
-    return "This question can't be sent. Keep it under 500 characters and try again."
-  }
-  return "The assistant is unavailable right now. Please try again or contact the admissions office."
+export function chatErrorKey(error: unknown): MessageKey {
+  if (!isApiError(error)) return "chat.error.generic"
+  if (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT") return "chat.error.timeout"
+  if (error.code === "NETWORK") return "chat.error.network"
+  if (error.code === "INVALID_REQUEST") return "chat.error.invalid"
+  return "chat.error.unavailable"
 }

@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { useEffect } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { useLanguageStore } from "@/i18n"
 import { ComparePage } from "@/pages/ComparePage"
 import { HomePage } from "@/pages/HomePage"
 import { ProgramDetailPage } from "@/pages/ProgramDetailPage"
@@ -17,6 +19,12 @@ const queryClient = new QueryClient({
 })
 
 export default function App() {
+  const language = useLanguageStore((state) => state.language)
+
+  useEffect(() => {
+    document.documentElement.lang = language
+  }, [language])
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

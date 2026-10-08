@@ -4,29 +4,26 @@ import { sendFeedback } from "@/api/assistant"
 import type { FeedbackReason } from "@/api/types"
 import { AnswerBody } from "@/components/chat/AnswerBody"
 import { Button } from "@/components/ui/button"
+import { useI18n, type I18n } from "@/i18n"
 import { cn } from "@/lib/utils"
 import { useChatStore, type ChatMessage as ChatMessageType, type ChatSource } from "@/store/chat"
 
-const REASONS: { id: FeedbackReason; label: string }[] = [
-  { id: "wrong", label: "Wrong" },
-  { id: "outdated", label: "Outdated" },
-  { id: "unclear", label: "Unclear" },
-  { id: "other", label: "Other" },
-]
+const REASONS: FeedbackReason[] = ["wrong", "outdated", "unclear", "other"]
 
-function sourceLabel(source: ChatSource, index: number, total: number) {
+function sourceLabel(source: ChatSource, index: number, total: number, t: I18n["t"]) {
   if (source.question) return source.question
-  return total > 1 ? `Source ${index + 1}` : "Source"
+  return total > 1 ? t("chat.sourceN", { n: index + 1 }) : t("chat.source")
 }
 
 function Sources({ sources }: { sources: ChatSource[] }) {
+  const { t } = useI18n()
   const visible = sources.filter((source) => source.link || source.question)
   if (visible.length === 0) return null
 
   return (
     <ul className="space-y-1">
       {visible.map((source, index) => {
-        const label = sourceLabel(source, index, visible.length)
+        const label = sourceLabel(source, index, visible.length, t)
         return (
           <li key={`${source.faqId ?? source.link ?? label}-${index}`} className="min-w-0">
             {source.link ? (
@@ -50,6 +47,7 @@ function Sources({ sources }: { sources: ChatSource[] }) {
 }
 
 function RatingControls({ message }: { message: ChatMessageType }) {
+  const { t } = useI18n()
   const rateMessage = useChatStore((state) => state.rateMessage)
   const sessionId = useChatStore((state) => state.sessionId)
   const [picking, setPicking] = useState(false)
@@ -84,7 +82,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
       <div className="flex items-center gap-1">
         <button
           type="button"
-          aria-label="Helpful"
+          aria-label={t("chat.helpful")}
           aria-pressed={selected?.rating === "up"}
           disabled={Boolean(selected) || sending}
           onClick={() => commit("up", null)}
@@ -97,7 +95,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
         </button>
         <button
           type="button"
-          aria-label="Not helpful"
+          aria-label={t("chat.notHelpful")}
           aria-pressed={selected?.rating === "down"}
           disabled={Boolean(selected) || sending}
           onClick={() => {
@@ -113,7 +111,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
         </button>
         {selected?.reason ? (
           <span className="text-[11px] text-muted-foreground">
-            {REASONS.find((reason) => reason.id === selected.reason)?.label}
+            {t(`chat.reason.${selected.reason}`)}
           </span>
         ) : null}
       </div>
@@ -121,13 +119,13 @@ function RatingControls({ message }: { message: ChatMessageType }) {
         <div className="flex flex-wrap gap-1.5">
           {REASONS.map((reason) => (
             <button
-              key={reason.id}
+              key={reason}
               type="button"
               disabled={sending}
-              onClick={() => commit("down", reason.id)}
+              onClick={() => commit("down", reason)}
               className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
-              {reason.label}
+              {t(`chat.reason.${reason}`)}
             </button>
           ))}
           <button
@@ -136,11 +134,11 @@ function RatingControls({ message }: { message: ChatMessageType }) {
             onClick={() => commit("down", null)}
             className="rounded-full px-2.5 py-1 text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           >
-            Skip reason
+            {t("chat.skipReason")}
           </button>
         </div>
       ) : null}
-      {error ? <p className="text-[11px] text-destructive">Could not save your rating. Please try again.</p> : null}
+      {error ? <p className="text-[11px] text-destructive">{t("chat.ratingError")}</p> : null}
     </div>
   )
 }
@@ -152,6 +150,7 @@ export function ChatMessage({
   message: ChatMessageType
   onResend?: (message: ChatMessageType) => void
 }) {
+  const { t } = useI18n()
   const isApplicant = message.role === "applicant"
   if (message.streaming && !message.text) return null
 
@@ -159,7 +158,7 @@ export function ChatMessage({
     <article className={cn("flex min-w-0", isApplicant ? "justify-end" : "justify-start")}>
       <div className={cn("min-w-0 space-y-1.5", isApplicant ? "max-w-[85%] text-right" : "max-w-full text-left")}>
         <p className="text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
-          {isApplicant ? "You" : "Admissions desk"}
+          {isApplicant ? t("chat.you") : t("chat.title")}
         </p>
         {message.text ? (
           <div
@@ -177,11 +176,11 @@ export function ChatMessage({
         ) : null}
         {message.interrupted || (message.isError && message.replyTo) ? (
           <div className="flex flex-wrap items-center gap-2">
-            {message.interrupted ? <p className="text-xs text-muted-foreground">This answer was interrupted.</p> : null}
+            {message.interrupted ? <p className="text-xs text-muted-foreground">{t("chat.interrupted")}</p> : null}
             {message.replyTo && onResend ? (
               <Button type="button" variant="outline" size="sm" onClick={() => onResend(message)}>
                 <RotateCcw className="size-3" />
-                Resend
+                {t("chat.resend")}
               </Button>
             ) : null}
           </div>
