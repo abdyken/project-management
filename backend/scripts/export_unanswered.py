@@ -17,6 +17,7 @@ sys.path.insert(0, str(BACKEND_ROOT))
 
 from app.assistant.language import detect_language  # noqa: E402
 from app.config import get_settings  # noqa: E402
+from app.exports import csv_cell, redact  # noqa: E402
 from app.db import get_session  # noqa: E402
 from app.followups.models import UNANSWERED_QUESTION, AdmissionsFollowup  # noqa: E402
 
@@ -29,8 +30,6 @@ Questions that differ only in case, spacing or punctuation are counted together.
 addresses and phone numbers are redacted; no session ids are exported."""
 
 HEADERS = ("question", "count", "language", "best_score", "first_asked", "last_asked")
-EMAIL = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
-PHONE = re.compile(r"(?<!\w)\+?\d[\d\s()\-]{7,}\d(?!\w)")
 _PUNCTUATION = re.compile(r"[^\w\s]")
 
 
@@ -42,10 +41,6 @@ class Group:
     first_asked: datetime | None = None
     last_asked: datetime | None = None
     variants: set[str] = field(default_factory=set)
-
-
-def redact(text: str) -> str:
-    return PHONE.sub("[phone redacted]", EMAIL.sub("[email redacted]", text))
 
 
 def normalize(text: str) -> str:
@@ -84,7 +79,7 @@ def write_csv(groups: list[Group], output: TextIO) -> None:
     for group in groups:
         writer.writerow(
             {
-                "question": group.question,
+                "question": csv_cell(group.question),
                 "count": group.count,
                 "language": detect_language(group.question),
                 "best_score": "" if group.best_score is None else f"{group.best_score:.2f}",

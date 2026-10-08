@@ -17,6 +17,10 @@ const LOCALES: Record<Language, string> = { kk: "kk-KZ", ru: "ru-RU", en: "en-US
 type Params = Record<string, string | number>
 type PluralKey<K> = K extends `${infer Base}.other` ? Base : never
 
+export function isLanguage(value: unknown): value is Language {
+  return LANGUAGES.some((option) => option.code === value)
+}
+
 function detectLanguage(): Language {
   const preferred = typeof navigator === "undefined" ? [] : (navigator.languages ?? [navigator.language])
   for (const tag of preferred.map((value) => value.toLowerCase())) {
@@ -38,7 +42,14 @@ export const useLanguageStore = create<LanguageState>()(
       language: detectLanguage(),
       setLanguage: (language) => set({ language }),
     }),
-    { name: "sdu-admissions-language", storage: createJSONStorage(() => localStorage) },
+    {
+      name: "sdu-admissions-language",
+      storage: createJSONStorage(() => localStorage),
+      merge: (persisted, current) => {
+        const language = (persisted as Partial<LanguageState> | undefined)?.language
+        return isLanguage(language) ? { ...current, language } : current
+      },
+    },
   ),
 )
 

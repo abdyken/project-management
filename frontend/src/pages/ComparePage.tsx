@@ -34,6 +34,11 @@ const ROWS: Row[] = [
   },
 ]
 
+function missingId(error: unknown, ids: string[]) {
+  const match = error instanceof Error ? /Program not found: (\S+)/.exec(error.message) : null
+  return match && ids.includes(match[1]) ? match[1] : null
+}
+
 function readIds(params: URLSearchParams) {
   const raw = params.get("ids")
   if (raw === null) return null
@@ -107,9 +112,16 @@ export function ComparePage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("compare.notFoundText")}
               </p>
-              <Button className="mt-5" onClick={clearAll}>
-                {t("compare.restart")}
-              </Button>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {missingId(query.error, ids) ? (
+                  <Button onClick={() => removeProgram(missingId(query.error, ids) as string)}>
+                    {t("compare.removeMissing", { code: missingId(query.error, ids) as string })}
+                  </Button>
+                ) : null}
+                <Button variant="outline" onClick={clearAll}>
+                  {t("compare.restart")}
+                </Button>
+              </div>
             </div>
           ) : (
             <ConnectionError

@@ -21,18 +21,16 @@ def _model() -> TextEmbedding:
 
 def embed(texts: list[str]) -> list[list[float]]:
     with _lock:
-        missing = [text for text in dict.fromkeys(texts) if text not in _cache]
+        known = {text: _cache[text] for text in dict.fromkeys(texts) if text in _cache}
+        for text in known:
+            _cache.move_to_end(text)
+    missing = [text for text in dict.fromkeys(texts) if text not in known]
     vectors = dict(zip(missing, (vector.tolist() for vector in _model().embed(missing)), strict=True)) if missing else {}
     with _lock:
-        for text, vector in vectors.items():
-            _cache[text] = vector
-        result = []
-        for text in texts:
-            _cache.move_to_end(text)
-            result.append(_cache[text])
+        _cache.update(vectors)
         while len(_cache) > CACHE_SIZE:
             _cache.popitem(last=False)
-    return result
+    return [known[text] if text in known else vectors[text] for text in texts]
 
 
 def warm_up() -> None:

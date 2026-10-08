@@ -56,9 +56,16 @@ async function run(browserType, name, width) {
     await page.getByText("Pick two or three programs").waitFor()
     record(name, width, "17.2 empty state below two programs", true)
 
-    await page.goto(`${BASE}/compare?ids=6B06101,0X00000`)
+    await page.goto(`${BASE}/compare?ids=6B06101,6B06102,0X00000`)
     await page.getByText("Program not found").waitFor()
-    record(name, width, "17.2 unknown program in a link", true)
+    await page.getByRole("button", { name: "Remove 0X00000 and compare the rest" }).click()
+    await page.locator('text="Tuition, local" >> visible=true').first().waitFor()
+    record(name, width, "17.2 unknown id in a link is removed, the rest compared", !page.url().includes("0X00000"))
+
+    await page.evaluate(() => localStorage.setItem("sdu-admissions-language", JSON.stringify({ state: { language: "de" }, version: 0 })))
+    await page.goto(`${BASE}/programs`)
+    await page.locator("h1").waitFor()
+    record(name, width, "unknown stored language falls back instead of crashing", (await page.locator("h1").innerText()).length > 0)
   } catch (error) {
     record(name, width, "run", false, String(error).split("\n")[0])
     await page.screenshot({ path: `${OUT}/compare-${name}-${width}-error.png` }).catch(() => {})
