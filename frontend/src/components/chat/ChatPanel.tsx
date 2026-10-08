@@ -10,7 +10,7 @@ import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { sourcesFromApi, useChatStore, type ChatMessage as ChatMessageType } from "@/store/chat"
 
 export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
   const messages = useChatStore((state) => state.messages)
   const suggestions = useChatStore((state) => state.suggestions)
   const draft = useChatStore((state) => state.draft)
@@ -42,7 +42,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
 
   useEffect(() => {
     const controller = new AbortController()
-    getSuggestions(sessionId, controller.signal)
+    getSuggestions(sessionId, language, controller.signal)
       .then((next) => {
         if (useChatStore.getState().sessionId === sessionId) setSuggestions(next)
       })
@@ -50,7 +50,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         if (!controller.signal.aborted && useChatStore.getState().sessionId === sessionId) setSuggestions([])
       })
     return () => controller.abort()
-  }, [sessionId, answered, setSuggestions])
+  }, [sessionId, answered, language, setSuggestions])
 
   async function ask(question: string, options?: { keepUserMessage?: boolean }) {
     if (!question || useChatStore.getState().sending) return

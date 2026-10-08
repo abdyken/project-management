@@ -27,6 +27,7 @@ _FILLER = frozenset(
     ал ше үшін да де қандай
     """.split()
 )
+_FILLER_PREFIXES = ("талапкер", "абитуриент", "студент", "поступающ")
 
 
 @dataclass(frozen=True)
@@ -74,6 +75,7 @@ def is_follow_up(question: str, programs: Sequence[Program]) -> bool:
         program_words = {matches[0].program_id.lower(), *_WORD.findall(matches[0].title.lower())}
     return all(
         word in _FILLER
+        or word.startswith(_FILLER_PREFIXES)
         or word in program_words
         or is_document_question(word)
         or bool(catalogue_fields(word))

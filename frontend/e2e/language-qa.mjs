@@ -24,8 +24,8 @@ const ENGLISH_LABELS = [
 ]
 
 const EXPECTED = {
-  kk: { switch: "Қазақша", programs: "Білім беру бағдарламалары", chat: "Жеке деректерді енгізбеңіз", compare: "Бағдарламаларды салыстыру" },
-  ru: { switch: "Русский", programs: "Образовательные программы", chat: "Не вводите персональные данные", compare: "Сравнение программ" },
+  kk: { script: /[әғқңөұүһі]/i, switch: "Қазақша", programs: "Білім беру бағдарламалары", chat: "Жеке деректерді енгізбеңіз", compare: "Бағдарламаларды салыстыру" },
+  ru: { script: /[а-яё]{4,}/i, switch: "Русский", programs: "Образовательные программы", chat: "Не вводите персональные данные", compare: "Сравнение программ" },
 }
 
 const results = []
@@ -92,6 +92,19 @@ async function run(browserType, name, width, language) {
     await page.getByText(expected.chat).waitFor()
     const chat = await visibleText(page)
     record(name, width, language, "chat has no English labels", leftovers(chat).length === 0, leftovers(chat).join(", "))
+
+    const chips = page.locator('[role="log"] > div button')
+    await chips.first().waitFor({ timeout: 10000 })
+    const chip = await chips.first().innerText()
+    record(name, width, language, "starter questions in the chosen language", expected.script.test(chip), chip)
+    await chips.first().click()
+    await page.waitForFunction(() => {
+      const articles = document.querySelectorAll('[role="log"] article')
+      return articles.length >= 2 && Boolean(articles[articles.length - 1].querySelector("button[aria-pressed]"))
+    }, null, { timeout: 25000 })
+    const articles = page.locator('[role="log"] article')
+    const reply = await articles.nth((await articles.count()) - 1).innerText()
+    record(name, width, language, "starter answered in the chosen language", expected.script.test(reply), reply.slice(0, 80))
     await page.screenshot({ path: `${OUT}/language-${name}-${width}-${language}-chat.png` })
   } catch (error) {
     record(name, width, language, "run", false, String(error).split("\n")[0])

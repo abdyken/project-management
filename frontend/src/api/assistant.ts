@@ -24,8 +24,8 @@ function parseSseBlock(block: string): SseEvent | null {
   return { event, data: data.join("\n") }
 }
 
-export function getSuggestions(sessionId: string, signal?: AbortSignal) {
-  const params = new URLSearchParams({ session_id: sessionId })
+export function getSuggestions(sessionId: string, language: string, signal?: AbortSignal) {
+  const params = new URLSearchParams({ session_id: sessionId, lang: language })
   return fetch(apiUrl(`/api/assistant/suggestions?${params}`), {
     headers: { Accept: "application/json" },
     signal,

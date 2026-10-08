@@ -55,6 +55,10 @@ Unanswered questions and programs without requirements are recorded in the `admi
 
 A document question contains "document", "paperwork", "checklist", "документ" or "құжат" and names a program by its code (`6B06102`), its full title, or at least two thirds of the words of a title with three or more words. A degree word (bachelor, master, PhD, магистр…) narrows the match to that degree. The applicant type is read from "local", "Kazakhstani", "citizen(s) of Kazakhstan", "местный" (local) or "international", "foreign", "abroad", "иностранец", "шетел" (international); words that are part of the program title ("International Relations") do not count.
 
+**Languages (US8).** The answer comes in the language of the applicant's own question: Kazakh when it has a Kazakh letter (ә ғ қ ң ө ұ ү һ і) or a common Kazakh word, Russian for other Cyrillic, otherwise English. For a follow-up the language is taken from the applicant's words, not from the rewritten question. FAQ items carry the official Russian and Kazakh text of their source page (`question_ru`, `answer_ru`, `source_link_ru`, `…_kk` in `faq.json`); an item without an official text in that language is given in English with the note "Этот ответ опубликован только на английском языке:" / "Бұл жауап тек ағылшын тілінде жарияланған:". Nothing is machine-translated. Sources link the page in the answer's language. The fallback, checklists and catalogue answers use fixed Russian and Kazakh wording (`app/assistant/texts.py`) with the official program titles; document names and deadlines stay as published in English. With a model, the items are sent in the question's language and the model is told to answer in it.
+
+**Retrieval.** Every FAQ item is indexed once per language it has (English, Russian, Kazakh). A question is scored against all of them by cosine similarity and by an IDF-weighted word overlap with the indexed questions (`LEXICAL_WEIGHT` 0.85 × overlap, first five letters of each word so Kazakh and Russian endings still match); each item keeps its higher score. The overlap catches Kazakh questions the multilingual embedding model does not understand well. Out-of-scope questions stay below the threshold (largest overlap on the evaluation fallbacks: 0.32 × 0.85). When a program is matched only by a title word (not its code) and an FAQ item matches with similarity ≥ 0.8, the FAQ answer wins ("discount for IT and mathematics programmes" is the discount item, not the Mathematics program). A question about an application deadline never gets an academic-calendar item.
+
 **Catalogue answers (US12).** A question that names a program (code, title or most of a long title) and asks for its fee ("tuition", "cost", "ECTS", "стоимость"…), application deadline ("deadline", "until when", "срок", "мерзім"…), language of instruction or faculty is answered from the catalogue. So is "compare X and Y" (fee, language, both deadlines and faculty, one line per value with each program side by side; up to 3 programs), a question with two or more program codes, and a program list ("Which master programs are taught in English?", filtered by degree, language and faculty). A program named with no topic and no FAQ match gets its catalogue summary. A value that is empty in the catalogue is answered as "not published yet" (fees: "The catalogue does not publish a tuition fee for …") with the Admissions Office contact, never with a number, and that program page is not cited. A title shared by several programs (Information Systems) gets the "which program?" answer.
 
 The catalogue tools `search_programs(query, degree_level, language, faculty)` and `get_program(program_id)` (`app/assistant/catalogue_tools.py`) read the catalogue service. With a model, the records they return, the FAQ items above the threshold and the office contact are sent in one call; the model must cite every `program_id` and `faq_id` it uses, and every number in its answer must be in the cited records or items (or in the contact, for an unpublished value), so a computed total or an invented date is rejected. The tools run in the answer service, not in a model tool-call loop: a loop needs a second free-tier call (about 6 s each), which does not fit the 15 s budget. Without a model, or when its answer is rejected, the catalogue answer above is built from the same records.
@@ -77,7 +81,7 @@ Latency: answers without a model (fallback, checklists, tuition, no key) take we
 
 ## `GET /api/assistant/suggestions`
 
-Suggested questions for the chat widget (US14). Four starters when the session has no turns yet, and up to three follow-ups once it does. Each suggestion is an official FAQ question: sending it to `/ask` or `/ask/stream` returns that item and its source.
+Suggested questions for the chat widget (US14). Four starters when the session has no turns yet, and up to three follow-ups once it does. Each suggestion is an official FAQ question in the requested language (US15): sending it to `/ask` or `/ask/stream` returns that item and its source.
 
 ```
 GET /api/assistant/suggestions?session_id=3f0c…
@@ -86,6 +90,7 @@ GET /api/assistant/suggestions?session_id=3f0c…
 | Field | Rules |
 | ----- | ----- |
 | `session_id` | Required, 1–100 characters; the chat's session id |
+| `lang` | Optional: `en` (default), `ru` or `kk`. Only items with an official text in that language are suggested. Anything else returns 422 |
 
 ### 200
 

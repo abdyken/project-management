@@ -14,7 +14,16 @@ from sqlalchemy.orm import Session
 
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
 from app.assistant.feedback import AnswerFeedback
-from app.assistant.schemas import AskRequest, AskResponse, FeedbackRequest, FeedbackResponse, SessionId, SuggestionsResponse
+from app.assistant.language import detect_language
+from app.assistant.schemas import (
+    AskRequest,
+    AskResponse,
+    FeedbackRequest,
+    FeedbackResponse,
+    Language,
+    SessionId,
+    SuggestionsResponse,
+)
 from app.assistant.service import AssistantService
 from app.assistant.streaming import STREAM_HEADERS, answer_events
 from app.assistant.suggestions import suggest
@@ -43,7 +52,8 @@ def _answer(
         programs = search_programs(session)
         question = standalone_question(body.question, history, programs) if history else body.question
         topic = faq_topic(session, history) if history else None
-        answer = AssistantService(session, settings, topic=topic).answer(question, body.session_id)
+        language = detect_language(body.question)
+        answer = AssistantService(session, settings, topic=topic, language=language).answer(question, body.session_id)
         if timed_out.is_set():
             return None
         sources = [source.model_dump() for source in answer.sources] or None
@@ -138,9 +148,10 @@ def feedback(
 def suggestions(
     open_session: Annotated[SessionFactory, Depends(get_session_factory)],
     session_id: Annotated[SessionId, Query(description="The chat session id")],
+    lang: Annotated[Language, Query(description="Language of the suggestions: en, ru or kk")] = "en",
 ) -> SuggestionsResponse:
     with open_session() as session:
-        return SuggestionsResponse(suggestions=suggest(session, session_id))
+        return SuggestionsResponse(suggestions=suggest(session, session_id, lang))
 
 
 @router.post(

@@ -147,7 +147,9 @@ def test_local_deadline_question_gets_the_local_deadlines(service):
 
 def test_russian_applicant_type_is_recognised(service):
     response = service.answer("Какие документы нужны на Computer Science для иностранцев?", "s1")
-    assert response.answer.startswith("Required documents for Computer Science (bachelor, 6B06102), international applicant")
+    assert response.answer.startswith(
+        "Необходимые документы для программы Computer Science (бакалавриат, 6B06102), иностранный абитуриент"
+    )
 
 
 def test_program_without_requirements_warns_once_and_is_logged(service, assistant_session):

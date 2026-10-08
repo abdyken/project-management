@@ -34,6 +34,8 @@ def program_facts(program: Program) -> dict[str, Any]:
     return {
         "program_id": program.program_id,
         "title": program.title,
+        "title_ru": program.title_ru,
+        "title_kk": program.title_kk,
         "degree_level": program.degree_level,
         "faculty": program.faculty,
         "language": program.language or NOT_PUBLISHED,

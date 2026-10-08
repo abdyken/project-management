@@ -25,7 +25,7 @@ _TUITION_KEYWORDS = (
     "құны",
     "баға",
 )
-_LOCAL_STEMS = ("local", "kazakhstani", "местн", "жергілікт")
+_LOCAL_STEMS = ("local", "kazakhstani", "местн", "жергілікт", "отандық")
 _LOCAL_PHRASES = re.compile(r"citizens? of kazakhstan|граждан\w* (?:рк|республики казахстан|казахстана)|қазақстан азамат")
 _INTERNATIONAL_STEMS = (
     "international",
@@ -138,8 +138,13 @@ def is_tuition_question(question: str) -> bool:
     return any(keyword in lowered for keyword in _TUITION_KEYWORDS)
 
 
+def program_titles(program: Program) -> list[str]:
+    return [title for title in (program.title, program.title_ru, program.title_kk) if title]
+
+
 def _title_matches(program: Program, question: str, question_stems: set[str]) -> bool:
-    if program.title.lower() in question.lower():
+    lowered = question.lower()
+    if any(title.lower() in lowered for title in program_titles(program)):
         return True
     title_stems = [_stem(token) for token in _tokens(program.title) if token not in _STOPWORDS]
     matched = sum(stem in question_stems for stem in title_stems)
@@ -187,13 +192,17 @@ def applicant_type_mentioned(text: str) -> str | None:
 
 
 def applicant_type_from_question(question: str, program: Program) -> str | None:
-    return applicant_type_mentioned(_without_title(question, program.title))
+    text = question
+    for title in program_titles(program):
+        text = _without_title(text, title)
+    return applicant_type_mentioned(text)
 
 
 def without_titles(question: str, programs: list[Program]) -> str:
     text = " ".join(_tokens(question))
     for program in programs:
-        text = _without_title(text, program.title)
+        for title in program_titles(program):
+            text = _without_title(text, title)
     return text
 
 

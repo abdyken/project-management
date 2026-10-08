@@ -480,6 +480,23 @@
               "title": "Session Id"
             },
             "description": "The chat session id"
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "ru",
+                "kk"
+              ],
+              "type": "string",
+              "description": "Language of the suggestions: en, ru or kk",
+              "default": "en",
+              "title": "Lang"
+            },
+            "description": "Language of the suggestions: en, ru or kk"
           }
         ],
         "responses": {
