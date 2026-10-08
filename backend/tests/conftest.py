@@ -68,10 +68,12 @@ def faq_items():
     return load_faq_base(BACKEND_ROOT / get_settings().faq_data_path)
 
 
-@pytest.fixture
-def assistant_session(db_session, faq_items):
+SPRINT2_CATALOGUE = BACKEND_ROOT / "tests" / "data" / "catalogue_sprint2.json"
+
+
+def _catalogue_session(db_session, faq_items, source_path):
     sys.path.insert(0, str(BACKEND_ROOT / "scripts"))
-    from import_catalogue import DEFAULT_SOURCE, import_catalogue, load_source
+    from import_catalogue import import_catalogue, load_source
 
     from app.assistant.retrieval import rebuild_index
 
@@ -79,7 +81,20 @@ def assistant_session(db_session, faq_items):
 
     from app.conversation.models import ChatTurn
 
-    import_catalogue(db_session, load_source(DEFAULT_SOURCE))
+    import_catalogue(db_session, load_source(source_path))
     rebuild_index(db_session, faq_items)
     db_session.execute(delete(ChatTurn))
     return db_session
+
+
+@pytest.fixture
+def assistant_session(db_session, faq_items):
+    return _catalogue_session(db_session, faq_items, SPRINT2_CATALOGUE)
+
+
+@pytest.fixture
+def full_catalogue_session(db_session, faq_items):
+    sys.path.insert(0, str(BACKEND_ROOT / "scripts"))
+    from import_catalogue import DEFAULT_SOURCE
+
+    return _catalogue_session(db_session, faq_items, DEFAULT_SOURCE)

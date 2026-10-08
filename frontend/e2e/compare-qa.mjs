@@ -18,10 +18,9 @@ async function run(browserType, name, width) {
     await page.goto(`${BASE}/programs`)
     const compare = page.getByRole("button", { name: /to comparison$/ })
     await compare.first().waitFor()
-    for (const title of ["Information Systems", "Computer Science", "Management"]) {
-      await page.getByRole("button", { name: `Add ${title} to comparison` }).first().click()
-    }
-    const disabled = await page.getByRole("button", { name: "Add Applied Law to comparison" }).isDisabled()
+    const toggle = (code) => page.locator(`article:has(a[href="/programs/${code}"]) button[aria-pressed]`)
+    for (const code of ["6B06101", "6B06102", "7M04115"]) await toggle(code).click()
+    const disabled = await toggle("6B04201").isDisabled()
     record(name, width, "17.2 a fourth program cannot be added", disabled)
 
     const bar = page.getByRole("region", { name: "Program comparison" })

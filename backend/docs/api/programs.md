@@ -20,10 +20,12 @@ Every endpoint below returns programs in this shape.
 | Field                  | Type                                    | Always set | Notes                                                                     |
 | ---------------------- | --------------------------------------- | ---------- | ------------------------------------------------------------------------- |
 | `program_id`           | string (max 64)                         | yes        | Official program code, e.g. `"6B06102"`. Use it in URLs.                  |
-| `title`                | string                                  | yes        | e.g. `"Computer Science"`                                                  |
+| `title`                | string                                  | yes        | Official English title, e.g. `"Computer Science"`                         |
+| `title_ru`             | string \| `null`                        | no         | Official Russian title (US15/US16), e.g. `"Компьютерные науки"`; `null` = not published |
+| `title_kk`             | string \| `null`                        | no         | Official Kazakh title, e.g. `"Компьютерлік ғылымдар"`; `null` = not published |
 | `faculty`              | string                                  | yes        | School, e.g. `"School of Information Technologies and Applied Mathematics"` |
 | `degree_level`         | `"bachelor"` \| `"master"` \| `"phd"`   | yes        | Lower-case code — the front-end chooses the display label                 |
-| `language`             | string                                  | yes        | Language(s) of instruction, comma-separated, e.g. `"English"`, `"Kazakh, Russian"` |
+| `language`             | string \| `null`                        | no         | Language(s) of instruction, comma-separated, e.g. `"English"`, `"Kazakh, Russian"`; `null` when no official source states it (17 master and PhD programs) |
 | `tuition_per_ects_kzt` | integer \| `null`                       | no         | Program course fee in KZT per ECTS credit (2026-2027 fee order)           |
 | `tuition_per_ects_usd` | integer \| `null`                       | no         | Same for international students, in USD per ECTS credit                   |
 | `deadline_local`       | string `YYYY-MM-DD` \| `null`           | no         | Application deadline for local applicants                                 |
@@ -37,6 +39,8 @@ Every endpoint below returns programs in this shape.
 {
   "program_id": "6B06102",
   "title": "Computer Science",
+  "title_ru": "Компьютерные науки",
+  "title_kk": "Компьютерлік ғылымдар",
   "faculty": "School of Information Technologies and Applied Mathematics",
   "degree_level": "bachelor",
   "language": "English",
@@ -57,12 +61,12 @@ All parameters are optional and combine with **AND**. Blank values (`?q=`) are i
 
 | Parameter      | Matching                                                                   | Example                          |
 | -------------- | -------------------------------------------------------------------------- | -------------------------------- |
-| `q`            | Case-insensitive substring of the **title, the faculty or the `program_id`** (max 100 chars) | `q=computer`, `q=6B061` |
+| `q`            | Case-insensitive substring of the **title (English, Russian or Kazakh), the faculty or the `program_id`** (max 100 chars) | `q=computer`, `q=6B061`, `q=құқық` |
 | `faculty`      | Case-insensitive **exact** faculty name                                    | `faculty=School of Social Sciences, Business and Law` |
 | `degree_level` | `bachelor`, `master` or `phd` — anything else returns 422                  | `degree_level=master`            |
 | `language`     | Case-insensitive; matches programs taught in this language (one of the comma-separated values) | `language=Kazakh`                |
 
-Results: only active programs, ordered by title. No pagination — the whole result is returned (10–15 programs in iteration 1).
+Results: only active programs, ordered by title. No pagination — the whole result is returned (64 programs in the full catalogue, US16).
 
 ### 200 OK
 

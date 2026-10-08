@@ -36,7 +36,7 @@ def program_facts(program: Program) -> dict[str, Any]:
         "title": program.title,
         "degree_level": program.degree_level,
         "faculty": program.faculty,
-        "language": program.language,
+        "language": program.language or NOT_PUBLISHED,
         "tuition_per_ects": fees_text(program.tuition_per_ects_kzt, program.tuition_per_ects_usd),
         "tuition_per_ects_kzt": program.tuition_per_ects_kzt,
         "tuition_per_ects_usd": program.tuition_per_ects_usd,

@@ -72,6 +72,7 @@ const en = {
   "languageName.English": "English",
   "languageName.Kazakh": "Kazakh",
   "languageName.Russian": "Russian",
+  "languageName.Korean": "Korean",
 
   "applicant.local": "Local",
   "applicant.international": "International",
@@ -265,6 +266,7 @@ const kk: Messages = {
   "languageName.English": "Ағылшын",
   "languageName.Kazakh": "Қазақ",
   "languageName.Russian": "Орыс",
+  "languageName.Korean": "Корей",
 
   "applicant.local": "Отандық",
   "applicant.international": "Шетелдік",
@@ -456,6 +458,7 @@ const ru: Messages = {
   "languageName.English": "Английский",
   "languageName.Kazakh": "Казахский",
   "languageName.Russian": "Русский",
+  "languageName.Korean": "Корейский",
 
   "applicant.local": "Местные",
   "applicant.international": "Иностранные",

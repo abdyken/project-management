@@ -26,6 +26,8 @@ def test_program_table_has_agreed_columns(db_engine):
     assert columns == {
         "program_id",
         "title",
+        "title_ru",
+        "title_kk",
         "faculty",
         "degree_level",
         "language",

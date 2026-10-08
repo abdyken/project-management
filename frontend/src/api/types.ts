@@ -5,9 +5,11 @@ export type DocumentFormat = "original" | "copy"
 export type Program = {
   program_id: string
   title: string
+  title_ru: string | null
+  title_kk: string | null
   faculty: string
   degree_level: DegreeLevel
-  language: string
+  language: string | null
   tuition_per_ects_kzt: number | null
   tuition_per_ects_usd: number | null
   deadline_local: string | null

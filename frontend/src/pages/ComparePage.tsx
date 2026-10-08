@@ -127,15 +127,15 @@ export function ComparePage() {
 }
 
 function ProgramHeading({ program, onRemove }: { program: ComparedProgram; onRemove: (id: string) => void }) {
-  const { t } = useI18n()
+  const { t, programTitle } = useI18n()
   return (
     <div className="flex items-start justify-between gap-2">
       <Link to={`/programs/${program.program_id}`} className="font-semibold leading-snug hover:text-primary">
-        {program.title}
+        {programTitle(program)}
       </Link>
       <button
         type="button"
-        aria-label={t("compare.removeAria", { title: program.title })}
+        aria-label={t("compare.removeAria", { title: programTitle(program) })}
         onClick={() => onRemove(program.program_id)}
         className="shrink-0 rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
       >
@@ -194,7 +194,7 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
             <dl className="mt-2 space-y-1.5 text-sm">
               {programs.map((program) => (
                 <div key={program.program_id} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-3">
-                  <dt className="text-muted-foreground break-words">{program.title}</dt>
+                  <dt className="text-muted-foreground break-words">{i18n.programTitle(program)}</dt>
                   <dd className="break-words">{row.value(program, i18n)}</dd>
                 </div>
               ))}
