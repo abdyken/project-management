@@ -4,6 +4,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.catalogue.models import Program
+from app.checklist.models import ProgramDocumentRequirement
 
 
 def _escape_like(value: str) -> str:
@@ -45,3 +46,16 @@ def get_active_program(session: Session, program_id: str) -> Program | None:
     if program is None or not program.is_active:
         return None
     return program
+
+
+def document_counts(session: Session, program_ids: list[str]) -> dict[tuple[str, str], int]:
+    rows = session.execute(
+        select(
+            ProgramDocumentRequirement.program_id,
+            ProgramDocumentRequirement.applicant_type,
+            func.count(),
+        )
+        .where(ProgramDocumentRequirement.program_id.in_(program_ids))
+        .group_by(ProgramDocumentRequirement.program_id, ProgramDocumentRequirement.applicant_type)
+    )
+    return {(program_id, applicant_type): count for program_id, applicant_type, count in rows}

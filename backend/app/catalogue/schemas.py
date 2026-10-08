@@ -27,3 +27,12 @@ class ProgramOut(BaseModel):
 class ProgramListResponse(BaseModel):
     total: int
     programs: list[ProgramOut]
+
+
+class ComparedProgram(ProgramOut):
+    documents_local: int
+    documents_international: int
+
+
+class CompareResponse(BaseModel):
+    programs: list[ComparedProgram]

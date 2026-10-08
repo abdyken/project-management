@@ -149,6 +149,79 @@
         }
       }
     },
+    "/api/programs/compare": {
+      "get": {
+        "tags": [
+          "catalogue"
+        ],
+        "summary": "Compare two or three study programs side by side",
+        "operationId": "compare_programs_api_programs_compare_get",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "2 or 3 comma-separated program ids, in display order",
+              "title": "Ids"
+            },
+            "description": "2 or 3 comma-separated program ids, in display order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "One of the ids is not an active program.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/programs/{program_id}": {
       "get": {
         "tags": [
@@ -760,6 +833,137 @@
           "items"
         ],
         "title": "ChecklistResponse"
+      },
+      "CompareResponse": {
+        "properties": {
+          "programs": {
+            "items": {
+              "$ref": "#/components/schemas/ComparedProgram"
+            },
+            "type": "array",
+            "title": "Programs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "programs"
+        ],
+        "title": "CompareResponse"
+      },
+      "ComparedProgram": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "faculty": {
+            "type": "string",
+            "title": "Faculty"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "tuition_per_ects_kzt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Kzt"
+          },
+          "tuition_per_ects_usd": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Usd"
+          },
+          "deadline_local": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Local"
+          },
+          "deadline_international": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline International"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "documents_local": {
+            "type": "integer",
+            "title": "Documents Local"
+          },
+          "documents_international": {
+            "type": "integer",
+            "title": "Documents International"
+          }
+        },
+        "type": "object",
+        "required": [
+          "program_id",
+          "title",
+          "faculty",
+          "degree_level",
+          "language",
+          "tuition_per_ects_kzt",
+          "tuition_per_ects_usd",
+          "deadline_local",
+          "deadline_international",
+          "source_url",
+          "is_active",
+          "documents_local",
+          "documents_international"
+        ],
+        "title": "ComparedProgram"
       },
       "DocumentRequirementOut": {
         "properties": {

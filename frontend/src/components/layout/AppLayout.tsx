@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom"
 import { ChatWidget } from "@/components/chat/ChatWidget"
 import { ErrorBoundary } from "@/components/common/ErrorBoundary"
+import { CompareBar } from "@/components/compare/CompareBar"
 import { SiteFooter } from "@/components/layout/SiteFooter"
 import { SiteHeader } from "@/components/layout/SiteHeader"
 
@@ -16,6 +17,7 @@ export function AppLayout() {
         </ErrorBoundary>
       </main>
       <SiteFooter />
+      <CompareBar />
       <ChatWidget />
     </div>
   )

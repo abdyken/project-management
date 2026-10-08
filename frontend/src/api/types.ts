@@ -83,3 +83,12 @@ export type FeedbackRequest = {
   rating: FeedbackRating
   reason?: FeedbackReason
 }
+
+export type ComparedProgram = Program & {
+  documents_local: number
+  documents_international: number
+}
+
+export type CompareResponse = {
+  programs: ComparedProgram[]
+}

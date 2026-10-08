@@ -34,12 +34,13 @@ Start the API on port 8000 first (see the root README). The dev server proxies `
 - `/` — admissions entry
 - `/programs` — catalogue (search + school / degree / language)
 - `/programs/:id` — programme + document checklist
+- `/compare?ids=a,b,c` — up to three programmes side by side (US17); the selection is kept in the session
 
 The chat widget is mounted on every page.
 
 ## API
 
-`GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist?applicant_type=local|international`, `POST /api/assistant/ask/stream`, `GET /api/assistant/suggestions`. Ratings are kept in the session store and sent to `POST /api/assistant/feedback`.
+`GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/compare?ids=`, `GET /api/programs/:id/checklist?applicant_type=local|international`, `POST /api/assistant/ask/stream`, `GET /api/assistant/suggestions`. Ratings are kept in the session store and sent to `POST /api/assistant/feedback`.
 
 ## Widget QA (US14 14.5)
 
@@ -49,6 +50,7 @@ The chat widget is mounted on every page.
 npm i --no-save playwright@1.55.0
 npx playwright install chromium firefox
 BASE_URL=http://localhost:5173 node e2e/widget-qa.mjs
+BASE_URL=http://localhost:5173 node e2e/compare-qa.mjs
 ```
 
 Screenshots and `results.json` go to `e2e/shots/` (git-ignored). `WIDTHS=360` limits the run to one width.

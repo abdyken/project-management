@@ -112,7 +112,28 @@ For the program detail page (and for direct links / page refresh).
 
 ---
 
-## Errors (both endpoints)
+## `GET /api/programs/compare` — two or three programs side by side (US17)
+
+| Parameter | Rules | Example |
+| --------- | ----- | ------- |
+| `ids` | Required: 2 or 3 different program ids, comma-separated, in the order they should be shown (max 200 chars) | `ids=6B06101,6B06102,7M06101` |
+
+- **200 OK** — `{"programs": [...]}` in the requested order. Each item is the program object above plus `documents_local` and `documents_international`: the number of documents in that applicant type's checklist (`0` = no published list).
+- **404 Not Found** — `{"error_code": "PROGRAM_NOT_FOUND", "message": "Program not found: <id>"}` for the first unknown or inactive id.
+- **422** — `INVALID_REQUEST` for fewer than 2, more than 3, or repeated ids.
+
+```json
+{
+  "programs": [
+    { "program_id": "6B06101", "title": "Information Systems", "...": "...", "documents_local": 11, "documents_international": 9 },
+    { "program_id": "7M06101", "title": "Information Systems", "...": "...", "documents_local": 7, "documents_international": 0 }
+  ]
+}
+```
+
+---
+
+## Errors (all endpoints)
 
 Error bodies always have this shape:
 

@@ -5,6 +5,7 @@ import { getChecklist, getProgram } from "@/api/programs"
 import type { ApplicantType } from "@/api/types"
 import { DocumentChecklist } from "@/components/catalog/DocumentChecklist"
 import { ConnectionError } from "@/components/common/ConnectionError"
+import { CompareToggle } from "@/components/compare/CompareToggle"
 import { Button } from "@/components/ui/button"
 import { DEGREE_LABELS } from "@/lib/constants"
 import { formatDeadline, formatTuitionInternational, formatTuitionLocal } from "@/lib/utils"
@@ -75,7 +76,10 @@ export function ProgramDetailPage() {
       <p className={`mt-6 ${labelClass}`}>
         {program.program_id} · {DEGREE_LABELS[program.degree_level]}
       </p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{program.title}</h1>
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{program.title}</h1>
+        <CompareToggle programId={program.program_id} title={program.title} />
+      </div>
 
       <dl className="mt-10 grid gap-6 border-y border-border py-8 sm:grid-cols-2">
         <div>
