@@ -6,7 +6,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.assistant import catalogue_tools
-from app.assistant.catalogue_tools import NOT_PUBLISHED, program_facts
+from app.assistant.catalogue_tools import NOT_PUBLISHED, program_facts, program_source
 from app.assistant.intents import (
     CATALOGUE_FIELDS,
     DEADLINE,
@@ -24,6 +24,7 @@ from app.assistant.intents import (
     resolve_programs,
     without_titles,
 )
+from app.assistant.schemas import AnswerSource
 from app.catalogue.models import Program
 
 MAX_COMPARED = 3
@@ -56,7 +57,7 @@ class CatalogueRequest:
 @dataclass(frozen=True)
 class CatalogueAnswer:
     text: str
-    links: list[str]
+    sources: list[AnswerSource]
 
 
 def catalogue_request(session: Session, question: str, programs: list[Program]) -> CatalogueRequest | None:
@@ -160,8 +161,9 @@ def _values(facts: dict[str, Any], field_name: str, applicant_types: tuple[str, 
     return [(f"Application deadline, {kind} applicants", facts[f"deadline_{kind}"]) for kind in applicant_types]
 
 
-def _page(facts: dict[str, Any]) -> list[str]:
-    return [facts["program_page"]] if facts.get("program_page") else []
+def _page(facts: dict[str, Any]) -> list[AnswerSource]:
+    source = program_source(facts)
+    return [source] if source is not None else []
 
 
 def _with_contact(text: str, missing: bool, contact: str) -> str:
@@ -223,8 +225,8 @@ def _comparison(request: CatalogueRequest, contact: str) -> CatalogueAnswer:
             lines.append(f"- {title}: " + "; ".join(cells))
     heading = f"Comparison of {_join(names)}:"
     text = heading + "\n" + "\n".join(lines)
-    links = [link for facts in programs for link in _page(facts)]
-    return CatalogueAnswer(f"{text}\n{contact}" if missing else text, list(dict.fromkeys(links)))
+    sources = list({source.link: source for facts in programs for source in _page(facts)}.values())
+    return CatalogueAnswer(f"{text}\n{contact}" if missing else text, sources)
 
 
 def _choose_program(request: CatalogueRequest) -> CatalogueAnswer:

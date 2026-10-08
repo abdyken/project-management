@@ -11,6 +11,7 @@ export type ChatSource = {
   faqId: string | null
   question: string | null
   link: string | null
+  title?: string | null
 }
 
 export type ChatRating = {
@@ -59,7 +60,7 @@ type ChatState = {
   appendAssistantText: (id: string, text: string) => void
   completeAssistantMessage: (
     id: string,
-    patch: { text?: string; sources: ChatSource[]; sourceLink: string | null; answerId: string },
+    patch: { text?: string; sources: ChatSource[]; answerId: string },
   ) => void
   interruptMessage: (id: string) => void
   failMessage: (id: string, text: string) => void
@@ -73,17 +74,15 @@ function settleStreaming(message: ChatMessage): ChatMessage {
   return { ...message, streaming: false, interrupted: true }
 }
 
-export function sourcesFromApi(sources: AnswerSource[] | null | undefined, sourceLink: string | null): ChatSource[] {
-  const mapped = (sources ?? [])
+export function sourcesFromApi(sources: AnswerSource[] | null | undefined): ChatSource[] {
+  return (sources ?? [])
     .map((source) => ({
       faqId: source.faq_id ?? null,
       question: source.question ?? null,
       link: source.link ?? null,
+      title: source.title ?? null,
     }))
     .filter((source) => source.link || source.question || source.faqId)
-  if (mapped.length > 0) return mapped
-  if (sourceLink) return [{ faqId: null, question: null, link: sourceLink }]
-  return []
 }
 
 export const useChatStore = create<ChatState>()(

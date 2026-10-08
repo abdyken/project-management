@@ -37,14 +37,14 @@ data: {"text": "Computer Science (bachelor, "}
 ...
 
 event: done
-data: {"answer_id": "42", "sources": [], "faq_id": null, "source_link": null, "similarity_score": null}
+data: {"answer_id": "42", "sources": []}
 ```
 
 For an FAQ answer `done` carries the source:
 
 ```text
 event: done
-data: {"answer_id": "43", "sources": [{"faq_id": "faq-003", "question": "How do I apply online for a bachelor's programme?", "link": "https://sdu.edu.kz/..."}], "faq_id": "faq-003", "source_link": "https://sdu.edu.kz/...", "similarity_score": 0.86}
+data: {"answer_id": "43", "sources": [{"faq_id": "faq-003", "question": "How do I apply online for a bachelor's programme?", "link": "https://sdu.edu.kz/...", "title": "How do I apply online for a bachelor's programme?"}]}
 ```
 
 | Event | Data | Meaning |
@@ -58,8 +58,7 @@ data: {"answer_id": "43", "sources": [{"faq_id": "faq-003", "question": "How do 
 | Field | Type | Notes |
 | ----- | ---- | ----- |
 | `answer_id` | string | Id of the stored answer. Use it to rate the answer (US13 feedback). |
-| `sources` | `[{faq_id, question, link}]` | Same as `sources` in the `/ask` response (contract v2, [assistant.md](assistant.md)). `[]` when the answer has no source (checklist answers, fallbacks). |
-| `faq_id`, `source_link`, `similarity_score` | as in `/ask` | Kept for one sprint, like `/ask`. |
+| `sources` | `[{faq_id, question, link, title}]` | Same as `sources` in the `/ask` response (contract v3, [assistant.md](assistant.md)). `[]` when the answer has no source (checklist answers, fallbacks). |
 
 A stream that ends without `done` was interrupted (network, closed tab): treat it like `error`.
 

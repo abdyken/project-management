@@ -87,7 +87,7 @@ def test_faq_answer_sources_are_stored(client, assistant_session, faq_items):
         select(ChatTurn).where(ChatTurn.session_id == "s1", ChatTurn.role == ASSISTANT)
     ).one()
 
-    assert answer_turn.sources == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link}]
+    assert answer_turn.sources == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link, "title": item.question}]
     assert body["sources"] == answer_turn.sources
     assert body["answer_id"] == str(answer_turn.id)
 

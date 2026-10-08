@@ -120,16 +120,15 @@ def test_done_event_carries_the_stored_answer_id_and_sources(client, assistant_s
         select(ChatTurn).where(ChatTurn.session_id == "s1", ChatTurn.role == ASSISTANT)
     ).one()
     assert done["answer_id"] == str(answer_turn.id)
-    assert done["faq_id"] == item.faq_id
-    assert done["sources"] == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link}]
-    assert set(done) == {"answer_id", "sources", "faq_id", "source_link", "similarity_score"}
+    assert done["sources"] == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link, "title": item.question}]
+    assert set(done) == {"answer_id", "sources"}
 
 
 def test_answer_without_a_source_has_an_empty_source_list(client):
     done = read_events(stream(client, DOCS_LOCAL, "s1"))[-1][1]
 
     assert done["sources"] == []
-    assert done["faq_id"] is None
+    assert set(done) == {"answer_id", "sources"}
 
 
 def test_follow_ups_work_in_the_stream_too(client):
@@ -168,4 +167,5 @@ def test_fallback_answers_stream_like_any_other(client, monkeypatch):
     events = read_events(stream(client, "something unrelated", "s1"))
 
     assert "".join(data["text"] for name, data in events if name == "chunk") == fallback.answer
-    assert events[-1][1]["similarity_score"] == 0.1
+    assert events[-1][1]["sources"] == []
+    assert events[-1][0] == "done"

@@ -94,7 +94,7 @@ class AssistantService:
             if generated is not None:
                 return generated
         rendered = answer_from_catalogue(request, contact)
-        return _text_answer(rendered.text, rendered.links)
+        return _text_answer(rendered.text, rendered.sources)
 
     def _faq_sources(
         self, question: str, results: list[retrieval.SearchResult], exclude: retrieval.SearchResult | None = None
@@ -172,12 +172,12 @@ def _written_for(question: str, item: FaqItem) -> bool:
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
 
 
-def _text_answer(text: str, links: list[str] | None = None) -> Answer:
-    links = links or []
+def _text_answer(text: str, sources: list[AnswerSource] | None = None) -> Answer:
+    sources = sources or []
     return Answer(
         answer=text,
-        sources=[AnswerSource(faq_id=None, question=None, link=link) for link in links],
-        source_link=links[0] if links else None,
+        sources=sources,
+        source_link=sources[0].link if sources else None,
         faq_id=None,
         similarity_score=None,
     )

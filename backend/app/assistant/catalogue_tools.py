@@ -6,6 +6,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.catalogue import service as catalogue
+from app.assistant.schemas import AnswerSource
 from app.catalogue.models import Program
 
 NOT_PUBLISHED = "not published yet"
@@ -53,6 +54,14 @@ def fees_text(kzt: int | None, usd: int | None) -> str:
     if usd is None:
         return f"{kzt:,} KZT"
     return f"{kzt:,} KZT (about USD {usd:,})"
+
+
+def program_source(facts: dict[str, Any]) -> AnswerSource | None:
+    if not facts.get("program_page"):
+        return None
+    return AnswerSource(
+        faq_id=None, question=None, link=facts["program_page"], title=f"{facts['title']} ({facts['program_id']})"
+    )
 
 
 def has_missing_values(facts: dict[str, Any]) -> bool:

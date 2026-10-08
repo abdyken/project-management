@@ -1,4 +1,6 @@
-# FAQ assistant API (US3 / T3.5, contract v2: US10 / T10.4)
+# FAQ assistant API (US3 / T3.5, contract v2: US10 / T10.4, contract v3: 10.6)
+
+**Contract v3 (Sprint 3):** the v1 fields `source_link`, `faq_id` and `similarity_score` announced as deprecated in Sprint 2 are removed from `/ask` and from the stream's `done` event; every source has a `title`.
 
 ## `POST /api/assistant/ask`
 
@@ -17,34 +19,35 @@
 {
   "answer": "Text of the matching official FAQ item",
   "sources": [
-    { "faq_id": "faq-004", "question": "What are the steps of the admission process for international applicants?", "link": "https://sdu.edu.kz/en/…" }
+    {
+      "faq_id": "faq-004",
+      "question": "What are the steps of the admission process for international applicants?",
+      "link": "https://sdu.edu.kz/en/…",
+      "title": "What are the steps of the admission process for international applicants?"
+    }
   ],
-  "answer_id": "42",
-  "source_link": "https://sdu.edu.kz/en/…",
-  "faq_id": "faq-004",
-  "similarity_score": 0.83
+  "answer_id": "42"
 }
 ```
 
 | Field | Type | Notes |
 | ----- | ---- | ----- |
 | `answer` | string | The answer text. Document lists are one line per document, separated by `\n`. |
-| `sources` | `[{faq_id, question, link}]` | Official sources of the answer, in the order they are used; `[]` when there is none (fallback, document checklist, "which program?" questions). A FAQ source has all three fields. A catalogue answer (US12) cites the official page of every program it uses: `faq_id` and `question` are `null`, `link` is the page. Once answers are generated (US10), one answer can cite several FAQ items. |
+| `sources` | `[{faq_id, question, link, title}]` | Official sources of the answer, in the order they are used; `[]` when there is none (fallback, document checklist, "which program?" questions). A FAQ source has `faq_id`, `question` and `link`, and `title` equals the question. A catalogue source (US12) is the official page of a program: `faq_id` and `question` are `null`, `title` is `<Program> (<code>)`. One answer can cite several sources. Show `title` as the link text. |
 | `answer_id` | string | Id of the stored answer, the same as in the stream's `done` event. Use it to rate the answer (`POST /api/assistant/feedback`). |
-| `source_link`, `faq_id`, `similarity_score` | as in contract v1 | **Deprecated, kept for Sprint 2 only.** `source_link` and `faq_id` are the first source. Read `sources` instead; they are removed in Sprint 3. |
 
 `answer` is always one of:
 
-| Case | `answer` | `source_link` / `faq_id` | `similarity_score` |
-| ---- | -------- | ------------------------ | ------------------ |
-| FAQ match (score ≥ `SIMILARITY_THRESHOLD`), model answer passes the grounding check (US10) | Gemini's answer in its own words, from the cited FAQ items only; a combined question gets one answer | first cited item; `sources` lists every cited item | best item's cosine similarity |
-| FAQ match, but no model answer: no `GEMINI_API_KEY`, every free model at its limit, API error, model timeout, or the answer fails the grounding check | The best FAQ item's answer, verbatim (Sprint 1) | set | cosine similarity |
-| Catalogue question (US12): fee, deadline, language or faculty of a program, a comparison, or a program list | Values from the catalogue, see *Catalogue answers* below | `source_link` is the first program page, `faq_id` `null` | `null` |
-| No FAQ match (T3.4) | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `null` | best score, or `null` when the FAQ is empty |
-| Document question (T3.6), one program, applicant type given | `Required documents for <Program> (<degree>, <code>), <local\|international> applicant:` and one line per document | `null` | `null` |
-| Document question, applicant type not given | Asks the applicant to say "local" or "international" | `null` | `null` |
-| Document question matching several programs (e.g. the bachelor and master Information Systems) | Lists the programs with degree and code and asks for the code | `null` | `null` |
-| Document question, no requirements stored (T4.3) | `The document list for this program is not published yet, please contact the admissions office. <contact>` | `null` | `null` |
+| Case | `answer` | `sources` |
+| ---- | -------- | --------- |
+| FAQ match (score ≥ `SIMILARITY_THRESHOLD`), model answer passes the grounding check (US10) | Gemini's answer in its own words, from the cited FAQ items only; a combined question gets one answer | every cited item |
+| FAQ match, but no model answer: no `GEMINI_API_KEY`, every free model at its limit, API error, model timeout, or the answer fails the grounding check | The best FAQ item's answer, verbatim (Sprint 1) | that item |
+| Catalogue question (US12): fee, deadline, language or faculty of a program, a comparison, or a program list | Values from the catalogue, see *Catalogue answers* below | the program pages used (none for a program list or an unpublished value) |
+| No FAQ match (T3.4) | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `[]` |
+| Document question (T3.6), one program, applicant type given | `Required documents for <Program> (<degree>, <code>), <local\|international> applicant:` and one line per document | `[]` |
+| Document question, applicant type not given | Asks the applicant to say "local" or "international" | `[]` |
+| Document question matching several programs (e.g. the bachelor and master Information Systems) | Lists the programs with degree and code and asks for the code | `[]` |
+| Document question, no requirements stored (T4.3) | `The document list for this program is not published yet, please contact the admissions office. <contact>` | `[]` |
 
 **Follow-ups (US11).** The last 6 turns of the session are read before answering. A document or catalogue follow-up ("and as an international applicant?", "and the deadline?") is rewritten into a standalone question with the program and applicant type named earlier. A short follow-up to a FAQ answer ("And when do I have to apply for it?") that does not reach the threshold on its own is searched again together with the category of the previous answer's FAQ item (`dormitory: And when…`). Only the session's own turns are used. A request that runs out of time stores nothing, so a resend does not duplicate the turn.
 

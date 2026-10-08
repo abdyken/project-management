@@ -688,6 +688,17 @@
           "link": {
             "type": "string",
             "title": "Link"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           }
         },
         "type": "object",
@@ -731,41 +742,7 @@
               "$ref": "#/components/schemas/AnswerSource"
             },
             "type": "array",
-            "title": "Sources",
-            "default": []
-          },
-          "source_link": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Source Link"
-          },
-          "faq_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Faq Id"
-          },
-          "similarity_score": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Similarity Score"
+            "title": "Sources"
           },
           "answer_id": {
             "type": "string",
@@ -775,9 +752,7 @@
         "type": "object",
         "required": [
           "answer",
-          "source_link",
-          "faq_id",
-          "similarity_score",
+          "sources",
           "answer_id"
         ],
         "title": "AskResponse"

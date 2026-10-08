@@ -11,6 +11,7 @@ import { useChatStore, type ChatMessage as ChatMessageType, type ChatSource } fr
 const REASONS: FeedbackReason[] = ["wrong", "outdated", "unclear", "other"]
 
 function sourceLabel(source: ChatSource, index: number, total: number, t: I18n["t"]) {
+  if (source.title) return source.title
   if (source.question) return source.question
   return total > 1 ? t("chat.sourceN", { n: index + 1 }) : t("chat.source")
 }

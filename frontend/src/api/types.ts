@@ -48,25 +48,18 @@ export type AnswerSource = {
   faq_id: string | null
   question: string | null
   link: string
+  title: string | null
 }
 
 export type AssistantResponse = {
   answer: string
   sources: AnswerSource[]
   answer_id: string
-  /** @deprecated v1, removed in Sprint 3: read `sources` */
-  source_link: string | null
-  /** @deprecated v1, removed in Sprint 3: read `sources` */
-  faq_id: string | null
-  similarity_score: number | null
 }
 
 export type StreamDone = {
   answer_id: string
   sources: AnswerSource[]
-  faq_id: string | null
-  source_link: string | null
-  similarity_score: number | null
 }
 
 export type SuggestionsResponse = {

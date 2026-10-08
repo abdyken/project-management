@@ -4,6 +4,7 @@ import json
 import logging
 from typing import Any
 
+from app.assistant.catalogue_tools import program_source
 from app.assistant.grounding import check_catalogue_grounding, check_grounding
 from app.assistant.llm import Llm, LlmUnavailable
 from app.assistant.schemas import Answer, AnswerSource, FaqItem
@@ -119,11 +120,10 @@ def generate_catalogue_answer(
         logger.warning("catalogue answer rejected: model=%s %s", model, reason)
         return None
 
-    sources = [
-        AnswerSource(faq_id=None, question=None, link=facts["program_page"])
-        for facts in cited_programs
-        if facts.get("program_page")
-    ] + [AnswerSource.from_faq(item) for item in cited_items]
+    program_sources = [program_source(facts) for facts in cited_programs]
+    sources = [source for source in program_sources if source is not None] + [
+        AnswerSource.from_faq(item) for item in cited_items
+    ]
     return Answer(
         answer=text,
         sources=sources,

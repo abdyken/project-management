@@ -39,10 +39,11 @@ class AnswerSource(BaseModel):
     faq_id: str | None
     question: str | None
     link: str
+    title: str | None = None
 
     @classmethod
     def from_faq(cls, item: FaqItem) -> "AnswerSource":
-        return cls(faq_id=item.faq_id, question=item.question, link=item.source_link)
+        return cls(faq_id=item.faq_id, question=item.question, link=item.source_link, title=item.question)
 
 
 class Answer(BaseModel):
@@ -53,7 +54,9 @@ class Answer(BaseModel):
     similarity_score: float | None
 
 
-class AskResponse(Answer):
+class AskResponse(BaseModel):
+    answer: str
+    sources: list[AnswerSource]
     answer_id: str
 
 

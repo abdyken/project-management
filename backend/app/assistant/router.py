@@ -49,7 +49,7 @@ def _answer(
         sources = [source.model_dump() for source in answer.sources] or None
         record_question(session, body.session_id, body.question)
         answer_turn = record_answer(session, body.session_id, answer.answer, sources)
-        return AskResponse(**answer.model_dump(), answer_id=str(answer_turn.id))
+        return AskResponse(answer=answer.answer, sources=answer.sources, answer_id=str(answer_turn.id))
 
 
 async def _answer_in_time(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse | None:

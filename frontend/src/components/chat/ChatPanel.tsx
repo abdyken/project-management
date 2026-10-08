@@ -72,8 +72,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         onDone: (done) => {
           if (!isCurrent(token)) return
           completeAssistantMessage(assistantId, {
-            sources: sourcesFromApi(done.sources, done.source_link),
-            sourceLink: done.source_link,
+            sources: sourcesFromApi(done.sources),
             answerId: done.answer_id,
           })
         },
