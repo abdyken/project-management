@@ -16,6 +16,12 @@
 | Daniyar     | Scrum Master & frontend developer | US15, Sprint 2 carry-over, sprint process                |
 | Nurmek      | Developer                         | US17                                                     |
 
+## Where we are (09.10.2026)
+
+- Built and checked locally (also on the full Docker stack): US17, US15, US16, US8, US18 and contract v3. QA records `backend/docs/qa/US8-QA.md`, `US16-QA.md` … `US18-QA.md`; review, decisions and retro in [sprint-3-review.md](sprint-3-review.md).
+- Pull requests are stacked on the Sprint 2 ones: US17 → US15 → contract v3 → US16 → US8/US18.
+- Open: the dev deployment and every QA run on dev (Sprint 2 and 3), branch protection, PO.5 (send the request to the admissions office).
+
 ## Data decision (Product Owner, 08.10.2026)
 
 The admissions office has not sent the PO.3 texts yet. Every SDU page is published in English, Russian and Kazakh (`hreflang` twins on sdu.edu.kz), and the fee orders list every program with its code and fee. Sprint 3 therefore uses these **official published texts**, each with a source link and a verbatim quote, marked "pending admissions office review" — the same rule as Sprint 1. Nothing is translated by the team except interface labels (buttons, headings), which are not admission facts. When the office sends its texts, they replace the published ones.
