@@ -3,14 +3,20 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from app.assistant import retrieval
+from app.assistant.catalogue import (
+    MAX_COMPARED,
+    CatalogueRequest,
+    answer_from_catalogue,
+    catalogue_request,
+    summary_request,
+)
 from app.assistant.fallback import build_fallback_response
-from app.assistant.generation import generate_grounded_answer
+from app.assistant.generation import generate_catalogue_answer, generate_grounded_answer
 from app.assistant.intents import (
     applicant_type_from_question,
     applicant_type_mentioned,
     degrees_mentioned,
     is_document_question,
-    is_tuition_question,
     resolve_programs,
 )
 from app.assistant.llm import Llm, get_llm
@@ -21,55 +27,45 @@ from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_requirements
 from app.config import Settings
 from app.followups.service import log_missing_documents, log_unanswered_question
 
-
 _DOCUMENT_EXAMPLE = "Which documents do I need for {title} ({program_id}) as a local applicant?"
-_TUITION_EXAMPLE = "How much is tuition for {title} ({program_id})?"
+MAX_LISTED_FOR_MODEL = 15
 
 
 class AssistantService:
     def __init__(self, session: Session, settings: Settings, llm: Llm | None = None):
         self._session = session
         self._settings = settings
-        # None without GEMINI_API_KEY: every FAQ answer is then the item's answer, word for word.
         self._llm = llm if llm is not None else get_llm(settings)
 
     def answer(self, question: str, session_id: str) -> Answer:
+        programs = search_programs(self._session)
         if is_document_question(question):
-            programs = resolve_programs(question, search_programs(self._session))
-            if len(programs) == 1:
-                return self._answer_document_question(question, session_id, programs[0])
-            if len(programs) > 1:
-                return _choose_program(programs, _DOCUMENT_EXAMPLE)
-        elif is_tuition_question(question):
-            programs = resolve_programs(question, search_programs(self._session))
-            if len(programs) == 1:
-                return self._answer_tuition_question(programs[0])
-            if len(programs) > 1:
-                return _choose_program(programs, _TUITION_EXAMPLE)
+            matched = resolve_programs(question, programs)
+            if len(matched) == 1:
+                return self._answer_document_question(question, session_id, matched[0])
+            if len(matched) > 1:
+                return _choose_program(matched, _DOCUMENT_EXAMPLE)
+        else:
+            request = catalogue_request(self._session, question, programs)
+            if request is not None:
+                return self._answer_from_catalogue(question, request)
 
         results = retrieval.search(self._session, question, limit=self._settings.grounding_top_k)
         result = _best_for_audience(question, results)
-        # The threshold fallback comes before any model call (US10): a question the FAQ
-        # does not cover never reaches the model.
         if result is None or result.similarity_score < self._settings.similarity_threshold:
+            summary = summary_request(question, programs)
+            if summary is not None:
+                return self._answer_from_catalogue(question, summary)
             score = results[0].similarity_score if results else None
             log_unanswered_question(self._session, question, score, session_id)
             return build_fallback_response(self._settings, score)
 
         if self._llm is not None:
-            sources = [result.faq_item] + [
-                r.faq_item
-                for r in results
-                if r is not result
-                and r.similarity_score >= self._settings.similarity_threshold
-                and _written_for(question, r.faq_item)
-            ]
+            sources = [result.faq_item] + self._faq_sources(question, results, exclude=result)
             generated = generate_grounded_answer(self._llm, question, sources, result.similarity_score)
             if generated is not None:
                 return generated
 
-        # Sprint 1 answer: the best FAQ item word for word. Also used whenever the model
-        # is unavailable or its answer fails the grounding check (US10 / T10.3).
         return Answer(
             answer=result.faq_item.answer,
             sources=[AnswerSource.from_faq(result.faq_item)],
@@ -77,6 +73,28 @@ class AssistantService:
             faq_id=result.faq_item.faq_id,
             similarity_score=result.similarity_score,
         )
+
+    def _answer_from_catalogue(self, question: str, request: CatalogueRequest) -> Answer:
+        contact = self._settings.admissions_office_contact
+        if self._llm is not None and _model_can_answer(request):
+            results = retrieval.search(self._session, question, limit=self._settings.grounding_top_k)
+            items = self._faq_sources(question, results)
+            generated = generate_catalogue_answer(self._llm, question, request.programs, items, contact)
+            if generated is not None:
+                return generated
+        rendered = answer_from_catalogue(request, contact)
+        return _text_answer(rendered.text, rendered.links)
+
+    def _faq_sources(
+        self, question: str, results: list[retrieval.SearchResult], exclude: retrieval.SearchResult | None = None
+    ) -> list[FaqItem]:
+        return [
+            r.faq_item
+            for r in results
+            if r is not exclude
+            and r.similarity_score >= self._settings.similarity_threshold
+            and _written_for(question, r.faq_item)
+        ]
 
     def _answer_document_question(self, question: str, session_id: str, program: Program) -> Answer:
         applicant_type = applicant_type_from_question(question, program)
@@ -103,27 +121,13 @@ class AssistantService:
             f"Required documents for {_label(program)}, {applicant_type} applicant:\n" + "\n".join(lines)
         )
 
-    def _answer_tuition_question(self, program: Program) -> Answer:
-        if program.tuition_per_ects_kzt is None and program.tuition_per_ects_usd is None:
-            return _text_answer(
-                f"The catalogue does not publish a tuition fee for {_label(program)}. "
-                f"{self._settings.admissions_office_contact}"
-            )
 
-        return _text_answer(
-            f"{_label(program)} costs {_fees(program)} per ECTS credit. "
-            "The total depends on how many ECTS credits you take per semester, so confirm the final amount with "
-            f"the Admissions Office. {self._settings.admissions_office_contact}",
-            source_link=program.source_url,
-        )
-
-
-def _fees(program: Program) -> str:
-    if program.tuition_per_ects_kzt is None:
-        return f"about USD {program.tuition_per_ects_usd:,}"
-    if program.tuition_per_ects_usd is None:
-        return f"{program.tuition_per_ects_kzt:,} KZT"
-    return f"{program.tuition_per_ects_kzt:,} KZT (about USD {program.tuition_per_ects_usd:,})"
+def _model_can_answer(request: CatalogueRequest) -> bool:
+    if request.ambiguous or not request.programs:
+        return False
+    if request.listing is not None:
+        return len(request.programs) <= MAX_LISTED_FOR_MODEL
+    return len(request.programs) <= MAX_COMPARED
 
 
 def _label(program: Program) -> str:
@@ -157,6 +161,12 @@ def _written_for(question: str, item: FaqItem) -> bool:
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
 
 
-def _text_answer(text: str, source_link: str | None = None) -> Answer:
-    sources = [AnswerSource(faq_id=None, question=None, link=source_link)] if source_link else []
-    return Answer(answer=text, sources=sources, source_link=source_link, faq_id=None, similarity_score=None)
+def _text_answer(text: str, links: list[str] | None = None) -> Answer:
+    links = links or []
+    return Answer(
+        answer=text,
+        sources=[AnswerSource(faq_id=None, question=None, link=link) for link in links],
+        source_link=links[0] if links else None,
+        faq_id=None,
+        similarity_score=None,
+    )

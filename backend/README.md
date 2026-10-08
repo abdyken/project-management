@@ -80,7 +80,7 @@ app/
   followups/     unanswered questions and missing checklists for the admissions office
   data/          catalogue.json and the FAQ base
 migrations/      Alembic migrations (one chain)
-scripts/         import_catalogue.py, reindex_faq.py, run_accuracy_test.py, qa_us1.py, export_*.py
+scripts/         import_catalogue.py, reindex_faq.py, run_accuracy_test.py, check_catalogue_answers.py, qa_us1.py, export_*.py
 tests/
 docs/            task notes (docs/serdar-ai-tasks/ - assistant tasks T0.7, T3.2-T3.7)
 ```
@@ -96,6 +96,7 @@ curl -X POST http://127.0.0.1:8000/api/assistant/ask \
 ```
 
 - Evaluation set v2 (40 questions) against a running API: `ASSISTANT_BASE_URL=<url> uv run python scripts/run_accuracy_test.py` (see the T10.5 doc).
+- Catalogue answer check (US12): `ASSISTANT_BASE_URL=<url> uv run python scripts/check_catalogue_answers.py` asks the fee, deadline and language of every program and compares the answers with `catalogue.json`.
 - After editing the FAQ file, run `uv run python scripts/reindex_faq.py` (or restart the container).
 
 ## Environment variables

@@ -50,6 +50,64 @@ _DEGREE_STEMS = {
 _PARTIAL_TITLE_MIN_WORDS = 3
 _PARTIAL_TITLE_SHARE = 2 / 3
 
+FEE = "fee"
+DEADLINE = "deadline"
+LANGUAGE = "language"
+FACULTY = "faculty"
+CATALOGUE_FIELDS = (FEE, LANGUAGE, DEADLINE, FACULTY)
+
+_FEE_KEYWORDS = _TUITION_KEYWORDS + ("ects",)
+_DEADLINE_KEYWORDS = (
+    "deadline",
+    "until when",
+    "apply by",
+    "last day",
+    "срок",
+    "дедлайн",
+    "до какого",
+    "мерзім",
+    "соңғы күн",
+    "қашанға дейін",
+)
+_DEADLINE_PHRASES = re.compile(
+    r"\bwhen\b.*\b(?:apply|application|submit)|когда.*(?:пода|заявк|документ)|қашан.*(?:тапсыр|өтінім)"
+)
+_LANGUAGE_KEYWORDS = (
+    "language",
+    "taught",
+    "instruction",
+    "язык",
+    "на каком",
+    "тілі",
+    "тілде",
+)
+_FACULTY_KEYWORDS = ("faculty", "school", "department", "факультет", "школ", "кафедр", "мектеп")
+_COMPARE_KEYWORDS = (
+    "compare",
+    "comparison",
+    " vs",
+    "versus",
+    "difference",
+    "differ",
+    "сравн",
+    "отлич",
+    "разниц",
+    "салыстыр",
+    "айырмашы",
+)
+_PROGRAM_LIST = re.compile(
+    r"\b(?:which|what|list|all|any|show)\b(?:\W+\w+){0,3}?\W+program(?:me)?s\b"
+    r"|(?:какие|какая|список|перечень|все)\s+(?:\S+\s+){0,3}?программ"
+    r"|(?:қандай|тізім)\s+(?:\S+\s+){0,3}?бағдарлама"
+)
+_LANGUAGE_PREFIXES = {
+    "English": ("english", "англ", "ағылшын"),
+    "Russian": ("russian", "русск", "орыс"),
+    "Kazakh": ("казахск", "қазақша"),
+}
+_LANGUAGE_WORDS = {"Kazakh": ("kazakh", "қазақ")}
+_FACULTY_STOPWORDS = _STOPWORDS | {"school", "applied"}
+
 
 def _tokens(text: str) -> list[str]:
     return _TOKEN.findall(text.lower())
@@ -122,3 +180,55 @@ def applicant_type_mentioned(text: str) -> str | None:
 
 def applicant_type_from_question(question: str, program: Program) -> str | None:
     return applicant_type_mentioned(_without_title(question, program.title))
+
+
+def without_titles(question: str, programs: list[Program]) -> str:
+    text = " ".join(_tokens(question))
+    for program in programs:
+        text = _without_title(text, program.title)
+    return text
+
+
+def catalogue_fields(text: str) -> tuple[str, ...]:
+    lowered = text.lower()
+    found = {
+        FEE: any(keyword in lowered for keyword in _FEE_KEYWORDS),
+        DEADLINE: any(keyword in lowered for keyword in _DEADLINE_KEYWORDS) or bool(_DEADLINE_PHRASES.search(lowered)),
+        LANGUAGE: any(keyword in lowered for keyword in _LANGUAGE_KEYWORDS),
+        FACULTY: any(keyword in lowered for keyword in _FACULTY_KEYWORDS),
+    }
+    return tuple(field for field in CATALOGUE_FIELDS if found[field])
+
+
+def is_comparison(question: str) -> bool:
+    lowered = f" {question.lower()}"
+    return any(keyword in lowered for keyword in _COMPARE_KEYWORDS)
+
+
+def is_program_list_question(question: str) -> bool:
+    return bool(_PROGRAM_LIST.search(question.lower()))
+
+
+def programs_named_by_code(question: str, programs: list[Program]) -> list[Program]:
+    tokens = _tokens(question)
+    return [program for program in programs if program.program_id.lower() in tokens]
+
+
+def language_mentioned(text: str) -> str | None:
+    tokens = _tokens(text)
+    found = [
+        name
+        for name, prefixes in _LANGUAGE_PREFIXES.items()
+        if any(token.startswith(prefixes) or token in _LANGUAGE_WORDS.get(name, ()) for token in tokens)
+    ]
+    return found[0] if len(found) == 1 else None
+
+
+def faculty_mentioned(text: str, faculties: list[str]) -> str | None:
+    stems = {_stem(token) for token in _tokens(text)}
+    found = [
+        faculty
+        for faculty in faculties
+        if any(_stem(token) in stems for token in _tokens(faculty) if token not in _FACULTY_STOPWORDS)
+    ]
+    return found[0] if len(found) == 1 else None

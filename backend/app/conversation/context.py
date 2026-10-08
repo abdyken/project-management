@@ -1,42 +1,30 @@
-"""Turn a follow-up question into a standalone one (US11 T11.2).
-
-"and as an international applicant?" after "Which documents do I need for
-6B06102 as a local applicant?" becomes "Which documents do I need for 6B06102
-as an international applicant?", so the answer service gets a question it can
-answer on its own. The same standalone question is the right input for an
-answer model later (US10).
-
-Only clear follow-ups are rewritten: questions made only of filler words, a
-topic word ("documents", "fee"), an applicant type and/or a program. A
-question with a subject of its own, such as "How much does the dormitory
-cost?", is never mixed with an earlier program.
-"""
 from __future__ import annotations
 
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+from app.assistant.catalogue import standalone_question_for
 from app.assistant.intents import (
+    DEADLINE,
     applicant_type_mentioned,
+    catalogue_fields,
     is_document_question,
-    is_tuition_question,
     resolve_programs,
+    without_titles,
 )
 from app.catalogue.models import Program
 from app.conversation.models import USER, ChatTurn
 
 DOCUMENTS = "documents"
-TUITION = "tuition"
 
 _WORD = re.compile(r"\w+")
-# Words that carry no subject of their own in a follow-up (en / ru / kk).
 _FILLER = frozenset(
     """
     and also too then what about how much many is are does do the a an as for of to in it its me i my we
-    need please applicant applicants student students
-    а и или для как насчет насчёт что про тогда тоже
-    ал ше үшін да де
+    need please applicant applicants student students when which
+    а и или для как насчет насчёт что про тогда тоже какой какая когда
+    ал ше үшін да де қандай
     """.split()
 )
 
@@ -49,13 +37,12 @@ class Topic:
 
 
 def topic_of(question: str, programs: Sequence[Program]) -> Topic:
+    matches = resolve_programs(question, list(programs))
     if is_document_question(question):
         intent = DOCUMENTS
-    elif is_tuition_question(question):
-        intent = TUITION
     else:
-        intent = None
-    matches = resolve_programs(question, list(programs))
+        fields = catalogue_fields(without_titles(question, matches))
+        intent = fields[0] if len(fields) == 1 else None
     return Topic(
         intent=intent,
         program_id=matches[0].program_id if len(matches) == 1 else None,
@@ -64,8 +51,6 @@ def topic_of(question: str, programs: Sequence[Program]) -> Topic:
 
 
 def context_of(history: Sequence[ChatTurn], programs: Sequence[Program]) -> Topic:
-    """The latest intent, program and applicant type the applicant named, each
-    taken from the most recent question that mentioned it."""
     intent = program_id = applicant_type = None
     for turn in reversed(history):
         if turn.role != USER:
@@ -80,8 +65,6 @@ def context_of(history: Sequence[ChatTurn], programs: Sequence[Program]) -> Topi
 
 
 def is_follow_up(question: str, programs: Sequence[Program]) -> bool:
-    """True when every word is filler, a topic word, an applicant type or the
-    program named in the question - nothing that starts a new subject."""
     words = [word.lower() for word in _WORD.findall(question)]
     if not words:
         return False
@@ -93,15 +76,13 @@ def is_follow_up(question: str, programs: Sequence[Program]) -> bool:
         word in _FILLER
         or word in program_words
         or is_document_question(word)
-        or is_tuition_question(word)
+        or bool(catalogue_fields(word))
         or applicant_type_mentioned(word) is not None
         for word in words
     )
 
 
 def standalone_question(question: str, history: Sequence[ChatTurn], programs: Sequence[Program]) -> str:
-    """The question to answer: the applicant's own words, or a rewritten
-    standalone question when it is a follow-up to the earlier turns."""
     if not history:
         return question
 
@@ -116,8 +97,6 @@ def standalone_question(question: str, history: Sequence[ChatTurn], programs: Se
             return _build(intent, program_id, applicant_type)
         return question
 
-    # A full document question for a program, without the applicant type: keep
-    # the applicant type named earlier instead of asking again.
     if (
         current.intent == DOCUMENTS
         and current.program_id
@@ -129,8 +108,11 @@ def standalone_question(question: str, history: Sequence[ChatTurn], programs: Se
 
 
 def _build(intent: str, program_id: str, applicant_type: str | None) -> str:
-    if intent == TUITION:
-        return f"How much is tuition for {program_id}?"
+    if intent != DOCUMENTS:
+        question = standalone_question_for(intent, program_id)
+        if intent == DEADLINE and applicant_type:
+            return question.removesuffix("?") + f" for {applicant_type} applicants?"
+        return question
     if applicant_type is None:
         return f"Which documents do I need for {program_id}?"
     article = "an" if applicant_type == "international" else "a"
