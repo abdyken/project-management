@@ -40,3 +40,15 @@ The chat widget is mounted on every page.
 ## API
 
 `GET /api/health`, `GET /api/programs`, `GET /api/programs/:id`, `GET /api/programs/:id/checklist?applicant_type=local|international`, `POST /api/assistant/ask/stream`, `GET /api/assistant/suggestions`. Ratings are kept in the session store and sent to `POST /api/assistant/feedback`.
+
+## Widget QA (US14 14.5)
+
+`e2e/widget-qa.mjs` drives the chat widget in Chromium and Firefox at 360, 768 and 1280 px: starter and follow-up suggestions, sources, checklist lists, follow-ups (US11), comparison (US12), rating with a reason that survives navigation (US13), new conversation, and closing the chat mid-answer (US14). Playwright is installed only for the run, not added to `package.json`:
+
+```bash
+npm i --no-save playwright@1.55.0
+npx playwright install chromium firefox
+BASE_URL=http://localhost:5173 node e2e/widget-qa.mjs
+```
+
+Screenshots and `results.json` go to `e2e/shots/` (git-ignored). `WIDTHS=360` limits the run to one width.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 from collections.abc import Callable
 from contextlib import AbstractContextManager
 from typing import Annotated
@@ -20,7 +21,7 @@ from app.assistant.suggestions import suggest
 from app.catalogue.service import search_programs
 from app.conversation.context import standalone_question
 from app.conversation.models import ASSISTANT, USER, ChatTurn
-from app.conversation.service import recent_turns, record_answer, record_question
+from app.conversation.service import faq_topic, recent_turns, record_answer, record_question
 from app.config import Settings, get_settings
 from app.db import get_session_factory
 
@@ -29,18 +30,22 @@ router = APIRouter(prefix="/assistant", tags=["assistant"])
 ASSISTANT_TIMEOUT = "ASSISTANT_TIMEOUT"
 ANSWER_NOT_FOUND = "ANSWER_NOT_FOUND"
 ALREADY_RATED = "ALREADY_RATED"
+MAX_ANSWER_ID = 2**31 - 1
 
 SessionFactory = Callable[[], AbstractContextManager[Session]]
 
 
-def _answer(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse:
-    """The one answer path behind /ask and /ask/stream: same context, fallbacks and storage."""
+def _answer(
+    open_session: SessionFactory, settings: Settings, body: AskRequest, timed_out: threading.Event
+) -> AskResponse | None:
     with open_session() as session:
-        # US11: answer follow-ups ("and as an international applicant?") in the
-        # context of the last turns of this session only.
         history = recent_turns(session, body.session_id)
-        question = standalone_question(body.question, history, search_programs(session)) if history else body.question
-        answer = AssistantService(session, settings).answer(question, body.session_id)
+        programs = search_programs(session)
+        question = standalone_question(body.question, history, programs) if history else body.question
+        topic = faq_topic(session, history) if history else None
+        answer = AssistantService(session, settings, topic=topic).answer(question, body.session_id)
+        if timed_out.is_set():
+            return None
         sources = [source.model_dump() for source in answer.sources] or None
         record_question(session, body.session_id, body.question)
         answer_turn = record_answer(session, body.session_id, answer.answer, sources)
@@ -48,12 +53,14 @@ def _answer(open_session: SessionFactory, settings: Settings, body: AskRequest) 
 
 
 async def _answer_in_time(open_session: SessionFactory, settings: Settings, body: AskRequest) -> AskResponse | None:
+    timed_out = threading.Event()
     try:
         return await asyncio.wait_for(
-            asyncio.to_thread(_answer, open_session, settings, body),
+            asyncio.to_thread(_answer, open_session, settings, body, timed_out),
             timeout=settings.assistant_timeout_seconds,
         )
     except TimeoutError:
+        timed_out.set()
         return None
 
 
@@ -81,9 +88,10 @@ def _timeout_response() -> JSONResponse:
 def feedback(
     body: FeedbackRequest, open_session: Annotated[SessionFactory, Depends(get_session_factory)]
 ) -> FeedbackResponse | JSONResponse:
+    answer_id = int(body.answer_id)
     with open_session() as session:
-        answer = session.get(ChatTurn, int(body.answer_id))
-        if answer is None or answer.role != ASSISTANT:
+        answer = session.get(ChatTurn, answer_id) if answer_id <= MAX_ANSWER_ID else None
+        if answer is None or answer.role != ASSISTANT or answer.session_id != body.session_id:
             return JSONResponse(
                 status_code=404,
                 content=ErrorResponse(error_code=ANSWER_NOT_FOUND, message="Answer not found.").model_dump(),
@@ -131,7 +139,6 @@ def suggestions(
     open_session: Annotated[SessionFactory, Depends(get_session_factory)],
     session_id: Annotated[SessionId, Query(description="The chat session id")],
 ) -> SuggestionsResponse:
-    """Four starter questions, or up to three follow-ups once the session has a turn."""
     with open_session() as session:
         return SuggestionsResponse(suggestions=suggest(session, session_id))
 

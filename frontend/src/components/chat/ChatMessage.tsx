@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils"
 import { useChatStore, type ChatMessage as ChatMessageType, type ChatSource } from "@/store/chat"
 
 const REASONS: { id: FeedbackReason; label: string }[] = [
+  { id: "wrong", label: "Wrong" },
   { id: "outdated", label: "Outdated" },
-  { id: "incorrect", label: "Incorrect" },
-  { id: "incomplete", label: "Incomplete" },
   { id: "unclear", label: "Unclear" },
+  { id: "other", label: "Other" },
 ]
 
 function sourceLabel(source: ChatSource, index: number, total: number) {
@@ -51,6 +51,7 @@ function Sources({ sources }: { sources: ChatSource[] }) {
 
 function RatingControls({ message }: { message: ChatMessageType }) {
   const rateMessage = useChatStore((state) => state.rateMessage)
+  const sessionId = useChatStore((state) => state.sessionId)
   const [picking, setPicking] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(false)
@@ -63,6 +64,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
     try {
       await sendFeedback({
         answer_id: message.answerId,
+        session_id: sessionId,
         rating,
         ...(reason ? { reason } : {}),
       })
@@ -128,6 +130,14 @@ function RatingControls({ message }: { message: ChatMessageType }) {
               {reason.label}
             </button>
           ))}
+          <button
+            type="button"
+            disabled={sending}
+            onClick={() => commit("down", null)}
+            className="rounded-full px-2.5 py-1 text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+          >
+            Skip reason
+          </button>
         </div>
       ) : null}
       {error ? <p className="text-[11px] text-destructive">Could not save your rating. Please try again.</p> : null}
@@ -165,9 +175,9 @@ export function ChatMessage({
             {isApplicant ? <p className="break-words whitespace-pre-wrap">{message.text}</p> : <AnswerBody text={message.text} />}
           </div>
         ) : null}
-        {message.interrupted ? (
+        {message.interrupted || (message.isError && message.replyTo) ? (
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-xs text-muted-foreground">This answer was interrupted.</p>
+            {message.interrupted ? <p className="text-xs text-muted-foreground">This answer was interrupted.</p> : null}
             {message.replyTo && onResend ? (
               <Button type="button" variant="outline" size="sm" onClick={() => onResend(message)}>
                 <RotateCcw className="size-3" />

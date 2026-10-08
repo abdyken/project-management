@@ -393,7 +393,6 @@
           "assistant"
         ],
         "summary": "Suggested questions for the chat widget",
-        "description": "Four starter questions, or up to three follow-ups once the session has a turn.",
         "operationId": "suggestions_api_assistant_suggestions_get",
         "parameters": [
           {
@@ -624,8 +623,7 @@
           "question",
           "link"
         ],
-        "title": "AnswerSource",
-        "description": "One official source of an answer (contract v2, US10).\n\nFAQ answers cite FAQ items; catalogue answers cite the program page, with\n`faq_id` and `question` null."
+        "title": "AnswerSource"
       },
       "AskRequest": {
         "properties": {
@@ -825,6 +823,12 @@
             "pattern": "^[1-9][0-9]{0,17}$",
             "title": "Answer Id"
           },
+          "session_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Session Id"
+          },
           "rating": {
             "type": "string",
             "enum": [
@@ -856,6 +860,7 @@
         "type": "object",
         "required": [
           "answer_id",
+          "session_id",
           "rating"
         ],
         "title": "FeedbackRequest"

@@ -44,7 +44,6 @@ export type ChecklistResponse = {
   contact: string | null
 }
 
-// Contract v2 (backend/docs/api/assistant.md). A catalogue source has faq_id and question null.
 export type AnswerSource = {
   faq_id: string | null
   question: string | null
@@ -76,10 +75,11 @@ export type SuggestionsResponse = {
 
 export type FeedbackRating = "up" | "down"
 
-export type FeedbackReason = "outdated" | "incorrect" | "incomplete" | "unclear"
+export type FeedbackReason = "wrong" | "outdated" | "unclear" | "other"
 
 export type FeedbackRequest = {
   answer_id: string
+  session_id: string
   rating: FeedbackRating
   reason?: FeedbackReason
 }

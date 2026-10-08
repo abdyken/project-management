@@ -13,8 +13,6 @@ from app.config import get_settings
 
 @pytest.fixture(autouse=True)
 def _no_gemini_key(monkeypatch):
-    # Tests never call Gemini, even with a key in a developer's .env: the env var wins.
-    # Tests of model answers pass a fake Llm to AssistantService instead.
     monkeypatch.setenv("GEMINI_API_KEY", "")
 
 
@@ -41,12 +39,14 @@ def db_session(db_engine):
     from sqlalchemy import delete
     from sqlalchemy.orm import Session
 
+    from app.assistant.feedback import AnswerFeedback
     from app.followups.models import AdmissionsFollowup
 
     with db_engine.connect() as connection:
         transaction = connection.begin()
         with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
             session.execute(delete(AdmissionsFollowup))
+            session.execute(delete(AnswerFeedback))
             yield session
         transaction.rollback()
 
@@ -81,6 +81,5 @@ def assistant_session(db_session, faq_items):
 
     import_catalogue(db_session, load_source(DEFAULT_SOURCE))
     rebuild_index(db_session, faq_items)
-    # Chat turns typed into the local dev database must not become context here.
     db_session.execute(delete(ChatTurn))
     return db_session

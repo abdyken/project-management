@@ -16,6 +16,7 @@ from app.assistant.intents import (
     applicant_type_from_question,
     applicant_type_mentioned,
     degrees_mentioned,
+    is_contextual_follow_up,
     is_document_question,
     resolve_programs,
 )
@@ -32,10 +33,11 @@ MAX_LISTED_FOR_MODEL = 15
 
 
 class AssistantService:
-    def __init__(self, session: Session, settings: Settings, llm: Llm | None = None):
+    def __init__(self, session: Session, settings: Settings, llm: Llm | None = None, topic: str | None = None):
         self._session = session
         self._settings = settings
         self._llm = llm if llm is not None else get_llm(settings)
+        self._topic = topic
 
     def answer(self, question: str, session_id: str) -> Answer:
         programs = search_programs(self._session)
@@ -52,7 +54,13 @@ class AssistantService:
 
         results = retrieval.search(self._session, question, limit=self._settings.grounding_top_k)
         result = _best_for_audience(question, results)
-        if result is None or result.similarity_score < self._settings.similarity_threshold:
+        if self._below_threshold(result) and self._topic and is_contextual_follow_up(question):
+            in_context = f"{self._topic}: {question}"
+            context_results = retrieval.search(self._session, in_context, limit=self._settings.grounding_top_k)
+            context_result = _best_for_audience(in_context, context_results)
+            if not self._below_threshold(context_result):
+                question, results, result = in_context, context_results, context_result
+        if result is None or self._below_threshold(result):
             summary = summary_request(question, programs)
             if summary is not None:
                 return self._answer_from_catalogue(question, summary)
@@ -73,6 +81,9 @@ class AssistantService:
             faq_id=result.faq_item.faq_id,
             similarity_score=result.similarity_score,
         )
+
+    def _below_threshold(self, result: retrieval.SearchResult | None) -> bool:
+        return result is None or result.similarity_score < self._settings.similarity_threshold
 
     def _answer_from_catalogue(self, question: str, request: CatalogueRequest) -> Answer:
         contact = self._settings.admissions_office_contact

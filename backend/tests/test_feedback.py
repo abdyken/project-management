@@ -38,7 +38,7 @@ def test_feedback_saves_answer_question_sources_and_reason(client, db_session):
     answer = _answer(db_session)
 
     response = client.post("/api/assistant/feedback", json={
-        "answer_id": str(answer.id), "rating": "down", "reason": "outdated",
+        "answer_id": str(answer.id), "session_id": "s1", "rating": "down", "reason": "outdated",
     })
 
     assert response.status_code == 201
@@ -52,7 +52,7 @@ def test_feedback_saves_answer_question_sources_and_reason(client, db_session):
 
 def test_one_rating_per_answer_and_unknown_answer(client, db_session):
     answer = _answer(db_session)
-    body = {"answer_id": str(answer.id), "rating": "up"}
+    body = {"answer_id": str(answer.id), "session_id": "s1", "rating": "up"}
     assert client.post("/api/assistant/feedback", json=body).status_code == 201
     duplicate = client.post("/api/assistant/feedback", json=body)
     assert duplicate.status_code == 409
@@ -63,10 +63,10 @@ def test_one_rating_per_answer_and_unknown_answer(client, db_session):
 def test_invalid_feedback_is_rejected(client, db_session):
     question = record_question(db_session, "s1", "Question only")
     for body in (
-        {"answer_id": str(question.id), "rating": "down"},
-        {"answer_id": "garbage", "rating": "down"},
-        {"answer_id": str(question.id), "rating": "maybe"},
-        {"answer_id": str(question.id), "rating": "up", "reason": "outdated"},
+        {"answer_id": str(question.id), "session_id": "s1", "rating": "down"},
+        {"answer_id": "garbage", "session_id": "s1", "rating": "down"},
+        {"answer_id": str(question.id), "session_id": "s1", "rating": "maybe"},
+        {"answer_id": str(question.id), "session_id": "s1", "rating": "up", "reason": "outdated"},
     ):
         response = client.post("/api/assistant/feedback", json=body)
         assert response.status_code in (404, 422)
@@ -80,7 +80,7 @@ def test_export_only_recent_negative_feedback_and_redacts_contact_details(client
     positive = _answer(db_session, "s3")
     for answer, rating in ((recent, "down"), (old, "down"), (positive, "up")):
         assert client.post("/api/assistant/feedback", json={
-            "answer_id": str(answer.id), "rating": rating, "reason": "outdated" if rating == "down" else None,
+            "answer_id": str(answer.id), "session_id": answer.session_id, "rating": rating, "reason": "outdated" if rating == "down" else None,
         }).status_code == 201
     db_session.scalar(select(AnswerFeedback).where(AnswerFeedback.answer_id == old.id)).created_at = now - timedelta(days=8)
     db_session.commit()
@@ -94,3 +94,30 @@ def test_export_only_recent_negative_feedback_and_redacts_contact_details(client
     assert "user@example.com" not in output.getvalue()
     assert "+7 777 123 45 67" not in output.getvalue()
     assert "session_id" not in output.getvalue()
+
+
+def test_an_answer_can_only_be_rated_from_its_own_session(client, db_session):
+    answer = _answer(db_session, "applicant-a")
+
+    response = client.post(
+        "/api/assistant/feedback", json={"answer_id": str(answer.id), "session_id": "applicant-b", "rating": "down"}
+    )
+
+    assert response.status_code == 404
+    assert response.json()["error_code"] == "ANSWER_NOT_FOUND"
+    assert db_session.scalars(select(AnswerFeedback)).all() == []
+
+
+@pytest.mark.parametrize("answer_id", ["2147483648", "999999999999999999"])
+def test_answer_id_beyond_the_id_range_is_not_found(client, answer_id):
+    response = client.post("/api/assistant/feedback", json={"answer_id": answer_id, "session_id": "s1", "rating": "up"})
+
+    assert response.status_code == 404
+
+
+def test_session_id_is_required(client, db_session):
+    answer = _answer(db_session)
+
+    response = client.post("/api/assistant/feedback", json={"answer_id": str(answer.id), "rating": "up"})
+
+    assert response.status_code == 422

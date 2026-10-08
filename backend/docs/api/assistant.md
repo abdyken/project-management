@@ -46,6 +46,8 @@
 | Document question matching several programs (e.g. the bachelor and master Information Systems) | Lists the programs with degree and code and asks for the code | `null` | `null` |
 | Document question, no requirements stored (T4.3) | `The document list for this program is not published yet, please contact the admissions office. <contact>` | `null` | `null` |
 
+**Follow-ups (US11).** The last 6 turns of the session are read before answering. A document or catalogue follow-up ("and as an international applicant?", "and the deadline?") is rewritten into a standalone question with the program and applicant type named earlier. A short follow-up to a FAQ answer ("And when do I have to apply for it?") that does not reach the threshold on its own is searched again together with the category of the previous answer's FAQ item (`dormitory: And when…`). Only the session's own turns are used. A request that runs out of time stores nothing, so a resend does not duplicate the turn.
+
 Unanswered questions and programs without requirements are recorded in the `admissions_followup` table for the admissions office.
 
 A document question contains "document", "paperwork", "checklist", "документ" or "құжат" and names a program by its code (`6B06102`), its full title, or at least two thirds of the words of a title with three or more words. A degree word (bachelor, master, PhD, магистр…) narrows the match to that degree. The applicant type is read from "local", "Kazakhstani", "citizen(s) of Kazakhstan", "местный" (local) or "international", "foreign", "abroad", "иностранец", "шетел" (international); words that are part of the program title ("International Relations") do not count.
@@ -102,18 +104,19 @@ A session that already has a user turn gets at most three questions, and never o
 Rate a stored assistant answer once. The `answer_id` comes from the `/ask` response or the `done` event of `/ask/stream`.
 
 ```json
-{ "answer_id": "42", "rating": "down", "reason": "outdated" }
+{ "answer_id": "42", "session_id": "3f0c…", "rating": "down", "reason": "outdated" }
 ```
 
 | Field | Rules |
 | ----- | ----- |
 | `answer_id` | Required positive decimal id of a stored assistant turn |
+| `session_id` | Required: the chat session the answer was given in. An answer can only be rated from its own session |
 | `rating` | Required: `up` or `down` |
-| `reason` | Optional for `down`: `outdated`, `incorrect`, `incomplete`, `unclear`, `wrong`, `other`; omit for `up` |
+| `reason` | Optional for `down`: `wrong`, `outdated`, `unclear`, `other` (the widget's choices; `incorrect` and `incomplete` are also accepted); omit for `up` |
 
-**201:** `{"answer_id":"42","rating":"down","reason":"outdated"}`. The server stores the rating with the anonymous session id, preceding question, answer, and answer sources. A database unique constraint allows only one rating per answer. Feedback is deleted when its chat answer is purged after 30 days.
+**201:** `{"answer_id":"42","rating":"down","reason":"outdated"}`. The server stores the rating with the anonymous session id, preceding question, answer, and answer sources. A database unique constraint allows only one rating per answer. Feedback is deleted when its chat answer is purged after 30 days (the API deletes turns older than 30 days on start and every 24 hours; `scripts/purge_chat_turns.py` does the same by hand).
 
-**Errors:** `404 ANSWER_NOT_FOUND` for an unknown id or a user turn; `409 ALREADY_RATED` for a second rating; `422 INVALID_REQUEST` for invalid fields; `503 DATABASE_UNAVAILABLE` as for the other assistant endpoints.
+**Errors:** `404 ANSWER_NOT_FOUND` for an unknown id, a user turn or an answer of another session; `409 ALREADY_RATED` for a second rating; `422 INVALID_REQUEST` for invalid fields; `503 DATABASE_UNAVAILABLE` as for the other assistant endpoints.
 
 The Product Owner can export negative ratings with `uv run python scripts/export_negative_feedback.py --days 7 --output feedback.csv` from `backend/`. The CSV contains timestamp, question, answer, sources and reason, but no session id or answer id. Email addresses and phone numbers in free text are redacted. Review the CSV before sharing because free text may contain other personal details.
 

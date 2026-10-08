@@ -42,7 +42,9 @@ export function sendFeedback(body: FeedbackRequest) {
     headers: { Accept: "application/json", "Content-Type": "application/json" },
     body: JSON.stringify(body),
   }).then(async (res) => {
-    if (!res.ok) throw await errorFromResponse(res)
+    if (res.ok) return
+    const error = await errorFromResponse(res)
+    if (error.code !== "ALREADY_RATED") throw error
   })
 }
 

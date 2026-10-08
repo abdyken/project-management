@@ -18,7 +18,13 @@
 
 **Role change (01.10.2026):** Daniyar took over the Scrum Master role from Nurmek. Both keep their development work; only the process duties moved.
 
-## Where we are (01.10.2026)
+## Where we are (08.10.2026)
+
+- Every Sprint 2 development task is built and tested locally: US10 (PR #11), US11, US13 and US14 (branch `backend`, in PR #11), US12 (`feature/us12-catalogue-tools`), plus review fixes, the US11 FAQ follow-up and the daily chat purge (`fix/sprint-2-wrap-up`). The pull requests are stacked: #11 → US12 → wrap-up.
+- QA records: `backend/docs/qa/US11-QA.md` … `US14-QA.md`. Widget checks pass in Chromium and Firefox at 360, 768 and 1280 px (78/78).
+- Not accepted yet: the stories run on dev only after the branches are merged and deployed with `GEMINI_API_KEY`. Review, acceptance, carry-over and retro are in [sprint-2-review.md](sprint-2-review.md).
+
+## Where we were (01.10.2026)
 
 - Sprint 1 is done: the dev environment is deployed, the QA scenarios passed there and the admissions office checked the catalogue, checklists and FAQ.
 - No Sprint 2 code is merged yet. PR #9 (keyword-based tuition answers) was merged on 25.09; US12 replaces it with catalogue tools.
@@ -106,6 +112,8 @@ Development:
 **Total:** 14 h development + Scrum Master duties
 
 **Development status (02.10.2026):** 11.4, 13.2, 14.2, 14.3 and 14.4 are in the chat widget. Chrome checks for 14.5 are in `backend/docs/qa/US14-QA.md`. Firefox at the same widths is still open. Scrum Master duties SM.1–SM.5 stay with Daniyar for the review.
+
+**Update (08.10.2026):** 14.5 Firefox done — `frontend/e2e/widget-qa.mjs` runs the widget checks in Chromium and Firefox at all three widths (78/78 locally). The run on dev is still open.
 
 ### Nurmek — Developer
 

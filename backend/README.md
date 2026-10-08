@@ -59,7 +59,7 @@ New migrations must set `down_revision` to the current head (`uv run alembic hea
 
 ## Scheduled jobs
 
-Chat turns are kept only against the anonymous session id and must be deleted after 30 days (US11). Run daily on the host:
+Chat turns are kept only against the anonymous session id and deleted after 30 days (US11). The API does this itself on start and every 24 hours, so no cron job is needed. To purge by hand:
 
 ```bash
 uv run python scripts/purge_chat_turns.py

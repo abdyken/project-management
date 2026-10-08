@@ -107,6 +107,14 @@ _LANGUAGE_PREFIXES = {
 }
 _LANGUAGE_WORDS = {"Kazakh": ("kazakh", "қазақ")}
 _FACULTY_STOPWORDS = _STOPWORDS | {"school", "applied"}
+_FOLLOW_UP_MARKERS = frozenset(
+    """
+    and also it its this that them they there then about
+    а и это этого его её их там тоже тогда
+    ал ше оны бұл сол онда
+    """.split()
+)
+_FOLLOW_UP_MAX_WORDS = 10
 
 
 def _tokens(text: str) -> list[str]:
@@ -232,3 +240,8 @@ def faculty_mentioned(text: str, faculties: list[str]) -> str | None:
         if any(_stem(token) in stems for token in _tokens(faculty) if token not in _FACULTY_STOPWORDS)
     ]
     return found[0] if len(found) == 1 else None
+
+
+def is_contextual_follow_up(question: str) -> bool:
+    tokens = _tokens(question)
+    return 0 < len(tokens) <= _FOLLOW_UP_MAX_WORDS and any(token in _FOLLOW_UP_MARKERS for token in tokens)

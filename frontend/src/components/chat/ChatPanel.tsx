@@ -80,7 +80,6 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       if (outcome === "interrupted" || outcome === "aborted") interruptMessage(assistantId)
     } catch (error) {
       if (!isCurrent(token) || abortReason() === "new") return
-      if (!useChatStore.getState().draft.trim()) setDraft(question)
       failMessage(assistantId, chatErrorMessage(error))
     } finally {
       finishRequest(token)
