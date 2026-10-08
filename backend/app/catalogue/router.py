@@ -6,12 +6,21 @@ from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
-from app.catalogue.schemas import DegreeLevel, ProgramListResponse, ProgramOut
-from app.catalogue.service import get_active_program, search_programs
+from app.api.errors import (
+    DATABASE_UNAVAILABLE_RESPONSE,
+    INVALID_REQUEST,
+    INVALID_REQUEST_RESPONSE,
+    PROGRAM_NOT_FOUND,
+    ErrorResponse,
+)
+from app.catalogue.schemas import CompareResponse, ComparedProgram, DegreeLevel, ProgramListResponse, ProgramOut
+from app.catalogue.service import document_counts, get_active_program, search_programs
 from app.db import get_db_session
 
 router = APIRouter(prefix="/programs", tags=["catalogue"])
+
+MIN_COMPARED = 2
+MAX_COMPARED = 3
 
 
 def _clean(value: str | None) -> str | None:
@@ -44,6 +53,48 @@ def list_programs(
         total=len(programs),
         programs=[ProgramOut.model_validate(program) for program in programs],
     )
+
+
+@router.get(
+    "/compare",
+    response_model=CompareResponse,
+    responses={
+        404: {"model": ErrorResponse, "description": "One of the ids is not an active program."},
+        **INVALID_REQUEST_RESPONSE,
+        **DATABASE_UNAVAILABLE_RESPONSE,
+    },
+    summary="Compare two or three study programs side by side",
+)
+def compare_programs(
+    session: Annotated[Session, Depends(get_db_session)],
+    ids: Annotated[str, Query(max_length=200, description="2 or 3 comma-separated program ids, in display order")],
+) -> CompareResponse | JSONResponse:
+    program_ids = [program_id.strip() for program_id in ids.split(",") if program_id.strip()]
+    if not MIN_COMPARED <= len(program_ids) <= MAX_COMPARED or len(set(program_ids)) != len(program_ids):
+        return _error(422, INVALID_REQUEST, f"ids: give {MIN_COMPARED} or {MAX_COMPARED} different program ids")
+
+    programs = []
+    for program_id in program_ids:
+        program = get_active_program(session, program_id)
+        if program is None:
+            return _error(404, PROGRAM_NOT_FOUND, f"Program not found: {program_id}")
+        programs.append(program)
+
+    counts = document_counts(session, program_ids)
+    return CompareResponse(
+        programs=[
+            ComparedProgram(
+                **ProgramOut.model_validate(program).model_dump(),
+                documents_local=counts.get((program.program_id, "local"), 0),
+                documents_international=counts.get((program.program_id, "international"), 0),
+            )
+            for program in programs
+        ]
+    )
+
+
+def _error(status_code: int, error_code: str, message: str) -> JSONResponse:
+    return JSONResponse(status_code=status_code, content=ErrorResponse(error_code=error_code, message=message).model_dump())
 
 
 @router.get(

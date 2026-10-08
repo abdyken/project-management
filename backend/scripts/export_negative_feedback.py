@@ -7,7 +7,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import re
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -21,15 +20,10 @@ sys.path.insert(0, str(BACKEND_ROOT))
 
 from app.assistant.feedback import AnswerFeedback  # noqa: E402
 from app.config import get_settings  # noqa: E402
+from app.exports import safe_text  # noqa: E402
 from app.db import get_session  # noqa: E402
 
 HEADERS = ("created_at", "question", "answer", "sources", "reason")
-EMAIL = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
-PHONE = re.compile(r"(?<!\w)\+?\d[\d\s()\-]{7,}\d(?!\w)")
-
-
-def _redact(text: str) -> str:
-    return PHONE.sub("[phone redacted]", EMAIL.sub("[email redacted]", text))
 
 
 def export_feedback(session: Session, output: TextIO, days: int = 7, now: datetime | None = None) -> int:
@@ -47,8 +41,8 @@ def export_feedback(session: Session, output: TextIO, days: int = 7, now: dateti
         writer.writerow(
             {
                 "created_at": row.created_at.isoformat(),
-                "question": _redact(row.question),
-                "answer": _redact(row.answer),
+                "question": safe_text(row.question),
+                "answer": safe_text(row.answer),
                 "sources": json.dumps(row.sources or [], ensure_ascii=False),
                 "reason": row.reason or "",
             }

@@ -87,7 +87,7 @@ def test_faq_answer_sources_are_stored(client, assistant_session, faq_items):
         select(ChatTurn).where(ChatTurn.session_id == "s1", ChatTurn.role == ASSISTANT)
     ).one()
 
-    assert answer_turn.sources == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link}]
+    assert answer_turn.sources == [{"faq_id": item.faq_id, "question": item.question, "link": item.source_link, "title": item.question}]
     assert body["sources"] == answer_turn.sources
     assert body["answer_id"] == str(answer_turn.id)
 
@@ -99,3 +99,36 @@ def test_unrelated_question_after_a_program_question_is_answered_on_its_own(clie
 
     assert "6B06102" not in answer
     assert "per ECTS credit" not in answer
+
+
+def sources(client: TestClient, question: str, session_id: str) -> list[str | None]:
+    response = client.post("/api/assistant/ask", json={"question": question, "session_id": session_id})
+    return [source["faq_id"] for source in response.json()["sources"]]
+
+
+def test_faq_follow_up_is_answered_in_the_topic_of_the_previous_answer(client):
+    assert sources(client, "How much does the dormitory cost?", "s1") == ["faq-022"]
+
+    assert sources(client, "And when do I have to apply for it?", "s1") == ["faq-023"]
+
+
+def test_faq_topic_does_not_reach_an_unrelated_question_or_another_session(client):
+    sources(client, "How much does the dormitory cost?", "s1")
+
+    assert sources(client, "What is the capital of France?", "s1") == []
+    assert sources(client, "And when do I have to apply for it?", "s2") != ["faq-023"]
+
+
+def test_timed_out_answer_is_not_stored(client, assistant_session, monkeypatch):
+    import time
+
+    from app.assistant.service import AssistantService
+
+    monkeypatch.setenv("ASSISTANT_TIMEOUT_SECONDS", "0.1")
+    monkeypatch.setattr(AssistantService, "answer", lambda self, question, session_id: time.sleep(0.3) or None)
+
+    response = client.post("/api/assistant/ask", json={"question": "Slow?", "session_id": "slow"})
+    time.sleep(0.4)
+
+    assert response.status_code == 504
+    assert assistant_session.scalars(select(ChatTurn).where(ChatTurn.session_id == "slow")).all() == []

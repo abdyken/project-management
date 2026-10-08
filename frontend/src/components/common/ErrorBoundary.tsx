@@ -1,8 +1,22 @@
 import { Component, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/i18n"
 
 type ErrorBoundaryProps = { children: ReactNode }
 type ErrorBoundaryState = { failed: boolean }
+
+function PageError() {
+  const { t } = useI18n()
+  return (
+    <div role="alert" className="mx-auto max-w-5xl px-4 py-16">
+      <p className="text-3xl font-semibold tracking-tight">{t("error.pageTitle")}</p>
+      <p className="mt-2 text-sm text-muted-foreground">{t("error.pageText")}</p>
+      <Button className="mt-5" onClick={() => window.location.reload()}>
+        {t("error.reload")}
+      </Button>
+    </div>
+  )
+}
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { failed: false }
@@ -12,17 +26,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   render() {
-    if (!this.state.failed) return this.props.children
-    return (
-      <div role="alert" className="mx-auto max-w-5xl px-4 py-16">
-        <p className="text-3xl font-semibold tracking-tight">Something went wrong</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This page could not be displayed. Reload it, or contact the admissions office if it keeps happening.
-        </p>
-        <Button className="mt-5" onClick={() => window.location.reload()}>
-          Reload page
-        </Button>
-      </div>
-    )
+    return this.state.failed ? <PageError /> : this.props.children
   }
 }

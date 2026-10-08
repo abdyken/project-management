@@ -59,7 +59,7 @@ New migrations must set `down_revision` to the current head (`uv run alembic hea
 
 ## Scheduled jobs
 
-Chat turns are kept only against the anonymous session id and must be deleted after 30 days (US11). Run daily on the host:
+Chat turns are kept only against the anonymous session id and deleted after 30 days (US11). The API does this itself on start and every 24 hours, so no cron job is needed. To purge by hand:
 
 ```bash
 uv run python scripts/purge_chat_turns.py
@@ -80,7 +80,7 @@ app/
   followups/     unanswered questions and missing checklists for the admissions office
   data/          catalogue.json and the FAQ base
 migrations/      Alembic migrations (one chain)
-scripts/         import_catalogue.py, reindex_faq.py, run_accuracy_test.py, qa_us1.py, export_*.py
+scripts/         import_catalogue.py, reindex_faq.py, run_accuracy_test.py, check_catalogue_answers.py, qa_us1.py, export_*.py (catalogue, negative feedback, unanswered questions)
 tests/
 docs/            task notes (docs/serdar-ai-tasks/ - assistant tasks T0.7, T3.2-T3.7)
 ```
@@ -96,6 +96,9 @@ curl -X POST http://127.0.0.1:8000/api/assistant/ask \
 ```
 
 - Evaluation set v2 (40 questions) against a running API: `ASSISTANT_BASE_URL=<url> uv run python scripts/run_accuracy_test.py` (see the T10.5 doc).
+- Evaluation set v3 (70 questions: v2 plus new FAQ topics, Kazakh, Russian and catalogue cases): `uv run python scripts/run_accuracy_test.py --set v3`.
+- Unanswered questions for the office (US18): `uv run python scripts/export_unanswered.py --days 30 --output unanswered.csv` groups the logged questions with counts; no session ids, e-mails or phone numbers.
+- Catalogue answer check (US12): `ASSISTANT_BASE_URL=<url> uv run python scripts/check_catalogue_answers.py` asks the fee, deadline and language of every program and compares the answers with `catalogue.json`.
 - After editing the FAQ file, run `uv run python scripts/reindex_faq.py` (or restart the container).
 
 ## Environment variables

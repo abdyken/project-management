@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -12,11 +13,10 @@ from app.assistant.router import router as assistant_router
 from app.catalogue.router import router as catalogue_router
 from app.checklist.router import router as checklist_router
 from app.config import get_settings
+from app.conversation.retention import purge_daily
 
 settings = get_settings()
 
-# Our own INFO lines (US10: model, tokens and latency of every Gemini call) reach the
-# server log; third-party loggers stay at their WARNING default.
 _app_log_handler = logging.StreamHandler()
 _app_log_handler.setFormatter(logging.Formatter("%(levelname)s %(name)s: %(message)s"))
 logging.getLogger("app").addHandler(_app_log_handler)
@@ -26,7 +26,9 @@ logging.getLogger("app").setLevel(logging.INFO)
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     embeddings.warm_up()
+    purge = asyncio.create_task(purge_daily(settings))
     yield
+    purge.cancel()
 
 
 app = FastAPI(title="Admissions Portal API", version="0.1.0", lifespan=lifespan)

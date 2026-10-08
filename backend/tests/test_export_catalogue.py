@@ -35,11 +35,11 @@ def test_export_includes_all_programs_with_unknown_values_blank(catalogue_sessio
         rows = list(csv.DictReader(file))
     assert list(rows[0].keys()) == COLUMNS
     assert rows == [
-        {"program_id": "arch-old", "title": "Architecture", "faculty": "Engineering",
+        {"program_id": "arch-old", "title": "Architecture", "title_ru": "", "title_kk": "", "faculty": "Engineering",
          "degree_level": "bachelor", "language": "Қазақ тілі", "tuition_per_ects_kzt": "",
          "tuition_per_ects_usd": "", "deadline_local": "", "deadline_international": "",
          "source_url": "", "is_active": "False"},
-        {"program_id": "cs-bsc", "title": "Computer Science", "faculty": "Engineering",
+        {"program_id": "cs-bsc", "title": "Computer Science", "title_ru": "", "title_kk": "", "faculty": "Engineering",
          "degree_level": "bachelor", "language": "English", "tuition_per_ects_kzt": "33000",
          "tuition_per_ects_usd": "90", "deadline_local": "2026-08-25", "deadline_international": "2026-07-31",
          "source_url": "https://sdu.edu.kz/en/computer-science-3/", "is_active": "True"},

@@ -25,8 +25,8 @@ def test_valid_question_returns_200_with_contract_shape(client: TestClient, faq_
     response = client.post("/api/assistant/ask", json={"question": item.question, "session_id": "s1"})
     assert response.status_code == 200
     body = response.json()
-    assert set(body) == {"answer", "sources", "answer_id", "source_link", "faq_id", "similarity_score"}
-    assert body["faq_id"] == item.faq_id
+    assert set(body) == {"answer", "sources", "answer_id"}
+    assert [source["faq_id"] for source in body["sources"]] == [item.faq_id]
 
 
 def test_fallback_answer_has_no_sources(client: TestClient):
@@ -61,7 +61,7 @@ def test_below_threshold_question_returns_200_not_error(client: TestClient):
         "/api/assistant/ask", json={"question": "What is the capital of France?", "session_id": "s1"}
     )
     assert response.status_code == 200
-    assert response.json()["faq_id"] is None
+    assert response.json()["sources"] == []
 
 
 def test_slow_answer_returns_504_error_contract(client: TestClient, monkeypatch):

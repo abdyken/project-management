@@ -5,19 +5,17 @@ import { getChecklist, getProgram } from "@/api/programs"
 import type { ApplicantType } from "@/api/types"
 import { DocumentChecklist } from "@/components/catalog/DocumentChecklist"
 import { ConnectionError } from "@/components/common/ConnectionError"
+import { CompareToggle } from "@/components/compare/CompareToggle"
 import { Button } from "@/components/ui/button"
-import { DEGREE_LABELS } from "@/lib/constants"
-import { formatDeadline, formatTuitionInternational, formatTuitionLocal } from "@/lib/utils"
+import { useI18n } from "@/i18n"
 import { useChatStore } from "@/store/chat"
 
-const APPLICANT_TYPES: { value: ApplicantType; label: string }[] = [
-  { value: "local", label: "Local" },
-  { value: "international", label: "International" },
-]
+const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
 
 const labelClass = "text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
 
 export function ProgramDetailPage() {
+  const { t, degree, languages, deadline, tuitionKzt, tuitionUsd, programTitle } = useI18n()
   const { id = "" } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const applicant: ApplicantType = searchParams.get("applicant") === "international" ? "international" : "local"
@@ -43,23 +41,23 @@ export function ProgramDetailPage() {
   }
 
   if (programQuery.isPending) {
-    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-muted-foreground">Loading program…</p>
+    return <p className="mx-auto max-w-5xl px-4 py-16 text-sm text-muted-foreground">{t("detail.loading")}</p>
   }
 
   if (programQuery.isError) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-16">
         {isNotFound(programQuery.error) ? (
-          <p className="text-3xl font-semibold tracking-tight">Program not found</p>
+          <p className="text-3xl font-semibold tracking-tight">{t("detail.notFound")}</p>
         ) : (
           <ConnectionError
-            message="The program could not be loaded."
+            message={t("detail.loadError")}
             retrying={programQuery.isFetching}
             onRetry={() => void programQuery.refetch()}
           />
         )}
         <Link to="/programs" className="mt-4 inline-block text-sm underline">
-          Back to the catalogue
+          {t("detail.back")}
         </Link>
       </div>
     )
@@ -70,36 +68,39 @@ export function ProgramDetailPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <Link to="/programs" className="text-sm text-muted-foreground hover:text-foreground">
-        ← Programs
+        {t("detail.backToPrograms")}
       </Link>
       <p className={`mt-6 ${labelClass}`}>
-        {program.program_id} · {DEGREE_LABELS[program.degree_level]}
+        {program.program_id} · {degree(program.degree_level)}
       </p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{program.title}</h1>
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{programTitle(program)}</h1>
+        <CompareToggle programId={program.program_id} title={programTitle(program)} />
+      </div>
 
       <dl className="mt-10 grid gap-6 border-y border-border py-8 sm:grid-cols-2">
         <div>
-          <dt className={labelClass}>School</dt>
-          <dd className="mt-1">{program.faculty}</dd>
+          <dt className={labelClass}>{t("detail.school")}</dt>
+          <dd className="mt-1" lang="en">{program.faculty}</dd>
         </div>
         <div>
-          <dt className={labelClass}>Language</dt>
-          <dd className="mt-1">{program.language}</dd>
+          <dt className={labelClass}>{t("detail.language")}</dt>
+          <dd className="mt-1">{languages(program.language)}</dd>
         </div>
         <div>
-          <dt className={labelClass}>Tuition, program courses</dt>
+          <dt className={labelClass}>{t("detail.tuition")}</dt>
           <dd className="mt-1">
-            Local: {formatTuitionLocal(program.tuition_per_ects_kzt)}
+            {t("detail.localValue", { value: tuitionKzt(program.tuition_per_ects_kzt) })}
             <br />
-            International: {formatTuitionInternational(program.tuition_per_ects_usd)}
+            {t("detail.internationalValue", { value: tuitionUsd(program.tuition_per_ects_usd) })}
           </dd>
         </div>
         <div>
-          <dt className={labelClass}>Application deadline</dt>
+          <dt className={labelClass}>{t("detail.deadline")}</dt>
           <dd className="mt-1">
-            Local: {formatDeadline(program.deadline_local)}
+            {t("detail.localValue", { value: deadline(program.deadline_local) })}
             <br />
-            International: {formatDeadline(program.deadline_international)}
+            {t("detail.internationalValue", { value: deadline(program.deadline_international) })}
           </dd>
         </div>
       </dl>
@@ -110,7 +111,7 @@ export function ProgramDetailPage() {
           rel="noreferrer"
           className="mt-4 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
         >
-          Official program page
+          {t("detail.officialPage")}
         </a>
       ) : null}
 
@@ -118,30 +119,30 @@ export function ProgramDetailPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 id="documents-heading" className="text-3xl font-semibold tracking-tight">
-              Required documents
+              {t("detail.documents")}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">Same list the assistant uses for this program.</p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("detail.documentsNote")}</p>
           </div>
-          <div className="flex gap-2" role="group" aria-label="Applicant type">
+          <div className="flex gap-2" role="group" aria-label={t("detail.applicantType")}>
             {APPLICANT_TYPES.map((type) => (
               <Button
-                key={type.value}
+                key={type}
                 size="sm"
-                variant={applicant === type.value ? "default" : "outline"}
-                aria-pressed={applicant === type.value}
-                onClick={() => setApplicant(type.value)}
+                variant={applicant === type ? "default" : "outline"}
+                aria-pressed={applicant === type}
+                onClick={() => setApplicant(type)}
               >
-                {type.label}
+                {t(`applicant.${type}`)}
               </Button>
             ))}
           </div>
         </div>
 
         <div className="mt-6">
-          {checklistQuery.isPending ? <p className="text-sm text-muted-foreground">Loading checklist…</p> : null}
+          {checklistQuery.isPending ? <p className="text-sm text-muted-foreground">{t("detail.loadingChecklist")}</p> : null}
           {checklistQuery.isError ? (
             <ConnectionError
-              message="The document checklist could not be loaded."
+              message={t("detail.checklistError")}
               retrying={checklistQuery.isFetching}
               onRetry={() => void checklistQuery.refetch()}
             />
@@ -153,13 +154,11 @@ export function ProgramDetailPage() {
           className="mt-8"
           variant="outline"
           onClick={() => {
-            setDraft(
-              `Which documents do I need for ${program.title} (${program.program_id}) as ${applicant === "local" ? "a local" : "an international"} applicant?`,
-            )
+            setDraft(t(`detail.askDocuments.${applicant}`, { title: programTitle(program), code: program.program_id }))
             setOpen(true)
           }}
         >
-          Ask in chat
+          {t("detail.askInChat")}
         </Button>
       </section>
     </div>

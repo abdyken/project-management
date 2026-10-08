@@ -2,6 +2,7 @@ import { request } from "@/api/client"
 import type {
   ApplicantType,
   ChecklistResponse,
+  CompareResponse,
   DegreeLevel,
   Program,
   ProgramListResponse,
@@ -26,7 +27,10 @@ export const allProgramsQuery = {
 }
 
 export function programLanguages(program: Program) {
-  return program.language.split(",").map((language) => language.trim())
+  return (program.language ?? "")
+    .split(",")
+    .map((language) => language.trim())
+    .filter(Boolean)
 }
 
 export function filterOptions(programs: Program[]): FilterOptions {
@@ -47,4 +51,8 @@ export function getChecklist(programId: string, applicantType: ApplicantType) {
   return request<ChecklistResponse>(`/api/programs/${encodeURIComponent(programId)}/checklist`, {
     query: { applicant_type: applicantType },
   })
+}
+
+export function comparePrograms(ids: string[]) {
+  return request<CompareResponse>("/api/programs/compare", { query: { ids: ids.join(",") } })
 }

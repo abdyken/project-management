@@ -1,6 +1,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import type { ComponentProps } from "react"
+import { useI18n } from "@/i18n"
 import { cn } from "@/lib/utils"
 
 function Sheet({ ...props }: ComponentProps<typeof DialogPrimitive.Root>) {
@@ -36,6 +37,7 @@ function SheetContent({
 }: ComponentProps<typeof DialogPrimitive.Content> & {
   side?: "top" | "bottom" | "left" | "right"
 }) {
+  const { t } = useI18n()
   const sideClass = {
     bottom: "inset-x-0 bottom-0 h-[88dvh] border-t",
     top: "inset-x-0 top-0 h-[88dvh] border-b",
@@ -53,7 +55,7 @@ function SheetContent({
         {children}
         <DialogPrimitive.Close className="absolute top-3 right-3 rounded-full p-1 text-muted-foreground hover:bg-secondary">
           <X className="size-4" />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{t("chat.close")}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </SheetPortal>

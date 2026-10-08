@@ -13,9 +13,11 @@ class ProgramOut(BaseModel):
 
     program_id: str
     title: str
+    title_ru: str | None
+    title_kk: str | None
     faculty: str
     degree_level: DegreeLevel
-    language: str
+    language: str | None
     tuition_per_ects_kzt: int | None
     tuition_per_ects_usd: int | None
     deadline_local: date | None
@@ -27,3 +29,12 @@ class ProgramOut(BaseModel):
 class ProgramListResponse(BaseModel):
     total: int
     programs: list[ProgramOut]
+
+
+class ComparedProgram(ProgramOut):
+    documents_local: int
+    documents_international: int
+
+
+class CompareResponse(BaseModel):
+    programs: list[ComparedProgram]

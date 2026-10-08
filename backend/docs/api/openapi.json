@@ -149,6 +149,79 @@
         }
       }
     },
+    "/api/programs/compare": {
+      "get": {
+        "tags": [
+          "catalogue"
+        ],
+        "summary": "Compare two or three study programs side by side",
+        "operationId": "compare_programs_api_programs_compare_get",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "2 or 3 comma-separated program ids, in display order",
+              "title": "Ids"
+            },
+            "description": "2 or 3 comma-separated program ids, in display order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "One of the ids is not an active program.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/programs/{program_id}": {
       "get": {
         "tags": [
@@ -393,7 +466,6 @@
           "assistant"
         ],
         "summary": "Suggested questions for the chat widget",
-        "description": "Four starter questions, or up to three follow-ups once the session has a turn.",
         "operationId": "suggestions_api_assistant_suggestions_get",
         "parameters": [
           {
@@ -408,6 +480,23 @@
               "title": "Session Id"
             },
             "description": "The chat session id"
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "ru",
+                "kk"
+              ],
+              "type": "string",
+              "description": "Language of the suggestions: en, ru or kk",
+              "default": "en",
+              "title": "Lang"
+            },
+            "description": "Language of the suggestions: en, ru or kk"
           }
         ],
         "responses": {
@@ -616,6 +705,17 @@
           "link": {
             "type": "string",
             "title": "Link"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           }
         },
         "type": "object",
@@ -624,8 +724,7 @@
           "question",
           "link"
         ],
-        "title": "AnswerSource",
-        "description": "One official source of an answer (contract v2, US10).\n\nFAQ answers cite FAQ items; catalogue answers cite the program page, with\n`faq_id` and `question` null."
+        "title": "AnswerSource"
       },
       "AskRequest": {
         "properties": {
@@ -660,41 +759,7 @@
               "$ref": "#/components/schemas/AnswerSource"
             },
             "type": "array",
-            "title": "Sources",
-            "default": []
-          },
-          "source_link": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Source Link"
-          },
-          "faq_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Faq Id"
-          },
-          "similarity_score": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Similarity Score"
+            "title": "Sources"
           },
           "answer_id": {
             "type": "string",
@@ -704,9 +769,7 @@
         "type": "object",
         "required": [
           "answer",
-          "source_link",
-          "faq_id",
-          "similarity_score",
+          "sources",
           "answer_id"
         ],
         "title": "AskResponse"
@@ -762,6 +825,168 @@
           "items"
         ],
         "title": "ChecklistResponse"
+      },
+      "CompareResponse": {
+        "properties": {
+          "programs": {
+            "items": {
+              "$ref": "#/components/schemas/ComparedProgram"
+            },
+            "type": "array",
+            "title": "Programs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "programs"
+        ],
+        "title": "CompareResponse"
+      },
+      "ComparedProgram": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
+          "faculty": {
+            "type": "string",
+            "title": "Faculty"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "tuition_per_ects_kzt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Kzt"
+          },
+          "tuition_per_ects_usd": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Usd"
+          },
+          "deadline_local": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Local"
+          },
+          "deadline_international": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline International"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "documents_local": {
+            "type": "integer",
+            "title": "Documents Local"
+          },
+          "documents_international": {
+            "type": "integer",
+            "title": "Documents International"
+          }
+        },
+        "type": "object",
+        "required": [
+          "program_id",
+          "title",
+          "title_ru",
+          "title_kk",
+          "faculty",
+          "degree_level",
+          "language",
+          "tuition_per_ects_kzt",
+          "tuition_per_ects_usd",
+          "deadline_local",
+          "deadline_international",
+          "source_url",
+          "is_active",
+          "documents_local",
+          "documents_international"
+        ],
+        "title": "ComparedProgram"
       },
       "DocumentRequirementOut": {
         "properties": {
@@ -825,6 +1050,12 @@
             "pattern": "^[1-9][0-9]{0,17}$",
             "title": "Answer Id"
           },
+          "session_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Session Id"
+          },
           "rating": {
             "type": "string",
             "enum": [
@@ -856,6 +1087,7 @@
         "type": "object",
         "required": [
           "answer_id",
+          "session_id",
           "rating"
         ],
         "title": "FeedbackRequest"
@@ -925,6 +1157,28 @@
             "type": "string",
             "title": "Title"
           },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
           "faculty": {
             "type": "string",
             "title": "Faculty"
@@ -939,7 +1193,14 @@
             "title": "Degree Level"
           },
           "language": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Language"
           },
           "tuition_per_ects_kzt": {
@@ -1008,6 +1269,8 @@
         "required": [
           "program_id",
           "title",
+          "title_ru",
+          "title_kk",
           "faculty",
           "degree_level",
           "language",

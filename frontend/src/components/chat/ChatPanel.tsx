@@ -1,14 +1,16 @@
 import { useEffect, useRef, type FormEvent, type KeyboardEvent } from "react"
 import { getSuggestions, streamAssistant } from "@/api/assistant"
-import { chatErrorMessage } from "@/api/errors"
+import { chatErrorKey } from "@/api/errors"
 import { Button } from "@/components/ui/button"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { TypingIndicator } from "@/components/chat/TypingIndicator"
+import { useI18n } from "@/i18n"
 import { abortReason, finishRequest, isCurrent, nextRequest } from "@/lib/chat-request"
 import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { sourcesFromApi, useChatStore, type ChatMessage as ChatMessageType } from "@/store/chat"
 
 export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
+  const { t, language } = useI18n()
   const messages = useChatStore((state) => state.messages)
   const suggestions = useChatStore((state) => state.suggestions)
   const draft = useChatStore((state) => state.draft)
@@ -40,7 +42,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
 
   useEffect(() => {
     const controller = new AbortController()
-    getSuggestions(sessionId, controller.signal)
+    getSuggestions(sessionId, language, controller.signal)
       .then((next) => {
         if (useChatStore.getState().sessionId === sessionId) setSuggestions(next)
       })
@@ -48,7 +50,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         if (!controller.signal.aborted && useChatStore.getState().sessionId === sessionId) setSuggestions([])
       })
     return () => controller.abort()
-  }, [sessionId, answered, setSuggestions])
+  }, [sessionId, answered, language, setSuggestions])
 
   async function ask(question: string, options?: { keepUserMessage?: boolean }) {
     if (!question || useChatStore.getState().sending) return
@@ -70,8 +72,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         onDone: (done) => {
           if (!isCurrent(token)) return
           completeAssistantMessage(assistantId, {
-            sources: sourcesFromApi(done.sources, done.source_link),
-            sourceLink: done.source_link,
+            sources: sourcesFromApi(done.sources),
             answerId: done.answer_id,
           })
         },
@@ -80,8 +81,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       if (outcome === "interrupted" || outcome === "aborted") interruptMessage(assistantId)
     } catch (error) {
       if (!isCurrent(token) || abortReason() === "new") return
-      if (!useChatStore.getState().draft.trim()) setDraft(question)
-      failMessage(assistantId, chatErrorMessage(error))
+      failMessage(assistantId, t(chatErrorKey(error)))
     } finally {
       finishRequest(token)
       if (isCurrent(token)) setSending(false)
@@ -118,13 +118,12 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         ref={listRef}
         role="log"
         aria-live="polite"
-        aria-label="Conversation"
+        aria-label={t("chat.conversation")}
         className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4"
       >
         {messages.length === 0 ? (
           <p className="text-sm leading-relaxed break-words text-muted-foreground">
-            Ask about deadlines, UNT, English requirements, or which documents you need for a program — for
-            example, “Which documents do I need for Computer Science as an international applicant?”
+            {t("chat.empty")}
           </p>
         ) : (
           messages.map((message) => <ChatMessage key={message.id} message={message} onResend={onResend} />)
@@ -148,22 +147,22 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       <form onSubmit={onSubmit} className="border-t border-border p-3 transition-colors focus-within:bg-card">
         <textarea
           ref={inputRef}
-          aria-label="Your question"
+          aria-label={t("chat.questionLabel")}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={onKeyDown}
           maxLength={MESSAGE_MAX_LENGTH}
           rows={3}
-          placeholder="Write a question"
+          placeholder={t("chat.placeholder")}
           className="w-full resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         />
-        <p className="mt-2 text-[11px] text-muted-foreground">Do not enter personal data</p>
+        <p className="mt-2 text-[11px] text-muted-foreground">{t("chat.noPersonalData")}</p>
         <div className="mt-2 flex items-center justify-between gap-3">
           <span className="text-[11px] text-muted-foreground">
             {draft.length}/{MESSAGE_MAX_LENGTH}
           </span>
           <Button type="submit" size="sm" disabled={!canSend}>
-            Send
+            {t("chat.send")}
           </Button>
         </div>
       </form>

@@ -1,6 +1,8 @@
 # SDU Admissions Portal
 
-Sprint 1 demo: a program catalogue, document checklist and FAQ assistant for SDU University admissions.
+Admissions portal for SDU University: the full official program catalogue (64 programs) with document checklists and side-by-side comparison, and a chat assistant that answers from the official FAQ and catalogue in Kazakh, Russian and English — with grounded Gemini answers when `GEMINI_API_KEY` is set (free tier) and word-for-word official answers without it.
+
+Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md).
 
 ## Start everything
 
@@ -10,7 +12,7 @@ Requirement: Docker Desktop.
 docker compose up --build
 ```
 
-Open http://localhost:8080. The first start takes a few minutes (it downloads the embedding model into the API image). On every start the API applies migrations, imports `backend/app/data/catalogue.json` and indexes `backend/app/data/faq.json`.
+Open http://localhost:8080. The first start takes a few minutes (it downloads the embedding model into the API image). On every start the API applies migrations, imports `backend/app/data/catalogue.json`, indexes `backend/app/data/faq.json` and deletes chat turns older than 30 days. If port 5432 is taken, start with `POSTGRES_PORT=5433 docker compose up --build`.
 
 | Service | URL |
 | --- | --- |

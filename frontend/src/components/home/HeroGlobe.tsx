@@ -1,9 +1,11 @@
 import createGlobe from "cobe"
 import { useEffect, useRef } from "react"
+import { useI18n } from "@/i18n"
 
 const ALMATY: [number, number] = [43.24, 76.95]
 
 export function HeroGlobe() {
+  const { t } = useI18n()
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -111,7 +113,7 @@ export function HeroGlobe() {
         ref={containerRef}
         className="relative aspect-square w-full cursor-grab touch-none select-none"
         role="img"
-        aria-label="Interactive globe with SDU University marker on Almaty"
+        aria-label={t("home.globe")}
       >
         <div className="absolute inset-[12%] rounded-full bg-primary/5 blur-2xl" aria-hidden />
         <canvas ref={canvasRef} className="relative h-full w-full" style={{ contain: "layout paint size" }} />

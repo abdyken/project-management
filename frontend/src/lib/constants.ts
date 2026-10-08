@@ -1,19 +1,12 @@
-import type { DegreeLevel } from "@/api/types"
+import type { Language } from "@/i18n"
 
-export const ADMISSIONS_CONTACT = {
-  name: "SDU Admissions Office",
-  address: "Abylai Khan 1/1, 040900 Kaskelen, Almaty Region",
-  phone: "+7 727 307 95 65",
-  website: "https://sdu.edu.kz/en/admission-3-2/",
-} as const
+export const ADMISSIONS_PHONE = "+7 727 307 95 65"
+
+export const ADMISSIONS_WEBSITE: Record<Language, string> = {
+  en: "https://sdu.edu.kz/en/admission-3-2/",
+  ru: "https://sdu.edu.kz/ru/admission/",
+  kk: "https://sdu.edu.kz/admission-2/",
+}
 
 export const MESSAGE_MAX_LENGTH = 500
-// Counted to the first streamed chunk. The API answers within 15 s (ASSISTANT_TIMEOUT_SECONDS);
-// a Gemini answer (US10) takes about 6-8 s on the free tier.
 export const ASSISTANT_TIMEOUT_MS = 20_000
-
-export const DEGREE_LABELS: Record<DegreeLevel, string> = {
-  bachelor: "Bachelor",
-  master: "Master",
-  phd: "PhD",
-}

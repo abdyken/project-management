@@ -147,7 +147,9 @@ def test_local_deadline_question_gets_the_local_deadlines(service):
 
 def test_russian_applicant_type_is_recognised(service):
     response = service.answer("Какие документы нужны на Computer Science для иностранцев?", "s1")
-    assert response.answer.startswith("Required documents for Computer Science (bachelor, 6B06102), international applicant")
+    assert response.answer.startswith(
+        "Необходимые документы для программы Computer Science (бакалавриат, 6B06102), иностранный абитуриент"
+    )
 
 
 def test_program_without_requirements_warns_once_and_is_logged(service, assistant_session):
@@ -167,7 +169,12 @@ def test_tuition_answer_uses_the_catalogue_figures(service):
     assert "33,000 KZT (about USD 90) per ECTS credit" in response.answer
     assert response.source_link == "https://sdu.edu.kz/en/computer-science-3/"
     assert [source.model_dump() for source in response.sources] == [
-        {"faq_id": None, "question": None, "link": "https://sdu.edu.kz/en/computer-science-3/"}
+        {
+            "faq_id": None,
+            "question": None,
+            "link": "https://sdu.edu.kz/en/computer-science-3/",
+            "title": "Computer Science (6B06102)",
+        }
     ]
     assert response.faq_id is None
     assert response.similarity_score is None

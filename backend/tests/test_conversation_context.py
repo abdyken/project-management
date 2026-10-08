@@ -103,3 +103,16 @@ def test_only_the_applicants_own_questions_are_used():
     assert standalone_question("and as an international applicant?", turns, PROGRAMS) == (
         "and as an international applicant?"
     )
+
+
+def test_catalogue_topic_follow_ups_keep_the_program():
+    fee = "How much is tuition for Computer Science?"
+    assert rewrite("and the deadline?", fee) == "When is the application deadline for 6B06102?"
+    assert rewrite("and the language?", fee) == "What is the language of instruction for 6B06102?"
+    assert rewrite("which faculty?", fee) == "Which faculty offers 6B06102?"
+
+
+def test_deadline_follow_up_keeps_the_applicant_type():
+    assert rewrite("and for international applicants?", "When is the deadline for 6B06102?") == (
+        "When is the application deadline for 6B06102 for international applicants?"
+    )

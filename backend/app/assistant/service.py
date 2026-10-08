@@ -3,140 +3,207 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from app.assistant import retrieval
+from app.assistant.catalogue import (
+    MAX_COMPARED,
+    CatalogueRequest,
+    answer_from_catalogue,
+    catalogue_request,
+    label,
+    summary_request,
+    title_in,
+)
+from app.assistant.catalogue_tools import program_facts
 from app.assistant.fallback import build_fallback_response
-from app.assistant.generation import generate_grounded_answer
+from app.assistant.generation import generate_catalogue_answer, generate_grounded_answer
 from app.assistant.intents import (
+    DEADLINE,
     applicant_type_from_question,
     applicant_type_mentioned,
+    catalogue_fields,
     degrees_mentioned,
+    is_contextual_follow_up,
     is_document_question,
-    is_tuition_question,
     resolve_programs,
 )
+from app.assistant.language import detect_language
 from app.assistant.llm import Llm, get_llm
-from app.assistant.schemas import Answer, AnswerSource, FaqItem
+from app.assistant.schemas import Answer, AnswerSource, FaqItem, Language
+from app.assistant.texts import contact, text
 from app.catalogue.models import Program
 from app.catalogue.service import search_programs
-from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_requirements
+from app.checklist.service import get_requirements
 from app.config import Settings
 from app.followups.service import log_missing_documents, log_unanswered_question
 
-
-_DOCUMENT_EXAMPLE = "Which documents do I need for {title} ({program_id}) as a local applicant?"
-_TUITION_EXAMPLE = "How much is tuition for {title} ({program_id})?"
+MAX_LISTED_FOR_MODEL = 15
+CALENDAR = "calendar"
+FAQ_OVER_TITLE_MATCH = 0.8
 
 
 class AssistantService:
-    def __init__(self, session: Session, settings: Settings, llm: Llm | None = None):
+    def __init__(
+        self,
+        session: Session,
+        settings: Settings,
+        llm: Llm | None = None,
+        topic: str | None = None,
+        language: Language | None = None,
+    ):
         self._session = session
         self._settings = settings
-        # None without GEMINI_API_KEY: every FAQ answer is then the item's answer, word for word.
         self._llm = llm if llm is not None else get_llm(settings)
+        self._topic = topic
+        self._language = language
+        self._search_language: Language = language or "en"
 
     def answer(self, question: str, session_id: str) -> Answer:
+        language = self._language or detect_language(question)
+        self._search_language = language
+        programs = search_programs(self._session)
         if is_document_question(question):
-            programs = resolve_programs(question, search_programs(self._session))
-            if len(programs) == 1:
-                return self._answer_document_question(question, session_id, programs[0])
-            if len(programs) > 1:
-                return _choose_program(programs, _DOCUMENT_EXAMPLE)
-        elif is_tuition_question(question):
-            programs = resolve_programs(question, search_programs(self._session))
-            if len(programs) == 1:
-                return self._answer_tuition_question(programs[0])
-            if len(programs) > 1:
-                return _choose_program(programs, _TUITION_EXAMPLE)
+            matched = resolve_programs(question, programs)
+            if len(matched) == 1:
+                return self._answer_document_question(question, session_id, matched[0], language)
+            if len(matched) > 1:
+                return _choose_program(matched, language)
+        else:
+            request = catalogue_request(self._session, question, programs)
+            if request is not None and not self._faq_answers_better(question, request):
+                return self._answer_from_catalogue(question, request, language)
 
-        results = retrieval.search(self._session, question, limit=self._settings.grounding_top_k)
+        results = self._search(question)
         result = _best_for_audience(question, results)
-        # The threshold fallback comes before any model call (US10): a question the FAQ
-        # does not cover never reaches the model.
-        if result is None or result.similarity_score < self._settings.similarity_threshold:
+        if self._topic and is_contextual_follow_up(question):
+            in_context = f"{self._topic}: {question}"
+            context_results = self._search(in_context)
+            context_result = _best_for_audience(in_context, context_results)
+            if context_result is not None and not self._below_threshold(context_result) and (
+                result is None or context_result.similarity_score > result.similarity_score
+            ):
+                question, results, result = in_context, context_results, context_result
+        if result is None or self._below_threshold(result):
+            summary = summary_request(question, programs)
+            if summary is not None:
+                return self._answer_from_catalogue(question, summary, language)
             score = results[0].similarity_score if results else None
             log_unanswered_question(self._session, question, score, session_id)
-            return build_fallback_response(self._settings, score)
+            return build_fallback_response(self._settings, score, language)
 
         if self._llm is not None:
-            sources = [result.faq_item] + [
-                r.faq_item
-                for r in results
-                if r is not result
-                and r.similarity_score >= self._settings.similarity_threshold
-                and _written_for(question, r.faq_item)
+            sources = ([result.faq_item] + self._faq_sources(question, results, exclude=result))[
+                : self._settings.grounding_top_k
             ]
-            generated = generate_grounded_answer(self._llm, question, sources, result.similarity_score)
+            localized = [item.localized(language) for item in sources]
+            generated = generate_grounded_answer(self._llm, question, localized, result.similarity_score)
             if generated is not None:
                 return generated
 
-        # Sprint 1 answer: the best FAQ item word for word. Also used whenever the model
-        # is unavailable or its answer fails the grounding check (US10 / T10.3).
+        item = result.faq_item.localized(language)
+        answer = item.answer if result.faq_item.has(language) else text(language, "english_only", answer=item.answer)
         return Answer(
-            answer=result.faq_item.answer,
-            sources=[AnswerSource.from_faq(result.faq_item)],
-            source_link=result.faq_item.source_link,
-            faq_id=result.faq_item.faq_id,
+            answer=answer,
+            sources=[AnswerSource.from_faq(item)],
+            source_link=item.source_link,
+            faq_id=item.faq_id,
             similarity_score=result.similarity_score,
         )
 
-    def _answer_document_question(self, question: str, session_id: str, program: Program) -> Answer:
+    def _faq_answers_better(self, question: str, request: CatalogueRequest) -> bool:
+        if request.by_code or request.listing is not None:
+            return False
+        results = self._search(question)
+        best = _best_for_audience(question, results)
+        return best is not None and best.similarity_score >= FAQ_OVER_TITLE_MATCH
+
+    def _search(self, question: str) -> list[retrieval.SearchResult]:
+        return retrieval.search(
+            self._session, question, limit=2 * self._settings.grounding_top_k, language=self._search_language
+        )
+
+    def _below_threshold(self, result: retrieval.SearchResult | None) -> bool:
+        return result is None or result.similarity_score < self._settings.similarity_threshold
+
+    def _contact(self, language: Language) -> str:
+        return contact(language, self._settings.admissions_office_contact)
+
+    def _answer_from_catalogue(self, question: str, request: CatalogueRequest, language: Language) -> Answer:
+        office = self._contact(language)
+        if self._llm is not None and _model_can_answer(request):
+            results = self._search(question)
+            items = [
+                item.localized(language)
+                for item in self._faq_sources(question, results)[: self._settings.grounding_top_k]
+            ]
+            generated = generate_catalogue_answer(self._llm, question, request.programs, items, office)
+            if generated is not None:
+                return generated
+        rendered = answer_from_catalogue(request, office, language)
+        return _text_answer(rendered.text, rendered.sources)
+
+    def _faq_sources(
+        self, question: str, results: list[retrieval.SearchResult], exclude: retrieval.SearchResult | None = None
+    ) -> list[FaqItem]:
+        return [
+            r.faq_item
+            for r in results
+            if r is not exclude
+            and r.similarity_score >= self._settings.similarity_threshold
+            and _written_for(question, r.faq_item)
+        ]
+
+    def _answer_document_question(
+        self, question: str, session_id: str, program: Program, language: Language
+    ) -> Answer:
+        facts = program_facts(program)
+        name = label(facts, language)
         applicant_type = applicant_type_from_question(question, program)
         if applicant_type is None:
             return _text_answer(
-                f"{_label(program)} has separate document lists for local and international applicants. "
-                f'Ask again with "local" or "international", for example: '
-                f'"Which documents do I need for {program.title} ({program.program_id}) as an international applicant?"'
+                text(
+                    language,
+                    "ask_applicant_type",
+                    label=name,
+                    title=title_in(facts, language),
+                    code=program.program_id,
+                )
             )
 
         requirements = get_requirements(self._session, program.program_id, applicant_type)
         if not requirements:
             log_missing_documents(self._session, program.program_id, applicant_type, question, session_id)
-            return _text_answer(f"{MISSING_REQUIREMENTS_WARNING} {self._settings.admissions_office_contact}")
+            return _text_answer(text(language, "missing_documents", contact=self._contact(language)))
 
         lines = [
-            f"- {doc.name} ({doc.document_format}"
-            + (", translation required" if doc.translation_required else "")
-            + (", notarisation required" if doc.notarisation_required else "")
-            + f", deadline {doc.deadline})"
+            text(
+                language,
+                "document_line",
+                name=doc.name,
+                format=text(language, f"format.{doc.document_format}"),
+                translation=text(language, "translation_required") if doc.translation_required else "",
+                notarisation=text(language, "notarisation_required") if doc.notarisation_required else "",
+                deadline=doc.deadline,
+            )
             for doc in requirements
         ]
-        return _text_answer(
-            f"Required documents for {_label(program)}, {applicant_type} applicant:\n" + "\n".join(lines)
-        )
-
-    def _answer_tuition_question(self, program: Program) -> Answer:
-        if program.tuition_per_ects_kzt is None and program.tuition_per_ects_usd is None:
-            return _text_answer(
-                f"The catalogue does not publish a tuition fee for {_label(program)}. "
-                f"{self._settings.admissions_office_contact}"
-            )
-
-        return _text_answer(
-            f"{_label(program)} costs {_fees(program)} per ECTS credit. "
-            "The total depends on how many ECTS credits you take per semester, so confirm the final amount with "
-            f"the Admissions Office. {self._settings.admissions_office_contact}",
-            source_link=program.source_url,
-        )
+        header = text(language, "documents_header", label=name, kind=text(language, f"kind.{applicant_type}"))
+        return _text_answer(header + "\n" + "\n".join(lines))
 
 
-def _fees(program: Program) -> str:
-    if program.tuition_per_ects_kzt is None:
-        return f"about USD {program.tuition_per_ects_usd:,}"
-    if program.tuition_per_ects_usd is None:
-        return f"{program.tuition_per_ects_kzt:,} KZT"
-    return f"{program.tuition_per_ects_kzt:,} KZT (about USD {program.tuition_per_ects_usd:,})"
+def _model_can_answer(request: CatalogueRequest) -> bool:
+    if request.ambiguous or not request.programs:
+        return False
+    if request.listing is not None:
+        return len(request.programs) <= MAX_LISTED_FOR_MODEL
+    return len(request.programs) <= MAX_COMPARED
 
 
-def _label(program: Program) -> str:
-    return f"{program.title} ({program.degree_level}, {program.program_id})"
-
-
-def _choose_program(programs: list[Program], example_question: str) -> Answer:
-    example = programs[0]
-    return _text_answer(
-        f"Your question matches several programs: {'; '.join(_label(program) for program in programs)}. "
-        f'Ask again with the program code, for example: '
-        f'"{example_question.format(title=example.title, program_id=example.program_id)}"'
+def _choose_program(programs: list[Program], language: Language) -> Answer:
+    facts = [program_facts(program) for program in programs]
+    example = text(
+        language, "example.documents", title=title_in(facts[0], language), program_id=programs[0].program_id
     )
+    labels = "; ".join(label(item, language) for item in facts)
+    return _text_answer(text(language, "choose_program", labels=labels, example=example))
 
 
 def _best_for_audience(question: str, results: list[retrieval.SearchResult]) -> retrieval.SearchResult | None:
@@ -150,6 +217,8 @@ def _best_for_audience(question: str, results: list[retrieval.SearchResult]) -> 
 
 
 def _written_for(question: str, item: FaqItem) -> bool:
+    if item.category == CALENDAR and DEADLINE in catalogue_fields(question):
+        return False
     degrees = degrees_mentioned(question)
     if degrees and item.degrees and not degrees & set(item.degrees):
         return False
@@ -157,6 +226,12 @@ def _written_for(question: str, item: FaqItem) -> bool:
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
 
 
-def _text_answer(text: str, source_link: str | None = None) -> Answer:
-    sources = [AnswerSource(faq_id=None, question=None, link=source_link)] if source_link else []
-    return Answer(answer=text, sources=sources, source_link=source_link, faq_id=None, similarity_score=None)
+def _text_answer(answer: str, sources: list[AnswerSource] | None = None) -> Answer:
+    sources = sources or []
+    return Answer(
+        answer=answer,
+        sources=sources,
+        source_link=sources[0].link if sources else None,
+        faq_id=None,
+        similarity_score=None,
+    )

@@ -63,7 +63,7 @@ def test_official_source_file_imports(catalogue_session):
     data = load_source(DEFAULT_SOURCE)
     result = import_catalogue(catalogue_session, data)
 
-    documents = sum(len(docs) for item in data.programs for docs in (item.documents or {}).values())
+    documents = sum(len(docs) for item in data.programs for docs in data.documents_of(item).values())
     assert result.programs == len(data.programs) >= 10
     assert result.requirements == documents
     assert result.deactivated == []

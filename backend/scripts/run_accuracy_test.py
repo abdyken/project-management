@@ -11,6 +11,7 @@ or the question; anything else is counted as an invented fact.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -27,6 +28,7 @@ from app.assistant.grounding import check_grounding
 from app.assistant.retrieval import load_faq_base
 
 TEST_SET_PATH = BACKEND_ROOT / "tests" / "accuracy_test_set.json"
+TEST_SETS = {"v2": TEST_SET_PATH, "v3": BACKEND_ROOT / "tests" / "accuracy_test_set_v3.json"}
 FAQ_PATH = BACKEND_ROOT / "app" / "data" / "faq.json"
 
 
@@ -66,8 +68,11 @@ def score(case: dict, body: dict, faq_by_id: dict) -> tuple[str, str | None]:
 
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--set", choices=sorted(TEST_SETS), default="v2")
+    args = parser.parse_args()
     base_url = os.environ.get("ASSISTANT_BASE_URL", "http://localhost:8000")
-    cases = json.loads(TEST_SET_PATH.read_text(encoding="utf-8"))
+    cases = json.loads(TEST_SETS[args.set].read_text(encoding="utf-8"))
     faq_by_id = {item.faq_id: item for item in load_faq_base(FAQ_PATH)}
 
     results: list[tuple[dict, str, list[str], str | None]] = []
@@ -86,13 +91,13 @@ def main() -> int:
             print(f"{case['kind']:<11} {case['question'][:56]:<58} {expected:<18} {','.join(cited) or '-':<18} {result}{flag}")
 
     passed = sum(result == "PASS" for _, result, _, _ in results)
-    fallback_cases = [r for r in results if not r[0]["expected_faq_ids"] and r[0]["kind"] != "tuition"]
+    fallback_cases = [r for r in results if not r[0]["expected_faq_ids"] and r[0]["kind"] not in ("tuition", "catalogue")]
     by_kind: dict[str, list[int]] = defaultdict(lambda: [0, 0])
     for case, result, _, _ in results:
         by_kind[case["kind"]][0] += result == "PASS"
         by_kind[case["kind"]][1] += 1
 
-    print(f"\nAccuracy: {passed}/{len(results)} ({passed / len(results):.0%}) against {base_url}")
+    print(f"\nAccuracy ({args.set}): {passed}/{len(results)} ({passed / len(results):.0%}) against {base_url}")
     print(f"Correct fallbacks: {sum(r[1] == 'PASS' for r in fallback_cases)}/{len(fallback_cases)}")
     print(f"Invented facts: {sum(r[3] is not None for r in results)}")
     print("By kind: " + ", ".join(f"{kind} {ok}/{total}" for kind, (ok, total) in sorted(by_kind.items())))

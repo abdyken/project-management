@@ -68,6 +68,8 @@ def test_program_fields_in_response(client):
         {
             "program_id": "cs-bsc-en",
             "title": "Computer Science",
+            "title_ru": None,
+            "title_kk": None,
             "faculty": "Engineering",
             "degree_level": "bachelor",
             "language": "English",
@@ -145,6 +147,8 @@ def test_get_program_by_id(client):
     assert response.json() == {
         "program_id": "cs-bsc-en",
         "title": "Computer Science",
+        "title_ru": None,
+        "title_kk": None,
         "faculty": "Engineering",
         "degree_level": "bachelor",
         "language": "English",

@@ -1,0 +1,86 @@
+import { chromium, firefox } from "playwright"
+import fs from "node:fs"
+
+const BASE = process.env.BASE_URL ?? "http://localhost:5173"
+const OUT = process.env.OUT ?? "e2e/shots"
+fs.mkdirSync(OUT, { recursive: true })
+
+const results = []
+function record(browser, width, check, ok, detail = "") {
+  results.push({ browser, width, check, ok, detail })
+  console.log(`${ok ? "PASS" : "FAIL"} ${browser} ${width}px ${check}${detail ? ` - ${detail}` : ""}`)
+}
+
+async function run(browserType, name, width) {
+  const browser = await browserType.launch()
+  const page = await browser.newPage({ viewport: { width, height: 820 } })
+  try {
+    await page.goto(`${BASE}/programs`)
+    const compare = page.getByRole("button", { name: /to comparison$/ })
+    await compare.first().waitFor()
+    const toggle = (code) => page.locator(`article:has(a[href="/programs/${code}"]) button[aria-pressed]`)
+    for (const code of ["6B06101", "6B06102", "7M04115"]) await toggle(code).click()
+    const disabled = await toggle("6B04201").isDisabled()
+    record(name, width, "17.2 a fourth program cannot be added", disabled)
+
+    const bar = page.getByRole("region", { name: "Program comparison" })
+    record(name, width, "17.2 compare bar shows 3/3", (await bar.innerText()).includes("3/3"))
+    await bar.getByRole("link", { name: "Compare" }).click()
+    await page.waitForURL(/\/compare\?ids=/)
+    await page.locator('text="Tuition, local" >> visible=true').first().waitFor()
+
+    const wide = width >= 640
+    if (wide) {
+      const columns = await page.locator("table thead th").count()
+      record(name, width, "17.2 three programs side by side", columns === 4, `${columns - 1} columns`)
+    } else {
+      const sections = await page.locator("section[aria-label]").count()
+      record(name, width, "17.2 stacked by field on phones", sections === 9, `${sections} fields`)
+    }
+    const text = await page.locator("main").innerText()
+    record(name, width, "17.2 empty values say Not published", text.includes("Not published"))
+    record(name, width, "17.2 fee from the catalogue", text.includes("33,000 KZT per ECTS credit"))
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)
+    record(name, width, "layout no horizontal overflow", overflow)
+    await page.screenshot({ path: `${OUT}/compare-${name}-${width}.png`, fullPage: true })
+
+    await page.reload()
+    await page.locator('text="Tuition, local" >> visible=true').first().waitFor()
+    await page.locator('button[aria-label="Remove Management from comparison"] >> visible=true').click()
+    await page.waitForURL((url) => !url.search.includes("7M04115"))
+    await page.waitForFunction(() => !document.querySelector("main").innerText.includes("Management"), null, { timeout: 5000 }).catch(() => {})
+    const afterRemove = await page.locator("main").innerText()
+    record(name, width, "17.2 remove keeps the other two", !afterRemove.includes("Management") && afterRemove.includes("Computer Science"))
+
+    await page.locator('button[aria-label="Remove Computer Science from comparison"] >> visible=true').click()
+    await page.getByText("Pick two or three programs").waitFor()
+    record(name, width, "17.2 empty state below two programs", true)
+
+    await page.goto(`${BASE}/compare?ids=6B06101,6B06102,0X00000`)
+    await page.getByText("Program not found").waitFor()
+    await page.getByRole("button", { name: "Remove 0X00000 and compare the rest" }).click()
+    await page.locator('text="Tuition, local" >> visible=true').first().waitFor()
+    record(name, width, "17.2 unknown id in a link is removed, the rest compared", !page.url().includes("0X00000"))
+
+    await page.evaluate(() => localStorage.setItem("sdu-admissions-language", JSON.stringify({ state: { language: "de" }, version: 0 })))
+    await page.goto(`${BASE}/programs`)
+    await page.locator("h1").waitFor()
+    record(name, width, "unknown stored language falls back instead of crashing", (await page.locator("h1").innerText()).length > 0)
+  } catch (error) {
+    record(name, width, "run", false, String(error).split("\n")[0])
+    await page.screenshot({ path: `${OUT}/compare-${name}-${width}-error.png` }).catch(() => {})
+  } finally {
+    await browser.close()
+  }
+}
+
+for (const [type, name] of [
+  [chromium, "chromium"],
+  [firefox, "firefox"],
+]) {
+  for (const width of (process.env.WIDTHS ?? "360,768,1280").split(",").map(Number)) await run(type, name, width)
+}
+
+const failed = results.filter((r) => !r.ok)
+console.log(`\n${results.length - failed.length}/${results.length} checks passed`)
+process.exit(failed.length ? 1 : 0)
