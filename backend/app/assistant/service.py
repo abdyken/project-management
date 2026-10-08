@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.assistant import retrieval
 from app.assistant.fallback import build_fallback_response
+from app.assistant.generation import generate_grounded_answer
 from app.assistant.intents import (
     applicant_type_from_question,
     applicant_type_mentioned,
@@ -12,7 +13,8 @@ from app.assistant.intents import (
     is_tuition_question,
     resolve_programs,
 )
-from app.assistant.schemas import AskResponse, FaqItem
+from app.assistant.llm import Llm, get_llm
+from app.assistant.schemas import Answer, AnswerSource, FaqItem
 from app.catalogue.models import Program
 from app.catalogue.service import search_programs
 from app.checklist.service import MISSING_REQUIREMENTS_WARNING, get_requirements
@@ -25,11 +27,13 @@ _TUITION_EXAMPLE = "How much is tuition for {title} ({program_id})?"
 
 
 class AssistantService:
-    def __init__(self, session: Session, settings: Settings):
+    def __init__(self, session: Session, settings: Settings, llm: Llm | None = None):
         self._session = session
         self._settings = settings
+        # None without GEMINI_API_KEY: every FAQ answer is then the item's answer, word for word.
+        self._llm = llm if llm is not None else get_llm(settings)
 
-    def answer(self, question: str, session_id: str) -> AskResponse:
+    def answer(self, question: str, session_id: str) -> Answer:
         if is_document_question(question):
             programs = resolve_programs(question, search_programs(self._session))
             if len(programs) == 1:
@@ -43,21 +47,38 @@ class AssistantService:
             if len(programs) > 1:
                 return _choose_program(programs, _TUITION_EXAMPLE)
 
-        results = retrieval.search(self._session, question)
+        results = retrieval.search(self._session, question, limit=self._settings.grounding_top_k)
         result = _best_for_audience(question, results)
+        # The threshold fallback comes before any model call (US10): a question the FAQ
+        # does not cover never reaches the model.
         if result is None or result.similarity_score < self._settings.similarity_threshold:
             score = results[0].similarity_score if results else None
             log_unanswered_question(self._session, question, score, session_id)
             return build_fallback_response(self._settings, score)
 
-        return AskResponse(
+        if self._llm is not None:
+            sources = [result.faq_item] + [
+                r.faq_item
+                for r in results
+                if r is not result
+                and r.similarity_score >= self._settings.similarity_threshold
+                and _written_for(question, r.faq_item)
+            ]
+            generated = generate_grounded_answer(self._llm, question, sources, result.similarity_score)
+            if generated is not None:
+                return generated
+
+        # Sprint 1 answer: the best FAQ item word for word. Also used whenever the model
+        # is unavailable or its answer fails the grounding check (US10 / T10.3).
+        return Answer(
             answer=result.faq_item.answer,
+            sources=[AnswerSource.from_faq(result.faq_item)],
             source_link=result.faq_item.source_link,
             faq_id=result.faq_item.faq_id,
             similarity_score=result.similarity_score,
         )
 
-    def _answer_document_question(self, question: str, session_id: str, program: Program) -> AskResponse:
+    def _answer_document_question(self, question: str, session_id: str, program: Program) -> Answer:
         applicant_type = applicant_type_from_question(question, program)
         if applicant_type is None:
             return _text_answer(
@@ -82,7 +103,7 @@ class AssistantService:
             f"Required documents for {_label(program)}, {applicant_type} applicant:\n" + "\n".join(lines)
         )
 
-    def _answer_tuition_question(self, program: Program) -> AskResponse:
+    def _answer_tuition_question(self, program: Program) -> Answer:
         if program.tuition_per_ects_kzt is None and program.tuition_per_ects_usd is None:
             return _text_answer(
                 f"The catalogue does not publish a tuition fee for {_label(program)}. "
@@ -109,7 +130,7 @@ def _label(program: Program) -> str:
     return f"{program.title} ({program.degree_level}, {program.program_id})"
 
 
-def _choose_program(programs: list[Program], example_question: str) -> AskResponse:
+def _choose_program(programs: list[Program], example_question: str) -> Answer:
     example = programs[0]
     return _text_answer(
         f"Your question matches several programs: {'; '.join(_label(program) for program in programs)}. "
@@ -136,5 +157,6 @@ def _written_for(question: str, item: FaqItem) -> bool:
     return not (applicant_type and item.applicant_types and applicant_type not in item.applicant_types)
 
 
-def _text_answer(text: str, source_link: str | None = None) -> AskResponse:
-    return AskResponse(answer=text, source_link=source_link, faq_id=None, similarity_score=None)
+def _text_answer(text: str, source_link: str | None = None) -> Answer:
+    sources = [AnswerSource(faq_id=None, question=None, link=source_link)] if source_link else []
+    return Answer(answer=text, sources=sources, source_link=source_link, faq_id=None, similarity_score=None)

@@ -308,6 +308,150 @@
         }
       }
     },
+    "/api/assistant/feedback": {
+      "post": {
+        "tags": [
+          "assistant"
+        ],
+        "summary": "Rate a stored assistant answer once",
+        "operationId": "feedback_api_assistant_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Answer id is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "This answer has already been rated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assistant/suggestions": {
+      "get": {
+        "tags": [
+          "assistant"
+        ],
+        "summary": "Suggested questions for the chat widget",
+        "description": "Four starter questions, or up to three follow-ups once the session has a turn.",
+        "operationId": "suggestions_api_assistant_suggestions_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "The chat session id",
+              "title": "Session Id"
+            },
+            "description": "The chat session id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestionsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/assistant/ask": {
       "post": {
         "tags": [
@@ -376,10 +520,113 @@
           }
         }
       }
+    },
+    "/api/assistant/ask/stream": {
+      "post": {
+        "tags": [
+          "assistant"
+        ],
+        "summary": "Answer an applicant question as a stream of server-sent events",
+        "operationId": "ask_stream_api_assistant_ask_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Server-sent events: `chunk` events with the answer text, then one `done` event with answer_id and sources. See docs/api/assistant-stream.md.",
+            "content": {
+              "text/event-stream": {}
+            }
+          },
+          "504": {
+            "description": "No answer within the time budget.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AnswerSource": {
+        "properties": {
+          "faq_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Faq Id"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "link": {
+            "type": "string",
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "required": [
+          "faq_id",
+          "question",
+          "link"
+        ],
+        "title": "AnswerSource",
+        "description": "One official source of an answer (contract v2, US10).\n\nFAQ answers cite FAQ items; catalogue answers cite the program page, with\n`faq_id` and `question` null."
+      },
       "AskRequest": {
         "properties": {
           "question": {
@@ -407,6 +654,14 @@
           "answer": {
             "type": "string",
             "title": "Answer"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerSource"
+            },
+            "type": "array",
+            "title": "Sources",
+            "default": []
           },
           "source_link": {
             "anyOf": [
@@ -440,6 +695,10 @@
               }
             ],
             "title": "Similarity Score"
+          },
+          "answer_id": {
+            "type": "string",
+            "title": "Answer Id"
           }
         },
         "type": "object",
@@ -447,7 +706,8 @@
           "answer",
           "source_link",
           "faq_id",
-          "similarity_score"
+          "similarity_score",
+          "answer_id"
         ],
         "title": "AskResponse"
       },
@@ -557,6 +817,82 @@
           "message"
         ],
         "title": "ErrorResponse"
+      },
+      "FeedbackRequest": {
+        "properties": {
+          "answer_id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,17}$",
+            "title": "Answer Id"
+          },
+          "rating": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Rating"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "outdated",
+                  "incorrect",
+                  "incomplete",
+                  "unclear",
+                  "wrong",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer_id",
+          "rating"
+        ],
+        "title": "FeedbackRequest"
+      },
+      "FeedbackResponse": {
+        "properties": {
+          "answer_id": {
+            "type": "string",
+            "title": "Answer Id"
+          },
+          "rating": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Rating"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer_id",
+          "rating",
+          "reason"
+        ],
+        "title": "FeedbackResponse"
       },
       "ProgramListResponse": {
         "properties": {
@@ -683,6 +1019,22 @@
           "is_active"
         ],
         "title": "ProgramOut"
+      },
+      "SuggestionsResponse": {
+        "properties": {
+          "suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Suggestions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "suggestions"
+        ],
+        "title": "SuggestionsResponse"
       }
     }
   }
