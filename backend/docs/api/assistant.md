@@ -43,7 +43,8 @@
 | FAQ match (score ≥ `SIMILARITY_THRESHOLD`), model answer passes the grounding check (US10) | Gemini's answer in its own words, from the cited FAQ items only; a combined question gets one answer | every cited item |
 | FAQ match, but no model answer: no `GEMINI_API_KEY`, every free model at its limit, API error, model timeout, or the answer fails the grounding check | The best FAQ item's answer, verbatim (Sprint 1) | that item |
 | Catalogue question (US12): fee, deadline, language or faculty of a program, a comparison, or a program list | Values from the catalogue, see *Catalogue answers* below | the program pages used (none for a program list or an unpublished value) |
-| No FAQ match (T3.4) | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `[]` |
+| No FAQ or catalogue match, model available | Gemini replies like a person at the desk: a greeting, thanks or small talk gets a natural answer; an admission question it has no source for gets "no official information" and the office contact. It gets the last turns of the conversation but no FAQ or catalogue facts, and a reply with any number not in the office contact or the question is rejected. Only real admission questions are logged as unanswered | `[]` |
+| No FAQ match (T3.4), no model or the model reply rejected | `I could not find this information in the official FAQ. Please contact the admissions office: <contact>` | `[]` |
 | Document question (T3.6), one program, applicant type given | `Required documents for <Program> (<degree>, <code>), <local\|international> applicant:` and one line per document | `[]` |
 | Document question, applicant type not given | Asks the applicant to say "local" or "international" | `[]` |
 | Document question matching several programs (e.g. the bachelor and master Information Systems) | Lists the programs with degree and code and asks for the code | `[]` |

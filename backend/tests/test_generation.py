@@ -75,13 +75,22 @@ def test_model_gets_at_most_top_k_items_with_the_best_match_first(assistant_sess
     assert len(ids) <= get_settings().grounding_top_k
 
 
-def test_question_below_the_threshold_never_reaches_the_model(assistant_session):
-    llm = FakeLlm(reply("Paris.", ["faq-001"]))
+def test_question_below_the_threshold_never_gives_the_model_faq_facts(assistant_session):
+    class ChatLlm:
+        prompts: list[str] = []
 
+        def generate(self, system, prompt, json_schema):
+            self.prompts.append(prompt)
+            text = json.dumps({"answer": "Paris is outside what I can help with.", "is_admission_question": False})
+            return Generation(text=text, model="fake", prompt_tokens=1, output_tokens=1, latency_ms=1)
+
+    llm = ChatLlm()
     response = answer_with(assistant_session, llm, "What is the capital of France?")
 
-    assert llm.prompts == []
-    assert response.answer == FALLBACK_TEMPLATE.format(contact=get_settings().admissions_office_contact)
+    assert len(llm.prompts) == 1
+    assert "<faq_items>" not in llm.prompts[0] and "<programs>" not in llm.prompts[0]
+    assert response.answer == "Paris is outside what I can help with."
+    assert response.sources == []
 
 
 @pytest.mark.parametrize(

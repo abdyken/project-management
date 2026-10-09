@@ -14,7 +14,7 @@ from app.assistant.catalogue import (
 )
 from app.assistant.catalogue_tools import program_facts
 from app.assistant.fallback import build_fallback_response
-from app.assistant.generation import generate_catalogue_answer, generate_grounded_answer
+from app.assistant.generation import generate_catalogue_answer, generate_chat_reply, generate_grounded_answer
 from app.assistant.intents import (
     DEADLINE,
     applicant_type_from_question,
@@ -48,12 +48,14 @@ class AssistantService:
         llm: Llm | None = None,
         topic: str | None = None,
         language: Language | None = None,
+        history: list[tuple[str, str]] | None = None,
     ):
         self._session = session
         self._settings = settings
         self._llm = llm if llm is not None else get_llm(settings)
         self._topic = topic
         self._language = language
+        self._history = history or []
         self._search_language: Language = language or "en"
 
     def answer(self, question: str, session_id: str) -> Answer:
@@ -86,6 +88,12 @@ class AssistantService:
             if summary is not None:
                 return self._answer_from_catalogue(question, summary, language)
             score = results[0].similarity_score if results else None
+            chat = self._chat_reply(question, language)
+            if chat is not None:
+                reply, is_admission_question = chat
+                if is_admission_question:
+                    log_unanswered_question(self._session, question, score, session_id)
+                return _text_answer(reply)
             log_unanswered_question(self._session, question, score, session_id)
             return build_fallback_response(self._settings, score, language)
 
@@ -114,6 +122,11 @@ class AssistantService:
         results = self._search(question)
         best = _best_for_audience(question, results)
         return best is not None and best.similarity_score >= FAQ_OVER_TITLE_MATCH
+
+    def _chat_reply(self, question: str, language: Language) -> tuple[str, bool] | None:
+        if self._llm is None:
+            return None
+        return generate_chat_reply(self._llm, question, self._history, self._contact(language))
 
     def _search(self, question: str) -> list[retrieval.SearchResult]:
         return retrieval.search(
