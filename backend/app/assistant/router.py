@@ -53,7 +53,10 @@ def _answer(
         question = standalone_question(body.question, history, programs) if history else body.question
         topic = faq_topic(session, history) if history else None
         language = detect_language(body.question)
-        answer = AssistantService(session, settings, topic=topic, language=language).answer(question, body.session_id)
+        turns = [(turn.role, turn.text) for turn in history]
+        answer = AssistantService(session, settings, topic=topic, language=language, history=turns).answer(
+            question, body.session_id
+        )
         if timed_out.is_set():
             return None
         sources = [source.model_dump() for source in answer.sources] or None
