@@ -20,8 +20,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "onnx>=1.16",
     "pytest>=8.3",
     "pytest-asyncio>=1.2",
+]
+model-build = [
+    "onnx>=1.16",
 ]
 
 [tool.pytest.ini_options]
