@@ -2,11 +2,8 @@ name: Backend CI
 
 on:
   pull_request:
-  push:
-    branches: [main]
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-ci.yml"
+  # Pushes to main run this through deploy.yml before deploying.
+  workflow_call:
 
 jobs:
   test:

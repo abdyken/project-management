@@ -2,11 +2,8 @@ name: Frontend CI
 
 on:
   pull_request:
-  push:
-    branches: [main]
-    paths:
-      - "frontend/**"
-      - ".github/workflows/frontend-ci.yml"
+  # Pushes to main run this through deploy.yml before deploying.
+  workflow_call:
 
 jobs:
   build:
