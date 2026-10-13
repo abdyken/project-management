@@ -24,6 +24,8 @@ uv run uvicorn app.main:app --reload
 
 Grounded answers (US10) need `GEMINI_API_KEY` in `.env` (a free Google AI Studio key); `uv run python scripts/gemini_smoke.py` makes one test call. Without it the assistant answers word for word from the FAQ. Tests never call Gemini.
 
+FAQ search model: locally the original model is used. The Docker image builds a slim copy (`scripts/build_slim_model.py`, Kazakh/Russian/English pieces only, int8 word table) that needs ~240 MB instead of ~610 MB, checks it against the original (`scripts/check_slim_model.py`) and precomputes the FAQ vectors (`scripts/precompute_faq_embeddings.py`). Try it locally: `uv run python scripts/build_slim_model.py --out /tmp/slim && EMBEDDING_MODEL_DIR=/tmp/slim uv run pytest`.
+
 ## Tests
 
 ```bash
