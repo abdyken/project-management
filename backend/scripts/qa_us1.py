@@ -82,11 +82,15 @@ class US1QA:
     @staticmethod
     def matches(program: dict, field: str, value: str) -> bool:
         if field == "language":
+            # Unpublished language (null since US16): the program cannot match a language filter.
+            if not program["language"]:
+                return False
             return value.lower() in [language.strip().lower() for language in program["language"].split(",")]
         return program[field].lower() == value.lower()
 
     def combined_filters(self) -> str:
-        sample = self.catalogue[0]
+        sample = next((program for program in self.catalogue if program["language"]), None)
+        check(sample is not None, "no program with a published language to test the language filter")
         language = sample["language"].split(",")[0].strip()
         combinations = [
             {"faculty": sample["faculty"]},
