@@ -9,4 +9,6 @@ This repository is ready for the three services below. The account actions and f
 
 `Backend CI` (pgvector database, `uv sync`, pytest) and `Frontend CI` (lint, build) run on every pull request. Enable the branch protection rule in `docs/repository-rules.md` so they block failing merges.
 
+The live site runs on an Oracle Cloud Always Free VM and is deployed automatically from `main`: see `deploy/oracle-vm/README.md`.
+
 For a local copy of the whole stack, `docker compose up --build` in the repository root is enough.

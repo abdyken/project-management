@@ -1,0 +1,84 @@
+name: Deploy
+
+# Every push to main that changes the app: run both CI workflows, then build the images
+# here (the 1 GB VM cannot build the slim search model) and hand them to deploy.sh on
+# the Oracle VM. See deploy/oracle-vm/README.md.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "deploy/oracle-vm/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    uses: ./.github/workflows/backend-ci.yml
+
+  frontend:
+    uses: ./.github/workflows/frontend-ci.yml
+
+  deploy:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://193-123-95-102.sslip.io
+    env:
+      SITE_URL: https://193-123-95-102.sslip.io
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Image tag
+        run: echo "TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          load: true
+          tags: sdu-admissions-api:${{ env.TAG }}
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+
+      - name: Build web image
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          load: true
+          tags: sdu-admissions-web:${{ env.TAG }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+
+      - name: Deploy to the VM
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          mkdir bundle
+          cp deploy/oracle-vm/compose.yml deploy/oracle-vm/Caddyfile bundle/
+          docker save "sdu-admissions-api:$TAG" "sdu-admissions-web:$TAG" | gzip -1 > bundle/images.tar.gz
+          tar -C bundle -cf - compose.yml Caddyfile images.tar.gz |
+            ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 "$DEPLOY_HOST" "deploy $TAG"
+
+      - name: Check the live site
+        run: |
+          curl -fsS --retry 5 --retry-delay 10 --retry-all-errors "$SITE_URL/api/health"
+          curl -fsS -o /dev/null "$SITE_URL/"

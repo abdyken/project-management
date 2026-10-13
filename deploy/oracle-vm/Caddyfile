@@ -1,0 +1,6 @@
+{$SITE_HOST} {
+	encode gzip
+	reverse_proxy web:80 {
+		flush_interval -1
+	}
+}
