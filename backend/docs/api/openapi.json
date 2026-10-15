@@ -674,10 +674,1870 @@
           }
         }
       }
+    },
+    "/api/staff/login": {
+      "post": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Log in to the staff area",
+        "description": "Sets the HttpOnly `staff_session` cookie (path `/api/staff`) for 8 hours.",
+        "operationId": "login_api_staff_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffUserOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unknown e-mail, wrong password or a deactivated account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_CREDENTIALS",
+                  "message": "Wrong e-mail or password."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Five failed logins in 15 minutes for this account or from this address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "TOO_MANY_ATTEMPTS",
+                  "message": "Too many failed logins. Try again in 15 minutes."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/logout": {
+      "post": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Log out",
+        "operationId": "logout_api_staff_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/me": {
+      "get": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "The logged-in staff user",
+        "operationId": "me_api_staff_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffUserOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/users": {
+      "get": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Staff accounts (administrators only)",
+        "description": "Accounts are added and deactivated with `scripts/create_staff_user.py`.",
+        "operationId": "users_api_staff_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffUserListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is not allowed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "FORBIDDEN",
+                  "message": "This page is for administrators only."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/faq": {
+      "get": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "List FAQ items",
+        "operationId": "list_faq_api_staff_faq_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Text in the id, question or answer",
+              "title": "Q"
+            },
+            "description": "Text in the id, question or answer"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "draft",
+                    "published",
+                    "retired"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "Create an FAQ item as a draft",
+        "description": "The new item gets the next `faq-NNN` id and status `draft`; the assistant uses it only after it is published.",
+        "operationId": "create_faq_api_staff_faq_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaqItemIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqItemOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/faq/{faq_id}": {
+      "get": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "One FAQ item",
+        "operationId": "get_faq_api_staff_faq__faq_id__get",
+        "parameters": [
+          {
+            "name": "faq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Faq Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqItemOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No FAQ item with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "FAQ_NOT_FOUND",
+                  "message": "FAQ item not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "Change an FAQ item",
+        "description": "A published item is re-indexed at once, so the assistant answers with the new text on the next question.",
+        "operationId": "update_faq_api_staff_faq__faq_id__put",
+        "parameters": [
+          {
+            "name": "faq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Faq Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaqItemIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqItemOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No FAQ item with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "FAQ_NOT_FOUND",
+                  "message": "FAQ item not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/faq/{faq_id}/publish": {
+      "post": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "Publish an FAQ item",
+        "description": "The assistant starts using the item at once.",
+        "operationId": "set_faq_published_api_staff_faq__faq_id__publish_post",
+        "parameters": [
+          {
+            "name": "faq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Faq Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqItemOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No FAQ item with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "FAQ_NOT_FOUND",
+                  "message": "FAQ item not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/faq/{faq_id}/retire": {
+      "post": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "Retire an FAQ item",
+        "description": "The assistant stops using the item at once; it stays in the list as `retired`.",
+        "operationId": "set_faq_retired_api_staff_faq__faq_id__retire_post",
+        "parameters": [
+          {
+            "name": "faq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Faq Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqItemOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No FAQ item with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "FAQ_NOT_FOUND",
+                  "message": "FAQ item not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/faq/{faq_id}/unpublish": {
+      "post": {
+        "tags": [
+          "staff: FAQ"
+        ],
+        "summary": "Move an FAQ item back to draft",
+        "description": "The assistant stops using the item until it is published again.",
+        "operationId": "set_faq_draft_api_staff_faq__faq_id__unpublish_post",
+        "parameters": [
+          {
+            "name": "faq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Faq Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqItemOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No FAQ item with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "FAQ_NOT_FOUND",
+                  "message": "FAQ item not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/inbox": {
+      "get": {
+        "tags": [
+          "staff: inbox"
+        ],
+        "summary": "Questions the assistant could not answer, grouped",
+        "description": "Questions that differ only in case, spacing or punctuation are one group, most asked first. E-mail addresses and phone numbers are redacted; session ids are never returned.",
+        "operationId": "inbox_api_staff_inbox_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "new",
+                "answered",
+                "dismissed"
+              ],
+              "type": "string",
+              "default": "new",
+              "title": "Status"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 90,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboxResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/inbox/dismiss": {
+      "post": {
+        "tags": [
+          "staff: inbox"
+        ],
+        "summary": "Dismiss a group (not an admissions question, spam, already answered elsewhere)",
+        "operationId": "dismiss_api_staff_inbox_dismiss_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandledResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No new question in this group (already handled, or an unknown key).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "GROUP_NOT_FOUND",
+                  "message": "No new question in this group."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/inbox/answer": {
+      "post": {
+        "tags": [
+          "staff: inbox"
+        ],
+        "summary": "Mark a group as answered by a published FAQ item",
+        "operationId": "answer_api_staff_inbox_answer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandledResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No new question in this group (already handled, or an unknown key).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "GROUP_NOT_FOUND",
+                  "message": "No new question in this group."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The FAQ item does not exist or is not published yet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "FAQ_NOT_PUBLISHED",
+                  "message": "Publish the FAQ item first."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/analytics": {
+      "get": {
+        "tags": [
+          "staff: analytics"
+        ],
+        "summary": "What applicants ask (admissions dashboard)",
+        "description": "Counts for the last `days` days (today included, Kazakhstan time), at most 30: chat turns are deleted after 30 days. Question texts are redacted; no session ids are returned.",
+        "operationId": "analytics_api_staff_analytics_get",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 30,
+              "minimum": 1,
+              "default": 7,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/programs": {
+      "get": {
+        "tags": [
+          "staff: catalogue"
+        ],
+        "summary": "All programs, archived ones included",
+        "operationId": "list_programs_api_staff_programs_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Text in the code, title or school",
+              "title": "Q"
+            },
+            "description": "Text in the code, title or school"
+          },
+          {
+            "name": "degree_level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "bachelor",
+                    "master",
+                    "phd"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Degree Level"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Active"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffProgramListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "staff: catalogue"
+        ],
+        "summary": "Add a program",
+        "description": "The program has no document lists until they are added; until then its pages show the missing-data warning.",
+        "operationId": "create_program_api_staff_programs_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffProgramOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A program with this code already exists.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "PROGRAM_EXISTS",
+                  "message": "Program 6B06102 already exists."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/programs/{program_id}": {
+      "get": {
+        "tags": [
+          "staff: catalogue"
+        ],
+        "summary": "One program with its document lists",
+        "operationId": "get_program_api_staff_programs__program_id__get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "title": "Program Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffProgramOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No program with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "PROGRAM_NOT_FOUND",
+                  "message": "Program not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "staff: catalogue"
+        ],
+        "summary": "Change a program's facts",
+        "description": "`is_active: false` archives the program: it leaves the catalogue, the comparison and the assistant's answers.",
+        "operationId": "update_program_api_staff_programs__program_id__put",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "title": "Program Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramFields"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffProgramOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No program with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "PROGRAM_NOT_FOUND",
+                  "message": "Program not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/staff/programs/{program_id}/documents/{applicant_type}": {
+      "put": {
+        "tags": [
+          "staff: catalogue"
+        ],
+        "summary": "Replace the document list of one applicant type",
+        "description": "The list replaces the old one in the given order. An empty list means no official list is published: the checklist then shows the missing-data warning.",
+        "operationId": "replace_documents_api_staff_programs__program_id__documents__applicant_type__put",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "title": "Program Id"
+            }
+          },
+          {
+            "name": "applicant_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "local",
+                "international"
+              ],
+              "type": "string",
+              "title": "Applicant Type"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentListIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffProgramOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No program with this id.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "PROGRAM_NOT_FOUND",
+                  "message": "Program not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AnalyticsResponse": {
+        "properties": {
+          "days": {
+            "type": "integer",
+            "title": "Days"
+          },
+          "since": {
+            "type": "string",
+            "format": "date",
+            "title": "Since"
+          },
+          "questions": {
+            "type": "integer",
+            "title": "Questions"
+          },
+          "sessions": {
+            "type": "integer",
+            "title": "Sessions"
+          },
+          "unanswered": {
+            "type": "integer",
+            "title": "Unanswered"
+          },
+          "per_day": {
+            "items": {
+              "$ref": "#/components/schemas/DayCount"
+            },
+            "type": "array",
+            "title": "Per Day"
+          },
+          "top_questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionCount"
+            },
+            "type": "array",
+            "title": "Top Questions"
+          },
+          "top_sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceCount"
+            },
+            "type": "array",
+            "title": "Top Sources"
+          },
+          "languages": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Languages"
+          },
+          "ratings": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Ratings"
+          },
+          "down_reasons": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Down Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "days",
+          "since",
+          "questions",
+          "sessions",
+          "unanswered",
+          "per_day",
+          "top_questions",
+          "top_sources",
+          "languages",
+          "ratings",
+          "down_reasons"
+        ],
+        "title": "AnalyticsResponse"
+      },
+      "AnswerRequest": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Key"
+          },
+          "faq_id": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Faq Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "faq_id"
+        ],
+        "title": "AnswerRequest"
+      },
       "AnswerSource": {
         "properties": {
           "faq_id": {
@@ -988,6 +2848,88 @@
         ],
         "title": "ComparedProgram"
       },
+      "DayCount": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "questions": {
+            "type": "integer",
+            "title": "Questions"
+          },
+          "unanswered": {
+            "type": "integer",
+            "title": "Unanswered"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "questions",
+          "unanswered"
+        ],
+        "title": "DayCount"
+      },
+      "DocumentIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "original",
+              "copy"
+            ],
+            "title": "Format"
+          },
+          "translation": {
+            "type": "boolean",
+            "title": "Translation",
+            "default": false
+          },
+          "notarisation": {
+            "type": "boolean",
+            "title": "Notarisation",
+            "default": false
+          },
+          "deadline": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Deadline"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "format",
+          "deadline"
+        ],
+        "title": "DocumentIn"
+      },
+      "DocumentListIn": {
+        "properties": {
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentIn"
+            },
+            "type": "array",
+            "maxItems": 60,
+            "title": "Documents"
+          }
+        },
+        "type": "object",
+        "required": [
+          "documents"
+        ],
+        "title": "DocumentListIn"
+      },
       "DocumentRequirementOut": {
         "properties": {
           "name": {
@@ -1042,6 +2984,482 @@
           "message"
         ],
         "title": "ErrorResponse"
+      },
+      "FaqItemIn": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 2,
+            "pattern": "^[a-z][a-z-]*$",
+            "title": "Category"
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Question"
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 5,
+            "title": "Answer"
+          },
+          "source_link": {
+            "type": "string",
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Link"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          },
+          "question_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Ru"
+          },
+          "answer_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Ru"
+          },
+          "source_link_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Link Ru"
+          },
+          "evidence_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Ru"
+          },
+          "question_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Kk"
+          },
+          "answer_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Kk"
+          },
+          "source_link_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Link Kk"
+          },
+          "evidence_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Kk"
+          },
+          "degrees": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "bachelor",
+                "master",
+                "phd"
+              ]
+            },
+            "type": "array",
+            "title": "Degrees",
+            "default": []
+          },
+          "applicant_types": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "local",
+                "international"
+              ]
+            },
+            "type": "array",
+            "title": "Applicant Types",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "question",
+          "answer",
+          "source_link"
+        ],
+        "title": "FaqItemIn",
+        "description": "An FAQ item as the staff editor sends it. English is required; a Russian or\nKazakh version is either complete (question, answer and its official page) or empty."
+      },
+      "FaqItemOut": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 2,
+            "pattern": "^[a-z][a-z-]*$",
+            "title": "Category"
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Question"
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 5,
+            "title": "Answer"
+          },
+          "source_link": {
+            "type": "string",
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Link"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          },
+          "question_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Ru"
+          },
+          "answer_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Ru"
+          },
+          "source_link_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Link Ru"
+          },
+          "evidence_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Ru"
+          },
+          "question_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Kk"
+          },
+          "answer_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Kk"
+          },
+          "source_link_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Link Kk"
+          },
+          "evidence_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Kk"
+          },
+          "degrees": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "bachelor",
+                "master",
+                "phd"
+              ]
+            },
+            "type": "array",
+            "title": "Degrees",
+            "default": []
+          },
+          "applicant_types": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "local",
+                "international"
+              ]
+            },
+            "type": "array",
+            "title": "Applicant Types",
+            "default": []
+          },
+          "faq_id": {
+            "type": "string",
+            "title": "Faq Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "retired"
+            ],
+            "title": "Status"
+          },
+          "last_update": {
+            "type": "string",
+            "title": "Last Update"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "question",
+          "answer",
+          "source_link",
+          "faq_id",
+          "status",
+          "last_update",
+          "updated_at",
+          "updated_by"
+        ],
+        "title": "FaqItemOut"
+      },
+      "FaqListItem": {
+        "properties": {
+          "faq_id": {
+            "type": "string",
+            "title": "Faq Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "retired"
+            ],
+            "title": "Status"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "languages": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "en",
+                "ru",
+                "kk"
+              ]
+            },
+            "type": "array",
+            "title": "Languages"
+          },
+          "last_update": {
+            "type": "string",
+            "title": "Last Update"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "faq_id",
+          "status",
+          "category",
+          "question",
+          "languages",
+          "last_update",
+          "updated_at",
+          "updated_by"
+        ],
+        "title": "FaqListItem"
+      },
+      "FaqListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FaqListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Categories"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "categories"
+        ],
+        "title": "FaqListResponse"
       },
       "FeedbackRequest": {
         "properties": {
@@ -1125,6 +3543,453 @@
           "reason"
         ],
         "title": "FeedbackResponse"
+      },
+      "GroupRequest": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "title": "GroupRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HandledResponse": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "new",
+              "answered",
+              "dismissed"
+            ],
+            "title": "Status"
+          },
+          "updated": {
+            "type": "integer",
+            "title": "Updated",
+            "description": "Questions of the group that changed status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "status",
+          "updated"
+        ],
+        "title": "HandledResponse"
+      },
+      "InboxGroup": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "Normalized question; send it back to dismiss or answer the group"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "kk"
+            ],
+            "title": "Language"
+          },
+          "best_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Score"
+          },
+          "first_asked": {
+            "type": "string",
+            "format": "date-time",
+            "title": "First Asked"
+          },
+          "last_asked": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Asked"
+          },
+          "faq_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Faq Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "question",
+          "count",
+          "language",
+          "best_score",
+          "first_asked",
+          "last_asked",
+          "faq_id"
+        ],
+        "title": "InboxGroup"
+      },
+      "InboxResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InboxGroup"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_asks": {
+            "type": "integer",
+            "title": "Total Asks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total_asks"
+        ],
+        "title": "InboxResponse"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "ProgramCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
+          "faculty": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Faculty"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "tuition_per_ects_kzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Kzt"
+          },
+          "tuition_per_ects_usd": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Usd"
+          },
+          "deadline_local": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Local"
+          },
+          "deadline_international": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline International"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "program_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "pattern": "^[0-9A-Z]+$",
+            "title": "Program Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "faculty",
+          "degree_level",
+          "program_id"
+        ],
+        "title": "ProgramCreate"
+      },
+      "ProgramFields": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
+          "faculty": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Faculty"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "tuition_per_ects_kzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Kzt"
+          },
+          "tuition_per_ects_usd": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Usd"
+          },
+          "deadline_local": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Local"
+          },
+          "deadline_international": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline International"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "faculty",
+          "degree_level"
+        ],
+        "title": "ProgramFields",
+        "description": "Every editable fact of a program. `null` means \"not published\" and is shown that\nway to applicants, never as 0 or an empty date."
       },
       "ProgramListResponse": {
         "properties": {
@@ -1283,6 +4148,420 @@
         ],
         "title": "ProgramOut"
       },
+      "QuestionCount": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "count"
+        ],
+        "title": "QuestionCount"
+      },
+      "SourceCount": {
+        "properties": {
+          "faq_id": {
+            "type": "string",
+            "title": "Faq Id"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "faq_id",
+          "question",
+          "count"
+        ],
+        "title": "SourceCount"
+      },
+      "StaffProgramListItem": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "degree_level": {
+            "type": "string",
+            "title": "Degree Level"
+          },
+          "faculty": {
+            "type": "string",
+            "title": "Faculty"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "documents_local": {
+            "type": "integer",
+            "title": "Documents Local"
+          },
+          "documents_international": {
+            "type": "integer",
+            "title": "Documents International"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "program_id",
+          "title",
+          "degree_level",
+          "faculty",
+          "is_active",
+          "documents_local",
+          "documents_international",
+          "updated_at",
+          "updated_by"
+        ],
+        "title": "StaffProgramListItem"
+      },
+      "StaffProgramListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StaffProgramListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "StaffProgramListResponse"
+      },
+      "StaffProgramOut": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "title_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ru"
+          },
+          "title_kk": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Kk"
+          },
+          "faculty": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Faculty"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "tuition_per_ects_kzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Kzt"
+          },
+          "tuition_per_ects_usd": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuition Per Ects Usd"
+          },
+          "deadline_local": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Local"
+          },
+          "deadline_international": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline International"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "pattern": "^https://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "program_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "pattern": "^[0-9A-Z]+$",
+            "title": "Program Id"
+          },
+          "documents": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/DocumentIn"
+              },
+              "type": "array"
+            },
+            "propertyNames": {
+              "enum": [
+                "local",
+                "international"
+              ]
+            },
+            "type": "object",
+            "title": "Documents"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "faculty",
+          "degree_level",
+          "program_id",
+          "documents",
+          "updated_at",
+          "updated_by"
+        ],
+        "title": "StaffProgramOut"
+      },
+      "StaffUserListItem": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "officer"
+            ],
+            "title": "Role"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active"
+          },
+          "last_login_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "role",
+          "active",
+          "last_login_at"
+        ],
+        "title": "StaffUserListItem"
+      },
+      "StaffUserListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StaffUserListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "StaffUserListResponse"
+      },
+      "StaffUserOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "officer"
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "role"
+        ],
+        "title": "StaffUserOut"
+      },
       "SuggestionsResponse": {
         "properties": {
           "suggestions": {
@@ -1298,6 +4577,46 @@
           "suggestions"
         ],
         "title": "SuggestionsResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       }
     }
   }

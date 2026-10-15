@@ -5,17 +5,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.assistant.retrieval import load_faq_base, rebuild_index
+from app.assistant.retrieval import rebuild_index
 from app.config import get_settings
 from app.db import get_session
+from app.faq.service import load_published
 
 
 def main() -> int:
-    settings = get_settings()
-    faq_items = load_faq_base(settings.faq_data_path)
-    with get_session(settings) as session:
+    # Since US20 the faq_item table is the source of truth (app/data/faq.json only seeded it).
+    with get_session(get_settings()) as session:
+        faq_items = load_published(session)
         rebuild_index(session, faq_items)
-    print(f"Indexed {len(faq_items)} FAQ items from {settings.faq_data_path}")
+    print(f"Indexed {len(faq_items)} published FAQ items from the faq_item table")
     return 0
 
 

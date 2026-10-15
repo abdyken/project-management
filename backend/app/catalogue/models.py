@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 
-from sqlalchemy import Boolean, CheckConstraint, Date, Integer, String, true
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, ForeignKey, Integer, String, true
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
@@ -31,3 +31,6 @@ class Program(Base):
     deadline_international: Mapped[date | None] = mapped_column(Date)
     source_url: Mapped[str | None] = mapped_column(String(500))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=true())
+    # US21: the last staff edit; null for programs as imported from catalogue.json.
+    updated_by_id: Mapped[int | None] = mapped_column(ForeignKey("staff_user.id", ondelete="SET NULL"))
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     gemini_thinking_level: str = "low"
     # How many FAQ items above the threshold are sent to the model as sources.
     grounding_top_k: int = 5
+    # US19: staff login. The cookie is Secure (HTTPS only); browsers also accept it on
+    # http://localhost, so the local Docker stack works without HTTPS.
+    staff_session_hours: int = 8
+    staff_cookie_secure: bool = True
     admissions_office_contact: str = (
         "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
     )

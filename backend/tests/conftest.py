@@ -41,12 +41,15 @@ def db_session(db_engine):
 
     from app.assistant.feedback import AnswerFeedback
     from app.followups.models import AdmissionsFollowup
+    from app.staff.models import StaffUser
 
     with db_engine.connect() as connection:
         transaction = connection.begin()
         with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
             session.execute(delete(AdmissionsFollowup))
             session.execute(delete(AnswerFeedback))
+            # Local accounts of the dev database must not leak into staff tests.
+            session.execute(delete(StaffUser))
             yield session
         transaction.rollback()
 

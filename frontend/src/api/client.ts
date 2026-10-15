@@ -69,6 +69,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       await parseError(res)
     }
 
+    if (res.status === 204) return undefined as T
     return (await res.json()) as T
   } catch (error) {
     if (error instanceof ApiError) throw error
