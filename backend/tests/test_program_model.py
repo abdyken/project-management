@@ -37,6 +37,8 @@ def test_program_table_has_agreed_columns(db_engine):
         "deadline_international",
         "source_url",
         "is_active",
+        "updated_by_id",
+        "updated_at",
     }
 
 

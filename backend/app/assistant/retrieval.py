@@ -41,10 +41,24 @@ def load_faq_base(path: str | Path) -> list[FaqItem]:
 
 
 def rebuild_index(session: Session, faq_items: list[FaqItem]) -> None:
+    records = _index_records(faq_items)
+    session.execute(delete(FaqEmbeddingRecord))
+    session.add_all(records)
+    session.commit()
+
+
+def reindex_item(session: Session, faq_id: str, item: FaqItem | None) -> None:
+    """Replace one item's rows in the index (US20); `None` removes it, e.g. when retired.
+    The caller commits, together with the change of the item itself."""
+    records = _index_records([item]) if item is not None else []
+    session.execute(delete(FaqEmbeddingRecord).where(FaqEmbeddingRecord.faq_id == faq_id))
+    session.add_all(records)
+
+
+def _index_records(faq_items: list[FaqItem]) -> list[FaqEmbeddingRecord]:
     rows = [(item, language, text) for item in faq_items for language, text in item.texts().items()]
     vectors = embeddings.embed([text for _, _, text in rows])
-    session.execute(delete(FaqEmbeddingRecord))
-    session.add_all(
+    return [
         FaqEmbeddingRecord(
             faq_id=item.faq_id,
             language=language,
@@ -59,8 +73,7 @@ def rebuild_index(session: Session, faq_items: list[FaqItem]) -> None:
             embedding=vector,
         )
         for (item, language, _), vector in zip(rows, vectors, strict=True)
-    )
-    session.commit()
+    ]
 
 
 def search(session: Session, question: str, limit: int = 5, language: str = "en") -> list[SearchResult]:

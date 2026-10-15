@@ -150,16 +150,25 @@ def import_catalogue(session: Session, source: SourceFile) -> ImportResult:
     return ImportResult(programs=len(source.programs), requirements=requirement_count, deactivated=sorted(deactivated))
 
 
-DESCRIPTION = "Import app/data/catalogue.json into the database. Safe to re-run."
+DESCRIPTION = """Import app/data/catalogue.json into the database. Safe to re-run.
+
+Since Sprint 4 (US21) the database is the source of truth: the admissions office edits programs
+and document lists in the staff area. The API start therefore runs this with --if-empty, which
+only fills an empty catalogue. Running it without the flag overwrites every staff edit with the
+file."""
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=DESCRIPTION)
+    parser = argparse.ArgumentParser(description=DESCRIPTION, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
+    parser.add_argument("--if-empty", action="store_true", help="import only when the catalogue has no programs yet")
     args = parser.parse_args()
 
     source = load_source(args.source)
     with get_session(get_settings()) as session:
+        if args.if_empty and session.scalar(select(Program.program_id).limit(1)) is not None:
+            print("Catalogue already in the database (edited in the staff area); import skipped")
+            return 0
         result = import_catalogue(session, source)
 
     print(f"Imported {result.programs} programs and {result.requirements} document requirements from {args.source.name}")

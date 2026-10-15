@@ -16,7 +16,9 @@ from app.checklist.models import ProgramDocumentRequirement
 from app.config import get_settings
 from app.conversation.models import ChatTurn
 from app.db import Base
+from app.faq.models import FaqRecord
 from app.followups.models import AdmissionsFollowup
+from app.staff.models import StaffSession, StaffUser
 
 config = context.config
 if config.config_file_name is not None:
