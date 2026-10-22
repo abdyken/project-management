@@ -70,6 +70,18 @@ def test_unpublished_language_is_never_guessed(full_catalogue_session):
     assert "English" not in response.answer
 
 
+@pytest.mark.parametrize("code", ["7M01701", "8D01701"])
+def test_kazakh_program_title_cannot_be_used_as_a_teaching_language(full_catalogue_session, code):
+    class ModelMustNotRun:
+        def generate(self, *args, **kwargs):
+            pytest.fail("Missing teaching language must use the catalogue's explicit unknown answer")
+
+    response = AssistantService(full_catalogue_session, get_settings(), llm=ModelMustNotRun()).answer(
+        f"What is the language of instruction for {code}?", "sprint5-regression"
+    )
+    assert response.answer.startswith("The catalogue does not publish the language of instruction")
+
+
 def test_phd_program_list(full_catalogue_session):
     response = ask(full_catalogue_session, "Which PhD programs are there at the School of Social Sciences, Business and Law?")
 

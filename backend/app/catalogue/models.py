@@ -6,6 +6,7 @@ from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, ForeignKey, Int
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
+from app.staff.models import StaffUser  # Register the editor FK target for standalone catalogue scripts.
 
 class Program(Base):
     __tablename__ = "program"
