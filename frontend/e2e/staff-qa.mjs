@@ -173,7 +173,6 @@ async function staffStories(page, name, width) {
     await page.goto(`${BASE}/staff/programs/6B04104`)
     const fee = page.getByLabel("Fee per ECTS, local (KZT)")
     await fee.waitFor()
-    const originalFee = await fee.inputValue()
     await fee.fill("43000")
     await page.getByRole("button", { name: "Save facts" }).click()
     await page.getByRole("form", { name: "Facts" }).getByRole("status").waitFor()

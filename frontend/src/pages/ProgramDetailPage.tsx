@@ -4,6 +4,8 @@ import { isNotFound } from "@/api/errors"
 import { getChecklist, getProgram } from "@/api/programs"
 import type { ApplicantType } from "@/api/types"
 import { DocumentChecklist } from "@/components/catalog/DocumentChecklist"
+import { ChecklistPdfButton } from "@/components/catalog/ChecklistPdfButton"
+import { SaveChecklistButton } from "@/components/catalog/SaveChecklistButton"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { CompareToggle } from "@/components/compare/CompareToggle"
 import { Button } from "@/components/ui/button"
@@ -15,7 +17,7 @@ const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
 const labelClass = "text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
 
 export function ProgramDetailPage() {
-  const { t, degree, languages, deadline, tuitionKzt, tuitionUsd, programTitle } = useI18n()
+  const { t, language, degree, languages, deadline, tuitionKzt, tuitionUsd, programTitle } = useI18n()
   const { id = "" } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const applicant: ApplicantType = searchParams.get("applicant") === "international" ? "international" : "local"
@@ -150,6 +152,10 @@ export function ProgramDetailPage() {
           {checklistQuery.data ? <DocumentChecklist checklist={checklistQuery.data} /> : null}
         </div>
 
+        <div className="mt-6 flex flex-wrap gap-3">
+          <SaveChecklistButton key={`${id}:${applicant}`} programId={id} applicantType={applicant} />
+          <ChecklistPdfButton path={`/api/programs/${encodeURIComponent(id)}/checklist/pdf?applicant_type=${applicant}&language=${language}`} />
+        </div>
         <Button
           className="mt-8"
           variant="outline"
