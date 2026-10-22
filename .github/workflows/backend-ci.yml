@@ -47,7 +47,10 @@ jobs:
       - name: Install locked dependencies
         run: uv sync --frozen
       - name: Run tests
-        run: uv run pytest
+        run: |
+          uv run alembic upgrade head
+          uv run python scripts/import_catalogue.py --if-empty
+          uv run pytest
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -80,6 +83,11 @@ jobs:
       - name: Run applicant browser QA
         working-directory: frontend
         run: npm run qa:applicant
+      - name: Show local service logs on failure
+        if: failure()
+        run: |
+          cat /tmp/admissions-api.log /tmp/admissions-web.log 2>/dev/null || true
+          docker logs ${{ job.services.mailpit.id }}
       - name: Upload browser QA evidence on failure
         if: failure()
         uses: actions/upload-artifact@v4

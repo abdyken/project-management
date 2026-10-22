@@ -58,9 +58,13 @@ async function run(type, name, width) {
     record(name, width, "US23 anonymous account page redirects to login")
     if (!created) {
       await page.getByRole("link", { name: "Create account", exact: true }).click()
+      await page.getByRole("heading", { name: "Create account", exact: true }).waitFor()
       await page.getByLabel("E-mail", { exact: true }).fill(EMAIL)
       await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
+      const registrationResponse = page.waitForResponse((response) => response.url().endsWith("/api/applicant/register") && response.request().method() === "POST")
       await page.getByRole("button", { name: "Create account", exact: true }).click()
+      const registration = await registrationResponse
+      assert.equal(registration.status(), 202, await registration.text())
       await page.getByRole("status").filter({ hasText: "Check your e-mail" }).waitFor()
       record(name, width, "US23 registration sends a real SMTP verification message")
       const link = await verificationLink()
