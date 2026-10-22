@@ -75,9 +75,11 @@ jobs:
         run: |
           uv run python scripts/import_catalogue.py --if-empty
           uv run python scripts/reindex_faq.py
-          uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/admissions-api.log 2>&1 &
+          .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/admissions-api.log 2>&1 &
+          echo $! > /tmp/admissions-api.pid
           cd ../frontend
-          npm run dev -- --host 127.0.0.1 > /tmp/admissions-web.log 2>&1 &
+          node_modules/.bin/vite --host 127.0.0.1 > /tmp/admissions-web.log 2>&1 &
+          echo $! > /tmp/admissions-web.pid
           for attempt in $(seq 1 60); do
             if curl -fsS http://localhost:5173/api/health; then exit 0; fi
             sleep 1
@@ -87,6 +89,14 @@ jobs:
       - name: Run applicant browser QA
         working-directory: frontend
         run: npm run qa:applicant
+      - name: Stop browser QA services
+        if: always()
+        run: |
+          for service in api web; do
+            if [ -f "/tmp/admissions-$service.pid" ]; then
+              kill "$(cat "/tmp/admissions-$service.pid")" 2>/dev/null || true
+            fi
+          done
       - name: Show local service logs on failure
         if: failure()
         run: |
