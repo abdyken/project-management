@@ -60,6 +60,10 @@ jobs:
         working-directory: frontend
         run: |
           npm ci
+          # Avoid the regional Azure mirror, which can stall font/library downloads.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
           npx playwright install --with-deps chromium firefox
       - name: Start the local stack for applicant QA
         env:
