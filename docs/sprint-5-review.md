@@ -18,7 +18,7 @@ Verified applicants can save separate local/international program checklists, ke
 
 | Check | Result |
 | --- | --- |
-| Complete backend suite, isolated PostgreSQL database | **592 passed, 1 existing optional slim-model skip** |
+| Initial backend suite, isolated PostgreSQL database | **592 passed, 1 existing catalogue-import prerequisite skip**; CI now seeds the official catalogue so that check also runs |
 | Sprint 5 integration cases (`test_applicant.py`) | **34 passed**, included above |
 | Applicant browser QA, Chromium/Firefox × 360/768/1280 px | **97/97**; also tests EN/RU/KK account labels |
 | Existing compare / language / widget / staff browser regressions | **60/60**, **144/144**, **78/78**, **88/88** |
@@ -31,6 +31,7 @@ Verified applicants can save separate local/international program checklists, ke
 | Running assistant catalogue checks | **192/192** |
 | Evaluation set v3, no Gemini key | **63/70 (90%)**, **9/9** correct fallbacks, **0** invented facts; same recorded baseline |
 | Docker API and web production images | PASS, including slim-model equivalence and precomputed FAQ embeddings |
+| Applicant browser matrix against the built nginx/API stack on local port 8081 | **97/97** |
 
 The machine ran out of disk space during the first Docker build and its test services temporarily reported storage errors. The unused full browser download from this task was removed; Docker Desktop was restarted without deleting volumes, and the built-in `desktop-linux` builder successfully built both images. The database and mail inbox recovered; checks above were completed against healthy services. The existing custom builder was not removed or reconfigured.
 
