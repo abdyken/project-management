@@ -42,6 +42,17 @@ class Settings(BaseSettings):
     # http://localhost, so the local Docker stack works without HTTPS.
     staff_session_hours: int = 8
     staff_cookie_secure: bool = True
+    # Sprint 5: local mail goes to Mailpit; production must provide its own SMTP.
+    applicant_accounts_enabled: bool = False
+    applicant_cookie_secure: bool = True
+    applicant_session_hours: int = 168
+    public_base_url: str = "http://localhost:8080"
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_starttls: bool = True
+    smtp_from: str = "admissions@localhost"
     admissions_office_contact: str = (
         "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
     )
