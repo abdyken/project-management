@@ -2,7 +2,9 @@
 
 Admissions portal for SDU University: the full official program catalogue (64 programs) with document checklists and side-by-side comparison, and a chat assistant that answers from the official FAQ and catalogue in Kazakh, Russian and English — with grounded Gemini answers when `GEMINI_API_KEY` is set (free tier) and word-for-word official answers without it.
 
-Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md).
+Applicants can also verify an e-mail account, save programs, track prepared documents, opt into deadline reminders and export checklists as PDFs. Local e-mail is captured by Mailpit at http://localhost:8025. Live applicant accounts require the [hosting and SMTP setup](docs/applicant-hosting.md).
+
+Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md), [`docs/sprint-4-tasks.md`](docs/sprint-4-tasks.md), [`docs/sprint-5-tasks.md`](docs/sprint-5-tasks.md).
 
 ## Start everything
 
@@ -19,6 +21,7 @@ Open http://localhost:8080. The first start takes a few minutes (it downloads th
 | Web app | http://localhost:8080 |
 | API | http://localhost:8000 (docs at `/docs`) |
 | Postgres | `localhost:5432`, user/password/db `admissions` |
+| Local e-mail inbox | http://localhost:8025 |
 
 `docker compose down -v` removes the database volume.
 
@@ -56,3 +59,14 @@ uv run pytest
 ```
 
 Deployment and repository rules are in [`docs/`](docs/).
+
+Applicant browser QA (Chromium and Firefox, 360/768/1280 px) runs against the local stack:
+
+```bash
+cd frontend
+npm ci
+npx playwright install chromium firefox
+BASE_URL=http://localhost:8080 npm run qa:applicant
+```
+
+The script uses Mailpit, creates and deletes its own test applicant, and does not modify official catalogue data. Backend CI runs the same matrix. API details: [`backend/docs/api/applicant.md`](backend/docs/api/applicant.md).
