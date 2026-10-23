@@ -7,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.analytics.router import router as analytics_router
+from app.applicant.router import router as applicant_router
+from app.applicant.reminders import reminders_hourly
 from app.api import health
 from app.api.errors import register_error_handlers
 from app.assistant import embeddings
@@ -33,8 +35,14 @@ logging.getLogger("app").setLevel(logging.INFO)
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     embeddings.warm_up()
     purge = asyncio.create_task(purge_daily(settings))
-    yield
-    purge.cancel()
+    reminders = asyncio.create_task(reminders_hourly(settings)) if settings.applicant_accounts_enabled else None
+    try:
+        yield
+    finally:
+        tasks = [purge, *([reminders] if reminders else [])]
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
 
 app = FastAPI(title="Admissions Portal API", version="0.1.0", lifespan=lifespan)
@@ -58,3 +66,12 @@ app.include_router(faq_router, prefix="/api")
 app.include_router(inbox_router, prefix="/api")
 app.include_router(analytics_router, prefix="/api")
 app.include_router(staff_catalogue_router, prefix="/api")
+app.include_router(applicant_router, prefix="/api")
+
+
+@app.middleware("http")
+async def private_applicant_responses(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/api/applicant"):
+        response.headers["Cache-Control"] = "no-store"
+    return response

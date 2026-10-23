@@ -1,15 +1,6 @@
-import type { ChecklistResponse, DocumentRequirement } from "@/api/types"
-import { useI18n, type I18n } from "@/i18n"
-
-function requirementNotes(item: DocumentRequirement, t: I18n["t"]) {
-  return [
-    item.format === "original" ? t("checklist.original") : t("checklist.copy"),
-    item.translation && t("checklist.translation"),
-    item.notarisation && t("checklist.notarised"),
-  ]
-    .filter(Boolean)
-    .join(" · ")
-}
+import type { ChecklistResponse } from "@/api/types"
+import { useI18n } from "@/i18n"
+import { requirementNotes } from "@/lib/checklist"
 
 export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse }) {
   const { t } = useI18n()

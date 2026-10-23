@@ -16,11 +16,13 @@ dependencies = [
     "pgvector>=0.3.6",
     "fastembed>=0.5",
     "google-genai>=2.27.0",
+    "reportlab>=5.1.0",
 ]
 
 [dependency-groups]
 dev = [
     "onnx>=1.16",
+    "pypdf>=6.21.2",
     "pytest>=8.3",
     "pytest-asyncio>=1.2",
 ]

@@ -25,6 +25,11 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      mailpit:
+        image: axllent/mailpit:v1.27
+        ports:
+          - 1025:1025
+          - 8025:8025
     env:
       DATABASE_URL: postgresql+psycopg://admissions:admissions@localhost:5432/admissions
       FASTEMBED_CACHE_PATH: /home/runner/.cache/fastembed
@@ -42,4 +47,64 @@ jobs:
       - name: Install locked dependencies
         run: uv sync --frozen
       - name: Run tests
-        run: uv run pytest
+        run: |
+          uv run alembic upgrade head
+          uv run python scripts/import_catalogue.py --if-empty
+          uv run pytest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install browser QA dependencies
+        working-directory: frontend
+        run: |
+          npm ci
+          # Avoid the regional Azure mirror, which can stall font/library downloads.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
+          npx playwright install --with-deps chromium firefox
+      - name: Start the local stack for applicant QA
+        env:
+          APPLICANT_ACCOUNTS_ENABLED: "true"
+          PUBLIC_BASE_URL: http://localhost:5173
+          SMTP_HOST: localhost
+          SMTP_PORT: "1025"
+          SMTP_STARTTLS: "false"
+        run: |
+          uv run python scripts/import_catalogue.py --if-empty
+          uv run python scripts/reindex_faq.py
+          .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/admissions-api.log 2>&1 &
+          echo $! > /tmp/admissions-api.pid
+          cd ../frontend
+          node_modules/.bin/vite --host 127.0.0.1 > /tmp/admissions-web.log 2>&1 &
+          echo $! > /tmp/admissions-web.pid
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://localhost:5173/api/health; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/admissions-api.log /tmp/admissions-web.log
+          exit 1
+      - name: Run applicant browser QA
+        working-directory: frontend
+        run: npm run qa:applicant
+      - name: Stop browser QA services
+        if: always()
+        run: |
+          for service in api web; do
+            if [ -f "/tmp/admissions-$service.pid" ]; then
+              kill "$(cat "/tmp/admissions-$service.pid")" 2>/dev/null || true
+            fi
+          done
+      - name: Show local service logs on failure
+        if: failure()
+        run: |
+          cat /tmp/admissions-api.log /tmp/admissions-web.log 2>/dev/null || true
+          docker logs ${{ job.services.mailpit.id }}
+      - name: Upload browser QA evidence on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applicant-browser-qa
+          path: frontend/e2e/shots

@@ -21,6 +21,15 @@ class ErrorResponse(BaseModel):
     message: str
 
 
+class ApiProblem(Exception):
+    def __init__(self, status: int, code: str, message: str) -> None:
+        self.status, self.code, self.message = status, code, message
+
+
+async def api_problem_handler(_: Request, exc: ApiProblem) -> JSONResponse:
+    return JSONResponse(status_code=exc.status, content=ErrorResponse(error_code=exc.code, message=exc.message).model_dump())
+
+
 DATABASE_UNAVAILABLE_RESPONSE = {
     503: {
         "model": ErrorResponse,
@@ -80,6 +89,7 @@ async def invalid_data_handler(request: Request, exc: DataError) -> JSONResponse
 
 
 def register_error_handlers(app: FastAPI) -> None:
+    app.add_exception_handler(ApiProblem, api_problem_handler)
     app.add_exception_handler(RequestValidationError, invalid_request_handler)
     app.add_exception_handler(DataError, invalid_data_handler)
     app.add_exception_handler(OperationalError, database_unavailable_handler)

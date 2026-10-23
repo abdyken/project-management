@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path, Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy.orm import Session
 
 from app.api.errors import (
@@ -66,3 +66,20 @@ def get_checklist(
             for requirement in requirements
         ],
     )
+
+
+@router.get("/programs/{program_id}/checklist/pdf", response_class=Response,
+            responses={200: {"content": {"application/pdf": {}}}, 404: {"model": ErrorResponse}, **INVALID_REQUEST_RESPONSE, **DATABASE_UNAVAILABLE_RESPONSE})
+def download_checklist_pdf(
+    session: Annotated[Session, Depends(get_db_session)],
+    program_id: Annotated[str, Path(max_length=64)],
+    applicant_type: Annotated[ApplicantType, Query()],
+    language: Annotated[str, Query(pattern="^(en|ru|kk)$")] = "en",
+) -> Response:
+    from app.applicant.service import active_program, checklist_snapshot
+    from app.checklist.pdf import checklist_pdf
+
+    settings = get_settings()
+    checklist = checklist_snapshot(session, active_program(session, program_id), applicant_type, settings)
+    return Response(checklist_pdf(checklist, language, settings.admissions_office_contact), media_type="application/pdf",
+                    headers={"Content-Disposition": f'attachment; filename="SDU-checklist-{applicant_type}-{language}.pdf"'})

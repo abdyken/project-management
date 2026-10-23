@@ -12,7 +12,7 @@ from app.assistant.catalogue import (
     summary_request,
     title_in,
 )
-from app.assistant.catalogue_tools import program_facts
+from app.assistant.catalogue_tools import NOT_PUBLISHED, program_facts
 from app.assistant.fallback import build_fallback_response
 from app.assistant.generation import generate_catalogue_answer, generate_chat_reply, generate_grounded_answer
 from app.assistant.intents import (
@@ -204,6 +204,10 @@ class AssistantService:
 
 def _model_can_answer(request: CatalogueRequest) -> bool:
     if request.ambiguous or not request.programs:
+        return False
+    # A program title (e.g. "Kazakh language") is not evidence of its teaching
+    # language. Preserve the explicit missing-value answer instead of rephrasing it.
+    if "language" in request.fields and any(program["language"] == NOT_PUBLISHED for program in request.programs):
         return False
     if request.listing is not None:
         return len(request.programs) <= MAX_LISTED_FOR_MODEL

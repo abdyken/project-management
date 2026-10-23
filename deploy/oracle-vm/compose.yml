@@ -26,6 +26,14 @@ services:
       DATABASE_URL: postgresql+psycopg://admissions:${POSTGRES_PASSWORD}@db:5432/admissions
       CORS_ORIGINS: https://${SITE_HOST:?}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      APPLICANT_ACCOUNTS_ENABLED: ${APPLICANT_ACCOUNTS_ENABLED:-false}
+      PUBLIC_BASE_URL: https://${SITE_HOST}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-admissions@localhost}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
     depends_on:
       db:
         condition: service_healthy

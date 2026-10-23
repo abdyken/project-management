@@ -16,6 +16,8 @@ import { StaffInboxPage } from "@/pages/staff/StaffInboxPage"
 import { StaffProgramEditPage } from "@/pages/staff/StaffProgramEditPage"
 import { StaffProgramsPage } from "@/pages/staff/StaffProgramsPage"
 import { StaffLoginPage } from "@/pages/staff/StaffLoginPage"
+import { ApplicantAccountPage } from "@/pages/applicant/ApplicantAccountPage"
+import { ApplicantLoginPage, ApplicantVerifyPage } from "@/pages/applicant/ApplicantLoginPage"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +54,10 @@ export default function App() {
             <Route path="*" element={<Navigate to="/staff" replace />} />
           </Route>
           <Route element={<AppLayout />}>
+            <Route path="/account" element={<ApplicantAccountPage />} />
+            <Route path="/account/login" element={<ApplicantLoginPage key="login" />} />
+            <Route path="/account/register" element={<ApplicantLoginPage key="register" register />} />
+            <Route path="/account/verify" element={<ApplicantVerifyPage />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/:id" element={<ProgramDetailPage />} />
