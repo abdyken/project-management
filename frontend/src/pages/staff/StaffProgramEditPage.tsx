@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { type StaffKey, useStaffT } from "@/staff/i18n"
 import { selectClass } from "@/staff/styles"
+import { GuidanceEditor } from "@/components/staff/GuidanceEditor"
 
 type Facts = Record<
   | "program_id"
@@ -336,6 +337,7 @@ export function StaffProgramEditPage() {
       </form>
 
       {program.data && APPLICANT_TYPES.map((type) => <DocumentsEditor key={type} program={program.data} applicantType={type} />)}
+      {program.data && <GuidanceEditor programId={program.data.program_id} />}
     </div>
   )
 }

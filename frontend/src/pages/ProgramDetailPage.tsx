@@ -11,12 +11,14 @@ import { CompareToggle } from "@/components/compare/CompareToggle"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
 import { useChatStore } from "@/store/chat"
+import { useGuidanceT } from "@/guidance/i18n"
 
 const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
 
 const labelClass = "text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
 
 export function ProgramDetailPage() {
+  const guidanceT = useGuidanceT()
   const { t, language, degree, languages, deadline, tuitionKzt, tuitionUsd, programTitle } = useI18n()
   const { id = "" } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -117,6 +119,11 @@ export function ProgramDetailPage() {
         </a>
       ) : null}
 
+      <nav className="mt-6 flex flex-wrap gap-3">
+        <Button asChild variant="outline"><Link to={`/eligibility?program=${encodeURIComponent(id)}`}>{guidanceT("eligibility")}</Link></Button>
+        <Button asChild variant="outline"><Link to={`/cost-calculator?program=${encodeURIComponent(id)}`}>{guidanceT("cost")}</Link></Button>
+        <Button asChild variant="outline"><Link to="/funding">{guidanceT("funding")}</Link></Button>
+      </nav>
       <section className="mt-12" aria-labelledby="documents-heading">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>

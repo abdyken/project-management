@@ -3575,6 +3575,1219 @@
           }
         }
       }
+    },
+    "/api/eligibility/check": {
+      "post": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Check",
+        "operationId": "check_api_eligibility_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EligibilityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EligibilityOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendations": {
+      "post": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Recommend",
+        "operationId": "recommend_api_recommendations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/programs/{program_id}/cost-estimate": {
+      "post": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Estimate",
+        "operationId": "estimate_api_programs__program_id__cost_estimate_post",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Program Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/programs/{program_id}/guidance": {
+      "get": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Public Guidance",
+        "operationId": "public_guidance_api_programs__program_id__guidance_get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Program Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Guidance"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/funding": {
+      "get": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Funding Guide",
+        "operationId": "funding_guide_api_funding_get",
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "ru",
+                "kk"
+              ],
+              "type": "string",
+              "default": "en",
+              "title": "Language"
+            }
+          },
+          {
+            "name": "degree_level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "bachelor",
+                    "master",
+                    "phd"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Degree Level"
+            }
+          },
+          {
+            "name": "applicant_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "local",
+                    "international"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Applicant Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/staff/programs/{program_id}/guidance": {
+      "get": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Staff Guidance",
+        "operationId": "staff_guidance_api_staff_programs__program_id__guidance_get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Program Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Guidance"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admissions guidance"
+        ],
+        "summary": "Update Guidance",
+        "operationId": "update_guidance_api_staff_programs__program_id__guidance_put",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Program Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Guidance"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Guidance"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A parameter or the request body is invalid.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "INVALID_REQUEST",
+                  "message": "question: String should have at least 1 character"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database is unreachable. The request can be retried; the Retry-After header suggests a delay in seconds (currently 5).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "DATABASE_UNAVAILABLE",
+                  "message": "The service is temporarily unavailable. Please try again."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "No staff session cookie, or the session expired or was logged out.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error_code": "NOT_LOGGED_IN",
+                  "message": "Please log in."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applicant/requests": {
+      "post": {
+        "tags": [
+          "applicant: requests"
+        ],
+        "summary": "Create",
+        "operationId": "create_api_applicant_requests_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "applicant: requests"
+        ],
+        "summary": "Mine",
+        "operationId": "mine_api_applicant_requests_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 30,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestsOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/applicant/requests/{request_id}": {
+      "get": {
+        "tags": [
+          "applicant: requests"
+        ],
+        "summary": "My Request",
+        "operationId": "my_request_api_applicant_requests__request_id__get",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/staff/requests": {
+      "get": {
+        "tags": [
+          "staff: requests"
+        ],
+        "summary": "Queue",
+        "operationId": "queue_api_staff_requests_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "new",
+                "answered",
+                "all"
+              ],
+              "type": "string",
+              "default": "new",
+              "title": "Status"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 30,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestsOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/staff/requests/{request_id}": {
+      "get": {
+        "tags": [
+          "staff: requests"
+        ],
+        "summary": "Staff Request",
+        "operationId": "staff_request_api_staff_requests__request_id__get",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/staff/requests/{request_id}/answer": {
+      "post": {
+        "tags": [
+          "staff: requests"
+        ],
+        "summary": "Answer",
+        "operationId": "answer_api_staff_requests__request_id__answer_post",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3660,6 +4873,22 @@
           "down_reasons"
         ],
         "title": "AnalyticsResponse"
+      },
+      "AnswerIn": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "maxLength": 6000,
+            "minLength": 1,
+            "title": "Answer"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "title": "AnswerIn"
       },
       "AnswerRequest": {
         "properties": {
@@ -4026,6 +5255,270 @@
         ],
         "title": "ComparedProgram"
       },
+      "Condition": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "enum": [
+              "unt_total",
+              "ct_total",
+              "gpa",
+              "phd_total",
+              "toefl_ibt",
+              "toefl_pbt",
+              "toeic",
+              "duolingo",
+              "work_months",
+              "ielts_overall",
+              "ielts_component_min",
+              "sdu_english",
+              "interview",
+              "special_exam",
+              "creative_exam",
+              "kaztest",
+              "subject_pair"
+            ],
+            "title": "Metric"
+          },
+          "minimum": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minimum"
+          },
+          "equals": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equals"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "metric"
+        ],
+        "title": "Condition"
+      },
+      "CostComponent": {
+        "properties": {
+          "component": {
+            "type": "string",
+            "enum": [
+              "professional",
+              "mde"
+            ],
+            "title": "Component"
+          },
+          "ects": {
+            "type": "integer",
+            "title": "Ects"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Evidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "component",
+          "ects",
+          "rate",
+          "amount",
+          "evidence"
+        ],
+        "title": "CostComponent"
+      },
+      "CostIn": {
+        "properties": {
+          "currency": {
+            "type": "string",
+            "enum": [
+              "KZT",
+              "USD"
+            ],
+            "title": "Currency",
+            "default": "KZT"
+          },
+          "professional_ects": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Professional Ects"
+          },
+          "mde_ects": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Mde Ects",
+            "default": 0
+          },
+          "language_group": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language Group"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "kk"
+            ],
+            "title": "Language",
+            "default": "en"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "professional_ects"
+        ],
+        "title": "CostIn"
+      },
+      "CostOut": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "KZT",
+              "USD"
+            ],
+            "title": "Currency"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/CostComponent"
+            },
+            "type": "array",
+            "title": "Components"
+          },
+          "known_subtotal": {
+            "type": "integer",
+            "title": "Known Subtotal"
+          },
+          "estimated_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Total"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Gaps"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          },
+          "published_total_ects": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published Total Ects"
+          },
+          "credits_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Evidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_binding_quote": {
+            "type": "boolean",
+            "title": "Is Binding Quote",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "program_id",
+          "currency",
+          "components",
+          "known_subtotal",
+          "estimated_total",
+          "gaps",
+          "assumptions",
+          "published_total_ects",
+          "credits_evidence"
+        ],
+        "title": "CostOut"
+      },
       "DayCount": {
         "properties": {
           "date": {
@@ -4145,6 +5638,124 @@
         ],
         "title": "DocumentRequirementOut"
       },
+      "EligibilityIn": {
+        "properties": {
+          "applicant_type": {
+            "type": "string",
+            "enum": [
+              "local",
+              "international"
+            ],
+            "title": "Applicant Type",
+            "default": "local"
+          },
+          "education_route": {
+            "type": "string",
+            "enum": [
+              "school",
+              "college",
+              "bachelor",
+              "master"
+            ],
+            "title": "Education Route",
+            "default": "school"
+          },
+          "track": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "scientific",
+                  "profile"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track"
+          },
+          "admission_basis": {
+            "type": "string",
+            "enum": [
+              "paid",
+              "grant"
+            ],
+            "title": "Admission Basis",
+            "default": "paid"
+          },
+          "scores": {
+            "$ref": "#/components/schemas/Scores"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "kk"
+            ],
+            "title": "Language",
+            "default": "en"
+          },
+          "program_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Program Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "program_id"
+        ],
+        "title": "EligibilityIn"
+      },
+      "EligibilityOut": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "meets_published_requirements",
+              "does_not_meet",
+              "insufficient_data"
+            ],
+            "title": "Status"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/RuleResult"
+            },
+            "type": "array",
+            "title": "Checks"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Gaps"
+          },
+          "admission_guaranteed": {
+            "type": "boolean",
+            "title": "Admission Guaranteed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "program_id",
+          "status",
+          "checks",
+          "gaps"
+        ],
+        "title": "EligibilityOut"
+      },
       "ErrorResponse": {
         "properties": {
           "error_code": {
@@ -4162,6 +5773,51 @@
           "message"
         ],
         "title": "ErrorResponse"
+      },
+      "Evidence": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 1000,
+            "pattern": "^https://",
+            "title": "Url"
+          },
+          "quote": {
+            "type": "string",
+            "maxLength": 6000,
+            "minLength": 1,
+            "title": "Quote"
+          },
+          "academic_year": {
+            "type": "string",
+            "pattern": "^20\\d{2}-20\\d{2}$",
+            "title": "Academic Year",
+            "default": "2026-2027"
+          },
+          "checked_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Checked On"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "pending",
+              "conflict"
+            ],
+            "title": "Status",
+            "default": "confirmed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url",
+          "quote",
+          "checked_on"
+        ],
+        "title": "Evidence"
       },
       "FaqItemIn": {
         "properties": {
@@ -4722,6 +6378,102 @@
         ],
         "title": "FeedbackResponse"
       },
+      "FundingItem": {
+        "properties": {
+          "faq_id": {
+            "type": "string",
+            "title": "Faq Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "last_checked": {
+            "type": "string",
+            "title": "Last Checked"
+          },
+          "content_language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "kk"
+            ],
+            "title": "Content Language"
+          },
+          "translation_missing": {
+            "type": "boolean",
+            "title": "Translation Missing"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "historical",
+              "verify_current_campaign"
+            ],
+            "title": "Status"
+          },
+          "degrees": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Degrees"
+          },
+          "applicant_types": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Applicant Types"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "faq_id",
+          "title",
+          "text",
+          "source_url",
+          "last_checked",
+          "content_language",
+          "translation_missing",
+          "status",
+          "degrees",
+          "applicant_types"
+        ],
+        "title": "FundingItem"
+      },
+      "FundingOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FundingItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "award_guaranteed": {
+            "type": "boolean",
+            "title": "Award Guaranteed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "FundingOut"
+      },
       "GroupRequest": {
         "properties": {
           "key": {
@@ -4736,6 +6488,136 @@
           "key"
         ],
         "title": "GroupRequest"
+      },
+      "Guidance": {
+        "properties": {
+          "professional_kzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Professional Kzt"
+          },
+          "professional_usd": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Professional Usd"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            },
+            "type": "array",
+            "maxItems": 60,
+            "title": "Rules"
+          },
+          "complete_for": {
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Complete For"
+          },
+          "total_ects": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Ects"
+          },
+          "credits_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Evidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mde_kzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mde Kzt"
+          },
+          "mde_usd": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mde Usd"
+          },
+          "mde_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Evidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "language_tariffs": {
+            "items": {
+              "$ref": "#/components/schemas/LanguageTariff"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "title": "Language Tariffs"
+          },
+          "sources": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "type": "object",
+            "maxProperties": 60,
+            "title": "Sources"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 60,
+            "title": "Gaps"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Guidance"
       },
       "HTTPValidationError": {
         "properties": {
@@ -4869,6 +6751,52 @@
           "total_asks"
         ],
         "title": "InboxResponse"
+      },
+      "LanguageTariff": {
+        "properties": {
+          "language_group": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Language Group"
+          },
+          "kzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kzt"
+          },
+          "usd": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usd"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "language_group",
+          "evidence"
+        ],
+        "title": "LanguageTariff"
       },
       "LoginRequest": {
         "properties": {
@@ -5393,6 +7321,168 @@
         ],
         "title": "QuestionCount"
       },
+      "RecommendationIn": {
+        "properties": {
+          "applicant_type": {
+            "type": "string",
+            "enum": [
+              "local",
+              "international"
+            ],
+            "title": "Applicant Type",
+            "default": "local"
+          },
+          "education_route": {
+            "type": "string",
+            "enum": [
+              "school",
+              "college",
+              "bachelor",
+              "master"
+            ],
+            "title": "Education Route",
+            "default": "school"
+          },
+          "track": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "scientific",
+                  "profile"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track"
+          },
+          "admission_basis": {
+            "type": "string",
+            "enum": [
+              "paid",
+              "grant"
+            ],
+            "title": "Admission Basis",
+            "default": "paid"
+          },
+          "scores": {
+            "$ref": "#/components/schemas/Scores"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "kk"
+            ],
+            "title": "Language",
+            "default": "en"
+          },
+          "degree_level": {
+            "type": "string",
+            "enum": [
+              "bachelor",
+              "master",
+              "phd"
+            ],
+            "title": "Degree Level",
+            "default": "bachelor"
+          },
+          "interests": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Interests"
+          },
+          "teaching_language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Teaching Language"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "interests"
+        ],
+        "title": "RecommendationIn"
+      },
+      "RecommendationItem": {
+        "properties": {
+          "program": {
+            "$ref": "#/components/schemas/ProgramOut"
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/EligibilityOut"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Gaps"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "program",
+          "eligibility",
+          "reasons",
+          "gaps"
+        ],
+        "title": "RecommendationItem"
+      },
+      "RecommendationsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RecommendationItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "explanation_mode": {
+            "type": "string",
+            "enum": [
+              "template",
+              "grounded_model"
+            ],
+            "title": "Explanation Mode"
+          },
+          "admission_guaranteed": {
+            "type": "boolean",
+            "title": "Admission Guaranteed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "explanation_mode"
+        ],
+        "title": "RecommendationsOut"
+      },
       "RegisterRequest": {
         "properties": {
           "email": {
@@ -5424,6 +7514,262 @@
           "password"
         ],
         "title": "RegisterRequest"
+      },
+      "RequestIn": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question"
+          },
+          "client_key": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Client Key"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "kk"
+            ],
+            "title": "Language",
+            "default": "en"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "question",
+          "client_key"
+        ],
+        "title": "RequestIn"
+      },
+      "RequestOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "answered_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answered At"
+          },
+          "notification_sent_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notification Sent At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "language",
+          "answer",
+          "created_at",
+          "answered_at",
+          "notification_sent_at"
+        ],
+        "title": "RequestOut"
+      },
+      "RequestsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RequestOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RequestsOut"
+      },
+      "Rule": {
+        "properties": {
+          "applicant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "international"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicant Type"
+          },
+          "education_route": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "school",
+                  "college",
+                  "bachelor",
+                  "master"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Education Route"
+          },
+          "track": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "scientific",
+                  "profile"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track"
+          },
+          "admission_basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "paid",
+                  "grant"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admission Basis"
+          },
+          "key": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Key"
+          },
+          "alternatives": {
+            "items": {
+              "items": {
+                "$ref": "#/components/schemas/Condition"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Alternatives"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "key",
+          "alternatives",
+          "evidence"
+        ],
+        "title": "Rule"
+      },
+      "RuleResult": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "unknown"
+            ],
+            "title": "Status"
+          },
+          "alternatives": {
+            "items": {
+              "items": {
+                "$ref": "#/components/schemas/Condition"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Alternatives"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "key",
+          "status",
+          "alternatives",
+          "evidence"
+        ],
+        "title": "RuleResult"
       },
       "SavedChecklistOut": {
         "properties": {
@@ -5503,6 +7849,292 @@
           "items"
         ],
         "title": "SavedProgramsOut"
+      },
+      "Scope": {
+        "properties": {
+          "applicant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "international"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicant Type"
+          },
+          "education_route": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "school",
+                  "college",
+                  "bachelor",
+                  "master"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Education Route"
+          },
+          "track": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "scientific",
+                  "profile"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track"
+          },
+          "admission_basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "paid",
+                  "grant"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admission Basis"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Scope"
+      },
+      "Scores": {
+        "properties": {
+          "phd_total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phd Total"
+          },
+          "toefl_ibt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 120.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toefl Ibt"
+          },
+          "toefl_pbt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 677.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toefl Pbt"
+          },
+          "toeic": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 990.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toeic"
+          },
+          "duolingo": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 160.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duolingo"
+          },
+          "work_months": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Months"
+          },
+          "kaztest": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kaztest"
+          },
+          "unt_total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 140.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unt Total"
+          },
+          "ct_total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 150.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ct Total"
+          },
+          "gpa": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 4.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa"
+          },
+          "ielts_overall": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 9.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ielts Overall"
+          },
+          "ielts_component_min": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 9.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ielts Component Min"
+          },
+          "sdu_english": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sdu English"
+          },
+          "interview": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interview"
+          },
+          "special_exam": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Special Exam"
+          },
+          "creative_exam": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creative Exam"
+          },
+          "subject_pair": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject Pair"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Scores"
       },
       "SourceCount": {
         "properties": {

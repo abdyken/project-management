@@ -18,6 +18,8 @@ import { StaffProgramsPage } from "@/pages/staff/StaffProgramsPage"
 import { StaffLoginPage } from "@/pages/staff/StaffLoginPage"
 import { ApplicantAccountPage } from "@/pages/applicant/ApplicantAccountPage"
 import { ApplicantLoginPage, ApplicantVerifyPage } from "@/pages/applicant/ApplicantLoginPage"
+import { AdmissionsPage, CostPage, EligibilityPage, FundingPage, RecommendationsPage } from "@/pages/guidance/AdmissionsPages"
+import { ApplicantRequestsPage, StaffRequestsPage } from "@/pages/guidance/RequestsPage"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +44,7 @@ export default function App() {
         <Routes>
           <Route path="/staff/login" element={<StaffLoginPage />} />
           <Route path="/staff" element={<StaffLayout />}>
+            <Route path="requests" element={<StaffRequestsPage />} />
             <Route index element={<StaffHomePage />} />
             <Route path="faq" element={<StaffFaqListPage />} />
             <Route path="faq/new" element={<StaffFaqEditPage />} />
@@ -54,6 +57,12 @@ export default function App() {
             <Route path="*" element={<Navigate to="/staff" replace />} />
           </Route>
           <Route element={<AppLayout />}>
+            <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/eligibility" element={<EligibilityPage />} />
+            <Route path="/recommendations" element={<RecommendationsPage />} />
+            <Route path="/cost-calculator" element={<CostPage />} />
+            <Route path="/funding" element={<FundingPage />} />
+            <Route path="/account/requests" element={<ApplicantRequestsPage />} />
             <Route path="/account" element={<ApplicantAccountPage />} />
             <Route path="/account/login" element={<ApplicantLoginPage key="login" />} />
             <Route path="/account/register" element={<ApplicantLoginPage key="register" register />} />

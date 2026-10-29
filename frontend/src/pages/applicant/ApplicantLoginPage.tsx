@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type FormEvent, useState } from "react"
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { loginApplicant, registerApplicant, verifyApplicant } from "@/api/applicant"
 import { isApiError } from "@/api/errors"
 import { useApplicantT } from "@/applicant/i18n"
@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input"
 import { useI18n } from "@/i18n"
 
 function safeNext(value: string | null) {
-  return value && /^\/programs(?:\/[^/?#]+)?(?:\?[^#]*)?$/.test(value) ? value : "/account"
+  return value && (value === "/account/requests" || /^\/programs(?:\/[^/?#]+)?(?:\?[^#]*)?$/.test(value)) ? value : "/account"
 }
 
 export function ApplicantLoginPage({ register = false }: { register?: boolean }) {
   const t = useApplicantT()
   const { language } = useI18n()
   const navigate = useNavigate()
+  const location = useLocation()
   const cache = useQueryClient()
   const [params] = useSearchParams()
   const next = safeNext(params.get("next"))
@@ -31,12 +32,12 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
       if ("id" in result) {
         cache.removeQueries({ queryKey: APPLICANT_KEY })
         cache.setQueryData(APPLICANT_ME_KEY, result)
-        navigate(next, { replace: true })
+        navigate(next, { replace: true, state: location.state })
       }
     },
     onError: () => setPassword(""),
   })
-  if (me.data) return <Navigate to={next} replace />
+  if (me.data) return <Navigate to={next} replace state={location.state} />
   const error = mutation.error
   const message = !error
     ? null
@@ -100,6 +101,7 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
       <Link
         className="mt-5 inline-block text-sm underline"
         to={`/account/${register ? "login" : "register"}?next=${encodeURIComponent(next)}`}
+        state={location.state}
       >
         {t(register ? "login" : "register")}
       </Link>

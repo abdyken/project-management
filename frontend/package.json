@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "qa:guidance": "node e2e/guidance-qa.mjs",
     "qa:applicant": "node e2e/applicant-qa.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",

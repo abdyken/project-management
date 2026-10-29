@@ -4,6 +4,12 @@ Admissions portal for SDU University: the full official program catalogue (64 pr
 
 Applicants can also verify an e-mail account, save programs, track prepared documents, opt into deadline reminders and export checklists as PDFs. Local e-mail is captured by Mailpit at http://localhost:8025. Live applicant accounts require the [hosting and SMTP setup](docs/applicant-hosting.md).
 
+Sprint 6 adds [admissions planning](docs/sprint-6-tasks.md): source-backed eligibility checks,
+programme recommendations, a professional/MDE tuition calculator, funding guidance and
+private questions answered by the admissions office. Open `/admissions` on the portal.
+The [64-programme source audit](docs/sprint-6-data-review.md) distinguishes confirmed
+facts from missing or conflicting requirements; checks never promise admission or a grant.
+
 Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md), [`docs/sprint-4-tasks.md`](docs/sprint-4-tasks.md), [`docs/sprint-5-tasks.md`](docs/sprint-5-tasks.md).
 
 ## Start everything
@@ -14,7 +20,7 @@ Requirement: Docker Desktop.
 docker compose up --build
 ```
 
-Open http://localhost:8080. The first start takes a few minutes (it downloads the embedding model into the API image). On every start the API applies migrations, imports `backend/app/data/catalogue.json`, indexes `backend/app/data/faq.json` and deletes chat turns older than 30 days. If port 5432 is taken, start with `POSTGRES_PORT=5433 docker compose up --build`.
+Open http://localhost:8080. The first start takes a few minutes (it downloads the embedding model into the API image). On every start the API applies migrations, fills an empty catalogue from `backend/app/data/catalogue.json`, seeds missing guidance records, indexes published database FAQ rows and deletes chat turns older than 30 days. Staff edits are preserved. If port 5432 is taken, start with `POSTGRES_PORT=5433 docker compose up --build`.
 
 | Service | URL |
 | --- | --- |
@@ -38,6 +44,7 @@ cp .env.example .env
 uv sync
 uv run alembic upgrade head
 uv run python scripts/import_catalogue.py
+uv run python scripts/seed_guidance.py
 uv run python scripts/reindex_faq.py
 uv run uvicorn app.main:app --reload
 
