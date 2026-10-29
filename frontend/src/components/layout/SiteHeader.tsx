@@ -3,14 +3,17 @@ import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher"
 import { useApplicantT } from "@/applicant/i18n"
 import { useI18n } from "@/i18n"
 import { useChatStore } from "@/store/chat"
+import { useGuidanceT } from "@/guidance/i18n"
 
 export function SiteHeader() {
   const { t } = useI18n()
   const applicantT = useApplicantT()
+  const guidanceT = useGuidanceT()
   const setOpen = useChatStore((state) => state.setOpen)
   const links = [
     { to: "/", label: t("nav.overview") },
     { to: "/programs", label: t("nav.programs") },
+    { to: "/admissions", label: guidanceT("hub") },
     { to: "/account", label: applicantT("account") },
   ]
 

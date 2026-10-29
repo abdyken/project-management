@@ -74,6 +74,8 @@ jobs:
           SMTP_STARTTLS: "false"
         run: |
           uv run python scripts/import_catalogue.py --if-empty
+          uv run python scripts/seed_guidance.py
+          printf '%s\n%s\n' 'Sprint6-browser-local-only' 'Sprint6-browser-local-only' | uv run python scripts/create_staff_user.py add qa-sprint6@example.test --name 'Sprint 6 QA' --password-stdin
           uv run python scripts/reindex_faq.py
           .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/admissions-api.log 2>&1 &
           echo $! > /tmp/admissions-api.pid
@@ -89,6 +91,18 @@ jobs:
       - name: Run applicant browser QA
         working-directory: frontend
         run: npm run qa:applicant
+      - name: Run guidance and private request browser QA
+        working-directory: frontend
+        env:
+          STAFF_EMAIL: qa-sprint6@example.test
+          STAFF_PASSWORD: Sprint6-browser-local-only
+          APPLICANT_ACCOUNTS_ENABLED: "true"
+          PUBLIC_BASE_URL: http://localhost:5173
+          SMTP_HOST: localhost
+          SMTP_PORT: "1025"
+          SMTP_STARTTLS: "false"
+          QA_RUN_NOTIFICATIONS: "true"
+        run: npm run qa:guidance
       - name: Stop browser QA services
         if: always()
         run: |

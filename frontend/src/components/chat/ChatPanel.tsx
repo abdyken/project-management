@@ -8,8 +8,11 @@ import { useI18n } from "@/i18n"
 import { abortReason, finishRequest, isCurrent, nextRequest } from "@/lib/chat-request"
 import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { sourcesFromApi, useChatStore, type ChatMessage as ChatMessageType } from "@/store/chat"
+import { Link } from "react-router-dom"
+import { useGuidanceT } from "@/guidance/i18n"
 
 export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
+  const guidanceT = useGuidanceT()
   const { t, language } = useI18n()
   const messages = useChatStore((state) => state.messages)
   const suggestions = useChatStore((state) => state.suggestions)
@@ -144,6 +147,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
           </div>
         ) : null}
       </div>
+      {!sending && messages.length > 0 && <Link className="mx-4 mb-3 text-xs underline" onClick={() => useChatStore.getState().setOpen(false)} to="/account/requests" state={{ question: [...messages].reverse().find(m => m.role === "applicant")?.text ?? "" }}>{guidanceT("send")}</Link>}
       <form onSubmit={onSubmit} className="border-t border-border p-3 transition-colors focus-within:bg-card">
         <textarea
           ref={inputRef}

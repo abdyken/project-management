@@ -36,4 +36,4 @@ ENV EMBEDDING_MODEL_DIR=/opt/slim-model \
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "alembic upgrade head && python scripts/import_catalogue.py --if-empty && python scripts/reindex_faq.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "alembic upgrade head && python scripts/import_catalogue.py --if-empty && python scripts/seed_guidance.py && python scripts/reindex_faq.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

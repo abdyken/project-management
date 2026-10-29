@@ -80,6 +80,7 @@ const en = {
   "edit.notFound": "This FAQ item does not exist.",
 
   "nav.inbox": "Inbox",
+  "nav.requests": "Applicant questions",
   "nav.dashboard": "Dashboard",
   "inbox.title": "Unanswered questions",
   "inbox.lead": "Questions the assistant could not answer, grouped and most asked first. Answer a question with a new FAQ item, or dismiss it.",
@@ -249,6 +250,7 @@ const ru: Record<StaffKey, string> = {
   "edit.notFound": "Такого пункта FAQ нет.",
 
   "nav.inbox": "Входящие",
+  "nav.requests": "Обращения абитуриентов",
   "nav.dashboard": "Статистика",
   "inbox.title": "Вопросы без ответа",
   "inbox.lead": "Вопросы, на которые ассистент не ответил, сгруппированы, самые частые сверху. Ответьте новым пунктом FAQ или скройте вопрос.",

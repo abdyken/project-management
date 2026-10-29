@@ -108,8 +108,10 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
 
 
 def _run(settings: Settings) -> None:
+    from app.applicant.requests import send_request_notifications
     with get_session(settings) as session:
         send_due_reminders(session, settings)
+        send_request_notifications(session, settings)
 
 
 async def reminders_hourly(settings: Settings) -> None:

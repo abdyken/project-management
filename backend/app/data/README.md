@@ -20,6 +20,17 @@
 - `catalogue_review.md` — conflicts and gaps in the official sources the admissions office
   has to settle (duplicate code 7M01501, two master fee orders, unpublished values).
 
+## Sprint 6 guidance
+
+`guidance.json` is the frozen, source-backed audit of all 64 catalogue programmes for
+2026-2027. It includes scoped admission rules, alternative certificates, tariff
+evidence, programme-specific credit references and explicit gaps. The provenance
+and unresolved conflicts are summarised in `docs/sprint-6-data-review.md` at the
+repository root. `scripts/seed_guidance.py` inserts missing `program_guidance` rows
+only. After seeding, staff edits in the database are authoritative; editing this
+file does not overwrite an existing row. New office rules must include evidence,
+and complete-route declarations require actual office confirmation.
+
 ## FAQ base
 
 - `faq.json` — official FAQ (T3.1, US8, US18): 75 items collected from sdu.edu.kz (35 on

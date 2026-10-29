@@ -20,6 +20,7 @@ import { requirementNotes } from "@/lib/checklist"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
 import { LANGUAGES, useI18n, type Language } from "@/i18n"
+import { useGuidanceT } from "@/guidance/i18n"
 
 function SavedProgram({ checklist }: { checklist: SavedChecklist }) {
   const t = useApplicantT()
@@ -198,6 +199,7 @@ function Preferences({ user }: { user: Applicant }) {
 }
 
 export function ApplicantAccountPage() {
+  const guidanceT = useGuidanceT()
   const t = useApplicantT()
   const me = useApplicant()
   const cache = useQueryClient()
@@ -258,6 +260,7 @@ export function ApplicantAccountPage() {
           {t("error")}
         </p>
       )}
+      <Link className="mt-6 inline-block underline" to="/account/requests">{guidanceT("requests")}</Link>
       <h2 className="mt-10 text-2xl font-semibold">{t("saved")}</h2>
       <Link className="mt-3 inline-block text-sm underline" to="/programs">
         {t("browse")}

@@ -20,6 +20,8 @@ from app.db import Base
 from app.faq.models import FaqRecord
 from app.followups.models import AdmissionsFollowup
 from app.staff.models import StaffSession, StaffUser
+from app.guidance.models import ProgramGuidance
+from app.applicant.requests import AdmissionsRequest
 
 config = context.config
 if config.config_file_name is not None:

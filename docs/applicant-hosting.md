@@ -8,6 +8,12 @@ The account area stores e-mail, a salted scrypt password hash, language/reminder
 
 ## Live enablement record
 
+Sprint 6 also stores private admissions questions, office replies, their timestamps,
+the last responding staff reference and notification delivery status. Account
+deletion removes these records too. Notifications contain only the account link;
+assessment questionnaires and scores are not persisted. Include this data footprint
+in the same outstanding hosting/SMTP decision before enabling accounts.
+
 The Product Owner/repository owner records the chosen host, who operates it, backup handling and the configured SMTP sender/provider before enabling accounts. This is an outstanding project decision, not an automated claim about legal approval.
 
 1. Record the hosting/SMTP decision here.

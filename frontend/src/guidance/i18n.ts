@@ -1,0 +1,547 @@
+import { useLanguageStore } from "@/i18n"
+
+const messages = {
+  profile_subjects: [
+    "Programme profile subjects",
+    "Профильные предметы программы",
+    "Бағдарламаның бейіндік пәндері",
+  ],
+  math_informatics: [
+    "Mathematics – Informatics",
+    "Математика – информатика",
+    "Математика – информатика",
+  ],
+  math_physics: [
+    "Mathematics – Physics",
+    "Математика – физика",
+    "Математика – физика",
+  ],
+  chemistry_biology: [
+    "Chemistry – Biology",
+    "Химия – биология",
+    "Химия – биология",
+  ],
+  biology_geography: [
+    "Biology – Geography",
+    "Биология – география",
+    "Биология – география",
+  ],
+  law_history: [
+    "Fundamentals of Law – World History",
+    "Основы права – всемирная история",
+    "Құқық негіздері – дүниежүзі тарихы",
+  ],
+  math_geography: [
+    "Mathematics – Geography",
+    "Математика – география",
+    "Математика – география",
+  ],
+  english_history: [
+    "English – World History",
+    "Английский язык – всемирная история",
+    "Ағылшын тілі – дүниежүзі тарихы",
+  ],
+  russian_literature: [
+    "Russian language – Russian literature",
+    "Русский язык – русская литература",
+    "Орыс тілі – орыс әдебиеті",
+  ],
+  history_geography: [
+    "World History – Geography",
+    "Всемирная история – география",
+    "Дүниежүзі тарихы – география",
+  ],
+  phd_total: [
+    "PhD entrance exam (0–100)",
+    "Вступительный экзамен PhD (0–100)",
+    "PhD түсу емтиханы (0–100)",
+  ],
+  toefl_ibt: ["TOEFL iBT (0–120)", "TOEFL iBT (0–120)", "TOEFL iBT (0–120)"],
+  toefl_pbt: ["TOEFL PBT (0–677)", "TOEFL PBT (0–677)", "TOEFL PBT (0–677)"],
+  toeic: ["TOEIC (0–990)", "TOEIC (0–990)", "TOEIC (0–990)"],
+  duolingo: ["Duolingo (0–160)", "Duolingo (0–160)", "Duolingo (0–160)"],
+  work_months: [
+    "Documented work experience (months)",
+    "Подтверждённый стаж работы (месяцев)",
+    "Расталған жұмыс өтілі (ай)",
+  ],
+  kaztest: ["KAZTEST certificate", "Сертификат КАЗТЕСТ", "ҚАЗТЕСТ сертификаты"],
+  doctoral_exam: [
+    "PhD entrance exam",
+    "Вступительный экзамен PhD",
+    "PhD түсу емтиханы",
+  ],
+  doctoral_language: [
+    "PhD foreign-language certificate alternatives",
+    "Языковые сертификаты для PhD: альтернативы",
+    "PhD тіл сертификаттары: баламалар",
+  ],
+  doctoral_kaztest: [
+    "KAZTEST requirement",
+    "Требование КАЗТЕСТ",
+    "ҚАЗТЕСТ талабы",
+  ],
+  doctoral_experience: [
+    "PhD work experience",
+    "Стаж работы для PhD",
+    "PhD үшін жұмыс өтілі",
+  ],
+  requirement: ["Requirement", "Требование", "Талап"],
+  addSource: [
+    "Add official source",
+    "Добавить официальный источник",
+    "Ресми дереккөз қосу",
+  ],
+  professional_tariff_needs_confirmation: [
+    "The programme tariff changed; the office must reconfirm its source.",
+    "Тариф программы изменился; комиссия должна повторно подтвердить источник.",
+    "Бағдарлама тарифі өзгерді; комиссия дереккөзді қайта растауы керек.",
+  ],
+  hub: [
+    "Plan your admission",
+    "Планирование поступления",
+    "Оқуға түсуді жоспарлау",
+  ],
+  lead: [
+    "Explore programmes, check published requirements and plan your budget.",
+    "Подберите программу, проверьте опубликованные требования и рассчитайте бюджет.",
+    "Бағдарламаны таңдап, жарияланған талаптарды тексеріп, бюджетіңізді есептеңіз.",
+  ],
+  eligibility: [
+    "Check requirements",
+    "Проверка требований",
+    "Талаптарды тексеру",
+  ],
+  recommendations: [
+    "Find my programmes",
+    "Подобрать программы",
+    "Бағдарламаларды таңдау",
+  ],
+  cost: ["Tuition calculator", "Калькулятор стоимости", "Оқу ақысын есептеу"],
+  funding: [
+    "Grants and scholarships",
+    "Гранты и скидки",
+    "Гранттар мен жеңілдіктер",
+  ],
+  requests: [
+    "Questions to admissions",
+    "Обращения в приёмную комиссию",
+    "Қабылдау комиссиясына сұрақтар",
+  ],
+  program: ["Programme", "Программа", "Бағдарлама"],
+  choose: ["Choose a programme", "Выберите программу", "Бағдарламаны таңдаңыз"],
+  degree: ["Degree level", "Ступень обучения", "Білім деңгейі"],
+  bachelor: ["Bachelor", "Бакалавриат", "Бакалавриат"],
+  master: ["Master", "Магистратура", "Магистратура"],
+  phd: ["PhD", "Докторантура", "Докторантура"],
+  applicant_type: [
+    "Applicant category",
+    "Категория абитуриента",
+    "Талапкер санаты",
+  ],
+  local: [
+    "Local applicant",
+    "Казахстанский абитуриент",
+    "Қазақстандық талапкер",
+  ],
+  international: [
+    "International applicant",
+    "Иностранный абитуриент",
+    "Шетелдік талапкер",
+  ],
+  education_route: [
+    "Previous education",
+    "Предыдущее образование",
+    "Алдыңғы білім",
+  ],
+  school: ["School", "Школа", "Мектеп"],
+  college: ["College", "Колледж", "Колледж"],
+  track: ["Master's track", "Направление магистратуры", "Магистратура бағыты"],
+  scientific: [
+    "Scientific and pedagogical",
+    "Научно-педагогическое",
+    "Ғылыми-педагогикалық",
+  ],
+  profile: ["Profile", "Профильное", "Бейіндік"],
+  admission_basis: [
+    "Admission basis",
+    "Основа поступления",
+    "Оқуға түсу негізі",
+  ],
+  paid: ["Paid contract", "Платное обучение", "Ақылы оқу"],
+  grant: ["Grant competition", "Конкурс грантов", "Грант конкурсы"],
+  optional: [
+    "Leave unknown results blank. Your answers are not saved.",
+    "Неизвестные результаты оставьте пустыми. Ответы анкеты не сохраняются.",
+    "Белгісіз нәтижелерді бос қалдырыңыз. Сауалнама жауаптары сақталмайды.",
+  ],
+  unt_total: [
+    "UNT total (0–140)",
+    "Общий балл ЕНТ (0–140)",
+    "ҰБТ жалпы балы (0–140)",
+  ],
+  ct_total: [
+    "Complex test total (0–150)",
+    "Общий балл КТ (0–150)",
+    "КТ жалпы балы (0–150)",
+  ],
+  gpa: ["GPA (0–4)", "GPA (0–4)", "GPA (0–4)"],
+  ielts_overall: [
+    "IELTS overall (0–9)",
+    "IELTS общий балл (0–9)",
+    "IELTS жалпы балы (0–9)",
+  ],
+  ielts_component_min: [
+    "Lowest IELTS component (0–9)",
+    "Минимальный компонент IELTS (0–9)",
+    "IELTS ең төменгі компоненті (0–9)",
+  ],
+  sdu_english: [
+    "Accepted SDU English exam / B1 certificate",
+    "Принятый SDU экзамен по английскому / сертификат B1",
+    "SDU қабылдаған ағылшын емтиханы / B1 сертификаты",
+  ],
+  interview: ["Interview passed", "Собеседование пройдено", "Сұхбаттан өтті"],
+  special_exam: [
+    "Pedagogical exam passed",
+    "Педагогический экзамен сдан",
+    "Педагогикалық емтихан тапсырылды",
+  ],
+  creative_exam: [
+    "Creative exam passed",
+    "Творческий экзамен сдан",
+    "Шығармашылық емтихан тапсырылды",
+  ],
+  subject_pair: [
+    "Profile subject combination",
+    "Комбинация профильных предметов",
+    "Бейіндік пәндер жұбы",
+  ],
+  unknown: ["Not known", "Неизвестно", "Белгісіз"],
+  yes: ["Yes", "Да", "Иә"],
+  no: ["No", "Нет", "Жоқ"],
+  submit: ["Check", "Проверить", "Тексеру"],
+  calculate: ["Calculate", "Рассчитать", "Есептеу"],
+  working: ["Please wait…", "Подождите…", "Күтіңіз…"],
+  error: [
+    "Could not complete the request. Check your connection and try again.",
+    "Не удалось выполнить запрос. Проверьте соединение и повторите.",
+    "Сұрауды орындау мүмкін болмады. Байланысты тексеріп, қайталаңыз.",
+  ],
+  retry: ["Retry", "Повторить", "Қайталау"],
+  meets_published_requirements: [
+    "Meets the checked published requirements",
+    "Соответствует проверенным опубликованным требованиям",
+    "Тексерілген жарияланған талаптарға сәйкес",
+  ],
+  does_not_meet: [
+    "A checked requirement is not met",
+    "Одно из проверенных требований не выполнено",
+    "Тексерілген талаптардың бірі орындалмады",
+  ],
+  insufficient_data: [
+    "More information is needed",
+    "Недостаточно данных для вывода",
+    "Қорытынды жасау үшін деректер жеткіліксіз",
+  ],
+  pass: ["Met", "Выполнено", "Орындалды"],
+  fail: ["Not met", "Не выполнено", "Орындалмады"],
+  disclaimer: [
+    "This check does not guarantee admission or a grant. The admissions office confirms the full requirements.",
+    "Проверка не гарантирует зачисление или грант. Полные требования подтверждает приёмная комиссия.",
+    "Тексеру оқуға қабылдануға немесе грантқа кепілдік бермейді. Толық талаптарды қабылдау комиссиясы растайды.",
+  ],
+  sources: ["Official source", "Официальный источник", "Ресми дереккөз"],
+  evidence: [
+    "Source and evidence",
+    "Источник и подтверждение",
+    "Дереккөз және дәлел",
+  ],
+  paid_unt: [
+    "UNT threshold for paid admission",
+    "Порог ЕНТ для платного поступления",
+    "Ақылы оқуға түсу үшін ҰБТ шегі",
+  ],
+  english_proof: [
+    "English proficiency: accepted alternatives",
+    "Английский язык: допустимые варианты",
+    "Ағылшын тілі: қабылданатын баламалар",
+  ],
+  international_interview: [
+    "International applicant interview",
+    "Собеседование иностранного абитуриента",
+    "Шетелдік талапкердің сұхбаты",
+  ],
+  college_interview: [
+    "Interview after college",
+    "Собеседование после колледжа",
+    "Колледжден кейінгі сұхбат",
+  ],
+  pedagogical_exam: [
+    "Pedagogical exam",
+    "Педагогический экзамен",
+    "Педагогикалық емтихан",
+  ],
+  master_ct: [
+    "Master's complex test",
+    "Комплексное тестирование магистратуры",
+    "Магистратураның кешенді тестілеуі",
+  ],
+  requirements_incomplete: [
+    "The complete requirements for this route need office confirmation.",
+    "Полные требования для этого пути поступления требуют подтверждения комиссии.",
+    "Бұл жол бойынша толық талаптарды комиссия растауы қажет.",
+  ],
+  education_route_mismatch: [
+    "Check the selected previous education for this degree.",
+    "Проверьте предыдущее образование для выбранной ступени.",
+    "Таңдалған деңгей үшін алдыңғы біліміңізді тексеріңіз.",
+  ],
+  program_track_unconfirmed: [
+    "The master's track needs confirmation.",
+    "Направление магистратуры требует подтверждения.",
+    "Магистратура бағытын растау қажет.",
+  ],
+  credit_split_missing: [
+    "The programme's professional/MDE credit split needs confirmation.",
+    "Распределение кредитов программы между профильными курсами и MDE требует подтверждения.",
+    "Бағдарламадағы бейіндік/MDE кредиттерінің бөлінуін растау қажет.",
+  ],
+  mde_rate_missing: [
+    "The MDE tariff is not confirmed.",
+    "Тариф MDE не подтверждён.",
+    "MDE тарифі расталмаған.",
+  ],
+  professional_rate_missing: [
+    "The programme tariff is not confirmed.",
+    "Профильный тариф не подтверждён.",
+    "Бейіндік тариф расталмаған.",
+  ],
+  language_missing: [
+    "The teaching language is not published.",
+    "Язык обучения не опубликован.",
+    "Оқыту тілі жарияланбаған.",
+  ],
+  source_conflict: [
+    "Official sources contain unresolved differences.",
+    "В официальных источниках остаются расхождения.",
+    "Ресми дереккөздердегі айырмашылықтар шешілмеген.",
+  ],
+  doctoral_requirements_unconfirmed: [
+    "Programme-specific doctoral requirements need confirmation.",
+    "Требования конкретной программы PhD требуют подтверждения.",
+    "PhD бағдарламасының талаптарын растау қажет.",
+  ],
+  double_degree_unconfirmed: [
+    "Double-degree credit requirements need confirmation.",
+    "Кредиты программы двойного диплома требуют подтверждения.",
+    "Қос диплом бағдарламасының кредиттерін растау қажет.",
+  ],
+  language_group_required: [
+    "Select a published language tariff.",
+    "Выберите опубликованный тариф языковой группы.",
+    "Тілдік топтың жарияланған тарифін таңдаңыз.",
+  ],
+  language_tariff_unconfirmed: [
+    "This language tariff is not confirmed.",
+    "Тариф выбранной языковой группы не подтверждён.",
+    "Бұл тілдік топтың тарифі расталмаған.",
+  ],
+  currency: ["Currency", "Валюта", "Валюта"],
+  professional: [
+    "Professional courses",
+    "Профильные дисциплины",
+    "Бейіндік пәндер",
+  ],
+  mde: [
+    "Multidisciplinary courses (MDE)",
+    "Общеобразовательные курсы (MDE)",
+    "Жалпы білім беретін курстар (MDE)",
+  ],
+  credits: ["ECTS credits", "Кредиты ECTS", "ECTS кредиттері"],
+  rate: ["Rate per ECTS", "Ставка за ECTS", "ECTS тарифі"],
+  amount: ["Amount", "Сумма", "Сома"],
+  total: ["Estimated amount", "Предварительная сумма", "Болжамды сома"],
+  subtotal: [
+    "Known subtotal",
+    "Подтверждённая часть расчёта",
+    "Расталған есеп бөлігі",
+  ],
+  costNote: [
+    "Enter the professional and MDE credits in your study plan. For a full-degree estimate, use the whole programme's split; a single tariff × all credits is not a full quote.",
+    "Укажите профильные и MDE-кредиты учебного плана. Для оценки всей программы нужен полный состав кредитов; одна ставка × все кредиты не даёт полной стоимости.",
+    "Оқу жоспарындағы бейіндік және MDE кредиттерін енгізіңіз. Толық бағдарлама үшін барлық кредиттердің бөлінуі қажет; бір тарифті барлық кредитке көбейту толық баға емес.",
+  ],
+  current_rates_only: [
+    "Current published rates; future price changes are excluded.",
+    "Тек текущие опубликованные ставки; будущие изменения цен не учтены.",
+    "Тек қазіргі жарияланған тарифтер; болашақ баға өзгерістері есептелмеген.",
+  ],
+  user_supplied_credit_split: [
+    "Credit allocation is supplied by you and must match your study plan.",
+    "Распределение кредитов введено вами и должно соответствовать учебному плану.",
+    "Кредиттерді сіз енгіздіңіз; олар оқу жоспарына сәйкес болуы керек.",
+  ],
+  discounts_not_applied: [
+    "Scholarships, discounts and non-tuition expenses are excluded.",
+    "Гранты, скидки и расходы помимо обучения не учтены.",
+    "Гранттар, жеңілдіктер және оқудан тыс шығындар есептелмеген.",
+  ],
+  not_full_degree_quote: [
+    "This estimate is not a binding full-degree price.",
+    "Оценка не является обязательством по полной стоимости программы.",
+    "Бұл есеп бағдарламаның толық бағасына міндеттеме емес.",
+  ],
+  language_group: [
+    "Tariff language group",
+    "Языковая группа тарифа",
+    "Тарифтің тілдік тобы",
+  ],
+  teaching_language: [
+    "Preferred teaching language",
+    "Предпочтительный язык обучения",
+    "Қалаған оқыту тілі",
+  ],
+  any: ["Any", "Любой", "Кез келген"],
+  interests: ["Your interests", "Ваши интересы", "Қызығушылықтарыңыз"],
+  computing: [
+    "Computing and technology",
+    "IT и технологии",
+    "IT және технологиялар",
+  ],
+  business: [
+    "Business and economics",
+    "Бизнес и экономика",
+    "Бизнес және экономика",
+  ],
+  law: ["Law", "Право", "Құқық"],
+  education: ["Education", "Педагогика", "Педагогика"],
+  languages: ["Languages", "Языки", "Тілдер"],
+  science: [
+    "Science and mathematics",
+    "Наука и математика",
+    "Ғылым және математика",
+  ],
+  media: [
+    "Media and journalism",
+    "Медиа и журналистика",
+    "Медиа және журналистика",
+  ],
+  psychology: ["Psychology", "Психология", "Психология"],
+  noMatches: [
+    "No matching programmes. Review your preferences and checked requirements.",
+    "Подходящих программ нет. Проверьте предпочтения и требования.",
+    "Сәйкес бағдарламалар жоқ. Қалауларыңыз бен талаптарды тексеріңіз.",
+  ],
+  matches: [
+    "Matches your interests",
+    "Соответствует интересам",
+    "Қызығушылықтарыңызға сәйкес",
+  ],
+  details: ["Programme details", "О программе", "Бағдарлама туралы"],
+  compare: [
+    "Compare these programmes",
+    "Сравнить программы",
+    "Бағдарламаларды салыстыру",
+  ],
+  fundingNote: [
+    "Grants are competitive. Check the current campaign, supporting documents and deadlines at the official source. Availability and awards are confirmed by the office.",
+    "Гранты предоставляются по конкурсу. Уточните текущую кампанию, документы и сроки в официальном источнике. Наличие финансирования и решение подтверждает комиссия.",
+    "Гранттар конкурс арқылы беріледі. Қазіргі науқанды, құжаттарды және мерзімдерді ресми дереккөзден тексеріңіз. Қаржыландыру мен шешімді комиссия растайды.",
+  ],
+  historical: [
+    "Historical information",
+    "Архивные сведения",
+    "Мұрағаттық ақпарат",
+  ],
+  verify_current_campaign: [
+    "Confirm current campaign",
+    "Уточните актуальность кампании",
+    "Қазіргі науқанды нақтылаңыз",
+  ],
+  translation_missing: [
+    "Official translation is not published; showing the English source.",
+    "Официальный перевод не опубликован; показан английский источник.",
+    "Ресми аударма жарияланбаған; ағылшын дереккөзі көрсетілген.",
+  ],
+  checked: ["Last checked", "Проверено", "Тексерілді"],
+  empty: ["No items yet.", "Пока нет записей.", "Әзірге жазбалар жоқ."],
+  question: ["Your question", "Ваш вопрос", "Сұрағыңыз"],
+  send: ["Send to admissions", "Отправить в комиссию", "Комиссияға жіберу"],
+  requestNote: [
+    "Send a question from your verified account. Do not include document scans or identity numbers. The reply appears here; e-mail will notify you.",
+    "Отправьте вопрос из подтверждённого аккаунта. Не включайте сканы документов и номера удостоверений. Ответ появится здесь, почта уведомит о нём.",
+    "Расталған аккаунттан сұрақ жіберіңіз. Құжат көшірмелері мен жеке куәлік нөмірлерін қоспаңыз. Жауап осы жерде көрсетіледі, пошта хабарлайды.",
+  ],
+  login: [
+    "Log in to send and read your questions",
+    "Войдите для отправки и просмотра обращений",
+    "Сұрақтарды жіберу және оқу үшін кіріңіз",
+  ],
+  new: ["Awaiting reply", "Ожидает ответа", "Жауап күтілуде"],
+  answered: ["Answered", "Есть ответ", "Жауап берілді"],
+  all: ["All", "Все", "Барлығы"],
+  answer: ["Answer", "Ответ", "Жауап"],
+  save: ["Save", "Сохранить", "Сақтау"],
+  saved: ["Saved", "Сохранено", "Сақталды"],
+  privateUnavailable: [
+    "Accounts are not enabled on this environment yet.",
+    "Аккаунты в этой среде пока не включены.",
+    "Бұл ортада аккаунттар әлі қосылмаған.",
+  ],
+  next: ["Next", "Далее", "Келесі"],
+  previous: ["Previous", "Назад", "Алдыңғы"],
+  rules: [
+    "Admission rules and tariffs",
+    "Правила поступления и тарифы",
+    "Оқуға түсу ережелері мен тарифтер",
+  ],
+  addRule: ["Add requirement", "Добавить требование", "Талап қосу"],
+  addAlternative: ["Add alternative", "Добавить альтернативу", "Балама қосу"],
+  addCondition: ["Add condition", "Добавить условие", "Шарт қосу"],
+  remove: ["Remove", "Удалить", "Жою"],
+  or: ["OR", "ИЛИ", "НЕМЕСЕ"],
+  and: ["AND", "И", "ЖӘНЕ"],
+  minimum: ["Minimum", "Минимум", "Ең төменгі"],
+  url: ["Source URL", "Ссылка на источник", "Дереккөз сілтемесі"],
+  quote: ["Supporting quote", "Подтверждающая цитата", "Растайтын дәйексөз"],
+  academic_year: ["Academic year", "Учебный год", "Оқу жылы"],
+  confirmed: ["Confirmed", "Подтверждено", "Расталған"],
+  pending: ["Pending review", "Ожидает проверки", "Тексеру күтілуде"],
+  conflict: [
+    "Source conflict",
+    "Противоречие источников",
+    "Дереккөздер қайшылығы",
+  ],
+  complete: [
+    "Office confirms the full rule set for this route",
+    "Комиссия подтверждает полноту правил для этого пути",
+    "Комиссия осы жолдың толық ережелерін растайды",
+  ],
+  addCoverage: [
+    "Confirm a complete route",
+    "Подтвердить полноту пути",
+    "Толық жолды растау",
+  ],
+  totalCredits: [
+    "Published programme ECTS",
+    "Опубликованное число ECTS программы",
+    "Бағдарламаның жарияланған ECTS саны",
+  ],
+  addTariff: [
+    "Add language tariff",
+    "Добавить тариф языковой группы",
+    "Тілдік топ тарифін қосу",
+  ],
+} as const
+
+export type GuidanceKey = keyof typeof messages
+export function useGuidanceT() {
+  const language = useLanguageStore((s) => s.language)
+  return (key: string): string => {
+    const value = messages[key as GuidanceKey]
+    return value
+      ? value[language === "en" ? 0 : language === "ru" ? 1 : 2]
+      : key
+  }
+}
