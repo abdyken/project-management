@@ -42,7 +42,9 @@ services:
       interval: 15s
       timeout: 5s
       retries: 20
-      start_period: 60s
+      start_period: 120s
+      # Checked every 3 s while starting, so a deploy notices "healthy" sooner.
+      start_interval: 3s
 
   web:
     image: sdu-admissions-web:${APP_TAG}
