@@ -324,6 +324,43 @@ def test_recommendations_exclude_failure_archive_and_language_mismatch(client):
     )
 
 
+def test_recommendations_rank_main_subject_above_adjacent_fields(catalogue_session):
+    # Real catalogue titles: eight bachelor programmes mention a computing term. With
+    # equal scores the top three used to be decided by programme id, which put
+    # "Multimedia and AI journalism" first and never showed Computer Science.
+    it = "School of Information Technologies and Applied Mathematics"
+    social = "School of Social Sciences, Business and Law"
+    session = catalogue_session
+    session.add_all(
+        Program(program_id=code, title=title, faculty=faculty, degree_level="bachelor")
+        for code, title, faculty in [
+            ("6B03205", "Multimedia and AI journalism", social),
+            ("6B05402", "Statistics and Data Science", it),
+            ("6B06101", "Information Systems", it),
+            ("6B06102", "Computer Science", it),
+            ("6B06103", "Mathematical and Computer Modelling", it),
+            ("6B06104", "Multimedia Sciences", it),
+            ("6B06105", "Software Engineering", it),
+            ("6B06107", "Business information systems", it),
+        ]
+    )
+    session.flush()
+    app.dependency_overrides[get_db_session] = lambda: session
+    try:
+        c = TestClient(app, base_url="https://localhost")
+
+        def top(*interests):
+            body = {"interests": list(interests)}
+            items = c.post("/api/recommendations", json=body).json()["items"]
+            return [item["program"]["program_id"] for item in items]
+
+        assert top("computing") == ["6B06101", "6B06102", "6B06105"]
+        assert top("media") == ["6B03205", "6B06104"]
+        assert top("science")[0] == "6B05402"
+    finally:
+        app.dependency_overrides.clear()
+
+
 def test_model_explanation_cannot_add_facts(client, monkeypatch):
     c, _ = client
 
