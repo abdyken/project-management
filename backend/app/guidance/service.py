@@ -205,37 +205,45 @@ def cost_estimate(program: Program, guidance: Guidance, body: CostIn) -> dict:
     }
 
 
+# Per interest: core terms name the subject itself, related terms an adjacent field
+# ("Multimedia and AI journalism" is media first, "Statistics and Data Science" is
+# science first). See _interest_score for the weights.
 INTEREST_TERMS = {
     "computing": (
-        "computer",
-        "information",
-        "software",
-        "data",
-        "multimedia",
-        "computational",
+        ("computer", "software", "information", "informatics", "computational"),
+        ("data", "multimedia"),
     ),
     "business": (
-        "business",
-        "finance",
-        "account",
-        "management",
-        "econom",
-        "marketing",
-        "mba",
+        ("business", "finance", "account", "management", "econom", "marketing", "mba"),
+        (),
     ),
-    "law": ("law", "legal", "jurisprudence"),
-    "education": ("pedagog", "education", "teaching"),
+    "law": (("law", "legal", "jurisprudence"), ()),
+    "education": (("pedagog", "education", "teaching"), ()),
     "languages": (
-        "language",
-        "philolog",
-        "translation",
-        "literature",
-        "international relations",
+        ("language", "philolog", "translation", "literature"),
+        ("international relations",),
     ),
-    "science": ("mathemat", "physics", "chemistry", "biology", "statistics", "science"),
-    "media": ("media", "journalism", "multimedia"),
-    "psychology": ("psychology", "psycholog"),
+    "science": (
+        ("mathemat", "physics", "chemistry", "biology", "statistics"),
+        ("science",),
+    ),
+    "media": (("media", "journalism", "multimedia"), ()),
+    "psychology": (("psycholog",), ()),
 }
+
+
+def _interest_score(interest: str, title: str, faculty: str) -> int:
+    """Core title term 10, related title term 5; +1 when the title starts with a core
+    term (the programme's main subject); +2 when the faculty matches. 0 = no match."""
+    core, related = INTEREST_TERMS[interest]
+    score = 0
+    if any(term in title for term in core):
+        score = 10 + (1 if title.startswith(core) else 0)
+    elif any(term in title for term in related):
+        score = 5
+    if any(term in faculty for term in core + related):
+        score += 2
+    return score
 
 
 def recommendations(
@@ -248,18 +256,12 @@ def recommendations(
         .order_by(Program.program_id)
     ):
         title, faculty = program.title.casefold(), program.faculty.casefold()
-        matches = [
-            interest
+        interest_scores = {
+            interest: _interest_score(interest, title, faculty)
             for interest in dict.fromkeys(body.interests)
-            if any(term in title for term in INTEREST_TERMS[interest])
-        ]
-        faculty_matches = [
-            interest
-            for interest in dict.fromkeys(body.interests)
-            if interest not in matches
-            and any(term in faculty for term in INTEREST_TERMS[interest])
-        ]
-        if not matches and not faculty_matches:
+        }
+        matches = [interest for interest, score in interest_scores.items() if score]
+        if not matches:
             continue
         result = eligibility(program, guidance_for(session, program.program_id), body)
         if result.status == "does_not_meet":
@@ -273,11 +275,10 @@ def recommendations(
         gaps = list(result.gaps)
         if body.teaching_language and not program.language:
             gaps.append("language_missing")
-        reasons = [f"interest:{interest}" for interest in matches + faculty_matches]
-        score = (
-            len(matches) * 10
-            + len(faculty_matches)
-            + (3 if result.status == "meets_published_requirements" else 0)
+        matches.sort(key=lambda interest: -interest_scores[interest])
+        reasons = [f"interest:{interest}" for interest in matches]
+        score = sum(interest_scores.values()) + (
+            3 if result.status == "meets_published_requirements" else 0
         )
         ranked.append(
             (

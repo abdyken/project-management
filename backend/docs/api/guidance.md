@@ -67,7 +67,9 @@ data gaps. Missing guidance is an incomplete record, not invented defaults.
 and optional `teaching_language`.
 
 Returns up to 3 active programme records, each with eligibility, matching-interest
-reason labels and gaps. Title keyword matches score 10, school matches score 1;
+reason labels and gaps. Each interest has core terms (the subject itself) and related
+terms (an adjacent field). Per interest, a core title term scores 10 (+1 when the title
+starts with it), a related title term scores 5, and a matching school adds 2;
 confirmed eligible routes add 3. Ties sort by programme id. Confirmed eligibility
 failures and known teaching-language mismatches are excluded; missing requirements
 and language remain explicit. No matches means an empty list.
