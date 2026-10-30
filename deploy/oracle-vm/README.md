@@ -17,14 +17,20 @@ plus a 2 GB swap file, Ubuntu 22.04) in `/opt/sdu-admissions`:
 `.github/workflows/deploy.yml` runs on every push to `main` that changes `backend/`,
 `frontend/`, `deploy/oracle-vm/` or a workflow, and on demand (Actions → Deploy → Run workflow):
 
-1. Backend CI and Frontend CI run first; a failure stops the deployment.
-2. GitHub builds `sdu-admissions-api:<short sha>` and `sdu-admissions-web:<short sha>`
-   (the VM is too small to build the slim search model).
-3. The images, `compose.yml` and `Caddyfile` go over SSH to `deploy.sh` on the VM. It
+1. Backend CI and Frontend CI run while GitHub builds `sdu-admissions-api:<short sha>` and
+   `sdu-admissions-web:<short sha>` (the VM is too small to build the slim search model)
+   and pushes them to GHCR (`ghcr.io/abdyken/...`, public packages). The build reuses
+   layers through the `buildcache` tag in the same packages.
+2. Only when both CI workflows and both images succeeded: `compose.yml` and `Caddyfile` go
+   over SSH to `deploy.sh` on the VM. It pulls the two images (only the changed layers),
    switches to the new version and waits until every service is healthy. If the new
    version does not become healthy, it starts the previous version again and the
    workflow fails.
-4. The workflow checks `/api/health` and the home page on the live site.
+3. The workflow checks `/api/health` and the home page on the live site.
+
+Run on another branch (Actions → Deploy → Run workflow, choose the branch), the workflow
+runs CI and pushes images but never deploys. If GHCR is unavailable, `deploy.sh` also
+accepts the old bundle: add `images.tar.gz` (`docker save` of both images) to the tar.
 
 The API container applies new Alembic migrations when it starts. An automatic rollback
 does not undo them, so keep migrations backward compatible with the previous version.
@@ -37,11 +43,14 @@ does not undo them, so keep migrations backward compatible with the previous ver
 | `DEPLOY_SSH_KEY` | secret | private half of the deploy key |
 | `DEPLOY_KNOWN_HOSTS` | secret | `ssh-keyscan -t ed25519 193.123.95.102` output |
 
+The packages `sdu-admissions-api` and `sdu-admissions-web` (GitHub profile → Packages) must
+be public, so the VM pulls them without a token. They contain no secrets: those stay in `.env`.
+
 The public half of the deploy key is in the VM's `~/.ssh/authorized_keys` with
 `restrict,command="/opt/sdu-admissions/deploy.sh"`: it can only run a deployment, not a shell.
 
 Application secrets (`POSTGRES_PASSWORD`, `GEMINI_API_KEY`) live only in
-`/opt/sdu-admissions/.env` on the VM (mode 600) and never go through GitHub. After editing
+`/opt/sdu-admissions/.env` on the VM (mode 660, group `sduadmin`) and never go through GitHub. After editing
 `.env`: `cd /opt/sdu-admissions && docker compose up -d`.
 
 ## By hand (on the VM)

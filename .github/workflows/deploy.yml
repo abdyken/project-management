@@ -1,8 +1,9 @@
 name: Deploy
 
-# Every push to main that changes the app: run both CI workflows, then build the images
-# here (the 1 GB VM cannot build the slim search model) and hand them to deploy.sh on
-# the Oracle VM. See deploy/oracle-vm/README.md.
+# Every push to main that changes the app: run both CI workflows and, at the same time,
+# build the images here (the 1 GB VM cannot build the slim search model) and push them
+# to GHCR. When everything passed, deploy.sh on the Oracle VM pulls only the changed
+# layers. See deploy/oracle-vm/README.md.
 on:
   push:
     branches: [main]
@@ -11,6 +12,7 @@ on:
       - "frontend/**"
       - "deploy/oracle-vm/**"
       - ".github/workflows/**"
+  # On another branch this runs CI and pushes images only; the deploy job needs main.
   workflow_dispatch:
 
 concurrency:
@@ -20,6 +22,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  REGISTRY: ghcr.io/abdyken
+
 jobs:
   backend:
     uses: ./.github/workflows/backend-ci.yml
@@ -27,8 +32,48 @@ jobs:
   frontend:
     uses: ./.github/workflows/frontend-ci.yml
 
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    strategy:
+      matrix:
+        include:
+          - name: sdu-admissions-api
+            context: backend
+          - name: sdu-admissions-web
+            context: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: tag
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.name }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ matrix.name }}:${{ steps.tag.outputs.tag }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ matrix.name }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ matrix.name }}:buildcache,mode=max
+
   deploy:
-    needs: [backend, frontend]
+    needs: [backend, frontend, images]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
@@ -36,31 +81,9 @@ jobs:
       url: https://193-123-95-102.sslip.io
     env:
       SITE_URL: https://193-123-95-102.sslip.io
+      TAG: ${{ needs.images.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Image tag
-        run: echo "TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-
-      - uses: docker/setup-buildx-action@v3
-
-      - name: Build API image
-        uses: docker/build-push-action@v6
-        with:
-          context: backend
-          load: true
-          tags: sdu-admissions-api:${{ env.TAG }}
-          cache-from: type=gha,scope=api
-          cache-to: type=gha,mode=max,scope=api
-
-      - name: Build web image
-        uses: docker/build-push-action@v6
-        with:
-          context: frontend
-          load: true
-          tags: sdu-admissions-web:${{ env.TAG }}
-          cache-from: type=gha,scope=web
-          cache-to: type=gha,mode=max,scope=web
 
       - name: Deploy to the VM
         env:
@@ -72,10 +95,7 @@ jobs:
           printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          mkdir bundle
-          cp deploy/oracle-vm/compose.yml deploy/oracle-vm/Caddyfile bundle/
-          docker save "sdu-admissions-api:$TAG" "sdu-admissions-web:$TAG" | gzip -1 > bundle/images.tar.gz
-          tar -C bundle -cf - compose.yml Caddyfile images.tar.gz |
+          tar -C deploy/oracle-vm -cf - compose.yml Caddyfile |
             ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 "$DEPLOY_HOST" "deploy $TAG"
 
       - name: Check the live site
