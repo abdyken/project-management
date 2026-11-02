@@ -192,6 +192,7 @@ async function run(type, name, width) {
         (
           await post("/api/applicant/verify", {
             token: await verification(email),
+            password: APPLICANT_PASSWORD,
           })
         ).status(),
         200,

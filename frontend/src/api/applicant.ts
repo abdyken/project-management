@@ -21,15 +21,16 @@ export const loginApplicant = (email: string, password: string) =>
     method: "POST",
     body: JSON.stringify({ email, password }),
   })
-export const registerApplicant = (email: string, password: string, language: Language) =>
+// No password here: it is set on the verification page, by whoever opens the e-mailed link.
+export const registerApplicant = (email: string, language: Language) =>
   request<{ message: string }>(`${ROOT}/register`, {
     ...options,
     method: "POST",
-    body: JSON.stringify({ email, password, language }),
+    body: JSON.stringify({ email, language }),
     timeoutMs: 20_000,
   })
-export const verifyApplicant = (token: string) =>
-  request<Applicant>(`${ROOT}/verify`, { ...options, method: "POST", body: JSON.stringify({ token }) })
+export const verifyApplicant = (token: string, password: string) =>
+  request<Applicant>(`${ROOT}/verify`, { ...options, method: "POST", body: JSON.stringify({ token, password }) })
 export const logoutApplicant = () => request<void>(`${ROOT}/logout`, { ...options, method: "POST" })
 export const deleteApplicant = () => request<void>(`${ROOT}/me`, { ...options, method: "DELETE" })
 export const updatePreferences = (body: Pick<Applicant, "language" | "reminders_enabled">) =>

@@ -34,6 +34,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-admissions@localhost}
       SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
+      REMINDER_DAILY_LIMIT: ${REMINDER_DAILY_LIMIT:-300}
     depends_on:
       db:
         condition: service_healthy

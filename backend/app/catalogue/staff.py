@@ -11,7 +11,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, field_validator
-from sqlalchemy import delete, func, or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.errors import INVALID_REQUEST_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
@@ -150,6 +150,10 @@ def _out(session: Session, program: Program) -> StaffProgramOut:
     )
 
 
+def _document_key(name: str) -> str:
+    return " ".join(name.split()).casefold()
+
+
 def _touch(program: Program, user: StaffUser) -> None:
     program.updated_by_id = user.id
     program.updated_at = datetime.now(timezone.utc)
@@ -285,7 +289,10 @@ def update_program(program_id: ProgramId, body: ProgramFields, user: Staff, sess
     response_model=StaffProgramOut,
     responses={**STAFF_RESPONSES, **NOT_FOUND_RESPONSE, **INVALID_REQUEST_RESPONSE},
     summary="Replace the document list of one applicant type",
-    description="The list replaces the old one in the given order. An empty list means no official list is "
+    description="The list replaces the old one in the given order. Documents whose name, format, translation "
+    "and notarisation are unchanged keep their id, so applicants keep their progress (deadline and order may "
+    "change); any other change, or removal, resets that document's progress. "
+    "An empty list means no official list is "
     "published: the checklist then shows the missing-data warning.",
 )
 def replace_documents(
@@ -294,25 +301,43 @@ def replace_documents(
     program = session.get(Program, program_id)
     if program is None:
         return _not_found()
-    session.execute(
-        delete(ProgramDocumentRequirement).where(
+    # Update rows in place where the document is unchanged, so applicants keep their
+    # "prepared" ticks (progress rows cascade from these ids). A renamed or removed document,
+    # or one that now needs another format, translation or notarisation, loses its own tick:
+    # what the applicant prepared no longer matches. Matching by position could move a tick
+    # to a different document.
+    existing: dict[str, list[ProgramDocumentRequirement]] = {}
+    for row in session.scalars(
+        select(ProgramDocumentRequirement)
+        .where(
             ProgramDocumentRequirement.program_id == program_id,
             ProgramDocumentRequirement.applicant_type == applicant_type,
         )
-    )
-    session.add_all(
-        ProgramDocumentRequirement(
-            program_id=program_id,
-            applicant_type=applicant_type,
-            name=document.name,
-            document_format=document.format,
-            translation_required=document.translation,
-            notarisation_required=document.notarisation,
-            deadline=document.deadline,
-            display_order=order,
-        )
-        for order, document in enumerate(body.documents)
-    )
+        .order_by(ProgramDocumentRequirement.display_order, ProgramDocumentRequirement.id)
+    ):
+        existing.setdefault(_document_key(row.name), []).append(row)
+    for order, document in enumerate(body.documents):
+        matches = existing.get(_document_key(document.name))
+        row = matches.pop(0) if matches else None
+        if row is not None and (row.document_format, row.translation_required, row.notarisation_required) != (
+            document.format,
+            document.translation,
+            document.notarisation,
+        ):
+            session.delete(row)
+            row = None
+        if row is None:
+            row = ProgramDocumentRequirement(program_id=program_id, applicant_type=applicant_type)
+        row.name = document.name
+        row.document_format = document.format
+        row.translation_required = document.translation
+        row.notarisation_required = document.notarisation
+        row.deadline = document.deadline
+        row.display_order = order
+        session.add(row)
+    for rows in existing.values():
+        for row in rows:
+            session.delete(row)
     _touch(program, user)
     session.commit()
     return _out(session, program)

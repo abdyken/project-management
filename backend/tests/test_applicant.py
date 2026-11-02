@@ -28,10 +28,13 @@ def applicant_env(catalogue_session, monkeypatch):
     get_settings.cache_clear()
     monkeypatch.setattr(router, "login_limiter", LoginLimiter())
     monkeypatch.setattr(router, "register_limiter", LoginLimiter())
+    monkeypatch.setattr(router, "login_ip_limiter", LoginLimiter(limit=router.IP_LIMIT))
+    monkeypatch.setattr(router, "register_ip_limiter", LoginLimiter(limit=router.IP_LIMIT))
     messages = []
     monkeypatch.setattr(
         mail, "send_mail", lambda settings, recipient, subject, body: messages.append((recipient, subject, body))
     )
+    monkeypatch.setattr(mail.Mailer, "send", lambda self, recipient, subject, body: messages.append((recipient, subject, body)))
     session = catalogue_session
     session.execute(delete(Applicant))
     session.add_all(
@@ -95,9 +98,9 @@ def register(client, email="applicant@example.com", language="en"):
     return client.post(f"{ROOT}/register", json={"email": email, "password": PASSWORD, "language": language})
 
 
-def verify(client, messages):
+def verify(client, messages, password=PASSWORD):
     token = messages[-1][2].split("#token=")[1].strip()
-    response = client.post(f"{ROOT}/verify", json={"token": token})
+    response = client.post(f"{ROOT}/verify", json={"token": token, "password": password})
     assert response.status_code == 200, response.text
     return token
 
@@ -120,7 +123,7 @@ def test_registration_verification_login_and_logout(applicant_env):
     token = verify(client, messages)
     assert session.scalar(select(ApplicantSession)).token_hash != client.cookies.get("applicant_session")
     assert token not in repr(user.verification_hash)
-    assert client.post(f"{ROOT}/verify", json={"token": token}).status_code == 422
+    assert client.post(f"{ROOT}/verify", json={"token": token, "password": PASSWORD}).status_code == 422
     assert client.get(f"{ROOT}/me").json()["email"] == user.email
     assert client.post(f"{ROOT}/logout").status_code == 204
     assert client.get(f"{ROOT}/me").status_code == 401
@@ -139,7 +142,7 @@ def test_expired_verification_and_session(applicant_env):
     user.verification_expires_at = service.now() - timedelta(seconds=1)
     session.flush()
     token = messages[-1][2].split("#token=")[1].strip()
-    assert client.post(f"{ROOT}/verify", json={"token": token}).status_code == 422
+    assert client.post(f"{ROOT}/verify", json={"token": token, "password": PASSWORD}).status_code == 422
     register(client)
     verify(client, messages)
     session.scalar(select(ApplicantSession)).expires_at = service.now() - timedelta(seconds=1)
@@ -156,21 +159,41 @@ def test_resend_rotates_token_and_verified_account_is_unchanged(logged_in):
     assert session.scalar(select(Applicant)).password_hash == original
 
 
-def test_pending_resend_uses_latest_password_and_invalidates_old_link(applicant_env):
+def test_pending_resend_keeps_password_and_invalidates_old_link(applicant_env):
     client, session, messages = applicant_env
     register(client)
+    original = session.scalar(select(Applicant)).password_hash
     old = messages[-1][2].split("#token=")[1].strip()
     client.post(f"{ROOT}/register", json={"email": "applicant@example.com", "password": PASSWORD + "2"})
-    assert client.post(f"{ROOT}/verify", json={"token": old}).status_code == 422
+    assert session.scalar(select(Applicant)).password_hash == original
+    assert client.post(f"{ROOT}/verify", json={"token": old, "password": PASSWORD}).status_code == 422
     verify(client, messages)
+
+
+@pytest.mark.parametrize("victim_first", [True, False])
+def test_registering_a_pending_email_cannot_take_over_the_account(applicant_env, victim_first):
+    # Either order: whoever opens the link from the inbox sets the password at verification.
+    client, session, messages = applicant_env
+    attacker = {"email": "applicant@example.com", "password": "attacker password 123"}
+    if victim_first:
+        register(client)
+        client.post(f"{ROOT}/register", json=attacker)
+    else:
+        client.post(f"{ROOT}/register", json=attacker)
+        register(client)
+    verify(client, messages)  # the victim opens the newest link and enters their password
     client.post(f"{ROOT}/logout")
-    assert (
-        client.post(f"{ROOT}/login", json={"email": "applicant@example.com", "password": PASSWORD}).status_code == 401
-    )
-    assert (
-        client.post(f"{ROOT}/login", json={"email": "applicant@example.com", "password": PASSWORD + "2"}).status_code
-        == 200
-    )
+    assert client.post(f"{ROOT}/login", json=attacker).status_code == 401
+    assert client.post(f"{ROOT}/login", json={"email": attacker["email"], "password": PASSWORD}).status_code == 200
+
+
+def test_verification_requires_a_valid_password(applicant_env):
+    client, _, messages = applicant_env
+    register(client)
+    token = messages[-1][2].split("#token=")[1].strip()
+    assert client.post(f"{ROOT}/verify", json={"token": token}).status_code == 422
+    assert client.post(f"{ROOT}/verify", json={"token": token, "password": "short"}).status_code == 422
+    verify(client, messages)
 
 
 @pytest.mark.parametrize(
@@ -178,7 +201,6 @@ def test_pending_resend_uses_latest_password_and_invalidates_old_link(applicant_
     [
         {"email": "bad", "password": PASSWORD},
         {"email": "a@example.com\nBcc:b@example.com", "password": PASSWORD},
-        {"email": "a@example.com", "password": "short"},
         {"email": "a@example.com", "password": PASSWORD, "language": "fr"},
     ],
 )
@@ -188,29 +210,78 @@ def test_registration_rejects_invalid_input(applicant_env, body):
     assert messages == []
 
 
-def test_registration_mail_failure_rolls_back_and_allows_retry(applicant_env, monkeypatch):
+def test_registration_mail_failure_keeps_pending_account_and_allows_retry(applicant_env, monkeypatch):
     client, session, messages = applicant_env
     with monkeypatch.context() as patch:
         patch.setattr(mail, "send_mail", lambda *args: (_ for _ in ()).throw(OSError("mail down")))
         assert register(client).status_code == 503
-    assert session.scalar(select(Applicant)) is None
+    # Committed before sending: no lock or connection is held while SMTP is slow.
+    assert session.scalar(select(Applicant)).verified is False
     assert register(client).status_code == 202
     verify(client, messages)
 
 
 def test_login_and_registration_rate_limits(applicant_env):
     client, _, _ = applicant_env
-    for index in range(5):
-        assert (
-            client.post(
-                f"{ROOT}/login", json={"email": f"unknown{index}@example.com", "password": PASSWORD}
-            ).status_code
-            == 401
-        )
-    assert client.post(f"{ROOT}/login", json={"email": "other@example.com", "password": PASSWORD}).status_code == 429
+    # Per e-mail: 5 attempts.
+    for _ in range(5):
+        assert client.post(f"{ROOT}/login", json={"email": "target@example.com", "password": "x"}).status_code == 401
+    assert client.post(f"{ROOT}/login", json={"email": "target@example.com", "password": "x"}).status_code == 429
     for _ in range(5):
         assert register(client).status_code == 202
     assert register(client).status_code == 429
+    # Per client IP: 30, so one shared campus network is not blocked by a few applicants.
+    for index in range(router.IP_LIMIT - 5):
+        assert client.post(f"{ROOT}/login", json={"email": f"u{index}@example.com", "password": "x"}).status_code == 401
+    assert client.post(f"{ROOT}/login", json={"email": "other@example.com", "password": "x"}).status_code == 429
+
+
+def test_registration_needs_no_password(applicant_env):
+    client, session, messages = applicant_env
+    assert client.post(f"{ROOT}/register", json={"email": "applicant@example.com"}).status_code == 202
+    assert client.post(f"{ROOT}/login", json={"email": "applicant@example.com", "password": PASSWORD}).status_code == 401
+    verify(client, messages)
+    client.post(f"{ROOT}/logout")
+    assert client.post(f"{ROOT}/login", json={"email": "applicant@example.com", "password": PASSWORD}).status_code == 200
+
+
+def test_rate_limits_count_per_visitor_behind_the_proxy(applicant_env):
+    # In production every request reaches the API from the nginx container; the visitor
+    # is the first X-Forwarded-For entry. One visitor's failures must not block others.
+    client, _, _ = applicant_env
+    nginx = "172.18.0.5"
+    for index in range(router.IP_LIMIT):
+        response = client.post(
+            f"{ROOT}/login",
+            json={"email": f"guess{index}@example.com", "password": PASSWORD},
+            headers={"X-Forwarded-For": f"203.0.113.7, {nginx}"},
+        )
+        assert response.status_code == 401
+    blocked = client.post(
+        f"{ROOT}/login",
+        json={"email": "someone@example.com", "password": PASSWORD},
+        headers={"X-Forwarded-For": f"203.0.113.7, {nginx}"},
+    )
+    assert blocked.status_code == 429
+    for index in range(5):
+        response = client.post(
+            f"{ROOT}/register",
+            json={"email": f"new{index}@example.com"},
+            headers={"X-Forwarded-For": f"198.51.100.{index}, {nginx}"},
+        )
+        assert response.status_code == 202
+    other = client.post(
+        f"{ROOT}/login",
+        json={"email": "someone@example.com", "password": PASSWORD},
+        headers={"X-Forwarded-For": f"198.51.100.200, {nginx}"},
+    )
+    assert other.status_code == 401
+    sixth = client.post(
+        f"{ROOT}/register",
+        json={"email": "new6@example.com"},
+        headers={"X-Forwarded-For": f"198.51.100.6, {nginx}"},
+    )
+    assert sixth.status_code == 202
 
 
 @pytest.mark.parametrize(
@@ -397,10 +468,12 @@ def test_reminders_opt_in_milestones_deduplication_and_missing_documents(logged_
     assert send_due_reminders(session, get_settings(), TODAY) == 0
     assert client.patch(f"{ROOT}/me", json={"language": "ru", "reminders_enabled": True}).status_code == 200
     client.put(f"{ROOT}/programs/cs/local/documents/{local['items'][0]['id']}", json={"prepared": True})
-    assert send_due_reminders(session, get_settings(), TODAY) == 2
-    assert "напоминание" in messages[-2][1]
-    assert "National ID" in messages[-2][2] and "School certificate" not in messages[-2][2]
-    assert "Passport" in messages[-1][2]
+    # Local (7 days) and international (1 day) are both due: one e-mail lists both.
+    assert send_due_reminders(session, get_settings(), TODAY) == 1
+    subject, body = messages[-1][1], messages[-1][2]
+    assert "напоминание" in subject
+    assert "National ID" in body and "School certificate" not in body and "Passport" in body
+    assert "местные абитуриенты" in body and "иностранные абитуриенты" in body
     assert send_due_reminders(session, get_settings(), TODAY) == 0
     assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=1)) == 1  # international deadline day
     assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=2)) == 0  # no overdue mail
@@ -417,9 +490,275 @@ def test_reminder_delivery_failure_is_retried_and_archived_program_is_skipped(lo
     save(client)
     client.patch(f"{ROOT}/me", json={"language": "en", "reminders_enabled": True})
     with monkeypatch.context() as patch:
-        patch.setattr(mail, "send_mail", lambda *args: (_ for _ in ()).throw(OSError("down")))
+        patch.setattr(mail.Mailer, "send", lambda *args: (_ for _ in ()).throw(OSError("down")))
         assert send_due_reminders(session, get_settings(), TODAY) == 0
     assert send_due_reminders(session, get_settings(), TODAY) == 1
     session.get(Program, "cs").is_active = False
     session.flush()
     assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=6)) == 0
+
+
+def _opted_in_applicants(client, session, messages, count):
+    """`count` extra verified applicants who saved cs/local and opted in to reminders."""
+    for index in range(count):
+        client.cookies.clear()
+        register(client, f"reader{index}@example.com")
+        verify(client, messages)
+        save(client)
+        client.patch(f"{ROOT}/me", json={"language": "en", "reminders_enabled": True})
+
+
+def test_reminders_send_one_digest_per_applicant(logged_in):
+    client, session, messages = logged_in
+    session.add(
+        Program(
+            program_id="law",
+            title="Law",
+            faculty="Law",
+            degree_level="bachelor",
+            deadline_local=TODAY + timedelta(days=7),
+        )
+    )
+    session.flush()
+    save(client)
+    save(client, program="law")
+    client.patch(f"{ROOT}/me", json={"language": "en", "reminders_enabled": True})
+    before = len(messages)
+    assert send_due_reminders(session, get_settings(), TODAY) == 1
+    assert len(messages) == before + 1
+    assert "Computer Science (cs)" in messages[-1][2] and "Law (law)" in messages[-1][2]
+    assert len(list(session.scalars(select(DeadlineReminder).where(DeadlineReminder.sent_at.is_not(None))))) == 2
+
+
+def test_reminder_daily_limit_leaves_the_rest_for_the_next_run(logged_in, monkeypatch):
+    client, session, messages = logged_in
+    _opted_in_applicants(client, session, messages, 3)
+    monkeypatch.setenv("REMINDER_DAILY_LIMIT", "2")
+    get_settings.cache_clear()
+    assert send_due_reminders(session, get_settings(), TODAY) == 2
+    assert send_due_reminders(session, get_settings(), TODAY) == 0  # limit reached for this Almaty day
+    monkeypatch.setenv("REMINDER_DAILY_LIMIT", "300")
+    get_settings.cache_clear()
+    # The applicant over the limit is caught up on a later day, before the next milestone.
+    assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=2)) == 1
+    assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=3)) == 0
+
+
+def test_missed_milestone_is_caught_up_until_the_next_one(logged_in, monkeypatch):
+    client, session, messages = logged_in
+    save(client)
+    client.patch(f"{ROOT}/me", json={"language": "en", "reminders_enabled": True})
+    # The 7-day run was missed (outage): it is still sent with 5 days left, once.
+    assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=2)) == 1
+    assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=3)) == 0
+    # The 1-day reminder was missed too: on the deadline day only the 0-day one is sent.
+    assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=7)) == 1
+    assert send_due_reminders(session, get_settings(), TODAY + timedelta(days=8)) == 0  # never after the deadline
+    stages = sorted(session.scalars(select(DeadlineReminder.milestone).where(DeadlineReminder.sent_at.is_not(None))))
+    assert stages == [0, 7]
+
+
+def test_login_or_quota_error_stops_the_run_but_refused_recipient_does_not(logged_in, monkeypatch):
+    import smtplib
+
+    client, session, messages = logged_in
+    _opted_in_applicants(client, session, messages, 3)
+    attempts = []
+
+    def quota(self, recipient, subject, body):
+        attempts.append(recipient)
+        raise smtplib.SMTPDataError(550, b"5.4.5 Daily user sending limit exceeded")
+
+    with monkeypatch.context() as patch:
+        patch.setattr(mail.Mailer, "send", quota)
+        assert send_due_reminders(session, get_settings(), TODAY) == 0
+    assert len(attempts) == 1  # no more Gmail attempts once the quota is reached
+
+    def refused(self, recipient, subject, body):
+        if recipient == "reader0@example.com":
+            raise smtplib.SMTPRecipientsRefused({recipient: (550, b"no such user")})
+        messages.append((recipient, subject, body))
+
+    with monkeypatch.context() as patch:
+        patch.setattr(mail.Mailer, "send", refused)
+        assert send_due_reminders(session, get_settings(), TODAY) == 2  # reader1 and reader2
+
+
+def test_temporary_recipient_refusal_stops_the_run(logged_in, monkeypatch):
+    import smtplib
+
+    client, session, messages = logged_in
+    _opted_in_applicants(client, session, messages, 3)
+    attempts = []
+
+    def closing(self, recipient, subject, body):
+        attempts.append(recipient)
+        raise smtplib.SMTPRecipientsRefused({recipient: (421, b"4.7.0 Try again later, closing connection")})
+
+    monkeypatch.setattr(mail.Mailer, "send", closing)
+    assert send_due_reminders(session, get_settings(), TODAY) == 0
+    assert len(attempts) == 1
+
+
+def test_one_failing_applicant_does_not_stop_the_run(logged_in, monkeypatch):
+    from app.applicant import reminders
+
+    client, session, messages = logged_in
+    _opted_in_applicants(client, session, messages, 2)
+    real = reminders.saved_checklist
+
+    def flaky(session, user, *args, **kwargs):
+        if user.email == "reader0@example.com":
+            raise RuntimeError("unexpected")
+        return real(session, user, *args, **kwargs)
+
+    monkeypatch.setattr(reminders, "saved_checklist", flaky)
+    assert send_due_reminders(session, get_settings(), TODAY) == 1
+
+
+def test_reminder_failure_does_not_block_reply_notifications(monkeypatch):
+    from app.applicant import reminders
+
+    calls = []
+
+    class Session:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def broken(session, settings):
+        raise RuntimeError("reminders broke")
+
+    monkeypatch.setattr(reminders, "get_session", lambda settings: Session())
+    monkeypatch.setattr(reminders, "send_due_reminders", broken)
+    monkeypatch.setattr("app.applicant.requests.send_request_notifications", lambda session, settings: calls.append(1))
+    reminders._run(get_settings())
+    assert calls == [1]
+
+
+def test_smtp_verifies_the_server_certificate_and_reuses_one_connection(monkeypatch):
+    import ssl
+
+    import app.applicant.mail as mail_module
+
+    connections = []
+
+    class FakeSMTP:
+        def __init__(self, host, port, timeout):
+            self.sent, self.context = [], None
+            connections.append(self)
+
+        def starttls(self, context=None):
+            self.context = context
+
+        def login(self, username, password):
+            pass
+
+        def send_message(self, message):
+            self.sent.append(message["To"])
+
+        def quit(self):
+            pass
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(mail_module.smtplib, "SMTP", FakeSMTP)
+    settings = get_settings().model_copy(update={"smtp_host": "smtp.gmail.com", "smtp_username": "portal@gmail.com"})
+    with mail_module.Mailer(settings) as mailer:
+        mailer.send("a@example.com", "s", "b")
+        mailer.send("b@example.com", "s", "b")
+    assert len(connections) == 1 and connections[0].sent == ["a@example.com", "b@example.com"]
+    context = connections[0].context
+    assert context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname is True
+
+    # A failed send (e.g. Gmail's 421 closing the connection) is never reused.
+    def closed(self, message):
+        raise mail_module.smtplib.SMTPServerDisconnected("closed")
+
+    with mail_module.Mailer(settings) as mailer:
+        monkeypatch.setattr(FakeSMTP, "send_message", closed)
+        with pytest.raises(mail_module.smtplib.SMTPServerDisconnected):
+            mailer.send("a@example.com", "s", "b")
+        monkeypatch.undo()
+        monkeypatch.setattr(mail_module.smtplib, "SMTP", FakeSMTP)
+        mailer.send("b@example.com", "s", "b")
+    assert len(connections) == 3 and connections[-1].sent == ["b@example.com"]
+    refused_5xx = mail_module.smtplib.SMTPRecipientsRefused({"x@example.com": (550, b"no such user")})
+    refused_4xx = mail_module.smtplib.SMTPRecipientsRefused({"x@example.com": (421, b"closing")})
+    assert not mail_module.stops_batch(refused_5xx) and mail_module.stops_batch(refused_4xx)
+
+
+def test_staff_document_list_edits_keep_applicant_progress(logged_in):
+    from app.staff.service import create_user
+
+    client, session, _ = logged_in
+    create_user(session, "officer@sdu.edu.kz", "Aigerim", "officer", PASSWORD)
+    assert client.post("/api/staff/login", json={"email": "officer@sdu.edu.kz", "password": PASSWORD}).status_code == 200
+    session.add(Program(program_id="6B06102", title="Computer Science", faculty="IT", degree_level="bachelor"))
+    session.flush()
+    session.add_all(
+        ProgramDocumentRequirement(
+            program_id="6B06102", applicant_type="local", name=name, document_format="copy", deadline="Enrolment"
+        )
+        for name in ("School certificate", "National ID")
+    )
+    session.flush()
+    local = save(client, program="6B06102")
+    for item in local["items"]:
+        client.put(f"{ROOT}/programs/6B06102/local/documents/{item['id']}", json={"prepared": True})
+    documents = [
+        {"name": item["name"], "format": item["format"], "deadline": item["deadline"]} for item in local["items"]
+    ]
+
+    def edit(new_documents):
+        response = client.put("/api/staff/programs/6B06102/documents/local", json={"documents": new_documents})
+        assert response.status_code == 200, response.text
+        return client.get(f"{ROOT}/programs/6B06102/local").json()
+
+    # Saving the same list, reordering it or changing a deadline keeps every tick.
+    assert edit(documents)["prepared"] == 2
+    reordered = edit([{**documents[1], "deadline": "Updated deadline"}, documents[0]])
+    assert reordered["prepared"] == 2 and reordered["items"][0]["name"] == documents[1]["name"]
+    # Case or spacing changes keep the tick.
+    assert edit([{**documents[0], "name": "  school   CERTIFICATE "}, documents[1]])["prepared"] == 2
+    # A new requirement for the same document (another format or notarisation) clears its tick.
+    stricter = edit([{**documents[0], "format": "original", "notarisation": True}, documents[1]])
+    assert stricter["prepared"] == 1 and stricter["items"][1]["prepared"] is True
+    client.put(f"{ROOT}/programs/6B06102/local/documents/{stricter['items'][0]['id']}", json={"prepared": True})
+    # Renaming one document clears only that document's tick; a new one starts unprepared.
+    renamed = edit(
+        [
+            {**documents[0], "format": "original", "notarisation": True, "name": "School leaving certificate"},
+            documents[1],
+            {**documents[1], "name": "Photo"},
+        ]
+    )
+    assert renamed["total"] == 3 and renamed["prepared"] == 1
+    # Duplicate names are matched one to one, in order.
+    twice = edit([documents[1], documents[1]])
+    assert twice["total"] == 2 and twice["prepared"] == 1
+
+
+def test_daily_limit_rotates_who_gets_the_urgent_reminders(logged_in, monkeypatch):
+    client, session, messages = logged_in
+    _opted_in_applicants(client, session, messages, 3)
+    monkeypatch.setenv("REMINDER_DAILY_LIMIT", "2")
+    get_settings.cache_clear()
+    received: dict[str, int] = {}
+
+    def count(self, recipient, subject, body):
+        received[recipient] = received.get(recipient, 0) + 1
+
+    monkeypatch.setattr(mail.Mailer, "send", count)
+    for day in (0, 6, 7):  # 7 days, 1 day and deadline day; each run its own 24 hours
+        session.execute(
+            DeadlineReminder.__table__.update()
+            .where(DeadlineReminder.sent_at.is_not(None))
+            .values(sent_at=DeadlineReminder.sent_at - timedelta(days=1))
+        )
+        send_due_reminders(session, get_settings(), TODAY + timedelta(days=day))
+    # 6 e-mails for 3 applicants: nobody is skipped every time.
+    assert sorted(received.values()) == [2, 2, 2]
