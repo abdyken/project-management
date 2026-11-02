@@ -289,8 +289,9 @@ def update_program(program_id: ProgramId, body: ProgramFields, user: Staff, sess
     response_model=StaffProgramOut,
     responses={**STAFF_RESPONSES, **NOT_FOUND_RESPONSE, **INVALID_REQUEST_RESPONSE},
     summary="Replace the document list of one applicant type",
-    description="The list replaces the old one in the given order. Documents whose name is unchanged keep "
-    "their id, so applicants keep their progress; removed or renamed documents lose it. "
+    description="The list replaces the old one in the given order. Documents whose name, format, translation "
+    "and notarisation are unchanged keep their id, so applicants keep their progress (deadline and order may "
+    "change); any other change, or removal, resets that document's progress. "
     "An empty list means no official list is "
     "published: the checklist then shows the missing-data warning.",
 )
@@ -300,9 +301,11 @@ def replace_documents(
     program = session.get(Program, program_id)
     if program is None:
         return _not_found()
-    # Update rows in place where the name is unchanged, so applicants keep their
-    # "prepared" ticks (progress rows cascade from these ids). Only removed or renamed
-    # documents lose their own tick; matching by position could move a tick to another document.
+    # Update rows in place where the document is unchanged, so applicants keep their
+    # "prepared" ticks (progress rows cascade from these ids). A renamed or removed document,
+    # or one that now needs another format, translation or notarisation, loses its own tick:
+    # what the applicant prepared no longer matches. Matching by position could move a tick
+    # to a different document.
     existing: dict[str, list[ProgramDocumentRequirement]] = {}
     for row in session.scalars(
         select(ProgramDocumentRequirement)
@@ -315,7 +318,16 @@ def replace_documents(
         existing.setdefault(_document_key(row.name), []).append(row)
     for order, document in enumerate(body.documents):
         matches = existing.get(_document_key(document.name))
-        row = matches.pop(0) if matches else ProgramDocumentRequirement(program_id=program_id, applicant_type=applicant_type)
+        row = matches.pop(0) if matches else None
+        if row is not None and (row.document_format, row.translation_required, row.notarisation_required) != (
+            document.format,
+            document.translation,
+            document.notarisation,
+        ):
+            session.delete(row)
+            row = None
+        if row is None:
+            row = ProgramDocumentRequirement(program_id=program_id, applicant_type=applicant_type)
         row.name = document.name
         row.document_format = document.format
         row.translation_required = document.translation

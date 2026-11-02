@@ -21,11 +21,12 @@ export const loginApplicant = (email: string, password: string) =>
     method: "POST",
     body: JSON.stringify({ email, password }),
   })
-export const registerApplicant = (email: string, password: string, language: Language) =>
+// No password here: it is set on the verification page, by whoever opens the e-mailed link.
+export const registerApplicant = (email: string, language: Language) =>
   request<{ message: string }>(`${ROOT}/register`, {
     ...options,
     method: "POST",
-    body: JSON.stringify({ email, password, language }),
+    body: JSON.stringify({ email, language }),
     timeoutMs: 20_000,
   })
 export const verifyApplicant = (token: string, password: string) =>

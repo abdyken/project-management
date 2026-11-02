@@ -3,12 +3,14 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.assistant.schemas import Language
 from app.catalogue.schemas import ProgramOut
 from app.checklist.schemas import ApplicantType, DocumentRequirementOut
-from app.staff.schemas import LoginRequest
 from app.staff.service import normalize_email
 
 
-class RegisterRequest(LoginRequest):
-    password: str = Field(min_length=10, max_length=200)
+class RegisterRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=254)
+    # Ignored: the password is chosen on the verification page, by whoever opens the link
+    # from the inbox. Still accepted so older clients keep working.
+    password: str | None = Field(default=None, max_length=200)
     language: Language = "en"
 
     @field_validator("email")

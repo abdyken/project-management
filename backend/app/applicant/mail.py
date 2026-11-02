@@ -43,7 +43,12 @@ class Mailer:
                 smtp.close()
                 raise
             self._smtp = smtp
-        self._smtp.send_message(_message(self.settings, recipient, subject, body))
+        try:
+            self._smtp.send_message(_message(self.settings, recipient, subject, body))
+        except BaseException:
+            # The server may have closed the connection (e.g. 421): never reuse it.
+            self.close()
+            raise
 
     def close(self) -> None:
         if self._smtp is not None:
@@ -74,6 +79,9 @@ def describe_error(error: BaseException) -> str:
 def stops_batch(error: BaseException) -> bool:
     """True when later messages in the same run would fail too (login, quota, connection).
 
-    A refused recipient only affects that message.
+    Only a permanent (5xx) refusal of the recipient affects just that message; a temporary
+    one such as Gmail's "421 ... closing connection" means the server stopped accepting.
     """
-    return not isinstance(error, smtplib.SMTPRecipientsRefused)
+    if isinstance(error, smtplib.SMTPRecipientsRefused):
+        return any(not 500 <= code < 600 for code, _ in error.recipients.values())
+    return True

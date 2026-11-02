@@ -26,7 +26,7 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
   const [password, setPassword] = useState("")
   const mutation = useMutation({
     mutationFn: async () =>
-      register ? await registerApplicant(email, password, language) : await loginApplicant(email, password),
+      register ? await registerApplicant(email, language) : await loginApplicant(email, password),
     onSuccess: (result) => {
       setPassword("")
       if ("id" in result) {
@@ -75,19 +75,19 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
               onChange={(event) => setEmail(event.target.value)}
             />
           </label>
-          <label className="block space-y-2 text-sm">
-            <span>{t("password")}</span>
-            <Input
-              type="password"
-              autoComplete={register ? "new-password" : "current-password"}
-              required
-              minLength={register ? 10 : 1}
-              maxLength={200}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </label>
-          {register && <p className="text-xs text-muted-foreground">{t("passwordHint")}</p>}
+          {!register && (
+            <label className="block space-y-2 text-sm">
+              <span>{t("password")}</span>
+              <Input
+                type="password"
+                autoComplete="current-password"
+                required
+                maxLength={200}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </label>
+          )}
           {message && (
             <p role="alert" className="text-sm text-destructive">
               {message}

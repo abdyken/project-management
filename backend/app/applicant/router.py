@@ -29,12 +29,16 @@ from app.checklist.models import ProgramDocumentRequirement
 from app.checklist.schemas import ApplicantType
 from app.config import get_settings
 from app.db import get_db_session
-from app.staff.passwords import hash_password
+from app.staff.passwords import DUMMY_HASH, hash_password
 from app.staff.schemas import LoginRequest
 from app.staff.service import LoginLimiter, normalize_email
 
 COOKIE_NAME, COOKIE_PATH = "applicant_session", "/api/applicant"
+# Per e-mail: 5 attempts in 15 minutes protect each account. Per client IP the limit is
+# higher, because a campus or mobile network puts many applicants behind one address.
+IP_LIMIT = 30
 login_limiter, register_limiter = LoginLimiter(), LoginLimiter()
+login_ip_limiter, register_ip_limiter = LoginLimiter(limit=IP_LIMIT), LoginLimiter(limit=IP_LIMIT)
 Db = Annotated[Session, Depends(get_db_session)]
 Token = Annotated[str | None, Cookie(alias=COOKIE_NAME, include_in_schema=False)]
 logger = logging.getLogger(__name__)
@@ -87,18 +91,20 @@ def register(body: RegisterRequest, request: Request, session: Db) -> MessageOut
     settings = get_settings()
     if not settings.smtp_host:
         raise ApiProblem(503, "MAIL_UNAVAILABLE", "E-mail delivery is not configured.")
-    keys = (f"email:{body.email}", f"ip:{client_ip(request)}")
-    if register_limiter.blocked(*keys):
+    email_key, ip_key = f"email:{body.email}", f"ip:{client_ip(request)}"
+    if register_limiter.blocked(email_key) or register_ip_limiter.blocked(ip_key):
         raise ApiProblem(429, "TOO_MANY_ATTEMPTS", "Please try again in 15 minutes.")
-    register_limiter.record_failure(*keys)
+    register_limiter.record_failure(email_key)
+    register_ip_limiter.record_failure(ip_key)
     # Same response for an existing account; registration also resends an unexpired verification.
-    # The password is final only on the verification page: whoever opens the link from the
-    # inbox chooses it, so registering someone else's pending e-mail gains nothing.
+    # The password is set on the verification page: whoever opens the link from the inbox
+    # chooses it, so registering someone else's pending e-mail gains nothing.
     user = session.scalar(select(Applicant).where(Applicant.email == body.email).with_for_update())
     if user is None:
         session.execute(
             insert(Applicant)
-            .values(email=body.email, password_hash=hash_password(body.password), language=body.language)
+            # No usable password until verification; no scrypt on this anonymous endpoint.
+            .values(email=body.email, password_hash=DUMMY_HASH, language=body.language)
             .on_conflict_do_nothing(index_elements=[Applicant.email])
         )
         user = session.scalar(select(Applicant).where(Applicant.email == body.email).with_for_update())
@@ -155,14 +161,15 @@ def verify(body: VerifyRequest, response: Response, session: Db) -> ApplicantOut
 
 @router.post("/login", response_model=ApplicantOut)
 def login(body: LoginRequest, request: Request, response: Response, session: Db, token: Token = None) -> ApplicantOut:
-    keys = (f"email:{normalize_email(body.email)}", f"ip:{client_ip(request)}")
-    if login_limiter.blocked(*keys):
+    email_key, ip_key = f"email:{normalize_email(body.email)}", f"ip:{client_ip(request)}"
+    if login_limiter.blocked(email_key) or login_ip_limiter.blocked(ip_key):
         raise ApiProblem(429, "TOO_MANY_ATTEMPTS", "Please try again in 15 minutes.")
     user = service.authenticate(session, body.email, body.password)
     if user is None:
-        login_limiter.record_failure(*keys)
+        login_limiter.record_failure(email_key)
+        login_ip_limiter.record_failure(ip_key)
         raise ApiProblem(401, "INVALID_CREDENTIALS", "Wrong e-mail or password, or e-mail not verified.")
-    login_limiter.reset(keys[0])
+    login_limiter.reset(email_key)
     if token:
         session.execute(delete(ApplicantSession).where(ApplicantSession.token_hash == service.token_hash(token)))
     set_cookie(response, service.start_session(session, user, get_settings()))

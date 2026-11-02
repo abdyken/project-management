@@ -6,7 +6,7 @@ import asyncio
 import logging
 import smtplib
 from collections import defaultdict
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
@@ -59,12 +59,22 @@ _TYPE = {
 ALMATY = ZoneInfo("Asia/Almaty")
 
 
-def _sent_today(session: Session) -> int:
-    """Reminder e-mails already sent on the current Almaty day: one per applicant and send time."""
-    start = datetime.combine(now().astimezone(ALMATY).date(), time.min, ALMATY)
+def _stage(days_left: int) -> int | None:
+    """The latest milestone (7, 1 or 0 days) already reached.
+
+    A milestone missed on its own day (outage, daily limit) is still sent on the following
+    days until the next milestone replaces it; nothing is sent after the deadline.
+    """
+    if days_left < 0 or days_left > 7:
+        return None
+    return days_left if days_left in (0, 1) else 7
+
+
+def _sent_last_24_hours(session: Session) -> int:
+    """Reminder e-mails in the last 24 hours (Gmail counts a rolling day): one per applicant and send time."""
     sends = (
         select(DeadlineReminder.applicant_id, DeadlineReminder.sent_at)
-        .where(DeadlineReminder.sent_at >= start, DeadlineReminder.sent_at < start + timedelta(days=1))
+        .where(DeadlineReminder.sent_at > now() - timedelta(hours=24))
         .distinct()
         .subquery()
     )
@@ -72,7 +82,7 @@ def _sent_today(session: Session) -> int:
 
 
 def send_due_reminders(session: Session, settings: Settings, today: date | None = None) -> int:
-    """Send one digest per applicant listing every saved checklist that is due today.
+    """Send one digest per applicant listing every saved checklist with a reminder due.
 
     Returns the number of e-mails sent. Every catalogue programme shares the same
     deadlines, so per-programme e-mails would arrive in bulk on the same three days.
@@ -88,17 +98,20 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
         if not program or not program.is_active:
             continue
         deadline = getattr(program, f"deadline_{applicant_type}")
-        milestone = (deadline - today).days if deadline else -1
-        if milestone in (7, 1, 0):
+        milestone = _stage((deadline - today).days) if deadline else None
+        if milestone is not None:
             due[user_id].append((program_id, applicant_type, deadline, milestone))
     if not due:
         return 0
-    remaining = settings.reminder_daily_limit - _sent_today(session)
+    remaining = settings.reminder_daily_limit - _sent_last_24_hours(session)
+    # Closest deadline first, so the daily limit delays the least urgent reminders.
+    order = sorted(due, key=lambda user_id: (min(item[2] for item in due[user_id]), user_id))
     sent = 0
     with mail.Mailer(settings) as mailer:
-        for user_id, items in due.items():
+        for user_id in order:
+            items = due[user_id]
             if sent >= remaining:
-                logger.warning("Daily reminder limit reached; the remaining reminders wait for the next run.")
+                logger.warning("Daily reminder limit reached; the remaining reminders are sent on later runs.")
                 break
             try:
                 sent += _send_digest(session, settings, mailer, user_id, items)

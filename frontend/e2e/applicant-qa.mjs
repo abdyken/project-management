@@ -60,7 +60,6 @@ async function run(type, name, width) {
       await page.getByRole("link", { name: "Create account", exact: true }).click()
       await page.getByRole("heading", { name: "Create account", exact: true }).waitFor()
       await page.getByLabel("E-mail", { exact: true }).fill(EMAIL)
-      await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
       const registrationResponse = page.waitForResponse((response) => response.url().endsWith("/api/applicant/register") && response.request().method() === "POST")
       await page.getByRole("button", { name: "Create account", exact: true }).click()
       const registration = await registrationResponse
