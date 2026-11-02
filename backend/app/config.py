@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_starttls: bool = True
     smtp_from: str = "admissions@localhost"
+    # Reminder e-mails per Almaty day. A free Gmail account sends about 500 a day; the rest
+    # stays for verification and reply e-mails. Reminders over the limit wait for the next run.
+    reminder_daily_limit: int = 300
     admissions_office_contact: str = (
         "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
     )

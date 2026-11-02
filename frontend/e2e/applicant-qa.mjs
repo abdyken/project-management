@@ -69,6 +69,7 @@ async function run(type, name, width) {
       record(name, width, "US23 registration sends a real SMTP verification message")
       const link = await verificationLink()
       await page.goto(link)
+      await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
       await page.getByRole("button", { name: "Verify e-mail", exact: true }).click()
       await page.waitForURL(/\/account$/)
       created = true

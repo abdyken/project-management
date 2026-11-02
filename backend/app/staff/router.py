@@ -7,6 +7,7 @@ from fastapi import APIRouter, Cookie, Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 from sqlalchemy.orm import Session
 
+from app.api.client import client_ip
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
 from app.config import get_settings
 from app.db import get_db_session
@@ -81,15 +82,6 @@ def require_staff(role: str | None = None):
     return dependency
 
 
-def _client_ip(request: Request) -> str:
-    # Caddy sets X-Forwarded-For to the real client and nginx appends Caddy's address,
-    # so the first entry is the client. Without a proxy (tests) the socket address is used.
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
-
-
 def _user_out(user: StaffUser) -> StaffUserOut:
     return StaffUserOut(id=user.id, email=user.email, name=user.name, role=user.role)
 
@@ -120,7 +112,7 @@ def login(
     response: Response,
     session: Annotated[Session, Depends(get_db_session)],
 ) -> StaffUserOut:
-    keys = (f"email:{normalize_email(body.email)}", f"ip:{_client_ip(request)}")
+    keys = (f"email:{normalize_email(body.email)}", f"ip:{client_ip(request)}")
     if login_limiter.blocked(*keys):
         raise StaffAuthError(429, TOO_MANY_ATTEMPTS, "Too many failed logins. Try again in 15 minutes.")
     user = authenticate(session, body.email, body.password)

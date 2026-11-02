@@ -5,13 +5,15 @@ from __future__ import annotations
 import asyncio
 import logging
 import smtplib
-from datetime import date, datetime
+from collections import defaultdict
+from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from app.api.errors import ApiProblem
 from app.applicant import mail
 from app.applicant.models import Applicant, DeadlineReminder, SavedProgram
 from app.applicant.service import now, saved_checklist
@@ -49,24 +51,81 @@ _TEXT = {
 }
 
 
+_TYPE = {
+    "en": {"local": "local applicants", "international": "international applicants"},
+    "ru": {"local": "местные абитуриенты", "international": "иностранные абитуриенты"},
+    "kk": {"local": "отандық талапкерлер", "international": "шетелдік талапкерлер"},
+}
+ALMATY = ZoneInfo("Asia/Almaty")
+
+
+def _sent_today(session: Session) -> int:
+    """Reminder e-mails already sent on the current Almaty day: one per applicant and send time."""
+    start = datetime.combine(now().astimezone(ALMATY).date(), time.min, ALMATY)
+    sends = (
+        select(DeadlineReminder.applicant_id, DeadlineReminder.sent_at)
+        .where(DeadlineReminder.sent_at >= start, DeadlineReminder.sent_at < start + timedelta(days=1))
+        .distinct()
+        .subquery()
+    )
+    return session.scalar(select(func.count()).select_from(sends)) or 0
+
+
 def send_due_reminders(session: Session, settings: Settings, today: date | None = None) -> int:
+    """Send one digest per applicant listing every saved checklist that is due today.
+
+    Returns the number of e-mails sent. Every catalogue programme shares the same
+    deadlines, so per-programme e-mails would arrive in bulk on the same three days.
+    """
     if not settings.applicant_accounts_enabled or not settings.smtp_host:
         return 0
-    today = today or datetime.now(ZoneInfo("Asia/Almaty")).date()
-    saved_keys = session.execute(
+    today = today or datetime.now(ALMATY).date()
+    due: dict[int, list[tuple[str, str, date, int]]] = defaultdict(list)
+    for user_id, program_id, applicant_type in session.execute(
         select(SavedProgram.applicant_id, SavedProgram.program_id, SavedProgram.applicant_type)
-    ).all()
-    sent = 0
-    for user_id, program_id, applicant_type in saved_keys:
-        # Re-read preferences for each delivery, so opting out stops future messages.
-        user = session.get(Applicant, user_id, populate_existing=True)
+    ).all():
         program = session.get(Program, program_id, populate_existing=True)
-        if not user or not user.verified or not user.reminders_enabled or not program or not program.is_active:
+        if not program or not program.is_active:
             continue
         deadline = getattr(program, f"deadline_{applicant_type}")
         milestone = (deadline - today).days if deadline else -1
-        if milestone not in (7, 1, 0):
-            continue
+        if milestone in (7, 1, 0):
+            due[user_id].append((program_id, applicant_type, deadline, milestone))
+    if not due:
+        return 0
+    remaining = settings.reminder_daily_limit - _sent_today(session)
+    sent = 0
+    with mail.Mailer(settings) as mailer:
+        for user_id, items in due.items():
+            if sent >= remaining:
+                logger.warning("Daily reminder limit reached; the remaining reminders wait for the next run.")
+                break
+            try:
+                sent += _send_digest(session, settings, mailer, user_id, items)
+            except (OSError, smtplib.SMTPException) as error:
+                session.rollback()
+                logger.warning(
+                    "Reminder delivery failed (%s); it will be retried on the next run.", mail.describe_error(error)
+                )
+                if mail.stops_batch(error):
+                    break
+            except Exception:
+                # E.g. the applicant removed a checklist during the run: skip only this applicant.
+                session.rollback()
+                logger.exception("Reminder for one applicant failed; continuing with the others.")
+    return sent
+
+
+def _send_digest(
+    session: Session, settings: Settings, mailer: mail.Mailer, user_id: int, items: list[tuple[str, str, date, int]]
+) -> int:
+    # Re-read preferences for each delivery, so opting out stops future messages.
+    user = session.get(Applicant, user_id, populate_existing=True)
+    if not user or not user.verified or not user.reminders_enabled:
+        return 0
+    subject, deadline_label, missing_label, complete, unavailable, manage = _TEXT[user.language]
+    sections, deliveries = [], []
+    for program_id, applicant_type, deadline, milestone in items:
         key = dict(
             applicant_id=user_id,
             program_id=program_id,
@@ -84,34 +143,45 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
             .with_for_update(skip_locked=True)
         )
         if delivery is None:
-            session.commit()
             continue
-        checklist = saved_checklist(session, user, program_id, applicant_type, settings)
-        subject, deadline_label, missing_label, complete, unavailable, manage = _TEXT[user.language]
+        program = session.get(Program, program_id)
+        try:
+            checklist = saved_checklist(session, user, program_id, applicant_type, settings)
+        except ApiProblem:
+            continue  # removed from the account during this run
         title = getattr(program, f"title_{user.language}", None) or program.title
         missing = "\n".join(f"- {item.name}" for item in checklist.items if not item.prepared)
         progress = unavailable if not checklist.items else f"{missing_label}:\n{missing}" if missing else complete
-        body = (
-            f"{title} ({program_id})\n{deadline_label}: {deadline.isoformat()}\n\n{progress}\n\n"
-            f"{manage}: {settings.public_base_url.rstrip('/')}/account\n\n{settings.admissions_office_contact}\n"
+        sections.append(
+            f"{title} ({program_id}), {_TYPE[user.language][applicant_type]}\n"
+            f"{deadline_label}: {deadline.isoformat()}\n\n{progress}"
         )
-        try:
-            mail.send_mail(settings, user.email, subject, body)
-        except (OSError, smtplib.SMTPException):
-            session.rollback()
-            logger.warning("Reminder delivery failed; it will be retried on the next run.")
-            continue
-        delivery.sent_at = now()
+        deliveries.append(delivery)
+    if not deliveries:
         session.commit()
-        sent += 1
-    return sent
+        return 0
+    body = (
+        "\n\n".join(sections)
+        + f"\n\n{manage}: {settings.public_base_url.rstrip('/')}/account\n\n{settings.admissions_office_contact}\n"
+    )
+    mailer.send(user.email, subject, body)
+    sent_at = now()
+    for delivery in deliveries:
+        delivery.sent_at = sent_at
+    session.commit()
+    return 1
 
 
 def _run(settings: Settings) -> None:
     from app.applicant.requests import send_request_notifications
-    with get_session(settings) as session:
-        send_due_reminders(session, settings)
-        send_request_notifications(session, settings)
+
+    # Separate sessions: a reminder failure must not hold back reply notifications.
+    for job in (send_due_reminders, send_request_notifications):
+        try:
+            with get_session(settings) as session:
+                job(session, settings)
+        except Exception:
+            logger.exception("%s failed; retrying in one hour.", job.__name__)
 
 
 async def reminders_hourly(settings: Settings) -> None:

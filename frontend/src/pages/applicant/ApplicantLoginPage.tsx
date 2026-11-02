@@ -116,14 +116,20 @@ export function ApplicantVerifyPage() {
   const navigate = useNavigate()
   // Fragments are never sent to the server, proxy access logs or referrer headers.
   const [token] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get("token") ?? "")
+  // The account password is set here, by whoever opened the link from the inbox.
+  const [password, setPassword] = useState("")
   const verification = useMutation({
-    mutationFn: () => verifyApplicant(token),
+    mutationFn: () => verifyApplicant(token, password),
     onSuccess: (user) => {
       cache.removeQueries({ queryKey: APPLICANT_KEY })
       cache.setQueryData(APPLICANT_ME_KEY, user)
       navigate("/account", { replace: true })
     },
   })
+  function submit(event: FormEvent) {
+    event.preventDefault()
+    verification.mutate()
+  }
   return (
     <div className="mx-auto max-w-md space-y-5 px-4 py-12">
       <h1 className="text-3xl font-semibold">{t("verify")}</h1>
@@ -135,9 +141,24 @@ export function ApplicantVerifyPage() {
             : t("invalidLink")}
         </p>
       )}
-      <Button disabled={!token || verification.isPending} onClick={() => verification.mutate()}>
-        {verification.isPending ? t("working") : t("verify")}
-      </Button>
+      <form onSubmit={submit} className="space-y-4">
+        <label className="block space-y-2 text-sm">
+          <span>{t("password")}</span>
+          <Input
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={10}
+            maxLength={200}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </label>
+        <p className="text-xs text-muted-foreground">{t("passwordHint")}</p>
+        <Button disabled={!token || password.length < 10 || verification.isPending} type="submit">
+          {verification.isPending ? t("working") : t("verify")}
+        </Button>
+      </form>
       <Link to="/account/register" className="block text-sm underline">
         {t("register")}
       </Link>

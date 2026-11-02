@@ -26,6 +26,8 @@ class RegisterRequest(LoginRequest):
 
 class VerifyRequest(BaseModel):
     token: str = Field(min_length=20, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    # Set here, not at registration: only the inbox owner reaches this page.
+    password: str = Field(min_length=10, max_length=200)
 
 
 class ApplicantOut(BaseModel):

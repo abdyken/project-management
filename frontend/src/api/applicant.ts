@@ -28,8 +28,8 @@ export const registerApplicant = (email: string, password: string, language: Lan
     body: JSON.stringify({ email, password, language }),
     timeoutMs: 20_000,
   })
-export const verifyApplicant = (token: string) =>
-  request<Applicant>(`${ROOT}/verify`, { ...options, method: "POST", body: JSON.stringify({ token }) })
+export const verifyApplicant = (token: string, password: string) =>
+  request<Applicant>(`${ROOT}/verify`, { ...options, method: "POST", body: JSON.stringify({ token, password }) })
 export const logoutApplicant = () => request<void>(`${ROOT}/logout`, { ...options, method: "POST" })
 export const deleteApplicant = () => request<void>(`${ROOT}/me`, { ...options, method: "DELETE" })
 export const updatePreferences = (body: Pick<Applicant, "language" | "reminders_enabled">) =>

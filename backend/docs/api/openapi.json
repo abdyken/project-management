@@ -2415,7 +2415,7 @@
           "staff: catalogue"
         ],
         "summary": "Replace the document list of one applicant type",
-        "description": "The list replaces the old one in the given order. An empty list means no official list is published: the checklist then shows the missing-data warning.",
+        "description": "The list replaces the old one in the given order. Documents whose name is unchanged keep their id, so applicants keep their progress; removed or renamed documents lose it. An empty list means no official list is published: the checklist then shows the missing-data warning.",
         "operationId": "replace_documents_api_staff_programs__program_id__documents__applicant_type__put",
         "parameters": [
           {
@@ -8643,11 +8643,18 @@
             "minLength": 20,
             "pattern": "^[A-Za-z0-9_-]+$",
             "title": "Token"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 10,
+            "title": "Password"
           }
         },
         "type": "object",
         "required": [
-          "token"
+          "token",
+          "password"
         ],
         "title": "VerifyRequest"
       }

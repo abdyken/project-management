@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import smtplib
 from datetime import datetime, timedelta
 from typing import Annotated, Literal
@@ -30,6 +31,8 @@ from app.config import Settings
 from app.db import Base, get_db_session
 from app.staff.models import StaffUser
 from app.staff.router import require_staff
+
+logger = logging.getLogger(__name__)
 
 
 class AdmissionsRequest(Base):
@@ -300,8 +303,13 @@ def send_request_notifications(session: Session, settings: Settings) -> int:
                 subject,
                 f"{text}: {settings.public_base_url.rstrip('/')}/account/requests\n",
             )
-        except (OSError, smtplib.SMTPException):
+        except (OSError, smtplib.SMTPException) as error:
             session.rollback()
+            logger.warning(
+                "Reply notification failed (%s); it will be retried on the next run.", mail.describe_error(error)
+            )
+            if mail.stops_batch(error):
+                break
             continue
         row.notification_sent_at = now()
         session.commit()

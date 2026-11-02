@@ -11,6 +11,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from app.api.client import client_ip
 from app.api.errors import ApiProblem, DATABASE_UNAVAILABLE_RESPONSE, ErrorResponse, INVALID_REQUEST_RESPONSE
 from app.applicant import mail, service
 from app.applicant.models import Applicant, ApplicantSession, DocumentProgress, SavedProgram
@@ -67,11 +68,6 @@ router = APIRouter(
 )
 
 
-def client_ip(request: Request) -> str:
-    # Use the socket address, never an untrusted forwarded header (uvicorn handles trusted proxies).
-    return request.client.host if request.client else "unknown"
-
-
 def set_cookie(response: Response, token: str) -> None:
     settings = get_settings()
     response.set_cookie(
@@ -96,24 +92,25 @@ def register(body: RegisterRequest, request: Request, session: Db) -> MessageOut
         raise ApiProblem(429, "TOO_MANY_ATTEMPTS", "Please try again in 15 minutes.")
     register_limiter.record_failure(*keys)
     # Same response for an existing account; registration also resends an unexpired verification.
+    # The password is final only on the verification page: whoever opens the link from the
+    # inbox chooses it, so registering someone else's pending e-mail gains nothing.
     user = session.scalar(select(Applicant).where(Applicant.email == body.email).with_for_update())
     if user is None:
         session.execute(
             insert(Applicant)
-            .values(
-                email=body.email,
-                password_hash=hash_password(body.password),
-                language=body.language,
-            )
+            .values(email=body.email, password_hash=hash_password(body.password), language=body.language)
             .on_conflict_do_nothing(index_elements=[Applicant.email])
         )
         user = session.scalar(select(Applicant).where(Applicant.email == body.email).with_for_update())
     if not user.verified:
-        user.password_hash = hash_password(body.password)
         user.language = body.language
         token = secrets.token_urlsafe(32)
         user.verification_hash = service.token_hash(token)
         user.verification_expires_at = service.now() + timedelta(hours=24)
+        email, language = user.email, user.language
+        # Commit before talking to SMTP: a slow mail server must not hold the row lock or a
+        # pool connection. If sending fails, registering again sends a new link.
+        session.commit()
         subjects = {
             "en": "Verify your SDU applicant account",
             "ru": "Подтвердите аккаунт абитуриента SDU",
@@ -127,14 +124,13 @@ def register(body: RegisterRequest, request: Request, session: Db) -> MessageOut
         try:
             mail.send_mail(
                 settings,
-                user.email,
-                subjects[user.language],
-                f"{instructions[user.language]}\n\n{settings.public_base_url.rstrip('/')}/account/verify#token={token}\n",
+                email,
+                subjects[language],
+                f"{instructions[language]}\n\n{settings.public_base_url.rstrip('/')}/account/verify#token={token}\n",
             )
-        except (OSError, smtplib.SMTPException):
-            session.rollback()
+        except (OSError, smtplib.SMTPException) as error:
+            logger.warning("Verification e-mail failed: %s", mail.describe_error(error))
             raise ApiProblem(503, "MAIL_UNAVAILABLE", "E-mail could not be sent. Please try again.") from None
-        session.commit()
     return MessageOut(message="If the account needs verification, a link has been sent to your e-mail.")
 
 
@@ -151,6 +147,7 @@ def verify(body: VerifyRequest, response: Response, session: Db) -> ApplicantOut
     )
     if user is None:
         raise ApiProblem(422, "INVALID_VERIFICATION", "This verification link is invalid or expired.")
+    user.password_hash = hash_password(body.password)
     user.verified, user.verification_hash, user.verification_expires_at = True, None, None
     set_cookie(response, service.start_session(session, user, get_settings()))
     return ApplicantOut.model_validate(user)
