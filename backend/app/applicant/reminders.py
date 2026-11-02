@@ -104,8 +104,26 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
     if not due:
         return 0
     remaining = settings.reminder_daily_limit - _sent_last_24_hours(session)
-    # Closest deadline first, so the daily limit delays the least urgent reminders.
-    order = sorted(due, key=lambda user_id: (min(item[2] for item in due[user_id]), user_id))
+    # Closest deadline first; among equals (every programme shares its deadlines) whoever has
+    # had the fewest and oldest reminders, so the daily limit does not always skip the same people.
+    history = {
+        user_id: (count, last)
+        for user_id, count, last in session.execute(
+            select(DeadlineReminder.applicant_id, func.count(), func.max(DeadlineReminder.sent_at))
+            .where(DeadlineReminder.applicant_id.in_(due), DeadlineReminder.sent_at.is_not(None))
+            .group_by(DeadlineReminder.applicant_id)
+        )
+    }
+    never = datetime.min.replace(tzinfo=ALMATY)
+    order = sorted(
+        due,
+        key=lambda user_id: (
+            min(item[2] for item in due[user_id]),
+            history.get(user_id, (0, never))[0],
+            history.get(user_id, (0, never))[1],
+            user_id,
+        ),
+    )
     sent = 0
     with mail.Mailer(settings) as mailer:
         for user_id in order:

@@ -740,3 +740,25 @@ def test_staff_document_list_edits_keep_applicant_progress(logged_in):
     # Duplicate names are matched one to one, in order.
     twice = edit([documents[1], documents[1]])
     assert twice["total"] == 2 and twice["prepared"] == 1
+
+
+def test_daily_limit_rotates_who_gets_the_urgent_reminders(logged_in, monkeypatch):
+    client, session, messages = logged_in
+    _opted_in_applicants(client, session, messages, 3)
+    monkeypatch.setenv("REMINDER_DAILY_LIMIT", "2")
+    get_settings.cache_clear()
+    received: dict[str, int] = {}
+
+    def count(self, recipient, subject, body):
+        received[recipient] = received.get(recipient, 0) + 1
+
+    monkeypatch.setattr(mail.Mailer, "send", count)
+    for day in (0, 6, 7):  # 7 days, 1 day and deadline day; each run its own 24 hours
+        session.execute(
+            DeadlineReminder.__table__.update()
+            .where(DeadlineReminder.sent_at.is_not(None))
+            .values(sent_at=DeadlineReminder.sent_at - timedelta(days=1))
+        )
+        send_due_reminders(session, get_settings(), TODAY + timedelta(days=day))
+    # 6 e-mails for 3 applicants: nobody is skipped every time.
+    assert sorted(received.values()) == [2, 2, 2]
