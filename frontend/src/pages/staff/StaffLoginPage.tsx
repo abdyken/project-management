@@ -21,7 +21,7 @@ export function StaffLoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  if (me.data) return <Navigate to={next} replace />
+  if (me.data && !me.isError) return <Navigate to={next} replace />
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()

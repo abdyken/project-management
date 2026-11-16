@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { AppLayout } from "@/components/layout/AppLayout"
@@ -20,8 +20,24 @@ import { ApplicantAccountPage } from "@/pages/applicant/ApplicantAccountPage"
 import { ApplicantLoginPage, ApplicantVerifyPage } from "@/pages/applicant/ApplicantLoginPage"
 import { AdmissionsPage, CostPage, EligibilityPage, FundingPage, RecommendationsPage } from "@/pages/guidance/AdmissionsPages"
 import { ApplicantRequestsPage, StaffRequestsPage } from "@/pages/guidance/RequestsPage"
+import { isNotLoggedIn, STAFF_ME_KEY } from "@/staff/session"
 
-const queryClient = new QueryClient({
+function recheckStaffSession() {
+  void queryClient.invalidateQueries({ queryKey: STAFF_ME_KEY, exact: true })
+}
+
+const queryClient: QueryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      const [scope, name] = query.queryKey
+      if (scope === "staff" && name !== "me" && isNotLoggedIn(error)) recheckStaffSession()
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      if (isNotLoggedIn(error)) recheckStaffSession()
+    },
+  }),
   defaultOptions: {
     queries: {
       staleTime: 30_000,
