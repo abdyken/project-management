@@ -109,7 +109,12 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
     history = {
         user_id: (count, last)
         for user_id, count, last in session.execute(
-            select(DeadlineReminder.applicant_id, func.count(), func.max(DeadlineReminder.sent_at))
+            # One digest sets the same sent_at on each of its programme rows.
+            select(
+                DeadlineReminder.applicant_id,
+                func.count(DeadlineReminder.sent_at.distinct()),
+                func.max(DeadlineReminder.sent_at),
+            )
             .where(DeadlineReminder.applicant_id.in_(due), DeadlineReminder.sent_at.is_not(None))
             .group_by(DeadlineReminder.applicant_id)
         )

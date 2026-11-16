@@ -762,3 +762,35 @@ def test_daily_limit_rotates_who_gets_the_urgent_reminders(logged_in, monkeypatc
         send_due_reminders(session, get_settings(), TODAY + timedelta(days=day))
     # 6 e-mails for 3 applicants: nobody is skipped every time.
     assert sorted(received.values()) == [2, 2, 2]
+
+
+def test_daily_limit_counts_earlier_digests_not_programmes(applicant_env, monkeypatch):
+    _, session, messages = applicant_env
+    monkeypatch.setenv("REMINDER_DAILY_LIMIT", "1")
+    get_settings.cache_clear()
+    programs = [f"p{index}" for index in range(4)]
+    session.add_all(
+        Program(program_id=code, title=code, faculty="Engineering", degree_level="bachelor", deadline_local=TODAY + timedelta(days=7))
+        for code in programs
+    )
+    many = Applicant(email="many@example.com", password_hash="x", verified=True, reminders_enabled=True)
+    few = Applicant(email="few@example.com", password_hash="x", verified=True, reminders_enabled=True)
+    session.add_all([many, few])
+    session.flush()
+    session.add_all(SavedProgram(applicant_id=many.id, program_id=code, applicant_type="local") for code in programs)
+    session.add(SavedProgram(applicant_id=few.id, program_id="p0", applicant_type="local"))
+    past = service.now() - timedelta(days=60)
+    old_deadline = TODAY - timedelta(days=60)
+
+    def sent(applicant, code, milestone, at):
+        return DeadlineReminder(
+            applicant_id=applicant.id, program_id=code, applicant_type="local", deadline=old_deadline, milestone=milestone, sent_at=at
+        )
+
+    # "many" got one digest listing four programmes, "few" two digests for one programme.
+    session.add_all(sent(many, code, 7, past + timedelta(days=2)) for code in programs)
+    session.add_all([sent(few, "p0", 7, past), sent(few, "p0", 1, past + timedelta(days=1))])
+    session.flush()
+
+    assert send_due_reminders(session, get_settings(), TODAY) == 1
+    assert messages[-1][0] == "many@example.com"
