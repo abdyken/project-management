@@ -14,6 +14,8 @@ from app.staff.passwords import DUMMY_HASH, hash_password, verify_password
 
 MAX_FAILED_LOGINS = 5
 FAILED_LOGIN_WINDOW = timedelta(minutes=15)
+# Keys kept per limiter; when full, expired keys go first, then the oldest ones.
+MAX_LIMITER_KEYS = 10_000
 
 
 def _now() -> datetime:
@@ -34,28 +36,47 @@ class LoginLimiter:
     Kept in memory: the API runs as one process, and a restart only resets the
     counters. The keys never hold the password."""
 
-    def __init__(self, limit: int = MAX_FAILED_LOGINS, window: timedelta = FAILED_LOGIN_WINDOW) -> None:
+    def __init__(
+        self, limit: int = MAX_FAILED_LOGINS, window: timedelta = FAILED_LOGIN_WINDOW, max_keys: int = MAX_LIMITER_KEYS
+    ) -> None:
         self.limit = limit
         self.window = window
+        self.max_keys = max_keys
         self._failures: dict[str, deque[datetime]] = {}
         self._lock = threading.Lock()
 
-    def _recent(self, key: str, now: datetime) -> deque[datetime]:
-        failures = self._failures.setdefault(key, deque())
+    def _recent(self, key: str, now: datetime) -> deque[datetime] | None:
+        failures = self._failures.get(key)
+        if failures is None:
+            return None
         while failures and now - failures[0] >= self.window:
             failures.popleft()
+        if not failures:
+            del self._failures[key]
+            return None
         return failures
+
+    def _make_room(self, now: datetime) -> None:
+        for key in [key for key, failures in self._failures.items() if now - failures[-1] >= self.window]:
+            del self._failures[key]
+        while len(self._failures) >= self.max_keys:
+            del self._failures[next(iter(self._failures))]
 
     def blocked(self, *keys: str, now: datetime | None = None) -> bool:
         now = now or _now()
         with self._lock:
-            return any(len(self._recent(key, now)) >= self.limit for key in keys)
+            return any(len(self._recent(key, now) or ()) >= self.limit for key in keys)
 
     def record_failure(self, *keys: str, now: datetime | None = None) -> None:
         now = now or _now()
         with self._lock:
             for key in keys:
-                self._recent(key, now).append(now)
+                failures = self._recent(key, now)
+                if failures is None:
+                    if len(self._failures) >= self.max_keys:
+                        self._make_room(now)
+                    failures = self._failures[key] = deque()
+                failures.append(now)
 
     def reset(self, *keys: str) -> None:
         with self._lock:
