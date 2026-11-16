@@ -24,6 +24,14 @@ import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
 
+function SubmitHint({ id, text }: { id: string; text: string | null }) {
+  return text ? (
+    <p id={id} className="mt-2 text-sm text-muted-foreground">
+      {text}
+    </p>
+  ) : null
+}
+
 export function AdmissionsPage() {
   const t = useGuidanceT()
   return (
@@ -410,9 +418,10 @@ export function EligibilityPage() {
             mutation.reset()
           }}
         />
-        <Button className="mt-6" disabled={!program || mutation.isPending}>
+        <Button className="mt-6" disabled={!program || mutation.isPending} aria-describedby={program ? undefined : "eligibility-hint"}>
           {t(mutation.isPending ? "working" : "submit")}
         </Button>
+        <SubmitHint id="eligibility-hint" text={program ? null : t("needProgram")} />
       </form>
       <ErrorMessage error={mutation.error} />
       {mutation.data && <EligibilityResult result={mutation.data} />}
@@ -534,9 +543,11 @@ export function RecommendationsPage() {
         <Button
           className="mt-6"
           disabled={!interests.length || mutation.isPending}
+          aria-describedby={interests.length ? undefined : "recommendations-hint"}
         >
           {t(mutation.isPending ? "working" : "recommendations")}
         </Button>
+        <SubmitHint id="recommendations-hint" text={interests.length ? null : t("needInterest")} />
       </form>
       <ErrorMessage error={mutation.error} />
       {mutation.data && (
@@ -612,6 +623,11 @@ export function CostPage() {
         language,
       }),
   })
+  const costHint = !program
+    ? t("needProgram")
+    : !professional || Number(professional) + Number(mde) <= 0
+      ? t("needCredits")
+      : null
   const number = (value: number | null) =>
     value == null ? t("unknown") : new Intl.NumberFormat(language).format(value)
   return (
@@ -704,9 +720,11 @@ export function CostPage() {
             mutation.isPending ||
             Number(professional) + Number(mde) <= 0
           }
+          aria-describedby={costHint ? "cost-hint" : undefined}
         >
           {t(mutation.isPending ? "working" : "calculate")}
         </Button>
+        <SubmitHint id="cost-hint" text={costHint} />
       </form>
       <ErrorMessage error={mutation.error || data.error} />
       {data.data && (

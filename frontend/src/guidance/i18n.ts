@@ -234,6 +234,9 @@ const messages = {
   no: ["No", "Нет", "Жоқ"],
   submit: ["Check", "Проверить", "Тексеру"],
   calculate: ["Calculate", "Рассчитать", "Есептеу"],
+  needProgram: ["Choose a programme first.", "Сначала выберите программу.", "Алдымен бағдарламаны таңдаңыз."],
+  needInterest: ["Choose at least one interest.", "Выберите хотя бы один интерес.", "Кемінде бір қызығушылықты таңдаңыз."],
+  needCredits: ["Enter the profile ECTS credits.", "Введите кредиты ECTS по профильным дисциплинам.", "Бейіндік пәндер бойынша ECTS кредиттерін енгізіңіз."],
   working: ["Please wait…", "Подождите…", "Күтіңіз…"],
   error: [
     "Could not complete the request. Check your connection and try again.",
