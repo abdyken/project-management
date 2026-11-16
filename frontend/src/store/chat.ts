@@ -35,16 +35,9 @@ export type ChatMessage = {
   streaming?: boolean
 }
 
-export type CornerOffset = {
-  right: number
-  bottom: number
-}
-
 type ChatState = {
   open: boolean
   minimized: boolean
-  panelOffset: CornerOffset | null
-  fabOffset: CornerOffset | null
   sessionId: string
   messages: ChatMessage[]
   suggestions: string[]
@@ -52,8 +45,6 @@ type ChatState = {
   sending: boolean
   setOpen: (open: boolean) => void
   setMinimized: (minimized: boolean) => void
-  setPanelOffset: (offset: CornerOffset) => void
-  setFabOffset: (offset: CornerOffset) => void
   setDraft: (draft: string) => void
   setSending: (sending: boolean) => void
   setSuggestions: (suggestions: string[]) => void
@@ -91,8 +82,6 @@ export const useChatStore = create<ChatState>()(
     (set) => ({
       open: false,
       minimized: false,
-      panelOffset: null,
-      fabOffset: null,
       sessionId: randomId(),
       messages: [],
       suggestions: [],
@@ -103,8 +92,6 @@ export const useChatStore = create<ChatState>()(
         set({ open, minimized: false })
       },
       setMinimized: (minimized) => set({ minimized, open: !minimized }),
-      setPanelOffset: (panelOffset) => set({ panelOffset }),
-      setFabOffset: (fabOffset) => set({ fabOffset }),
       setDraft: (draft) => set({ draft: draft.slice(0, MESSAGE_MAX_LENGTH) }),
       setSending: (sending) => set({ sending }),
       setSuggestions: (suggestions) => set({ suggestions }),
@@ -169,8 +156,6 @@ export const useChatStore = create<ChatState>()(
         suggestions: state.suggestions,
         draft: state.draft,
         minimized: state.minimized,
-        panelOffset: state.panelOffset,
-        fabOffset: state.fabOffset,
       }),
     },
   ),
