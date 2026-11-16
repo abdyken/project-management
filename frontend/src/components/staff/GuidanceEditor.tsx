@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useEffect, useRef, useState } from "react"
 import {
   SUBJECT_PAIRS,
   getGuidance,
@@ -171,9 +171,26 @@ function Editor({
 }) {
   const t = useGuidanceT()
   const [value, setValue] = useState(initial)
+  const queryClient = useQueryClient()
+  const formRef = useRef<HTMLFormElement>(null)
   const mutation = useMutation({
     mutationFn: () => saveGuidance(programId, value),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(["staff", "guidance", programId], saved)
+      void queryClient.invalidateQueries({ queryKey: ["guidance", programId] })
+    },
   })
+  useEffect(() => {
+    const form = formRef.current
+    if (!form) return
+    // Required fields can sit in a closed <details>; open it so the browser can focus the field.
+    const openDetails = (event: Event) => {
+      const details = (event.target as Element).closest("details")
+      if (details) details.open = true
+    }
+    form.addEventListener("invalid", openDetails, true)
+    return () => form.removeEventListener("invalid", openDetails, true)
+  }, [])
   const patch = (change: Partial<Guidance>) => {
     setValue((v) => ({ ...v, ...change }))
     mutation.reset()
@@ -200,6 +217,7 @@ function Editor({
     })
   return (
     <form
+      ref={formRef}
       className="mt-8 space-y-6 border-t border-border pt-6"
       onSubmit={(e) => {
         e.preventDefault()
@@ -687,12 +705,15 @@ export function GuidanceEditor({ programId }: { programId: string }) {
   const data = useQuery({
     queryKey: ["staff", "guidance", programId],
     queryFn: ({ signal }) => getGuidance(programId, true, signal),
+    staleTime: 0,
   })
-  return data.data ? (
+  const [openedAt] = useState(Date.now)
+  // The editor copies the data once, so start it only from data fetched for this visit.
+  return data.data && data.dataUpdatedAt >= openedAt ? (
     <Editor key={programId} initial={data.data} programId={programId} />
   ) : (
     <div className="mt-6">
-      {data.isPending && <p>{t("working")}</p>}
+      {!data.isError && <p>{t("working")}</p>}
       <ErrorMessage error={data.error} />
       {data.isError && (
         <Button onClick={() => void data.refetch()}>{t("retry")}</Button>
