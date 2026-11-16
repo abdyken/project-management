@@ -8,14 +8,6 @@ function Sheet({ ...props }: ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root {...props} />
 }
 
-function SheetTrigger({ ...props }: ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger {...props} />
-}
-
-function SheetClose({ ...props }: ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close {...props} />
-}
-
 function SheetPortal({ ...props }: ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal {...props} />
 }
@@ -74,4 +66,4 @@ function SheetDescription({ className, ...props }: ComponentProps<typeof DialogP
   return <DialogPrimitive.Description className={cn("text-sm text-muted-foreground", className)} {...props} />
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger }
+export { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle }
