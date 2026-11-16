@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom"
 import { dismissInboxGroup, type InboxStatus, listInbox } from "@/api/staff"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useStaffT } from "@/staff/i18n"
+import { staffErrorKey, useStaffT } from "@/staff/i18n"
 import { selectClass } from "@/staff/styles"
 
 const STATUSES: InboxStatus[] = ["new", "answered", "dismissed"]
@@ -43,13 +43,12 @@ export function StaffInboxPage() {
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("inbox.lead")}</p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <div role="tablist" className="flex border border-border text-sm">
+        <div role="group" aria-label={t("inbox.statusFilter")} className="flex border border-border text-sm">
           {STATUSES.map((value) => (
             <button
               key={value}
               type="button"
-              role="tab"
-              aria-selected={status === value}
+              aria-pressed={status === value}
               onClick={() => setParam("status", value)}
               className={cn("px-3 py-1.5", status === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
             >
@@ -118,6 +117,11 @@ export function StaffInboxPage() {
                       {t("inbox.dismiss")}
                     </Button>
                   </div>
+                )}
+                {dismiss.isError && dismiss.variables === group.key && (
+                  <p role="alert" className="w-full text-xs text-destructive">
+                    {t("inbox.dismissFailed", { message: t(staffErrorKey(dismiss.error)) })}
+                  </p>
                 )}
               </li>
             ))}

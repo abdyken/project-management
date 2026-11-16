@@ -1,3 +1,4 @@
+import { isApiError } from "@/api/errors"
 import { useLanguageStore } from "@/i18n"
 
 // The staff area is used by the admissions office only, so it has Russian and English
@@ -25,6 +26,17 @@ const en = {
   "common.loading": "Loading…",
   "common.error": "Could not load the data. Try again.",
   "common.retry": "Try again",
+  "error.generic": "Something went wrong. Try again.",
+  "error.network": "No connection to the server. Check the connection and try again.",
+  "error.invalid": "Some fields are not valid. Check the form and try again.",
+  "error.notLoggedIn": "Your session has ended. Log in again.",
+  "error.forbidden": "You do not have permission for this action.",
+  "error.unavailable": "The database is unavailable. Try again later.",
+  "error.programExists": "A programme with this code already exists.",
+  "error.programNotFound": "This programme no longer exists.",
+  "error.faqNotFound": "This FAQ item no longer exists.",
+  "error.faqNotPublished": "Publish the FAQ item first.",
+  "error.groupNotFound": "This inbox question is no longer new.",
 
   "nav.faq": "FAQ",
   "faq.title": "FAQ base",
@@ -60,6 +72,7 @@ const en = {
   "edit.lang.en": "English (required)",
   "edit.lang.ru": "Russian",
   "edit.lang.kk": "Kazakh",
+  "edit.langGroup": "Language version",
   "edit.question": "Question",
   "edit.answer": "Answer",
   "edit.sourceLink": "Official page (https://…)",
@@ -106,6 +119,8 @@ const en = {
   "inbox.lastAsked": "last {date}",
   "inbox.answer": "Answer",
   "inbox.dismiss": "Dismiss",
+  "inbox.dismissFailed": "Could not dismiss: {message}",
+  "inbox.statusFilter": "Status",
   "inbox.answeredBy": "Answered by {faq}",
   "inbox.linkTitle": "This question comes from the inbox. After publishing, it is marked as answered.",
   "inbox.linked": "The inbox question is marked as answered.",
@@ -125,6 +140,10 @@ const en = {
   "dash.reasons": "Reasons of thumbs down",
   "dash.none": "No data for this period.",
   "dash.reason.none": "no reason",
+  "dash.reason.wrong": "Wrong",
+  "dash.reason.outdated": "Outdated",
+  "dash.reason.unclear": "Unclear",
+  "dash.reason.other": "Other",
   "dash.table": "Show as a table",
   "dash.date": "Date",
 
@@ -206,6 +225,17 @@ const ru: Record<StaffKey, string> = {
   "common.loading": "Загрузка…",
   "common.error": "Не удалось загрузить данные. Попробуйте ещё раз.",
   "common.retry": "Повторить",
+  "error.generic": "Что-то пошло не так. Попробуйте ещё раз.",
+  "error.network": "Нет связи с сервером. Проверьте соединение и попробуйте ещё раз.",
+  "error.invalid": "Некоторые поля заполнены неверно. Проверьте форму и попробуйте ещё раз.",
+  "error.notLoggedIn": "Сессия завершилась. Войдите снова.",
+  "error.forbidden": "У вас нет прав на это действие.",
+  "error.unavailable": "База данных недоступна. Попробуйте позже.",
+  "error.programExists": "Программа с таким кодом уже существует.",
+  "error.programNotFound": "Такой программы больше нет.",
+  "error.faqNotFound": "Такого пункта FAQ больше нет.",
+  "error.faqNotPublished": "Сначала опубликуйте пункт FAQ.",
+  "error.groupNotFound": "Этот вопрос во входящих уже не новый.",
 
   "nav.faq": "FAQ",
   "faq.title": "База FAQ",
@@ -241,6 +271,7 @@ const ru: Record<StaffKey, string> = {
   "edit.lang.en": "Английский (обязательно)",
   "edit.lang.ru": "Русский",
   "edit.lang.kk": "Казахский",
+  "edit.langGroup": "Языковая версия",
   "edit.question": "Вопрос",
   "edit.answer": "Ответ",
   "edit.sourceLink": "Официальная страница (https://…)",
@@ -287,6 +318,8 @@ const ru: Record<StaffKey, string> = {
   "inbox.lastAsked": "последний раз {date}",
   "inbox.answer": "Ответить",
   "inbox.dismiss": "Скрыть",
+  "inbox.dismissFailed": "Не удалось скрыть: {message}",
+  "inbox.statusFilter": "Статус",
   "inbox.answeredBy": "Ответ: {faq}",
   "inbox.linkTitle": "Этот вопрос пришёл из входящих. После публикации он будет отмечен как отвеченный.",
   "inbox.linked": "Вопрос во входящих отмечен как отвеченный.",
@@ -306,6 +339,10 @@ const ru: Record<StaffKey, string> = {
   "dash.reasons": "Причины дизлайков",
   "dash.none": "За этот период данных нет.",
   "dash.reason.none": "без причины",
+  "dash.reason.wrong": "Неверно",
+  "dash.reason.outdated": "Устарело",
+  "dash.reason.unclear": "Непонятно",
+  "dash.reason.other": "Другое",
   "dash.table": "Показать таблицей",
   "dash.date": "Дата",
 
@@ -366,6 +403,25 @@ const ru: Record<StaffKey, string> = {
 const STAFF_MESSAGES = { en, ru }
 
 export type { StaffKey }
+
+const ERROR_KEYS: Record<string, StaffKey> = {
+  NETWORK: "error.network",
+  TIMEOUT: "error.network",
+  INVALID_REQUEST: "error.invalid",
+  NOT_LOGGED_IN: "error.notLoggedIn",
+  FORBIDDEN: "error.forbidden",
+  DATABASE_UNAVAILABLE: "error.unavailable",
+  PROGRAM_EXISTS: "error.programExists",
+  PROGRAM_NOT_FOUND: "error.programNotFound",
+  FAQ_NOT_FOUND: "error.faqNotFound",
+  FAQ_NOT_PUBLISHED: "error.faqNotPublished",
+  GROUP_NOT_FOUND: "error.groupNotFound",
+}
+
+// The API sends English messages; show a translated text for its error code instead.
+export function staffErrorKey(error: unknown): StaffKey {
+  return (isApiError(error) && ERROR_KEYS[error.code]) || "error.generic"
+}
 
 export function useStaffT() {
   const language = useLanguageStore((state) => (state.language === "en" ? "en" : "ru"))
