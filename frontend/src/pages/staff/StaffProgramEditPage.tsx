@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react"
 import { type FormEvent, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { isApiError, isNotFound } from "@/api/errors"
+import { isNotFound } from "@/api/errors"
 import {
   type ApplicantType,
   createStaffProgram,
@@ -15,8 +15,9 @@ import {
 } from "@/api/staff"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { type StaffKey, useStaffT } from "@/staff/i18n"
+import { type StaffKey, staffErrorKey, useStaffT } from "@/staff/i18n"
 import { selectClass } from "@/staff/styles"
+import { invalidateProgramData } from "@/lib/public-cache"
 import { GuidanceEditor } from "@/components/staff/GuidanceEditor"
 
 type Facts = Record<
@@ -91,10 +92,6 @@ function toFields(facts: Facts): StaffProgramFields {
   }
 }
 
-function errorText(error: unknown) {
-  return isApiError(error) ? error.message : String(error)
-}
-
 function DocumentsEditor({ program, applicantType }: { program: StaffProgram; applicantType: ApplicantType }) {
   const t = useStaffT()
   const queryClient = useQueryClient()
@@ -107,6 +104,7 @@ function DocumentsEditor({ program, applicantType }: { program: StaffProgram; ap
     onSuccess: (updated) => {
       queryClient.setQueryData(["staff", "programs", "item", program.program_id], updated)
       queryClient.invalidateQueries({ queryKey: ["staff", "programs", "list"] })
+      invalidateProgramData(queryClient)
       setDraft(null)
       setSaved(true)
     },
@@ -202,7 +200,7 @@ function DocumentsEditor({ program, applicantType }: { program: StaffProgram; ap
         </Button>
         {save.error && (
           <p role="alert" className="text-sm text-destructive">
-            {t("edit.error", { message: errorText(save.error) })}
+            {t("edit.error", { message: t(staffErrorKey(save.error)) })}
           </p>
         )}
         {saved && draft === null && <p role="status" className="text-sm">{t("edit.saved")}</p>}
@@ -232,6 +230,7 @@ export function StaffProgramEditPage() {
     onSuccess: (updated) => {
       queryClient.setQueryData(["staff", "programs", "item", updated.program_id], updated)
       queryClient.invalidateQueries({ queryKey: ["staff", "programs", "list"] })
+      invalidateProgramData(queryClient)
       setDraft(null)
       setSaved(true)
       if (isNew) navigate(`/staff/programs/${updated.program_id}`, { replace: true })
@@ -329,7 +328,7 @@ export function StaffProgramEditPage() {
           </Button>
           {save.error && (
             <p role="alert" className="text-sm text-destructive">
-              {t("edit.error", { message: errorText(save.error) })}
+              {t("edit.error", { message: t(staffErrorKey(save.error)) })}
             </p>
           )}
           {saved && draft === null && <p role="status" className="text-sm">{t("edit.saved")}</p>}

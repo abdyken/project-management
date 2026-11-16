@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { ChatWidget } from "@/components/chat/ChatWidget"
 import { ErrorBoundary } from "@/components/common/ErrorBoundary"
+import { PageLoading } from "@/components/common/PageLoading"
 import { CompareBar } from "@/components/compare/CompareBar"
 import { SiteFooter } from "@/components/layout/SiteFooter"
 import { SiteHeader } from "@/components/layout/SiteHeader"
@@ -13,7 +15,9 @@ export function AppLayout() {
       <SiteHeader />
       <main className="flex-1 min-h-[60vh]">
         <ErrorBoundary key={location.pathname}>
-          <Outlet />
+          <Suspense fallback={<PageLoading />}>
+            <Outlet />
+          </Suspense>
         </ErrorBoundary>
       </main>
       <SiteFooter />

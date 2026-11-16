@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useEffect, useRef, useState } from "react"
 import {
   SUBJECT_PAIRS,
   getGuidance,
@@ -12,12 +12,8 @@ import {
 } from "@/api/guidance"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useGuidanceT } from "@/guidance/i18n"
-import {
-  ErrorMessage,
-  Field,
-  fieldClass,
-} from "@/pages/guidance/AdmissionsPages"
+import { useGuidanceT, type GuidanceKey } from "@/guidance/i18n"
+import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 
 const numeric: Metric[] = [
   "unt_total",
@@ -93,7 +89,7 @@ function EvidenceEditor({
             onChange={(e) => onChange({ ...value, checked_on: e.target.value })}
           />
         </Field>
-        <Field label={t("confirmed")}>
+        <Field label={t("evidenceStatus")}>
           <select
             className={fieldClass}
             value={value.status}
@@ -104,7 +100,7 @@ function EvidenceEditor({
               })
             }
           >
-            {["pending", "confirmed", "conflict"].map((v) => (
+            {(["pending", "confirmed", "conflict"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -136,7 +132,7 @@ function ScopeEditor({
   onChange: (value: Scope) => void
 }) {
   const t = useGuidanceT()
-  const fields: [keyof Scope, string[]][] = [
+  const fields: [keyof Scope, readonly GuidanceKey[]][] = [
     ["applicant_type", ["local", "international"]],
     ["education_route", ["school", "college", "bachelor", "master"]],
     ["admission_basis", ["paid", "grant"]],
@@ -175,9 +171,26 @@ function Editor({
 }) {
   const t = useGuidanceT()
   const [value, setValue] = useState(initial)
+  const queryClient = useQueryClient()
+  const formRef = useRef<HTMLFormElement>(null)
   const mutation = useMutation({
     mutationFn: () => saveGuidance(programId, value),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(["staff", "guidance", programId], saved)
+      void queryClient.invalidateQueries({ queryKey: ["guidance", programId] })
+    },
   })
+  useEffect(() => {
+    const form = formRef.current
+    if (!form) return
+    // Required fields can sit in a closed <details>; open it so the browser can focus the field.
+    const openDetails = (event: Event) => {
+      const details = (event.target as Element).closest("details")
+      if (details) details.open = true
+    }
+    form.addEventListener("invalid", openDetails, true)
+    return () => form.removeEventListener("invalid", openDetails, true)
+  }, [])
   const patch = (change: Partial<Guidance>) => {
     setValue((v) => ({ ...v, ...change }))
     mutation.reset()
@@ -204,6 +217,7 @@ function Editor({
     })
   return (
     <form
+      ref={formRef}
       className="mt-8 space-y-6 border-t border-border pt-6"
       onSubmit={(e) => {
         e.preventDefault()
@@ -216,7 +230,7 @@ function Editor({
           key={ri}
           className="min-w-0 rounded-lg border border-border p-4"
         >
-          <legend className="px-2 text-sm font-medium">{t(rule.key)}</legend>
+          <legend className="px-2 text-sm font-medium">{t.code(rule.key)}</legend>
           <ScopeEditor
             value={rule}
             onChange={(scope) =>
@@ -240,7 +254,7 @@ function Editor({
                   className="grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
                   key={ci}
                 >
-                  <Field label={t("rules")}>
+                  <Field label={t("condition")}>
                     <select
                       className={fieldClass}
                       value={condition.metric}
@@ -299,7 +313,7 @@ function Editor({
                           })
                         }
                       >
-                        <option value="">{t("choose")}</option>
+                        <option value="">{t("chooseSubjectPair")}</option>
                         {SUBJECT_PAIRS.map((pair) => (
                           <option key={pair} value={pair}>
                             {t(pair)}
@@ -691,12 +705,15 @@ export function GuidanceEditor({ programId }: { programId: string }) {
   const data = useQuery({
     queryKey: ["staff", "guidance", programId],
     queryFn: ({ signal }) => getGuidance(programId, true, signal),
+    staleTime: 0,
   })
-  return data.data ? (
+  const [openedAt] = useState(Date.now)
+  // The editor copies the data once, so start it only from data fetched for this visit.
+  return data.data && data.dataUpdatedAt >= openedAt ? (
     <Editor key={programId} initial={data.data} programId={programId} />
   ) : (
     <div className="mt-6">
-      {data.isPending && <p>{t("working")}</p>}
+      {!data.isError && <p>{t("working")}</p>}
       <ErrorMessage error={data.error} />
       {data.isError && (
         <Button onClick={() => void data.refetch()}>{t("retry")}</Button>

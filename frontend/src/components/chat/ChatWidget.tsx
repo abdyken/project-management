@@ -120,7 +120,7 @@ function DesktopChat() {
     if (!showPanel) return
     function onKeyDown(event: globalThis.KeyboardEvent) {
       const focus = document.activeElement
-      const focusInPanel = focus === document.body || Boolean(panelRef.current?.contains(focus))
+      const focusInPanel = Boolean(panelRef.current?.contains(focus))
       if (event.key === "Escape" && focusInPanel) setOpen(false)
     }
     window.addEventListener("keydown", onKeyDown)
@@ -176,7 +176,8 @@ function DesktopChat() {
       ref={panelRef}
       role="dialog"
       aria-labelledby={TITLE_ID}
-      className="fixed z-50 flex flex-col border border-border bg-background shadow-lg"
+      tabIndex={-1}
+      className="fixed z-50 flex flex-col outline-none border border-border bg-background shadow-lg"
       style={{ left: panelPos.x, top: panelPos.y, width: panelSize.width, height: panelSize.height }}
     >
       <div

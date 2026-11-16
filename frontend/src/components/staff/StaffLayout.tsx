@@ -47,7 +47,7 @@ export function StaffLayout() {
               {t("staff.title")}
             </span>
           </Link>
-          <nav className="order-last flex w-full items-center gap-4 text-sm sm:order-none sm:w-auto sm:flex-1">
+          <nav className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-2 text-sm sm:order-none sm:w-auto sm:flex-1">
             {STAFF_NAV.map((item) => (
               <NavLink
                 key={item.to}

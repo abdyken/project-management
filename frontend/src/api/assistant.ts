@@ -60,6 +60,7 @@ export async function streamAssistant(
   else signal.addEventListener("abort", abortFromCaller, { once: true })
 
   let gotChunk = false
+  let reader: ReadableStreamDefaultReader<string> | undefined
   const timer = window.setTimeout(() => {
     if (!gotChunk) controller.abort()
   }, ASSISTANT_TIMEOUT_MS)
@@ -78,7 +79,7 @@ export async function streamAssistant(
     }
     if (!res.body) throw new ApiError(0, "NETWORK", "Network error")
 
-    const reader = res.body.pipeThrough(new TextDecoderStream()).getReader()
+    reader = res.body.pipeThrough(new TextDecoderStream()).getReader()
     let buffer = ""
     let finished = false
 
@@ -120,5 +121,6 @@ export async function streamAssistant(
   } finally {
     window.clearTimeout(timer)
     signal.removeEventListener("abort", abortFromCaller)
+    reader?.cancel().catch(() => {})
   }
 }

@@ -153,7 +153,8 @@ export function ChatMessage({
 }) {
   const { t } = useI18n()
   const isApplicant = message.role === "applicant"
-  if (message.streaming && !message.text) return null
+  const text = message.isError && message.errorKey ? t(message.errorKey) : message.text
+  if (message.streaming && !text) return null
 
   return (
     <article className={cn("flex min-w-0", isApplicant ? "justify-end" : "justify-start")}>
@@ -161,7 +162,7 @@ export function ChatMessage({
         <p className="text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
           {isApplicant ? t("chat.you") : t("chat.title")}
         </p>
-        {message.text ? (
+        {text ? (
           <div
             className={cn(
               "px-3.5 py-2.5 text-sm leading-relaxed",
@@ -172,7 +173,7 @@ export function ChatMessage({
                   : "border border-border bg-card",
             )}
           >
-            {isApplicant ? <p className="break-words whitespace-pre-wrap">{message.text}</p> : <AnswerBody text={message.text} />}
+            {isApplicant ? <p className="break-words whitespace-pre-wrap">{text}</p> : <AnswerBody text={text} />}
           </div>
         ) : null}
         {message.interrupted || (message.isError && message.replyTo) ? (

@@ -24,9 +24,10 @@ export function ProgramsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = readFilters(searchParams)
 
+  const hasFilters = Object.values(filters).some(Boolean)
   const optionsQuery = useQuery({ ...allProgramsQuery, select: (data) => filterOptions(data.programs) })
   const query = useQuery({
-    queryKey: ["programs", filters],
+    queryKey: hasFilters ? ["programs", filters] : allProgramsQuery.queryKey,
     queryFn: () => listPrograms(filters),
     placeholderData: keepPreviousData,
   })
@@ -61,6 +62,14 @@ export function ProgramsPage() {
           options={optionsQuery.data ?? NO_OPTIONS}
           onChange={updateFilters}
         />
+        {optionsQuery.isError && !query.isError ? (
+          <div role="alert" className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+            <p>{t("filters.optionsError")}</p>
+            <Button variant="outline" size="sm" onClick={() => void optionsQuery.refetch()} disabled={optionsQuery.isFetching}>
+              {optionsQuery.isFetching ? t("error.tryingAgain") : t("error.tryAgain")}
+            </Button>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-8" aria-busy={query.isFetching}>
