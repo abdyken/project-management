@@ -8,7 +8,7 @@ Event stream contract (docs/api/assistant-stream.md):
     ... more chunks, in order; concatenated they are the full answer ...
 
     event: done
-    data: {"answer_id": "42", "sources": [{"faq_id", "question", "link"}], "faq_id": ..., "source_link": ..., "similarity_score": ...}
+    data: {"answer_id": "42", "sources": [{"faq_id", "question", "link", "title"}]}
 
     event: error            (only if the answer breaks off after streaming started)
     data: {"error_code": "...", "message": "..."}
