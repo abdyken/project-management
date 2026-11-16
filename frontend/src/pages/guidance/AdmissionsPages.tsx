@@ -79,7 +79,7 @@ export function GapList({ gaps }: { gaps: string[] }) {
   return gaps.length > 0 ? (
     <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
       {[...new Set(gaps)].map((gap, index) => (
-        <li key={index}>{t(gap)}</li>
+        <li key={index}>{t.code(gap)}</li>
       ))}
     </ul>
   ) : null
@@ -91,7 +91,7 @@ function ConditionText({ condition }: { condition: Condition }) {
       {t(condition.metric)}{" "}
       {condition.minimum != null
         ? `≥ ${condition.minimum}`
-        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t(String(condition.equals))}`}
+        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t.code(String(condition.equals))}`}
     </span>
   )
 }
@@ -109,7 +109,7 @@ export function EligibilityResult({ result }: { result: Eligibility }) {
         {result.checks.map((check, index) => (
           <li className="py-4" key={index}>
             <h3 className="font-medium">
-              {t(check.key)} · {t(check.status)}
+              {t.code(check.key)} · {t(check.status)}
             </h3>
             <div className="mt-2 space-y-1 text-sm">
               {check.alternatives.map((group, gi) => (
@@ -170,7 +170,7 @@ function ProfileFields({
             value={value.applicant_type}
             onChange={(e) => change("applicant_type", e.target.value)}
           >
-            {["local", "international"].map((v) => (
+            {(["local", "international"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -183,7 +183,7 @@ function ProfileFields({
             value={value.education_route}
             onChange={(e) => change("education_route", e.target.value)}
           >
-            {["school", "college", "bachelor", "master"].map((v) => (
+            {(["school", "college", "bachelor", "master"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -196,7 +196,7 @@ function ProfileFields({
             value={value.admission_basis}
             onChange={(e) => change("admission_basis", e.target.value)}
           >
-            {["paid", "grant"].map((v) => (
+            {(["paid", "grant"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -211,7 +211,7 @@ function ProfileFields({
               onChange={(e) => change("track", e.target.value || null)}
             >
               <option value="">{t("unknown")}</option>
-              {["scientific", "profile"].map((v) => (
+              {(["scientific", "profile"] as const).map((v) => (
                 <option key={v} value={v}>
                   {t(v)}
                 </option>
@@ -463,7 +463,7 @@ export function RecommendationsPage() {
                 clear()
               }}
             >
-              {["bachelor", "master", "phd"].map((v) => (
+              {(["bachelor", "master", "phd"] as const).map((v) => (
                 <option key={v} value={v}>
                   {t(v)}
                 </option>
@@ -491,7 +491,7 @@ export function RecommendationsPage() {
         <fieldset className="mt-6">
           <legend className="font-medium">{t("interests")}</legend>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {[
+            {([
               "computing",
               "business",
               "law",
@@ -500,7 +500,7 @@ export function RecommendationsPage() {
               "science",
               "media",
               "psychology",
-            ].map((v) => (
+            ] as const).map((v) => (
               <label key={v} className="flex gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -553,7 +553,7 @@ export function RecommendationsPage() {
               <p className="mt-2 text-sm">
                 {t("matches")}:{" "}
                 {item.reasons
-                  .map((r) => t(r.replace("interest:", "")))
+                  .map((r) => t.code(r.replace("interest:", "")))
                   .join(", ")}
               </p>
               <p className="mt-2 text-sm font-medium">
@@ -679,7 +679,7 @@ export function CostPage() {
                   mutation.reset()
                 }}
               >
-                <option value="">{t("choose")}</option>
+                <option value="">{t("chooseLanguageGroup")}</option>
                 {data.data.language_tariffs.map((tariff) => (
                   <option
                     key={tariff.language_group}
@@ -734,7 +734,7 @@ export function CostPage() {
           <ul className="mt-4 divide-y divide-border">
             {mutation.data.components.map((c) => (
               <li className="py-3 text-sm" key={c.component}>
-                <h3 className="font-medium">{t(c.component)}</h3>
+                <h3 className="font-medium">{t.code(c.component)}</h3>
                 <p>
                   {c.ects} ECTS × {number(c.rate)} {currency} ={" "}
                   {number(c.amount)} {currency}
@@ -774,7 +774,7 @@ export function FundingPage() {
             onChange={(e) => setDegree(e.target.value)}
           >
             <option value="">{t("all")}</option>
-            {["bachelor", "master", "phd"].map((v) => (
+            {(["bachelor", "master", "phd"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -788,7 +788,7 @@ export function FundingPage() {
             onChange={(e) => setApplicant(e.target.value)}
           >
             <option value="">{t("all")}</option>
-            {["local", "international"].map((v) => (
+            {(["local", "international"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -813,7 +813,7 @@ export function FundingPage() {
             className="rounded-xl border border-border p-5"
           >
             <p className="text-xs text-muted-foreground">
-              {t(item.status)} · {t("checked")}: {item.last_checked}
+              {t.code(item.status)} · {t("checked")}: {item.last_checked}
             </p>
             <h2
               className="mt-2 text-xl font-medium"

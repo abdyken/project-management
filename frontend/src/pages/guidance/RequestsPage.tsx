@@ -171,7 +171,7 @@ function RequestsContent({
               setOffset(0)
             }}
           >
-            {["new", "answered", "all"].map((v) => (
+            {(["new", "answered", "all"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>

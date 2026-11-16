@@ -4,4 +4,4 @@ export const GUIDANCE_ROUTES = [
   ["cost", "/cost-calculator"],
   ["funding", "/funding"],
   ["requests", "/account/requests"],
-]
+] as const

@@ -12,7 +12,7 @@ import {
 } from "@/api/guidance"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useGuidanceT } from "@/guidance/i18n"
+import { useGuidanceT, type GuidanceKey } from "@/guidance/i18n"
 import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 
 const numeric: Metric[] = [
@@ -89,7 +89,7 @@ function EvidenceEditor({
             onChange={(e) => onChange({ ...value, checked_on: e.target.value })}
           />
         </Field>
-        <Field label={t("confirmed")}>
+        <Field label={t("evidenceStatus")}>
           <select
             className={fieldClass}
             value={value.status}
@@ -100,7 +100,7 @@ function EvidenceEditor({
               })
             }
           >
-            {["pending", "confirmed", "conflict"].map((v) => (
+            {(["pending", "confirmed", "conflict"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -132,7 +132,7 @@ function ScopeEditor({
   onChange: (value: Scope) => void
 }) {
   const t = useGuidanceT()
-  const fields: [keyof Scope, string[]][] = [
+  const fields: [keyof Scope, readonly GuidanceKey[]][] = [
     ["applicant_type", ["local", "international"]],
     ["education_route", ["school", "college", "bachelor", "master"]],
     ["admission_basis", ["paid", "grant"]],
@@ -212,7 +212,7 @@ function Editor({
           key={ri}
           className="min-w-0 rounded-lg border border-border p-4"
         >
-          <legend className="px-2 text-sm font-medium">{t(rule.key)}</legend>
+          <legend className="px-2 text-sm font-medium">{t.code(rule.key)}</legend>
           <ScopeEditor
             value={rule}
             onChange={(scope) =>
@@ -236,7 +236,7 @@ function Editor({
                   className="grid gap-2 sm:grid-cols-[2fr_1fr_auto]"
                   key={ci}
                 >
-                  <Field label={t("rules")}>
+                  <Field label={t("condition")}>
                     <select
                       className={fieldClass}
                       value={condition.metric}
@@ -295,7 +295,7 @@ function Editor({
                           })
                         }
                       >
-                        <option value="">{t("choose")}</option>
+                        <option value="">{t("chooseSubjectPair")}</option>
                         {SUBJECT_PAIRS.map((pair) => (
                           <option key={pair} value={pair}>
                             {t(pair)}
