@@ -170,7 +170,7 @@ function Preferences({ user }: { user: Applicant }) {
         <label htmlFor="reminder-language">{t("language")}</label>
         <select
           id="reminder-language"
-          className="rounded-md border border-border bg-background p-2"
+          className="rounded-md border border-border bg-background p-2 text-base sm:text-sm"
           value={language}
           onChange={(event) => setLanguage(event.target.value as Language)}
         >

@@ -158,7 +158,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
           maxLength={MESSAGE_MAX_LENGTH}
           rows={3}
           placeholder={t("chat.placeholder")}
-          className="w-full resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          className="w-full resize-none bg-transparent text-base outline-none sm:text-sm placeholder:text-muted-foreground"
         />
         <p className="mt-2 text-[11px] text-muted-foreground">{t("chat.noPersonalData")}</p>
         <div className="mt-2 flex items-center justify-between gap-3">

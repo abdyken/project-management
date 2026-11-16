@@ -22,7 +22,7 @@ import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 
 export const fieldClass =
-  "w-full min-w-0 rounded-md border border-border bg-background px-3 py-2 text-sm"
+  "w-full min-w-0 rounded-md border border-border bg-background px-3 py-2 text-base sm:text-sm"
 const routes = [
   ["eligibility", "/eligibility"],
   ["recommendations", "/recommendations"],

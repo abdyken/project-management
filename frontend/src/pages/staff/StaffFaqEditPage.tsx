@@ -18,7 +18,7 @@ const LANGS: Lang[] = ["en", "ru", "kk"]
 const DEGREES = ["bachelor", "master", "phd"] as const
 const APPLICANTS = ["local", "international"] as const
 const textareaClass =
-  "w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/20"
+  "w-full rounded-md border border-input bg-card px-3 py-2 text-base outline-none sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/20"
 
 function key(field: TextField, lang: Lang) {
   return (lang === "en" ? field : `${field}_${lang}`) as keyof Form & `${TextField}${string}`
