@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { type StaffKey, useStaffT } from "@/staff/i18n"
 import { selectClass } from "@/staff/styles"
+import { invalidateProgramData } from "@/lib/public-cache"
 import { GuidanceEditor } from "@/components/staff/GuidanceEditor"
 
 type Facts = Record<
@@ -107,6 +108,7 @@ function DocumentsEditor({ program, applicantType }: { program: StaffProgram; ap
     onSuccess: (updated) => {
       queryClient.setQueryData(["staff", "programs", "item", program.program_id], updated)
       queryClient.invalidateQueries({ queryKey: ["staff", "programs", "list"] })
+      invalidateProgramData(queryClient)
       setDraft(null)
       setSaved(true)
     },
@@ -232,6 +234,7 @@ export function StaffProgramEditPage() {
     onSuccess: (updated) => {
       queryClient.setQueryData(["staff", "programs", "item", updated.program_id], updated)
       queryClient.invalidateQueries({ queryKey: ["staff", "programs", "list"] })
+      invalidateProgramData(queryClient)
       setDraft(null)
       setSaved(true)
       if (isNew) navigate(`/staff/programs/${updated.program_id}`, { replace: true })
