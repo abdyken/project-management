@@ -20,9 +20,9 @@ export function ProgramCard({ program }: { program: Program }) {
         </Link>
       </h2>
       <p className="mt-3 text-sm text-muted-foreground" lang="en">{program.faculty}</p>
-      <div className="mt-6 flex flex-wrap items-end justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground">
+      <div className="mt-6 flex flex-col gap-1 text-xs text-muted-foreground sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-x-4">
         <span>{t("card.localDeadline", { value: deadline(program.deadline_local) })}</span>
-        <span className="text-right">{t("card.localTuition", { value: tuitionKzt(program.tuition_per_ects_kzt) })}</span>
+        <span className="sm:text-right">{t("card.localTuition", { value: tuitionKzt(program.tuition_per_ects_kzt) })}</span>
       </div>
     </article>
   )
