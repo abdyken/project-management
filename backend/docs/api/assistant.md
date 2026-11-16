@@ -75,6 +75,7 @@ Same shape as the rest of the API: `{ "error_code": "...", "message": "..." }`.
 | Status | `error_code`           | When                                          |
 | ------ | ---------------------- | --------------------------------------------- |
 | 422    | `INVALID_REQUEST`      | Empty/too long question or missing session id |
+| 429    | `TOO_MANY_REQUESTS`    | More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 20) questions from this client IP in a sliding minute, `/ask` and `/ask/stream` together. The IP is the first `X-Forwarded-For` entry, as for the login limits; counters live in memory and reset on restart |
 | 503    | `DATABASE_UNAVAILABLE` | Database unreachable                          |
 | 504    | `ASSISTANT_TIMEOUT`    | No answer within `ASSISTANT_TIMEOUT_SECONDS` (default 15 s, above the 10 s model timeout so a slow model ends in the verbatim answer, not in 504) |
 

@@ -670,6 +670,20 @@
               }
             }
           },
+          "429": {
+            "description": "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 20) questions from this address in a minute, /ask and /ask/stream together.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "TOO_MANY_REQUESTS",
+                  "message": "Too many requests. Please wait a minute and try again."
+                }
+              }
+            }
+          },
           "422": {
             "description": "A parameter or the request body is invalid.",
             "content": {
@@ -731,6 +745,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 20) questions from this address in a minute, /ask and /ask/stream together.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "TOO_MANY_REQUESTS",
+                  "message": "Too many requests. Please wait a minute and try again."
                 }
               }
             }
@@ -3707,6 +3735,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "More than `RECOMMENDATIONS_REQUESTS_PER_MINUTE` (default 10) requests from this address in a minute.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error_code": "TOO_MANY_REQUESTS",
+                  "message": "Too many requests. Please wait a minute and try again."
                 }
               }
             }

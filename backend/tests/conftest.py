@@ -23,6 +23,14 @@ def _clear_settings_cache():
     get_settings.cache_clear()
 
 
+@pytest.fixture(autouse=True)
+def _fresh_request_limits():
+    from app.api.client import assistant_rate_limit, recommendations_rate_limit
+
+    for limit in (assistant_rate_limit, recommendations_rate_limit):
+        limit.limiter.reset(*list(limit.limiter._failures))
+
+
 @pytest.fixture(scope="session")
 def db_engine():
     from alembic import command
