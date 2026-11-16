@@ -64,6 +64,11 @@ def test_list_includes_document_counts_and_filters(officer):
     assert officer.get("/api/staff/programs/0X00000").status_code == 404
 
 
+@pytest.mark.parametrize("q", ["%", "_", "6B0%104"])
+def test_list_search_treats_wildcards_as_text(officer, q):
+    assert officer.get("/api/staff/programs", params={"q": q}).json()["items"] == []
+
+
 def test_fee_edit_is_used_by_the_catalogue_and_the_assistant_at_once(officer):
     program = officer.get("/api/staff/programs/6B04104").json()
     assert program["tuition_per_ects_kzt"] == 41500
