@@ -21,7 +21,8 @@ import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
-import { GUIDANCE_ROUTES, GuidanceShell } from "@/components/guidance/GuidanceShell"
+import { GuidanceShell } from "@/components/guidance/GuidanceShell"
+import { GUIDANCE_ROUTES } from "@/guidance/routes"
 
 export function AdmissionsPage() {
   const t = useGuidanceT()

@@ -1,14 +1,7 @@
 import type { ReactNode } from "react"
 import { Link } from "react-router-dom"
 import { useGuidanceT } from "@/guidance/i18n"
-
-export const GUIDANCE_ROUTES = [
-  ["eligibility", "/eligibility"],
-  ["recommendations", "/recommendations"],
-  ["cost", "/cost-calculator"],
-  ["funding", "/funding"],
-  ["requests", "/account/requests"],
-]
+import { GUIDANCE_ROUTES } from "@/guidance/routes"
 
 export function GuidanceShell({
   title,
