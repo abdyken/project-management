@@ -57,6 +57,7 @@ const en = {
   "filters.allDegrees": "All degrees",
   "filters.language": "Language",
   "filters.allLanguages": "All languages",
+  "filters.optionsError": "Could not load the lists of schools and languages.",
 
   "card.localDeadline": "Local deadline: {value}",
   "card.localTuition": "Local tuition: {value}",
@@ -252,6 +253,7 @@ const kk: Messages = {
   "filters.allDegrees": "Барлық дәрежелер",
   "filters.language": "Тілі",
   "filters.allLanguages": "Барлық тілдер",
+  "filters.optionsError": "Мектептер мен тілдер тізімін жүктеу мүмкін болмады.",
 
   "card.localDeadline": "Мерзім (отандық): {value}",
   "card.localTuition": "Ақы (отандық): {value}",
@@ -445,6 +447,7 @@ const ru: Messages = {
   "filters.allDegrees": "Все степени",
   "filters.language": "Язык",
   "filters.allLanguages": "Все языки",
+  "filters.optionsError": "Не удалось загрузить списки школ и языков.",
 
   "card.localDeadline": "Срок (местные): {value}",
   "card.localTuition": "Стоимость (местные): {value}",
