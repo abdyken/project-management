@@ -6,6 +6,7 @@ import { StaffLayout } from "@/components/staff/StaffLayout"
 import { useLanguageStore } from "@/i18n"
 import { ComparePage } from "@/pages/ComparePage"
 import { HomePage } from "@/pages/HomePage"
+import { NotFoundPage } from "@/pages/NotFoundPage"
 import { ProgramDetailPage } from "@/pages/ProgramDetailPage"
 import { ProgramsPage } from "@/pages/ProgramsPage"
 import { StaffDashboardPage } from "@/pages/staff/StaffDashboardPage"
@@ -87,7 +88,7 @@ export default function App() {
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/:id" element={<ProgramDetailPage />} />
             <Route path="/compare" element={<ComparePage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
