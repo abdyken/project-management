@@ -157,8 +157,7 @@ def _faq_block(items: list[FaqItem]) -> str:
 
 
 def _question_block(question: str) -> str:
-    escaped = question.replace("<", "&lt;").replace(">", "&gt;")
-    return f"<question>\n{escaped}\n</question>"
+    return f"<question>\n{_escape(question)}\n</question>"
 
 
 CHAT_INSTRUCTION = """\
@@ -192,7 +191,7 @@ CHAT_RESPONSE_SCHEMA = {
 
 
 def build_chat_prompt(message: str, history: list[tuple[str, str]], contact: str) -> str:
-    turns = [{"role": role, "text": text} for role, text in history]
+    turns = [{"role": role, "text": _escape(text)} for role, text in history]
     return (
         f"<conversation>\n{json.dumps(turns, ensure_ascii=False, indent=1)}\n</conversation>\n\n"
         f"<contact>\n{contact}\n</contact>\n\n"
