@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import type { AnswerSource, FeedbackRating, FeedbackReason } from "@/api/types"
+import type { MessageKey } from "@/i18n/messages"
 import { abortRequest } from "@/lib/chat-request"
 import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { randomId } from "@/lib/utils"
@@ -30,6 +31,7 @@ export type ChatMessage = {
   rating?: ChatRating | null
   createdAt: number
   isError?: boolean
+  errorKey?: MessageKey
   interrupted?: boolean
   streaming?: boolean
 }
@@ -63,7 +65,7 @@ type ChatState = {
     patch: { text?: string; sources: ChatSource[]; answerId: string },
   ) => void
   interruptMessage: (id: string) => void
-  failMessage: (id: string, text: string) => void
+  failMessage: (id: string, errorKey: MessageKey) => void
   removeMessage: (id: string) => void
   rateMessage: (id: string, rating: ChatRating) => void
   startNewConversation: () => void
@@ -133,10 +135,10 @@ export const useChatStore = create<ChatState>()(
             return { ...message, streaming: false, interrupted: true }
           }),
         })),
-      failMessage: (id, text) =>
+      failMessage: (id, errorKey) =>
         set((state) => ({
           messages: state.messages.map((message) =>
-            message.id === id ? { ...message, text, streaming: false, isError: true, interrupted: false } : message,
+            message.id === id ? { ...message, text: "", errorKey, streaming: false, isError: true, interrupted: false } : message,
           ),
         })),
       removeMessage: (id) =>

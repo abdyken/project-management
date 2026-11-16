@@ -1,4 +1,4 @@
-import { useEffect, useRef, type FormEvent, type KeyboardEvent } from "react"
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react"
 import { getSuggestions, streamAssistant } from "@/api/assistant"
 import { chatErrorKey } from "@/api/errors"
 import { Button } from "@/components/ui/button"
@@ -30,14 +30,21 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
   const removeMessage = useChatStore((state) => state.removeMessage)
   const listRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const stickToBottom = useRef(true)
+  const [announcement, setAnnouncement] = useState("")
   const canSend = draft.trim().length > 0 && draft.trim().length <= MESSAGE_MAX_LENGTH && !sending
   const answered = messages.some((message) => message.role === "assistant" && message.answerId)
   const visibleSuggestions = suggestions.slice(0, answered ? 3 : 4)
   const waitingForFirstChunk = sending && messages.some((message) => message.streaming && !message.text)
 
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
+    if (stickToBottom.current) listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
   }, [messages, sending, visibleSuggestions.length])
+
+  function onListScroll() {
+    const list = listRef.current
+    if (list) stickToBottom.current = list.scrollHeight - list.scrollTop - list.clientHeight < 80
+  }
 
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus()
@@ -63,6 +70,8 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       setDraft("")
     }
 
+    stickToBottom.current = true
+    setAnnouncement("")
     const assistantId = addMessage({ role: "assistant", text: "", streaming: true, replyTo: question })
     setSending(true)
     const { signal, token } = nextRequest()
@@ -84,10 +93,14 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       if (outcome === "interrupted" || outcome === "aborted") interruptMessage(assistantId)
     } catch (error) {
       if (!isCurrent(token) || abortReason() === "new") return
-      failMessage(assistantId, t(chatErrorKey(error)))
+      failMessage(assistantId, chatErrorKey(error))
     } finally {
       finishRequest(token)
-      if (isCurrent(token)) setSending(false)
+      if (isCurrent(token)) {
+        setSending(false)
+        const answer = useChatStore.getState().messages.find((message) => message.id === assistantId)
+        if (answer) setAnnouncement(answer.isError && answer.errorKey ? t(answer.errorKey) : answer.text)
+      }
     }
   }
 
@@ -121,8 +134,9 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       <div
         ref={listRef}
         role="log"
-        aria-live="polite"
+        aria-live="off"
         aria-label={t("chat.conversation")}
+        onScroll={onListScroll}
         className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4"
       >
         {messages.length === 0 ? (
@@ -148,6 +162,9 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
           </div>
         ) : null}
       </div>
+      <p className="sr-only" aria-live="polite">
+        {announcement}
+      </p>
       {!sending && messages.length > 0 && <Link className="mx-4 mb-3 text-xs underline" onClick={() => useChatStore.getState().setOpen(false)} to="/account/requests" state={{ question: [...messages].reverse().find(m => m.role === "applicant")?.text ?? "" }}>{guidanceT("send")}</Link>}
       <form onSubmit={onSubmit} className="border-t border-border p-3 transition-colors focus-within:bg-card">
         <textarea
