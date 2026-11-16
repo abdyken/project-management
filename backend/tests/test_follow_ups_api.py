@@ -132,3 +132,37 @@ def test_timed_out_answer_is_not_stored(client, assistant_session, monkeypatch):
 
     assert response.status_code == 504
     assert assistant_session.scalars(select(ChatTurn).where(ChatTurn.session_id == "slow")).all() == []
+
+
+def test_timed_out_answer_does_not_reach_the_inbox(client, assistant_session, monkeypatch):
+    import time
+
+    from app.assistant.service import AssistantService
+    from app.followups.models import AdmissionsFollowup
+
+    answer = AssistantService.answer
+
+    def slow_answer(self, question, session_id):
+        result = answer(self, question, session_id)
+        time.sleep(1)
+        return result
+
+    monkeypatch.setenv("ASSISTANT_TIMEOUT_SECONDS", "0.5")
+    monkeypatch.setattr(AssistantService, "answer", slow_answer)
+
+    response = client.post("/api/assistant/ask", json={"question": "What is the capital of France?", "session_id": "slow"})
+    time.sleep(1.5)
+
+    assert response.status_code == 504
+    assert assistant_session.scalars(select(ChatTurn).where(ChatTurn.session_id == "slow")).all() == []
+    assert assistant_session.scalars(select(AdmissionsFollowup)).all() == []
+
+
+def test_unanswered_question_reaches_the_inbox_with_its_turns(client, assistant_session):
+    from app.followups.models import AdmissionsFollowup
+
+    ask(client, "What is the capital of France?", "inbox")
+
+    followups = assistant_session.scalars(select(AdmissionsFollowup)).all()
+    assert [followup.session_id for followup in followups] == ["inbox"]
+    assert len(assistant_session.scalars(select(ChatTurn).where(ChatTurn.session_id == "inbox")).all()) == 2

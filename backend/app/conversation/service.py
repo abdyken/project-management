@@ -18,23 +18,27 @@ def record_turn(
     role: str,
     text: str,
     sources: list[dict[str, Any]] | None = None,
+    commit: bool = True,
 ) -> ChatTurn:
     if role not in ROLES:
         raise ValueError(f"role must be one of {ROLES}, got {role!r}")
     turn = ChatTurn(session_id=session_id, role=role, text=text, sources=sources)
     session.add(turn)
-    session.commit()
+    if commit:
+        session.commit()
+    else:
+        session.flush()
     return turn
 
 
-def record_question(session: Session, session_id: str, question: str) -> ChatTurn:
-    return record_turn(session, session_id, USER, question)
+def record_question(session: Session, session_id: str, question: str, commit: bool = True) -> ChatTurn:
+    return record_turn(session, session_id, USER, question, commit=commit)
 
 
 def record_answer(
-    session: Session, session_id: str, answer: str, sources: list[dict[str, Any]] | None = None
+    session: Session, session_id: str, answer: str, sources: list[dict[str, Any]] | None = None, commit: bool = True
 ) -> ChatTurn:
-    return record_turn(session, session_id, ASSISTANT, answer, sources)
+    return record_turn(session, session_id, ASSISTANT, answer, sources, commit=commit)
 
 
 def recent_turns(session: Session, session_id: str, limit: int = CONTEXT_TURNS) -> list[ChatTurn]:

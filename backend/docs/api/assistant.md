@@ -50,7 +50,7 @@
 | Document question matching several programs (e.g. the bachelor and master Information Systems) | Lists the programs with degree and code and asks for the code | `[]` |
 | Document question, no requirements stored (T4.3) | `The document list for this program is not published yet, please contact the admissions office. <contact>` | `[]` |
 
-**Follow-ups (US11).** The last 6 turns of the session are read before answering. A document or catalogue follow-up ("and as an international applicant?", "and the deadline?") is rewritten into a standalone question with the program and applicant type named earlier. A short follow-up to a FAQ answer ("And when do I have to apply for it?") that does not reach the threshold on its own is searched again together with the category of the previous answer's FAQ item (`dormitory: And when…`). Only the session's own turns are used. A request that runs out of time stores nothing, so a resend does not duplicate the turn.
+**Follow-ups (US11).** The last 6 turns of the session are read before answering. A document or catalogue follow-up ("and as an international applicant?", "and the deadline?") is rewritten into a standalone question with the program and applicant type named earlier. A short follow-up to a FAQ answer ("And when do I have to apply for it?") that does not reach the threshold on its own is searched again together with the category of the previous answer's FAQ item (`dormitory: And when…`). Only the session's own turns are used. A request that runs out of time stores nothing (no turns, no staff inbox entry), so a resend does not duplicate the turn.
 
 Unanswered questions and programs without requirements are recorded in the `admissions_followup` table for the admissions office.
 

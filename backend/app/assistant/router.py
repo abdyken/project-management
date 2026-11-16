@@ -58,10 +58,13 @@ def _answer(
             question, body.session_id
         )
         if timed_out.is_set():
+            session.rollback()
             return None
         sources = [source.model_dump() for source in answer.sources] or None
-        record_question(session, body.session_id, body.question)
-        answer_turn = record_answer(session, body.session_id, answer.answer, sources)
+        # Inbox logs from the answer service are still pending: they commit with the turns.
+        record_question(session, body.session_id, body.question, commit=False)
+        answer_turn = record_answer(session, body.session_id, answer.answer, sources, commit=False)
+        session.commit()
         return AskResponse(answer=answer.answer, sources=answer.sources, answer_id=str(answer_turn.id))
 
 
