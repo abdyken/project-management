@@ -25,7 +25,6 @@ export type ChatMessage = {
   role: ChatRole
   text: string
   sources: ChatSource[]
-  sourceLink?: string | null
   answerId?: string | null
   replyTo?: string
   rating?: ChatRating | null
@@ -164,29 +163,6 @@ export const useChatStore = create<ChatState>()(
       name: "sdu-admissions-chat",
       version: 2,
       storage: createJSONStorage(() => sessionStorage),
-      migrate: (persisted) => {
-        const stored = persisted as Partial<ChatState>
-        return {
-          sessionId: stored.sessionId,
-          messages: (stored.messages ?? []).map((message) => {
-            const settled = settleStreaming({
-              ...message,
-              sources:
-                message.sources?.length
-                  ? message.sources
-                  : message.sourceLink
-                    ? [{ faqId: null, question: null, link: message.sourceLink }]
-                    : [],
-            })
-            return settled
-          }),
-          suggestions: stored.suggestions ?? [],
-          draft: stored.draft,
-          minimized: stored.minimized,
-          panelOffset: stored.panelOffset,
-          fabOffset: stored.fabOffset,
-        } as ChatState
-      },
       partialize: (state) => ({
         sessionId: state.sessionId,
         messages: state.messages.map(settleStreaming),
