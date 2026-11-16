@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { cloneElement, isValidElement, useEffect, useId, useState, type ReactNode } from "react"
+import { useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import {
   SUBJECT_PAIRS,
@@ -20,45 +20,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
-
-export const fieldClass =
-  "w-full min-w-0 rounded-md border border-border bg-background px-3 py-2 text-base sm:text-sm"
-const routes = [
-  ["eligibility", "/eligibility"],
-  ["recommendations", "/recommendations"],
-  ["cost", "/cost-calculator"],
-  ["funding", "/funding"],
-  ["requests", "/account/requests"],
-]
-
-export function GuidanceShell({
-  title,
-  children,
-}: {
-  title: string
-  children: ReactNode
-}) {
-  const t = useGuidanceT()
-  return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <Link className="text-sm underline" to="/admissions">
-        {t("hub")}
-      </Link>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{title}</h1>
-      <nav
-        aria-label={t("hub")}
-        className="my-6 flex flex-wrap gap-x-5 gap-y-2 text-sm"
-      >
-        {routes.map(([key, to]) => (
-          <Link className="underline underline-offset-4" key={key} to={to}>
-            {t(key)}
-          </Link>
-        ))}
-      </nav>
-      {children}
-    </div>
-  )
-}
+import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
+import { GUIDANCE_ROUTES, GuidanceShell } from "@/components/guidance/GuidanceShell"
 
 export function AdmissionsPage() {
   const t = useGuidanceT()
@@ -66,7 +29,7 @@ export function AdmissionsPage() {
     <GuidanceShell title={t("hub")}>
       <p className="max-w-2xl text-muted-foreground">{t("lead")}</p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {routes.map(([key, to], i) => (
+        {GUIDANCE_ROUTES.map(([key, to], i) => (
           <Link
             className="rounded-xl border border-border p-6 hover:bg-secondary"
             key={key}
@@ -81,31 +44,6 @@ export function AdmissionsPage() {
   )
 }
 
-export function Field({
-  label,
-  children,
-}: {
-  label: string
-  children: ReactNode
-}) {
-  const generatedId = useId()
-  const control = isValidElement<{ id?: string }>(children) ? children : null
-  const id = control?.props.id ?? generatedId
-  return (
-    <div className="block min-w-0 space-y-1 text-sm">
-      <label htmlFor={id} className="block"><span>{label}</span></label>
-      {control ? cloneElement(control, { id }) : children}
-    </div>
-  )
-}
-export function ErrorMessage({ error }: { error: unknown }) {
-  const t = useGuidanceT()
-  return error ? (
-    <p role="alert" className="mt-4 text-sm text-destructive">
-      {t("error")}
-    </p>
-  ) : null
-}
 export function EvidenceView({
   evidence,
 }: {

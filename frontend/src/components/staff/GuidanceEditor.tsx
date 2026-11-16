@@ -13,11 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
-import {
-  ErrorMessage,
-  Field,
-  fieldClass,
-} from "@/pages/guidance/AdmissionsPages"
+import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 
 const numeric: Metric[] = [
   "unt_total",

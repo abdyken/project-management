@@ -12,12 +12,8 @@ import { useApplicant } from "@/applicant/session"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
-import {
-  ErrorMessage,
-  Field,
-  fieldClass,
-  GuidanceShell,
-} from "./AdmissionsPages"
+import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
+import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 
 function RequestCard({
   item,
