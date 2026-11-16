@@ -178,5 +178,14 @@ def test_invalid_items_are_rejected(officer_client, change, field):
     assert field.split()[0] in response.json()["message"]
 
 
+def test_two_editors_creating_an_item_at_once_get_a_conflict(officer_client, monkeypatch):
+    monkeypatch.setattr("app.faq.service._next_id", lambda session: "faq-022")
+
+    response = officer_client.post("/api/staff/faq", json=NEW_ITEM)
+
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "CONFLICT"
+
+
 def _indexed(session, faq_id):
     return sorted(session.scalars(select(FaqEmbeddingRecord.language).where(FaqEmbeddingRecord.faq_id == faq_id)))

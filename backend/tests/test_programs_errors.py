@@ -83,3 +83,25 @@ def test_nul_character_in_query_returns_422(catalogue_session):
 
     assert response.status_code == 422
     assert response.json()["error_code"] == "INVALID_REQUEST"
+
+
+def test_integrity_error_returns_409_with_error_code():
+    from fastapi import FastAPI
+    from sqlalchemy.exc import IntegrityError
+
+    from app.api.errors import register_error_handlers
+
+    race = FastAPI()
+    register_error_handlers(race)
+
+    @race.post("/race")
+    def lose_the_race():
+        raise IntegrityError("INSERT ...", {}, Exception("duplicate key value violates unique constraint"))
+
+    response = TestClient(race).post("/race")
+
+    assert response.status_code == 409
+    assert response.json() == {
+        "error_code": "CONFLICT",
+        "message": "Someone changed the same data at the same time. Please try again.",
+    }

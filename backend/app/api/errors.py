@@ -6,13 +6,14 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from sqlalchemy.exc import DataError, OperationalError, TimeoutError as PoolTimeoutError
+from sqlalchemy.exc import DataError, IntegrityError, OperationalError, TimeoutError as PoolTimeoutError
 
 logger = logging.getLogger(__name__)
 
 DATABASE_UNAVAILABLE = "DATABASE_UNAVAILABLE"
 PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND"
 INVALID_REQUEST = "INVALID_REQUEST"
+CONFLICT = "CONFLICT"
 RETRY_AFTER_SECONDS = 5
 
 
@@ -88,9 +89,21 @@ async def invalid_data_handler(request: Request, exc: DataError) -> JSONResponse
     )
 
 
+async def conflict_handler(request: Request, exc: IntegrityError) -> JSONResponse:
+    # The request's session is closed (and rolled back) by its dependency.
+    logger.warning("Conflicting write on %s %s: %s", request.method, request.url.path, exc.orig)
+    return JSONResponse(
+        status_code=409,
+        content=ErrorResponse(
+            error_code=CONFLICT, message="Someone changed the same data at the same time. Please try again."
+        ).model_dump(),
+    )
+
+
 def register_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(ApiProblem, api_problem_handler)
     app.add_exception_handler(RequestValidationError, invalid_request_handler)
     app.add_exception_handler(DataError, invalid_data_handler)
+    app.add_exception_handler(IntegrityError, conflict_handler)
     app.add_exception_handler(OperationalError, database_unavailable_handler)
     app.add_exception_handler(PoolTimeoutError, database_unavailable_handler)

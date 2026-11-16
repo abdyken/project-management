@@ -101,5 +101,6 @@ The server records the last staff editor/time and current professional fee snaps
 New programmes can have an empty guidance record; archived programmes remain editable.
 
 Unknown/inactive public programme: 404 `PROGRAM_NOT_FOUND`; invalid body/parameters:
-422 `INVALID_REQUEST`; unauthenticated staff: 401 `NOT_LOGGED_IN`.
+422 `INVALID_REQUEST`; unauthenticated staff: 401 `NOT_LOGGED_IN`; a save that collides
+with a simultaneous one: 409 `CONFLICT`.
 The generated OpenAPI file contains all request/response schemas.

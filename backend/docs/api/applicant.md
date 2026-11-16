@@ -1,6 +1,6 @@
 # Applicant area — Sprint 5 (US23–US26, US7)
 
-All paths below start with `/api/applicant`. JSON errors use the existing `{ "error_code": "…", "message": "…" }` contract. Every response is `Cache-Control: no-store`. Applicant sessions are distinct from staff and chat sessions; no applicant id is accepted from a caller to select an owner.
+All paths below start with `/api/applicant`. JSON errors use the existing `{ "error_code": "…", "message": "…" }` contract; a write that collides with a simultaneous one gets 409 `CONFLICT` (trying again usually works). Every response is `Cache-Control: no-store`. Applicant sessions are distinct from staff and chat sessions; no applicant id is accepted from a caller to select an owner.
 
 `APPLICANT_ACCOUNTS_ENABLED=false` returns 503 `ACCOUNTS_UNAVAILABLE`. The local Docker stack enables it; the live deployment defaults off pending the hosting decision. Mutations with an Origin header outside the configured public/CORS origins return 403. Deploy behind the same origin as the frontend.
 
