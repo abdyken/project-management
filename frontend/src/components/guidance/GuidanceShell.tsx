@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import { useGuidanceT } from "@/guidance/i18n"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
 
@@ -22,9 +22,17 @@ export function GuidanceShell({
         className="my-6 flex flex-wrap gap-x-5 gap-y-2 text-sm"
       >
         {GUIDANCE_ROUTES.map(([key, to]) => (
-          <Link className="underline underline-offset-4" key={key} to={to}>
+          <NavLink
+            key={key}
+            to={to}
+            className={({ isActive }) =>
+              isActive
+                ? "font-semibold text-foreground no-underline"
+                : "text-muted-foreground underline underline-offset-4 hover:text-foreground"
+            }
+          >
             {t(key)}
-          </Link>
+          </NavLink>
         ))}
       </nav>
       {children}
