@@ -9,7 +9,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -90,17 +90,23 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
     if not settings.applicant_accounts_enabled or not settings.smtp_host:
         return 0
     today = today or datetime.now(ALMATY).date()
+    deadline = case(
+        (SavedProgram.applicant_type == "local", Program.deadline_local), else_=Program.deadline_international
+    )
     due: dict[int, list[tuple[str, str, date, int]]] = defaultdict(list)
-    for user_id, program_id, applicant_type in session.execute(
-        select(SavedProgram.applicant_id, SavedProgram.program_id, SavedProgram.applicant_type)
+    for user_id, program_id, applicant_type, program_deadline in session.execute(
+        select(SavedProgram.applicant_id, SavedProgram.program_id, SavedProgram.applicant_type, deadline)
+        .join(Program, Program.program_id == SavedProgram.program_id)
+        .join(Applicant, Applicant.id == SavedProgram.applicant_id)
+        .where(
+            Applicant.verified.is_(True),
+            Applicant.reminders_enabled.is_(True),
+            Program.is_active.is_(True),
+            deadline.between(today, today + timedelta(days=7)),
+        )
     ).all():
-        program = session.get(Program, program_id, populate_existing=True)
-        if not program or not program.is_active:
-            continue
-        deadline = getattr(program, f"deadline_{applicant_type}")
-        milestone = _stage((deadline - today).days) if deadline else None
-        if milestone is not None:
-            due[user_id].append((program_id, applicant_type, deadline, milestone))
+        milestone = _stage((program_deadline - today).days)
+        due[user_id].append((program_id, applicant_type, program_deadline, milestone))
     if not due:
         return 0
     remaining = settings.reminder_daily_limit - _sent_last_24_hours(session)
@@ -109,7 +115,12 @@ def send_due_reminders(session: Session, settings: Settings, today: date | None 
     history = {
         user_id: (count, last)
         for user_id, count, last in session.execute(
-            select(DeadlineReminder.applicant_id, func.count(), func.max(DeadlineReminder.sent_at))
+            # One digest sets the same sent_at on each of its programme rows.
+            select(
+                DeadlineReminder.applicant_id,
+                func.count(DeadlineReminder.sent_at.distinct()),
+                func.max(DeadlineReminder.sent_at),
+            )
             .where(DeadlineReminder.applicant_id.in_(due), DeadlineReminder.sent_at.is_not(None))
             .group_by(DeadlineReminder.applicant_id)
         )

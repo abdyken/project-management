@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     gemini_thinking_level: str = "low"
     # How many FAQ items above the threshold are sent to the model as sources.
     grounding_top_k: int = 5
+    # Public endpoints that may call Gemini: requests per client IP in a sliding minute.
+    # /ask and /ask/stream share one limit. A campus network puts many applicants behind one address.
+    assistant_requests_per_minute: int = 20
+    recommendations_requests_per_minute: int = 10
     # US19: staff login. The cookie is Secure (HTTPS only); browsers also accept it on
     # http://localhost, so the local Docker stack works without HTTPS.
     staff_session_hours: int = 8

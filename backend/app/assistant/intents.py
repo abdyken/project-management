@@ -133,11 +133,6 @@ def is_document_question(question: str) -> bool:
     return any(keyword in lowered for keyword in _DOCUMENT_KEYWORDS)
 
 
-def is_tuition_question(question: str) -> bool:
-    lowered = question.lower()
-    return any(keyword in lowered for keyword in _TUITION_KEYWORDS)
-
-
 def program_titles(program: Program) -> list[str]:
     return [title for title in (program.title, program.title_ru, program.title_kk) if title]
 

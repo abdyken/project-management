@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.api.errors import INVALID_REQUEST_RESPONSE, PROGRAM_NOT_FOUND, ErrorResponse
 from app.catalogue.models import Program
+from app.catalogue.service import escape_like
 from app.checklist.models import ProgramDocumentRequirement
 from app.db import get_db_session
 from app.staff.models import StaffUser
@@ -188,14 +189,14 @@ def list_programs(
 ) -> StaffProgramListResponse:
     query = select(Program).order_by(Program.degree_level, Program.program_id)
     if q and q.strip():
-        pattern = f"%{q.strip()}%"
+        pattern = f"%{escape_like(q.strip())}%"
         query = query.where(
             or_(
-                Program.program_id.ilike(pattern),
-                Program.title.ilike(pattern),
-                Program.title_ru.ilike(pattern),
-                Program.title_kk.ilike(pattern),
-                Program.faculty.ilike(pattern),
+                Program.program_id.ilike(pattern, escape="\\"),
+                Program.title.ilike(pattern, escape="\\"),
+                Program.title_ru.ilike(pattern, escape="\\"),
+                Program.title_kk.ilike(pattern, escape="\\"),
+                Program.faculty.ilike(pattern, escape="\\"),
             )
         )
     if degree_level:

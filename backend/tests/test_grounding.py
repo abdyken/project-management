@@ -1,7 +1,7 @@
 """US10 / T10.3: grounding check of model answers (no database, no model)."""
 from __future__ import annotations
 
-from app.assistant.grounding import check_grounding
+from app.assistant.grounding import check_catalogue_grounding, check_grounding
 from app.assistant.schemas import FaqItem
 
 
@@ -70,3 +70,28 @@ def test_citation_of_an_item_that_was_not_given_is_rejected():
 
 def test_empty_answer_is_rejected():
     assert check_grounding("  ", ["faq-001"], GIVEN, "?") == ([], "empty answer")
+
+
+def test_number_only_in_the_question_is_rejected():
+    cited, reason = check_grounding(
+        "Yes, the student fee is 999999 KZT.", ["faq-007"], GIVEN, "Is the student fee 999999 KZT?"
+    )
+    assert cited == []
+    assert "999999" in reason
+
+
+def test_program_code_not_named_in_the_question_is_rejected():
+    _, reason = check_grounding("For 6B06103 the Fall deadline is 31.07.2026.", ["faq-001"], GIVEN, "Deadline for 6B06102?")
+    assert reason is not None
+
+
+def test_catalogue_answer_with_a_number_only_in_the_question_is_rejected():
+    program = {"program_id": "6B06102", "title": "Computer Science", "tuition_fee": "2500000 KZT"}
+    question = "Does 6B06102 cost 999999 KZT?"
+    cited_items, cited_programs, reason = check_catalogue_grounding(
+        "Yes, 6B06102 costs 999999 KZT.", [], ["6B06102"], [], [program], question, "Tel. 1"
+    )
+    assert (cited_items, cited_programs) == ([], [])
+    assert "999999" in reason
+    _, _, reason = check_catalogue_grounding("6B06102 costs 2500000 KZT.", [], ["6B06102"], [], [program], question, "Tel. 1")
+    assert reason is None

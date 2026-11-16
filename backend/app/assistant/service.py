@@ -92,9 +92,9 @@ class AssistantService:
             if chat is not None:
                 reply, is_admission_question = chat
                 if is_admission_question:
-                    log_unanswered_question(self._session, question, score, session_id)
+                    log_unanswered_question(self._session, question, score, session_id, commit=False)
                 return _text_answer(reply)
-            log_unanswered_question(self._session, question, score, session_id)
+            log_unanswered_question(self._session, question, score, session_id, commit=False)
             return build_fallback_response(self._settings, score, language)
 
         if self._llm is not None:
@@ -183,7 +183,9 @@ class AssistantService:
 
         requirements = get_requirements(self._session, program.program_id, applicant_type)
         if not requirements:
-            log_missing_documents(self._session, program.program_id, applicant_type, question, session_id)
+            log_missing_documents(
+                self._session, program.program_id, applicant_type, question, session_id, commit=False
+            )
             return _text_answer(text(language, "missing_documents", contact=self._contact(language)))
 
         lines = [

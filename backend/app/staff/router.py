@@ -112,14 +112,14 @@ def login(
     response: Response,
     session: Annotated[Session, Depends(get_db_session)],
 ) -> StaffUserOut:
-    keys = (f"email:{normalize_email(body.email)}", f"ip:{client_ip(request)}")
-    if login_limiter.blocked(*keys):
+    email_key, ip_key = f"email:{normalize_email(body.email)}", f"ip:{client_ip(request)}"
+    if login_limiter.blocked(ip_key, email_key):
         raise StaffAuthError(429, TOO_MANY_ATTEMPTS, "Too many failed logins. Try again in 15 minutes.")
     user = authenticate(session, body.email, body.password)
     if user is None:
-        login_limiter.record_failure(*keys)
+        login_limiter.record_failure(email_key, ip_key)
         raise StaffAuthError(401, INVALID_CREDENTIALS, "Wrong e-mail or password.")
-    login_limiter.reset(keys[0])
+    login_limiter.reset(email_key)
     settings = get_settings()
     lifetime = timedelta(hours=settings.staff_session_hours)
     token = start_session(session, user, lifetime)

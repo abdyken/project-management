@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.assistant.retrieval import reindex_item
 from app.assistant.schemas import FaqItem
+from app.catalogue.service import escape_like
 from app.faq.models import PUBLISHED, FaqRecord
 from app.faq.schemas import TRANSLATED, FaqItemIn
 from app.staff.models import StaffUser
@@ -59,14 +60,14 @@ def list_items(
     if category:
         query = query.where(FaqRecord.category == category)
     if q:
-        pattern = f"%{q.strip()}%"
+        pattern = f"%{escape_like(q.strip())}%"
         query = query.where(
             or_(
-                FaqRecord.faq_id.ilike(pattern),
-                FaqRecord.question.ilike(pattern),
-                FaqRecord.answer.ilike(pattern),
-                FaqRecord.question_ru.ilike(pattern),
-                FaqRecord.question_kk.ilike(pattern),
+                FaqRecord.faq_id.ilike(pattern, escape="\\"),
+                FaqRecord.question.ilike(pattern, escape="\\"),
+                FaqRecord.answer.ilike(pattern, escape="\\"),
+                FaqRecord.question_ru.ilike(pattern, escape="\\"),
+                FaqRecord.question_kk.ilike(pattern, escape="\\"),
             )
         )
     return list(session.scalars(query))

@@ -9,7 +9,7 @@ from app.followups.models import MISSING_DOCUMENTS, UNANSWERED_QUESTION, Admissi
 
 
 def log_unanswered_question(
-    session: Session, question: str, similarity_score: float | None, session_id: str | None
+    session: Session, question: str, similarity_score: float | None, session_id: str | None, commit: bool = True
 ) -> None:
     session.add(
         AdmissionsFollowup(
@@ -19,14 +19,20 @@ def log_unanswered_question(
             session_id=session_id,
         )
     )
-    session.commit()
+    if commit:
+        session.commit()
 
 
 PAGE_VIEW_LOG_INTERVAL = timedelta(days=1)
 
 
 def log_missing_documents(
-    session: Session, program_id: str, applicant_type: str, question: str | None = None, session_id: str | None = None
+    session: Session,
+    program_id: str,
+    applicant_type: str,
+    question: str | None = None,
+    session_id: str | None = None,
+    commit: bool = True,
 ) -> None:
     if question is None and _logged_recently(session, program_id, applicant_type):
         return
@@ -39,7 +45,8 @@ def log_missing_documents(
             session_id=session_id,
         )
     )
-    session.commit()
+    if commit:
+        session.commit()
 
 
 def _logged_recently(session: Session, program_id: str, applicant_type: str) -> bool:

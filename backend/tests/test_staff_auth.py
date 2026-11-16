@@ -204,3 +204,27 @@ class _Lines:
 
     def readline(self):
         return self.lines.pop(0)
+
+
+def test_limiter_does_not_store_keys_it_only_checks():
+    limiter = LoginLimiter(limit=2)
+    for index in range(1000):
+        assert not limiter.blocked(f"ip:198.51.100.{index}", f"email:guess{index}@sdu.edu.kz")
+    assert limiter._failures == {}
+
+
+def test_limiter_drops_expired_keys_and_caps_its_size():
+    limiter = LoginLimiter(limit=2, window=timedelta(minutes=15), max_keys=3)
+    start = datetime(2026, 10, 16, 9, 0, tzinfo=timezone.utc)
+    limiter.record_failure("old", now=start)
+    assert not limiter.blocked("old", now=start + timedelta(minutes=15))
+    assert "old" not in limiter._failures
+
+    for index in range(5):
+        limiter.record_failure(f"k{index}", now=start + timedelta(minutes=20, seconds=index))
+    assert list(limiter._failures) == ["k2", "k3", "k4"]
+
+    limiter.record_failure("k4", now=start + timedelta(minutes=21))
+    assert limiter.blocked("k4", now=start + timedelta(minutes=21))
+    limiter.record_failure("late", now=start + timedelta(minutes=35, seconds=30))
+    assert list(limiter._failures) == ["k4", "late"]
