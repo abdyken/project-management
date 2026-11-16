@@ -344,13 +344,17 @@ function ProgramSelect({
       </Field>
       {programs.isPending && <p role="status">{t("working")}</p>}
       {programs.isError && (
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => void programs.refetch()}
-        >
-          {t("retry")}
-        </Button>
+        <>
+          <ErrorMessage error={programs.error} />
+          <Button
+            variant="outline"
+            type="button"
+            className="mt-2"
+            onClick={() => void programs.refetch()}
+          >
+            {t("retry")}
+          </Button>
+        </>
       )}
     </div>
   )
