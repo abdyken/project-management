@@ -9,6 +9,7 @@ from app.assistant.catalogue_tools import has_missing_values
 from app.assistant.schemas import FaqItem
 
 _DIGITS = re.compile(r"\d+")
+_PROGRAM_CODE = re.compile(r"\b\d[A-Z]\d{5}\b", re.IGNORECASE)
 
 
 def check_grounding(
@@ -24,7 +25,7 @@ def check_grounding(
     if not cited:
         return [], "cites no faq_id"
 
-    invented = invented_numbers(answer, [question, *_faq_texts(cited)])
+    invented = invented_numbers(answer, _faq_texts(cited), question)
     if invented:
         return [], f"numbers not in the cited items: {invented}"
     return cited, None
@@ -52,16 +53,22 @@ def check_catalogue_grounding(
     if not cited_items and not cited_programs:
         return [], [], "cites no source"
 
-    allowed = [question, *_faq_texts(cited_items), *(json.dumps(facts, ensure_ascii=False) for facts in cited_programs)]
+    allowed = [*_faq_texts(cited_items), *(json.dumps(facts, ensure_ascii=False) for facts in cited_programs)]
     if any(has_missing_values(facts) for facts in cited_programs):
         allowed.append(contact)
-    invented = invented_numbers(answer, allowed)
+    invented = invented_numbers(answer, allowed, question)
     if invented:
         return [], [], f"numbers not in the cited sources: {invented}"
     return cited_items, cited_programs, None
 
 
-def invented_numbers(answer: str, allowed_texts: Iterable[str]) -> list[str]:
+def invented_numbers(answer: str, allowed_texts: Iterable[str], question: str = "") -> list[str]:
+    """Numbers in the answer that are not in the allowed texts.
+
+    The question is not a source: "Is the fee 999999 KZT?" must not make 999999 official.
+    Only the program codes it names may be repeated."""
+    codes = {code.upper() for code in _PROGRAM_CODE.findall(question)}
+    answer = _PROGRAM_CODE.sub(lambda match: " " if match.group().upper() in codes else match.group(), answer)
     return sorted(_numbers([answer]) - _numbers(allowed_texts), key=int)
 
 

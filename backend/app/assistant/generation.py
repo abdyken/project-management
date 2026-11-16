@@ -217,7 +217,7 @@ def generate_chat_reply(
         return None
     if not text:
         return None
-    invented = invented_numbers(text, [message, contact])
+    invented = invented_numbers(text, [contact], message)
     if invented:
         logger.warning("chat reply rejected: model=%s numbers not in the contact: %s", generation.model, invented)
         return None
