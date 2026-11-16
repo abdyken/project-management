@@ -208,12 +208,28 @@ export function StaffFaqEditPage() {
         </fieldset>
       </div>
 
-      <div role="group" aria-label={t("edit.langGroup")} className="mt-6 flex border-b border-border text-sm">
+      <div
+        role="tablist"
+        aria-label={t("edit.langGroup")}
+        className="mt-6 flex border-b border-border text-sm"
+        onKeyDown={(event) => {
+          const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0
+          if (!step) return
+          event.preventDefault()
+          const next = LANGS[(LANGS.indexOf(tab) + step + LANGS.length) % LANGS.length]
+          setTab(next)
+          document.getElementById(`faq-tab-${next}`)?.focus()
+        }}
+      >
         {LANGS.map((lang) => (
           <button
             key={lang}
+            id={`faq-tab-${lang}`}
             type="button"
-            aria-pressed={tab === lang}
+            role="tab"
+            aria-selected={tab === lang}
+            aria-controls="faq-tabpanel"
+            tabIndex={tab === lang ? 0 : -1}
             onClick={() => setTab(lang)}
             className={cn(
               "-mb-px border-b-2 px-3 py-2",
@@ -221,12 +237,12 @@ export function StaffFaqEditPage() {
             )}
           >
             {t(`edit.lang.${lang}`)}
-            {languageState(form, lang) === "incomplete" && <span className="ml-1 text-destructive">•</span>}
+            {languageState(form, lang) === "incomplete" && <span aria-hidden="true" className="ml-1 text-destructive">•</span>}
           </button>
         ))}
       </div>
 
-      <div className="mt-4 space-y-4">
+      <div id="faq-tabpanel" role="tabpanel" aria-labelledby={`faq-tab-${tab}`} className="mt-4 space-y-4">
         <label className="block space-y-1.5 text-sm">
           <span>{t("edit.question")}</span>
           <Input value={form[key("question", tab)]} onChange={(event) => update({ [key("question", tab)]: event.target.value })} />
