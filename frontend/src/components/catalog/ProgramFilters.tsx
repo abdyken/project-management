@@ -2,7 +2,6 @@ import { useState, type FormEvent } from "react"
 import type { FilterOptions } from "@/api/programs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useI18n } from "@/i18n"
 
 export type FilterValues = {
@@ -18,7 +17,8 @@ type ProgramFiltersProps = {
   onChange: (values: FilterValues) => void
 }
 
-const ALL = "all"
+const selectClass =
+  "h-10 w-full rounded-md border border-input bg-card px-3 text-base outline-none sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/20"
 const labelClass = "mb-1.5 block text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
 
 type FilterSelectProps = {
@@ -38,24 +38,19 @@ function FilterSelect({ id, label, allLabel, value, options, onChange }: FilterS
       <label className={labelClass} htmlFor={id}>
         {label}
       </label>
-      <Select value={value || ALL} onValueChange={(next) => onChange(next === ALL ? "" : next)}>
-        <SelectTrigger id={id}>
-          <SelectValue placeholder={allLabel} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={ALL}>{allLabel}</SelectItem>
-          {items.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <select id={id} className={selectClass} value={value} onChange={(event) => onChange(event.target.value)}>
+        <option value="">{allLabel}</option>
+        {items.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </div>
   )
 }
 
-export const SEARCH_MAX_LENGTH = 100
+const SEARCH_MAX_LENGTH = 100
 
 export function ProgramFilters({ values, options, onChange }: ProgramFiltersProps) {
   const { t, degree, languages } = useI18n()

@@ -7,7 +7,7 @@ from app.catalogue.models import Program
 from app.checklist.models import ProgramDocumentRequirement
 
 
-def _escape_like(value: str) -> str:
+def escape_like(value: str) -> str:
     return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
@@ -22,7 +22,7 @@ def search_programs(
     query = select(Program).where(Program.is_active.is_(True))
 
     if keyword:
-        pattern = f"%{_escape_like(keyword)}%"
+        pattern = f"%{escape_like(keyword)}%"
         query = query.where(
             or_(
                 Program.title.ilike(pattern, escape="\\"),
@@ -38,7 +38,7 @@ def search_programs(
         query = query.where(Program.degree_level == degree_level)
     if language:
         languages = func.concat(",", func.replace(func.lower(Program.language), ", ", ","), ",")
-        query = query.where(languages.like(f"%,{_escape_like(language.lower())},%", escape="\\"))
+        query = query.where(languages.like(f"%,{escape_like(language.lower())},%", escape="\\"))
 
     return list(session.scalars(query.order_by(Program.title, Program.program_id)))
 

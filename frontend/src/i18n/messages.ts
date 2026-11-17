@@ -57,6 +57,7 @@ const en = {
   "filters.allDegrees": "All degrees",
   "filters.language": "Language",
   "filters.allLanguages": "All languages",
+  "filters.optionsError": "Could not load the lists of schools and languages.",
 
   "card.localDeadline": "Local deadline: {value}",
   "card.localTuition": "Local tuition: {value}",
@@ -80,6 +81,10 @@ const en = {
   "detail.loading": "Loading program…",
   "detail.notFound": "Program not found",
   "detail.loadError": "The program could not be loaded.",
+  "notFound.title": "Page not found",
+  "notFound.text": "The link may be old or mistyped.",
+  "notFound.home": "Go to the home page",
+  "page.loading": "Loading the page…",
   "detail.back": "Back to the catalogue",
   "detail.backToPrograms": "← Programs",
   "detail.school": "School",
@@ -188,6 +193,7 @@ const en = {
   "chat.error.invalid": "This question can't be sent. Keep it under 500 characters and try again.",
   "chat.error.generic": "Something went wrong. Please try again or contact the admissions office.",
   "chat.error.unavailable": "The assistant is unavailable right now. Please try again or contact the admissions office.",
+  "chat.error.tooMany": "Too many questions in a short time. Please wait a minute and try again.",
 }
 
 export type MessageKey = keyof typeof en
@@ -252,6 +258,7 @@ const kk: Messages = {
   "filters.allDegrees": "Барлық дәрежелер",
   "filters.language": "Тілі",
   "filters.allLanguages": "Барлық тілдер",
+  "filters.optionsError": "Мектептер мен тілдер тізімін жүктеу мүмкін болмады.",
 
   "card.localDeadline": "Мерзім (отандық): {value}",
   "card.localTuition": "Ақы (отандық): {value}",
@@ -275,6 +282,10 @@ const kk: Messages = {
   "detail.loading": "Бағдарлама жүктелуде…",
   "detail.notFound": "Бағдарлама табылмады",
   "detail.loadError": "Бағдарламаны жүктеу мүмкін болмады.",
+  "notFound.title": "Бет табылмады",
+  "notFound.text": "Сілтеме ескірген немесе қате терілген болуы мүмкін.",
+  "notFound.home": "Басты бетке өту",
+  "page.loading": "Бет жүктелуде…",
   "detail.back": "Каталогқа оралу",
   "detail.backToPrograms": "← Бағдарламалар",
   "detail.school": "Мектеп",
@@ -384,6 +395,7 @@ const kk: Messages = {
   "chat.error.invalid": "Бұл сұрақты жіберу мүмкін емес. 500 таңбадан қысқа жазып, қайталап көріңіз.",
   "chat.error.generic": "Бірдеңе дұрыс болмады. Қайталап көріңіз немесе қабылдау комиссиясына хабарласыңыз.",
   "chat.error.unavailable": "Ассистент қазір қолжетімсіз. Қайталап көріңіз немесе қабылдау комиссиясына хабарласыңыз.",
+  "chat.error.tooMany": "Қысқа уақытта тым көп сұрақ жіберілді. Бір минут күтіп, қайталап көріңіз.",
 }
 
 const ru: Messages = {
@@ -445,6 +457,7 @@ const ru: Messages = {
   "filters.allDegrees": "Все степени",
   "filters.language": "Язык",
   "filters.allLanguages": "Все языки",
+  "filters.optionsError": "Не удалось загрузить списки школ и языков.",
 
   "card.localDeadline": "Срок (местные): {value}",
   "card.localTuition": "Стоимость (местные): {value}",
@@ -468,6 +481,10 @@ const ru: Messages = {
   "detail.loading": "Загрузка программы…",
   "detail.notFound": "Программа не найдена",
   "detail.loadError": "Не удалось загрузить программу.",
+  "notFound.title": "Страница не найдена",
+  "notFound.text": "Возможно, ссылка устарела или в ней опечатка.",
+  "notFound.home": "На главную",
+  "page.loading": "Загрузка страницы…",
   "detail.back": "Вернуться в каталог",
   "detail.backToPrograms": "← Программы",
   "detail.school": "Школа",
@@ -577,6 +594,7 @@ const ru: Messages = {
   "chat.error.invalid": "Этот вопрос нельзя отправить. Сократите его до 500 символов и попробуйте снова.",
   "chat.error.generic": "Что-то пошло не так. Попробуйте ещё раз или свяжитесь с приёмной комиссией.",
   "chat.error.unavailable": "Ассистент сейчас недоступен. Попробуйте ещё раз или свяжитесь с приёмной комиссией.",
+  "chat.error.tooMany": "Слишком много вопросов за короткое время. Подождите минуту и попробуйте снова.",
 }
 
 export const MESSAGES = { en, kk, ru }

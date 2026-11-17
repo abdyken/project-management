@@ -2,6 +2,7 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from app.api.client import recommendations_rate_limit, too_many_requests_response
 from app.api.errors import (
     DATABASE_UNAVAILABLE_RESPONSE,
     INVALID_REQUEST_RESPONSE,
@@ -56,7 +57,14 @@ def check(body: EligibilityIn, session: Db):
     )
 
 
-@router.post("/recommendations", response_model=RecommendationsOut)
+@router.post(
+    "/recommendations",
+    response_model=RecommendationsOut,
+    dependencies=[Depends(recommendations_rate_limit)],
+    responses=too_many_requests_response(
+        "More than `RECOMMENDATIONS_REQUESTS_PER_MINUTE` (default 30) requests from this address in a minute."
+    ),
+)
 def recommend(body: RecommendationIn, session: Db):
     return recommendations(session, body, get_settings())
 

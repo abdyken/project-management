@@ -74,6 +74,11 @@ confirmed eligible routes add 3. Ties sort by programme id. Confirmed eligibilit
 failures and known teaching-language mismatches are excluded; missing requirements
 and language remain explicit. No matches means an empty list.
 
+The endpoint may call Gemini, so it allows `RECOMMENDATIONS_REQUESTS_PER_MINUTE`
+(default 30) requests per client IP in a sliding minute; more get 429
+`TOO_MANY_REQUESTS`. The client IP is taken as for the login limits (first
+`X-Forwarded-For` entry). The counters live in memory and reset on restart.
+
 Gemini receives only selected programme titles and allowed reason labels, never
 scores or e-mail. Its response must contain exactly those ids and nonempty subsets
 of the allowed labels. Invalid/model-unavailable responses use template explanations;
@@ -101,5 +106,6 @@ The server records the last staff editor/time and current professional fee snaps
 New programmes can have an empty guidance record; archived programmes remain editable.
 
 Unknown/inactive public programme: 404 `PROGRAM_NOT_FOUND`; invalid body/parameters:
-422 `INVALID_REQUEST`; unauthenticated staff: 401 `NOT_LOGGED_IN`.
+422 `INVALID_REQUEST`; unauthenticated staff: 401 `NOT_LOGGED_IN`; a save that collides
+with a simultaneous one: 409 `CONFLICT`.
 The generated OpenAPI file contains all request/response schemas.

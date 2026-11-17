@@ -14,56 +14,16 @@ export function HeroGlobe() {
     const canvas = canvasRef.current
     if (!container || !canvas) return
 
-    let width = 0
+    let width = canvas.offsetWidth
     let phi = 2.1
     let theta = 0.28
     let frame = 0
     let dragging = false
+    let touch = false
     let lastX = 0
     let lastY = 0
-
-    const onResize = () => {
-      width = canvas.offsetWidth
-    }
-
-    const onPointerDown = (event: PointerEvent) => {
-      dragging = true
-      lastX = event.clientX
-      lastY = event.clientY
-      container.setPointerCapture(event.pointerId)
-      container.style.cursor = "grabbing"
-    }
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (!dragging) return
-      const dx = event.clientX - lastX
-      const dy = event.clientY - lastY
-      phi += dx * 0.006
-      theta = Math.max(-0.8, Math.min(0.8, theta + dy * 0.004))
-      lastX = event.clientX
-      lastY = event.clientY
-    }
-
-    const onPointerUp = (event: PointerEvent) => {
-      dragging = false
-      container.releasePointerCapture(event.pointerId)
-      container.style.cursor = "grab"
-    }
-
-    onResize()
-    window.addEventListener("resize", onResize)
-    container.addEventListener("pointerdown", onPointerDown)
-    container.addEventListener("pointermove", onPointerMove)
-    container.addEventListener("pointerup", onPointerUp)
-    container.addEventListener("pointercancel", onPointerUp)
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-
-    const marker = container.querySelector<HTMLElement>(".sdu-globe-marker")
-    const wrapper = canvas.parentElement
-    if (marker && wrapper && marker.parentElement !== wrapper) {
-      wrapper.appendChild(marker)
-    }
+    let visible = true
+    const spin = !window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     const globe = createGlobe(canvas, {
       devicePixelRatio: Math.min(window.devicePixelRatio, 2),
@@ -81,25 +41,82 @@ export function HeroGlobe() {
       markers: [{ location: ALMATY, size: 0.028, id: "sdu" }],
     })
 
+    // Spin only while the globe is on screen and the tab is visible; with reduced motion,
+    // draw a frame only when the globe is resized or dragged.
+    const running = () => spin && visible && !document.hidden
+
     const tick = () => {
-      if (!dragging && !reducedMotion) {
-        phi += 0.0015
-      }
+      frame = 0
+      if (spin && !dragging) phi += 0.0015
       globe.update({
         phi,
         theta,
         width: width * 2,
         height: width * 2,
       })
-      frame = window.requestAnimationFrame(tick)
+      if (running()) schedule()
     }
 
-    frame = window.requestAnimationFrame(tick)
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(tick)
+    }
+
+    const onResize = () => {
+      width = canvas.offsetWidth
+      schedule()
+    }
+
+    const onPointerDown = (event: PointerEvent) => {
+      dragging = true
+      touch = event.pointerType === "touch"
+      lastX = event.clientX
+      lastY = event.clientY
+      container.setPointerCapture(event.pointerId)
+      container.style.cursor = "grabbing"
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!dragging) return
+      const dx = event.clientX - lastX
+      const dy = event.clientY - lastY
+      phi += dx * 0.006
+      // Vertical swipes scroll the page on touch screens, so a finger only spins the globe.
+      if (!touch) theta = Math.max(-0.8, Math.min(0.8, theta + dy * 0.004))
+      lastX = event.clientX
+      lastY = event.clientY
+      schedule()
+    }
+
+    const onPointerUp = (event: PointerEvent) => {
+      dragging = false
+      if (container.hasPointerCapture(event.pointerId)) container.releasePointerCapture(event.pointerId)
+      container.style.cursor = "grab"
+    }
+
+    const onVisibility = () => {
+      if (running()) schedule()
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      onVisibility()
+    })
+
+    onResize()
+    window.addEventListener("resize", onResize)
+    document.addEventListener("visibilitychange", onVisibility)
+    observer.observe(container)
+    container.addEventListener("pointerdown", onPointerDown)
+    container.addEventListener("pointermove", onPointerMove)
+    container.addEventListener("pointerup", onPointerUp)
+    container.addEventListener("pointercancel", onPointerUp)
 
     return () => {
       window.cancelAnimationFrame(frame)
+      observer.disconnect()
       globe.destroy()
       window.removeEventListener("resize", onResize)
+      document.removeEventListener("visibilitychange", onVisibility)
       container.removeEventListener("pointerdown", onPointerDown)
       container.removeEventListener("pointermove", onPointerMove)
       container.removeEventListener("pointerup", onPointerUp)
@@ -111,7 +128,7 @@ export function HeroGlobe() {
     <div className="relative mx-auto w-full max-w-sm">
       <div
         ref={containerRef}
-        className="relative aspect-square w-full cursor-grab touch-none select-none"
+        className="relative aspect-square w-full cursor-grab touch-pan-y select-none"
         role="img"
         aria-label={t("home.globe")}
       >

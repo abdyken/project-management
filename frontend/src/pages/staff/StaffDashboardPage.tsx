@@ -12,6 +12,8 @@ const ANSWERED = "#2a78d6"
 const UNANSWERED = "#eb6834"
 const PERIODS = [7, 14, 30]
 const PLOT_HEIGHT = 160
+const REASONS = ["none", "wrong", "outdated", "unclear", "other"] as const
+type Reason = (typeof REASONS)[number]
 
 function Tile({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
@@ -272,7 +274,7 @@ export function StaffDashboardPage() {
           <Section title={t("dash.reasons")}>
             <Bars
               rows={Object.entries(data.down_reasons).map(([reason, value]) => ({
-                label: reason === "none" ? t("dash.reason.none") : reason,
+                label: REASONS.includes(reason as Reason) ? t(`dash.reason.${reason as Reason}`) : reason,
                 value,
               }))}
             />

@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import type { AnswerSource, FeedbackRating, FeedbackReason } from "@/api/types"
+import type { MessageKey } from "@/i18n/messages"
 import { abortRequest } from "@/lib/chat-request"
 import { MESSAGE_MAX_LENGTH } from "@/lib/constants"
 import { randomId } from "@/lib/utils"
@@ -24,26 +25,19 @@ export type ChatMessage = {
   role: ChatRole
   text: string
   sources: ChatSource[]
-  sourceLink?: string | null
   answerId?: string | null
   replyTo?: string
   rating?: ChatRating | null
   createdAt: number
   isError?: boolean
+  errorKey?: MessageKey
   interrupted?: boolean
   streaming?: boolean
-}
-
-export type CornerOffset = {
-  right: number
-  bottom: number
 }
 
 type ChatState = {
   open: boolean
   minimized: boolean
-  panelOffset: CornerOffset | null
-  fabOffset: CornerOffset | null
   sessionId: string
   messages: ChatMessage[]
   suggestions: string[]
@@ -51,8 +45,6 @@ type ChatState = {
   sending: boolean
   setOpen: (open: boolean) => void
   setMinimized: (minimized: boolean) => void
-  setPanelOffset: (offset: CornerOffset) => void
-  setFabOffset: (offset: CornerOffset) => void
   setDraft: (draft: string) => void
   setSending: (sending: boolean) => void
   setSuggestions: (suggestions: string[]) => void
@@ -63,7 +55,7 @@ type ChatState = {
     patch: { text?: string; sources: ChatSource[]; answerId: string },
   ) => void
   interruptMessage: (id: string) => void
-  failMessage: (id: string, text: string) => void
+  failMessage: (id: string, errorKey: MessageKey) => void
   removeMessage: (id: string) => void
   rateMessage: (id: string, rating: ChatRating) => void
   startNewConversation: () => void
@@ -90,8 +82,6 @@ export const useChatStore = create<ChatState>()(
     (set) => ({
       open: false,
       minimized: false,
-      panelOffset: null,
-      fabOffset: null,
       sessionId: randomId(),
       messages: [],
       suggestions: [],
@@ -102,8 +92,6 @@ export const useChatStore = create<ChatState>()(
         set({ open, minimized: false })
       },
       setMinimized: (minimized) => set({ minimized, open: !minimized }),
-      setPanelOffset: (panelOffset) => set({ panelOffset }),
-      setFabOffset: (fabOffset) => set({ fabOffset }),
       setDraft: (draft) => set({ draft: draft.slice(0, MESSAGE_MAX_LENGTH) }),
       setSending: (sending) => set({ sending }),
       setSuggestions: (suggestions) => set({ suggestions }),
@@ -133,10 +121,10 @@ export const useChatStore = create<ChatState>()(
             return { ...message, streaming: false, interrupted: true }
           }),
         })),
-      failMessage: (id, text) =>
+      failMessage: (id, errorKey) =>
         set((state) => ({
           messages: state.messages.map((message) =>
-            message.id === id ? { ...message, text, streaming: false, isError: true, interrupted: false } : message,
+            message.id === id ? { ...message, text: "", errorKey, streaming: false, isError: true, interrupted: false } : message,
           ),
         })),
       removeMessage: (id) =>
@@ -162,37 +150,12 @@ export const useChatStore = create<ChatState>()(
       name: "sdu-admissions-chat",
       version: 2,
       storage: createJSONStorage(() => sessionStorage),
-      migrate: (persisted) => {
-        const stored = persisted as Partial<ChatState>
-        return {
-          sessionId: stored.sessionId,
-          messages: (stored.messages ?? []).map((message) => {
-            const settled = settleStreaming({
-              ...message,
-              sources:
-                message.sources?.length
-                  ? message.sources
-                  : message.sourceLink
-                    ? [{ faqId: null, question: null, link: message.sourceLink }]
-                    : [],
-            })
-            return settled
-          }),
-          suggestions: stored.suggestions ?? [],
-          draft: stored.draft,
-          minimized: stored.minimized,
-          panelOffset: stored.panelOffset,
-          fabOffset: stored.fabOffset,
-        } as ChatState
-      },
       partialize: (state) => ({
         sessionId: state.sessionId,
         messages: state.messages.map(settleStreaming),
         suggestions: state.suggestions,
         draft: state.draft,
         minimized: state.minimized,
-        panelOffset: state.panelOffset,
-        fabOffset: state.fabOffset,
       }),
     },
   ),

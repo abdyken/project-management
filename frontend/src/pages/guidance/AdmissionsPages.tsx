@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { cloneElement, isValidElement, useEffect, useId, useState, type ReactNode } from "react"
+import { useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import {
   SUBJECT_PAIRS,
@@ -20,44 +20,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
+import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
+import { GuidanceShell } from "@/components/guidance/GuidanceShell"
+import { GUIDANCE_ROUTES } from "@/guidance/routes"
 
-export const fieldClass =
-  "w-full min-w-0 rounded-md border border-border bg-background px-3 py-2 text-sm"
-const routes = [
-  ["eligibility", "/eligibility"],
-  ["recommendations", "/recommendations"],
-  ["cost", "/cost-calculator"],
-  ["funding", "/funding"],
-  ["requests", "/account/requests"],
-]
-
-export function GuidanceShell({
-  title,
-  children,
-}: {
-  title: string
-  children: ReactNode
-}) {
-  const t = useGuidanceT()
-  return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <Link className="text-sm underline" to="/admissions">
-        {t("hub")}
-      </Link>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{title}</h1>
-      <nav
-        aria-label={t("hub")}
-        className="my-6 flex flex-wrap gap-x-5 gap-y-2 text-sm"
-      >
-        {routes.map(([key, to]) => (
-          <Link className="underline underline-offset-4" key={key} to={to}>
-            {t(key)}
-          </Link>
-        ))}
-      </nav>
-      {children}
-    </div>
-  )
+function SubmitHint({ id, text }: { id: string; text: string | null }) {
+  return text ? (
+    <p id={id} className="mt-2 text-sm text-muted-foreground">
+      {text}
+    </p>
+  ) : null
 }
 
 export function AdmissionsPage() {
@@ -66,7 +38,7 @@ export function AdmissionsPage() {
     <GuidanceShell title={t("hub")}>
       <p className="max-w-2xl text-muted-foreground">{t("lead")}</p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {routes.map(([key, to], i) => (
+        {GUIDANCE_ROUTES.map(([key, to], i) => (
           <Link
             className="rounded-xl border border-border p-6 hover:bg-secondary"
             key={key}
@@ -81,31 +53,6 @@ export function AdmissionsPage() {
   )
 }
 
-export function Field({
-  label,
-  children,
-}: {
-  label: string
-  children: ReactNode
-}) {
-  const generatedId = useId()
-  const control = isValidElement<{ id?: string }>(children) ? children : null
-  const id = control?.props.id ?? generatedId
-  return (
-    <div className="block min-w-0 space-y-1 text-sm">
-      <label htmlFor={id} className="block"><span>{label}</span></label>
-      {control ? cloneElement(control, { id }) : children}
-    </div>
-  )
-}
-export function ErrorMessage({ error }: { error: unknown }) {
-  const t = useGuidanceT()
-  return error ? (
-    <p role="alert" className="mt-4 text-sm text-destructive">
-      {t("error")}
-    </p>
-  ) : null
-}
 export function EvidenceView({
   evidence,
 }: {
@@ -140,7 +87,7 @@ export function GapList({ gaps }: { gaps: string[] }) {
   return gaps.length > 0 ? (
     <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
       {[...new Set(gaps)].map((gap, index) => (
-        <li key={index}>{t(gap)}</li>
+        <li key={index}>{t.code(gap)}</li>
       ))}
     </ul>
   ) : null
@@ -152,7 +99,7 @@ function ConditionText({ condition }: { condition: Condition }) {
       {t(condition.metric)}{" "}
       {condition.minimum != null
         ? `≥ ${condition.minimum}`
-        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t(String(condition.equals))}`}
+        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t.code(String(condition.equals))}`}
     </span>
   )
 }
@@ -170,7 +117,7 @@ export function EligibilityResult({ result }: { result: Eligibility }) {
         {result.checks.map((check, index) => (
           <li className="py-4" key={index}>
             <h3 className="font-medium">
-              {t(check.key)} · {t(check.status)}
+              {t.code(check.key)} · {t(check.status)}
             </h3>
             <div className="mt-2 space-y-1 text-sm">
               {check.alternatives.map((group, gi) => (
@@ -231,7 +178,7 @@ function ProfileFields({
             value={value.applicant_type}
             onChange={(e) => change("applicant_type", e.target.value)}
           >
-            {["local", "international"].map((v) => (
+            {(["local", "international"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -244,7 +191,7 @@ function ProfileFields({
             value={value.education_route}
             onChange={(e) => change("education_route", e.target.value)}
           >
-            {["school", "college", "bachelor", "master"].map((v) => (
+            {(["school", "college", "bachelor", "master"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -257,7 +204,7 @@ function ProfileFields({
             value={value.admission_basis}
             onChange={(e) => change("admission_basis", e.target.value)}
           >
-            {["paid", "grant"].map((v) => (
+            {(["paid", "grant"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -272,7 +219,7 @@ function ProfileFields({
               onChange={(e) => change("track", e.target.value || null)}
             >
               <option value="">{t("unknown")}</option>
-              {["scientific", "profile"].map((v) => (
+              {(["scientific", "profile"] as const).map((v) => (
                 <option key={v} value={v}>
                   {t(v)}
                 </option>
@@ -405,13 +352,17 @@ function ProgramSelect({
       </Field>
       {programs.isPending && <p role="status">{t("working")}</p>}
       {programs.isError && (
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => void programs.refetch()}
-        >
-          {t("retry")}
-        </Button>
+        <>
+          <ErrorMessage error={programs.error} />
+          <Button
+            variant="outline"
+            type="button"
+            className="mt-2"
+            onClick={() => void programs.refetch()}
+          >
+            {t("retry")}
+          </Button>
+        </>
       )}
     </div>
   )
@@ -467,9 +418,10 @@ export function EligibilityPage() {
             mutation.reset()
           }}
         />
-        <Button className="mt-6" disabled={!program || mutation.isPending}>
+        <Button className="mt-6" disabled={!program || mutation.isPending} aria-describedby={program ? undefined : "eligibility-hint"}>
           {t(mutation.isPending ? "working" : "submit")}
         </Button>
+        <SubmitHint id="eligibility-hint" text={program ? null : t("needProgram")} />
       </form>
       <ErrorMessage error={mutation.error} />
       {mutation.data && <EligibilityResult result={mutation.data} />}
@@ -524,7 +476,7 @@ export function RecommendationsPage() {
                 clear()
               }}
             >
-              {["bachelor", "master", "phd"].map((v) => (
+              {(["bachelor", "master", "phd"] as const).map((v) => (
                 <option key={v} value={v}>
                   {t(v)}
                 </option>
@@ -552,7 +504,7 @@ export function RecommendationsPage() {
         <fieldset className="mt-6">
           <legend className="font-medium">{t("interests")}</legend>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {[
+            {([
               "computing",
               "business",
               "law",
@@ -561,7 +513,7 @@ export function RecommendationsPage() {
               "science",
               "media",
               "psychology",
-            ].map((v) => (
+            ] as const).map((v) => (
               <label key={v} className="flex gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -591,9 +543,11 @@ export function RecommendationsPage() {
         <Button
           className="mt-6"
           disabled={!interests.length || mutation.isPending}
+          aria-describedby={interests.length ? undefined : "recommendations-hint"}
         >
           {t(mutation.isPending ? "working" : "recommendations")}
         </Button>
+        <SubmitHint id="recommendations-hint" text={interests.length ? null : t("needInterest")} />
       </form>
       <ErrorMessage error={mutation.error} />
       {mutation.data && (
@@ -614,7 +568,7 @@ export function RecommendationsPage() {
               <p className="mt-2 text-sm">
                 {t("matches")}:{" "}
                 {item.reasons
-                  .map((r) => t(r.replace("interest:", "")))
+                  .map((r) => t.code(r.replace("interest:", "")))
                   .join(", ")}
               </p>
               <p className="mt-2 text-sm font-medium">
@@ -669,6 +623,11 @@ export function CostPage() {
         language,
       }),
   })
+  const costHint = !program
+    ? t("needProgram")
+    : !professional || Number(professional) + Number(mde) <= 0
+      ? t("needCredits")
+      : null
   const number = (value: number | null) =>
     value == null ? t("unknown") : new Intl.NumberFormat(language).format(value)
   return (
@@ -740,7 +699,7 @@ export function CostPage() {
                   mutation.reset()
                 }}
               >
-                <option value="">{t("choose")}</option>
+                <option value="">{t("chooseLanguageGroup")}</option>
                 {data.data.language_tariffs.map((tariff) => (
                   <option
                     key={tariff.language_group}
@@ -761,9 +720,11 @@ export function CostPage() {
             mutation.isPending ||
             Number(professional) + Number(mde) <= 0
           }
+          aria-describedby={costHint ? "cost-hint" : undefined}
         >
           {t(mutation.isPending ? "working" : "calculate")}
         </Button>
+        <SubmitHint id="cost-hint" text={costHint} />
       </form>
       <ErrorMessage error={mutation.error || data.error} />
       {data.data && (
@@ -795,7 +756,7 @@ export function CostPage() {
           <ul className="mt-4 divide-y divide-border">
             {mutation.data.components.map((c) => (
               <li className="py-3 text-sm" key={c.component}>
-                <h3 className="font-medium">{t(c.component)}</h3>
+                <h3 className="font-medium">{t.code(c.component)}</h3>
                 <p>
                   {c.ects} ECTS × {number(c.rate)} {currency} ={" "}
                   {number(c.amount)} {currency}
@@ -835,7 +796,7 @@ export function FundingPage() {
             onChange={(e) => setDegree(e.target.value)}
           >
             <option value="">{t("all")}</option>
-            {["bachelor", "master", "phd"].map((v) => (
+            {(["bachelor", "master", "phd"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -849,7 +810,7 @@ export function FundingPage() {
             onChange={(e) => setApplicant(e.target.value)}
           >
             <option value="">{t("all")}</option>
-            {["local", "international"].map((v) => (
+            {(["local", "international"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -874,7 +835,7 @@ export function FundingPage() {
             className="rounded-xl border border-border p-5"
           >
             <p className="text-xs text-muted-foreground">
-              {t(item.status)} · {t("checked")}: {item.last_checked}
+              {t.code(item.status)} · {t("checked")}: {item.last_checked}
             </p>
             <h2
               className="mt-2 text-xl font-medium"

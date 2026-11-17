@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   answerRequest,
   listRequests,
@@ -12,12 +12,41 @@ import { useApplicant } from "@/applicant/session"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
-import {
-  ErrorMessage,
-  Field,
-  fieldClass,
-  GuidanceShell,
-} from "./AdmissionsPages"
+import { Field, fieldClass } from "@/components/guidance/fields"
+import { GuidanceShell } from "@/components/guidance/GuidanceShell"
+import { randomId } from "@/lib/utils"
+import { useStaffT, type StaffKey } from "@/staff/i18n"
+
+// The staff side shows these labels from the staff dictionary, so Kazakh falls back to Russian.
+const STAFF_TEXT = {
+  answer: "req.answer",
+  answered: "req.answered",
+  new: "req.new",
+  all: "req.all",
+  working: "req.working",
+  send: "req.send",
+  retry: "common.retry",
+  empty: "req.empty",
+  error: "req.error",
+  previous: "req.previous",
+  next: "req.next",
+} as const satisfies Record<string, StaffKey>
+
+function useRequestT(staff: boolean) {
+  const guidanceT = useGuidanceT()
+  const staffT = useStaffT()
+  return (key: keyof typeof STAFF_TEXT) =>
+    staff ? staffT(STAFF_TEXT[key]) : guidanceT(key)
+}
+
+function RequestError({ error, staff }: { error: unknown; staff: boolean }) {
+  const t = useRequestT(staff)
+  return error ? (
+    <p role="alert" className="mt-4 text-sm text-destructive">
+      {t("error")}
+    </p>
+  ) : null
+}
 
 function RequestCard({
   item,
@@ -26,7 +55,8 @@ function RequestCard({
   item: AdmissionRequest
   staff: boolean
 }) {
-  const t = useGuidanceT()
+  const t = useRequestT(staff)
+  const { deadline } = useI18n()
   const cache = useQueryClient()
   const [text, setText] = useState("")
   const mutation = useMutation({
@@ -37,7 +67,8 @@ function RequestCard({
   return (
     <article className="rounded-xl border border-border p-5">
       <p className="text-xs text-muted-foreground">
-        #{item.id} · {item.created_at.slice(0, 10)} ·{" "}
+        #{item.id} ·{" "}
+        {staff ? item.created_at.slice(0, 10) : deadline(item.created_at)} ·{" "}
         {t(item.answer ? "answered" : "new")}
       </p>
       <p className="mt-3 whitespace-pre-wrap break-words" lang={item.language}>
@@ -74,7 +105,7 @@ function RequestCard({
           >
             {t(mutation.isPending ? "working" : "send")}
           </Button>
-          <ErrorMessage error={mutation.error} />
+          <RequestError error={mutation.error} staff={staff} />
         </form>
       )}
     </article>
@@ -88,15 +119,14 @@ function RequestsContent({
   staff: boolean
   ownerId?: number
 }) {
-  const t = useGuidanceT()
+  const guidanceT = useGuidanceT()
+  const staffT = useStaffT()
+  const t = useRequestT(staff)
   const { language } = useI18n()
   const location = useLocation()
-  const [question, setQuestion] = useState(
-    staff || typeof location.state?.question !== "string"
-      ? ""
-      : location.state.question.slice(0, 2000),
-  )
-  const [key, setKey] = useState(() => crypto.randomUUID())
+  const navigate = useNavigate()
+  const [question, setQuestion] = useState("")
+  const [key, setKey] = useState(randomId)
   const [status, setStatus] = useState(staff ? "new" : "all")
   const [offset, setOffset] = useState(0)
   const cache = useQueryClient()
@@ -118,11 +148,24 @@ function RequestsContent({
     mutationFn: () => sendRequest(question, language, key),
     onSuccess: () => {
       setQuestion("")
-      setKey(crypto.randomUUID())
+      setKey(randomId())
       setOffset(0)
       void cache.invalidateQueries({ queryKey: ["applicant", "requests"] })
     },
   })
+  const { reset } = mutation
+  const prefill: unknown = staff ? undefined : location.state?.question
+  const [prefilledFrom, setPrefilledFrom] = useState<string | null>(null)
+  if (typeof prefill === "string" && prefilledFrom !== location.key) {
+    setPrefilledFrom(location.key)
+    setQuestion(prefill.slice(0, 2000))
+    setKey(randomId())
+  }
+  useEffect(() => {
+    if (typeof prefill !== "string") return
+    reset()
+    navigate(location.pathname + location.search, { replace: true, state: null })
+  }, [prefill, location.pathname, location.search, navigate, reset])
   return (
     <div>
       {!staff && (
@@ -134,9 +177,9 @@ function RequestsContent({
           }}
         >
           <p className="mb-4 text-sm text-muted-foreground">
-            {t("requestNote")}
+            {guidanceT("requestNote")}
           </p>
-          <Field label={t("question")}>
+          <Field label={guidanceT("question")}>
             <textarea
               className={fieldClass}
               required
@@ -146,7 +189,7 @@ function RequestsContent({
               value={question}
               onChange={(e) => {
                 setQuestion(e.target.value)
-                setKey(crypto.randomUUID())
+                setKey(randomId())
                 mutation.reset()
               }}
             />
@@ -157,16 +200,16 @@ function RequestsContent({
           >
             {t(mutation.isPending ? "working" : "send")}
           </Button>
-          <ErrorMessage error={mutation.error} />
+          <RequestError error={mutation.error} staff={staff} />
           {mutation.isSuccess && (
             <p role="status" className="mt-3">
-              {t("saved")}
+              {guidanceT("saved")}
             </p>
           )}
         </form>
       )}
       {staff && (
-        <Field label={t("requests")}>
+        <Field label={staffT("req.status")}>
           <select
             className={`${fieldClass} mb-5 max-w-xs`}
             value={status}
@@ -175,7 +218,7 @@ function RequestsContent({
               setOffset(0)
             }}
           >
-            {["new", "answered", "all"].map((v) => (
+            {(["new", "answered", "all"] as const).map((v) => (
               <option key={v} value={v}>
                 {t(v)}
               </option>
@@ -186,7 +229,7 @@ function RequestsContent({
       {data.isPending && <p>{t("working")}</p>}
       {data.isError && (
         <>
-          <ErrorMessage error={data.error} />
+          <RequestError error={data.error} staff={staff} />
           <Button className="my-4" onClick={() => void data.refetch()}>
             {t("retry")}
           </Button>
@@ -251,10 +294,10 @@ export function ApplicantRequestsPage() {
 }
 
 export function StaffRequestsPage() {
-  const t = useGuidanceT()
+  const t = useStaffT()
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">{t("requests")}</h1>
+      <h1 className="mb-6 text-2xl font-semibold">{t("nav.requests")}</h1>
       <RequestsContent staff />
     </div>
   )

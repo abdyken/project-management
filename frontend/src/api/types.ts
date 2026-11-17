@@ -53,12 +53,6 @@ export type AnswerSource = {
   title: string | null
 }
 
-export type AssistantResponse = {
-  answer: string
-  sources: AnswerSource[]
-  answer_id: string
-}
-
 export type StreamDone = {
   answer_id: string
   sources: AnswerSource[]

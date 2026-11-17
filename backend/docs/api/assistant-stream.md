@@ -20,6 +20,7 @@ Content-Type: application/json
 | Status | `error_code` | When |
 | ------ | ------------ | ---- |
 | 422 | `INVALID_REQUEST` | Empty or too long question, missing `session_id` |
+| 429 | `TOO_MANY_REQUESTS` | Over the per-IP limit shared with `/ask` (`ASSISTANT_REQUESTS_PER_MINUTE`, default 60 a minute) |
 | 503 | `DATABASE_UNAVAILABLE` | Database unreachable (`Retry-After` header) |
 | 504 | `ASSISTANT_TIMEOUT` | No answer within the time budget (`ASSISTANT_TIMEOUT_SECONDS`) |
 

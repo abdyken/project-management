@@ -65,6 +65,14 @@ def test_a_reply_with_an_invented_number_falls_back(assistant_session):
     assert response.answer == FALLBACK_TEMPLATE.format(contact=get_settings().admissions_office_contact)
 
 
+def test_a_number_from_the_message_is_not_allowed(assistant_session):
+    llm = ChatLlm("Yes, parking costs 999999 tenge a month.", is_admission_question=True)
+
+    response = ask(assistant_session, "Is parking 999999 tenge?", llm)
+
+    assert response.answer == FALLBACK_TEMPLATE.format(contact=get_settings().admissions_office_contact)
+
+
 def test_contact_numbers_are_allowed(assistant_session):
     contact = get_settings().admissions_office_contact
     llm = ChatLlm(f"I don't know that. {contact}", is_admission_question=True)

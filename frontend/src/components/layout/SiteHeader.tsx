@@ -19,7 +19,7 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-border/80">
-      <div className="mx-auto flex min-h-16 max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex min-h-16 max-w-5xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3 sm:flex-nowrap sm:px-6">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <img src="/logo.svg" alt="" className="size-6" />
           <span className="text-xl font-semibold tracking-tight">SDU</span>
@@ -27,13 +27,14 @@ export function SiteHeader() {
             {t("header.admissions")}
           </span>
         </Link>
-        <nav className="flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-2 text-sm sm:gap-x-5">
+        <nav className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm sm:order-none sm:ml-auto sm:w-auto sm:justify-end sm:gap-x-5">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
                 [
+                  "py-1",
                   isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                   link.to === "/" ? "hidden sm:inline" : "",
                 ].join(" ")
@@ -49,8 +50,8 @@ export function SiteHeader() {
           >
             {t("nav.ask")}
           </button>
-          <LanguageSwitcher />
         </nav>
+        <LanguageSwitcher />
       </div>
     </header>
   )

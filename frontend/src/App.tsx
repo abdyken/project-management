@@ -1,27 +1,50 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useEffect } from "react"
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { lazy, Suspense, useEffect } from "react"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { ErrorBoundary } from "@/components/common/ErrorBoundary"
+import { PageLoading } from "@/components/common/PageLoading"
 import { AppLayout } from "@/components/layout/AppLayout"
-import { StaffLayout } from "@/components/staff/StaffLayout"
 import { useLanguageStore } from "@/i18n"
 import { ComparePage } from "@/pages/ComparePage"
 import { HomePage } from "@/pages/HomePage"
+import { NotFoundPage } from "@/pages/NotFoundPage"
 import { ProgramDetailPage } from "@/pages/ProgramDetailPage"
 import { ProgramsPage } from "@/pages/ProgramsPage"
-import { StaffDashboardPage } from "@/pages/staff/StaffDashboardPage"
-import { StaffFaqEditPage } from "@/pages/staff/StaffFaqEditPage"
-import { StaffFaqListPage } from "@/pages/staff/StaffFaqListPage"
-import { StaffHomePage } from "@/pages/staff/StaffHomePage"
-import { StaffInboxPage } from "@/pages/staff/StaffInboxPage"
-import { StaffProgramEditPage } from "@/pages/staff/StaffProgramEditPage"
-import { StaffProgramsPage } from "@/pages/staff/StaffProgramsPage"
-import { StaffLoginPage } from "@/pages/staff/StaffLoginPage"
-import { ApplicantAccountPage } from "@/pages/applicant/ApplicantAccountPage"
-import { ApplicantLoginPage, ApplicantVerifyPage } from "@/pages/applicant/ApplicantLoginPage"
-import { AdmissionsPage, CostPage, EligibilityPage, FundingPage, RecommendationsPage } from "@/pages/guidance/AdmissionsPages"
-import { ApplicantRequestsPage, StaffRequestsPage } from "@/pages/guidance/RequestsPage"
+import { isNotLoggedIn, STAFF_ME_KEY } from "@/staff/session"
 
-const queryClient = new QueryClient({
+const StaffArea = lazy(() => import("@/pages/staff/StaffArea"))
+const guidance = () => import("@/pages/guidance/AdmissionsPages")
+const AdmissionsPage = lazy(() => guidance().then((m) => ({ default: m.AdmissionsPage })))
+const EligibilityPage = lazy(() => guidance().then((m) => ({ default: m.EligibilityPage })))
+const RecommendationsPage = lazy(() => guidance().then((m) => ({ default: m.RecommendationsPage })))
+const CostPage = lazy(() => guidance().then((m) => ({ default: m.CostPage })))
+const FundingPage = lazy(() => guidance().then((m) => ({ default: m.FundingPage })))
+const ApplicantRequestsPage = lazy(() =>
+  import("@/pages/guidance/RequestsPage").then((m) => ({ default: m.ApplicantRequestsPage })),
+)
+const ApplicantAccountPage = lazy(() =>
+  import("@/pages/applicant/ApplicantAccountPage").then((m) => ({ default: m.ApplicantAccountPage })),
+)
+const applicantLogin = () => import("@/pages/applicant/ApplicantLoginPage")
+const ApplicantLoginPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantLoginPage })))
+const ApplicantVerifyPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantVerifyPage })))
+
+function recheckStaffSession() {
+  void queryClient.invalidateQueries({ queryKey: STAFF_ME_KEY, exact: true })
+}
+
+const queryClient: QueryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      const [scope, name] = query.queryKey
+      if (scope === "staff" && name !== "me" && isNotLoggedIn(error)) recheckStaffSession()
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      if (isNotLoggedIn(error)) recheckStaffSession()
+    },
+  }),
   defaultOptions: {
     queries: {
       staleTime: 30_000,
@@ -42,20 +65,16 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/staff/login" element={<StaffLoginPage />} />
-          <Route path="/staff" element={<StaffLayout />}>
-            <Route path="requests" element={<StaffRequestsPage />} />
-            <Route index element={<StaffHomePage />} />
-            <Route path="faq" element={<StaffFaqListPage />} />
-            <Route path="faq/new" element={<StaffFaqEditPage />} />
-            <Route path="faq/:faqId" element={<StaffFaqEditPage />} />
-            <Route path="inbox" element={<StaffInboxPage />} />
-            <Route path="programs" element={<StaffProgramsPage />} />
-            <Route path="programs/new" element={<StaffProgramEditPage />} />
-            <Route path="programs/:programId" element={<StaffProgramEditPage />} />
-            <Route path="dashboard" element={<StaffDashboardPage />} />
-            <Route path="*" element={<Navigate to="/staff" replace />} />
-          </Route>
+          <Route
+            path="/staff/*"
+            element={
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoading staff />}>
+                  <StaffArea />
+                </Suspense>
+              </ErrorBoundary>
+            }
+          />
           <Route element={<AppLayout />}>
             <Route path="/admissions" element={<AdmissionsPage />} />
             <Route path="/eligibility" element={<EligibilityPage />} />
@@ -71,7 +90,7 @@ export default function App() {
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/:id" element={<ProgramDetailPage />} />
             <Route path="/compare" element={<ComparePage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -92,7 +92,7 @@ def register(body: RegisterRequest, request: Request, session: Db) -> MessageOut
     if not settings.smtp_host:
         raise ApiProblem(503, "MAIL_UNAVAILABLE", "E-mail delivery is not configured.")
     email_key, ip_key = f"email:{body.email}", f"ip:{client_ip(request)}"
-    if register_limiter.blocked(email_key) or register_ip_limiter.blocked(ip_key):
+    if register_ip_limiter.blocked(ip_key) or register_limiter.blocked(email_key):
         raise ApiProblem(429, "TOO_MANY_ATTEMPTS", "Please try again in 15 minutes.")
     register_limiter.record_failure(email_key)
     register_ip_limiter.record_failure(ip_key)
@@ -162,7 +162,7 @@ def verify(body: VerifyRequest, response: Response, session: Db) -> ApplicantOut
 @router.post("/login", response_model=ApplicantOut)
 def login(body: LoginRequest, request: Request, response: Response, session: Db, token: Token = None) -> ApplicantOut:
     email_key, ip_key = f"email:{normalize_email(body.email)}", f"ip:{client_ip(request)}"
-    if login_limiter.blocked(email_key) or login_ip_limiter.blocked(ip_key):
+    if login_ip_limiter.blocked(ip_key) or login_limiter.blocked(email_key):
         raise ApiProblem(429, "TOO_MANY_ATTEMPTS", "Please try again in 15 minutes.")
     user = service.authenticate(session, body.email, body.password)
     if user is None:

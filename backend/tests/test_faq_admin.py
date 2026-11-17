@@ -178,5 +178,26 @@ def test_invalid_items_are_rejected(officer_client, change, field):
     assert field.split()[0] in response.json()["message"]
 
 
+@pytest.mark.parametrize("q", ["%", "_"])
+def test_search_treats_wildcards_as_text(officer_client, assistant_session, q):
+    records = assistant_session.scalars(select(FaqRecord)).all()
+    fields = ("faq_id", "question", "answer", "question_ru", "question_kk")
+    expected = sorted(r.faq_id for r in records if any(q in (getattr(r, field) or "") for field in fields))
+
+    found = officer_client.get("/api/staff/faq", params={"q": q}).json()["items"]
+
+    assert sorted(item["faq_id"] for item in found) == expected
+    assert len(expected) < len(records)
+
+
+def test_two_editors_creating_an_item_at_once_get_a_conflict(officer_client, monkeypatch):
+    monkeypatch.setattr("app.faq.service._next_id", lambda session: "faq-022")
+
+    response = officer_client.post("/api/staff/faq", json=NEW_ITEM)
+
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "CONFLICT"
+
+
 def _indexed(session, faq_id):
     return sorted(session.scalars(select(FaqEmbeddingRecord.language).where(FaqEmbeddingRecord.faq_id == faq_id)))

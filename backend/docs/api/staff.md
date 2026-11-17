@@ -94,6 +94,10 @@ Every endpoint under `/api/staff` except `login` and `logout` uses the `require_
 dependency and answers `401 NOT_LOGGED_IN` without a valid session; each one has a test
 for that (Definition of Done, Sprint 4).
 
+A write that collides with a simultaneous one (two editors creating an FAQ item or the same
+program at once) gets `409 CONFLICT` in the usual error shape; trying again usually works.
+A missing required value or a failed check constraint is a server bug and returns 500 `INTERNAL_ERROR`.
+
 ---
 
 ## FAQ management (US20)
@@ -123,7 +127,7 @@ Draft and retired items are never used by the assistant or suggested in the chat
 
 | Method and path | Body | Answer |
 | --------------- | ---- | ------ |
-| `GET /api/staff/faq?q=&status=&category=` | — | `{ items: [{faq_id, status, category, question, languages, last_update, updated_at, updated_by}], categories }` |
+| `GET /api/staff/faq?q=&status=&category=` | — | `{ items: [{faq_id, status, category, question, languages, last_update, updated_at, updated_by}], categories }`; `q` is plain text (`%` and `_` match only themselves) |
 | `GET /api/staff/faq/{faq_id}` | — | the item, `404 FAQ_NOT_FOUND` |
 | `POST /api/staff/faq` | item fields (no id, status or dates) | `201`, the new draft |
 | `PUT /api/staff/faq/{faq_id}` | item fields | the item; a published item is re-indexed at once |
@@ -188,7 +192,7 @@ directly, so an edit is visible at once. `null` means "not published" and is sho
 
 | Method and path | Body | Answer |
 | --------------- | ---- | ------ |
-| `GET /api/staff/programs?q=&degree_level=&active=` | — | `{ items: [{program_id, title, degree_level, faculty, is_active, documents_local, documents_international, updated_at, updated_by}] }`, archived programs included |
+| `GET /api/staff/programs?q=&degree_level=&active=` | — | `{ items: [{program_id, title, degree_level, faculty, is_active, documents_local, documents_international, updated_at, updated_by}] }`, archived programs included; `q` is plain text (`%` and `_` match only themselves) |
 | `GET /api/staff/programs/{program_id}` | — | the program with `documents: {local: [...], international: [...]}`; `404 PROGRAM_NOT_FOUND` |
 | `POST /api/staff/programs` | `program_id` (`[0-9A-Z]+`) and the fields below | `201`; `409 PROGRAM_EXISTS` |
 | `PUT /api/staff/programs/{program_id}` | `title`, `title_ru`, `title_kk`, `faculty`, `degree_level`, `language`, `tuition_per_ects_kzt`, `tuition_per_ects_usd` (≥ 0), `deadline_local`, `deadline_international` (`YYYY-MM-DD`), `source_url` (`https://`), `is_active` | the program; `is_active: false` archives it (it leaves the catalogue, the comparison and the assistant) |

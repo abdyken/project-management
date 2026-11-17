@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { type FormEvent, useState } from "react"
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
-import { isApiError, isNotFound } from "@/api/errors"
+import { isNotFound } from "@/api/errors"
 import { answerInboxGroup, createFaq, type FaqItem, type FaqItemInput, getFaq, setFaqStatus, updateFaq } from "@/api/staff"
 import { StatusBadge } from "@/components/staff/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { useStaffT } from "@/staff/i18n"
+import { staffErrorKey, useStaffT } from "@/staff/i18n"
 
 type Lang = "en" | "ru" | "kk"
 type TextField = "question" | "answer" | "source_link" | "evidence"
@@ -18,7 +18,7 @@ const LANGS: Lang[] = ["en", "ru", "kk"]
 const DEGREES = ["bachelor", "master", "phd"] as const
 const APPLICANTS = ["local", "international"] as const
 const textareaClass =
-  "w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/20"
+  "w-full rounded-md border border-input bg-card px-3 py-2 text-base outline-none sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/20"
 
 function key(field: TextField, lang: Lang) {
   return (lang === "en" ? field : `${field}_${lang}`) as keyof Form & `${TextField}${string}`
@@ -109,7 +109,7 @@ export function StaffFaqEditPage() {
         await answerInboxGroup(inboxKey, saved.faq_id)
         return { saved, linkError: null, linked: true }
       } catch (linkError) {
-        return { saved, linkError: isApiError(linkError) ? linkError.message : String(linkError), linked: false }
+        return { saved, linkError: t(staffErrorKey(linkError)), linked: false }
       }
     },
     onSuccess: ({ saved, linkError, linked }) => {
@@ -131,7 +131,7 @@ export function StaffFaqEditPage() {
   if (!isNew && item.isError) {
     return (
       <div className="text-sm">
-        <p>{isNotFound(item.error) ? t("edit.notFound") : t("common.error")}</p>
+        <h1 className="text-base font-normal">{isNotFound(item.error) ? t("edit.notFound") : t("common.error")}</h1>
         <Link to="/staff/faq" className="mt-3 inline-block underline">
           {t("edit.back")}
         </Link>
@@ -208,13 +208,34 @@ export function StaffFaqEditPage() {
         </fieldset>
       </div>
 
-      <div role="tablist" className="mt-6 flex border-b border-border text-sm">
+      <div
+        role="tablist"
+        aria-label={t("edit.langGroup")}
+        className="mt-6 flex border-b border-border text-sm"
+        onKeyDown={(event) => {
+          const index = LANGS.indexOf(tab)
+          const target =
+            event.key === "ArrowRight" ? (index + 1) % LANGS.length
+            : event.key === "ArrowLeft" ? (index - 1 + LANGS.length) % LANGS.length
+            : event.key === "Home" ? 0
+            : event.key === "End" ? LANGS.length - 1
+            : -1
+          if (target < 0) return
+          event.preventDefault()
+          const next = LANGS[target]
+          setTab(next)
+          document.getElementById(`faq-tab-${next}`)?.focus()
+        }}
+      >
         {LANGS.map((lang) => (
           <button
             key={lang}
+            id={`faq-tab-${lang}`}
             type="button"
             role="tab"
             aria-selected={tab === lang}
+            aria-controls="faq-tabpanel"
+            tabIndex={tab === lang ? 0 : -1}
             onClick={() => setTab(lang)}
             className={cn(
               "-mb-px border-b-2 px-3 py-2",
@@ -222,12 +243,12 @@ export function StaffFaqEditPage() {
             )}
           >
             {t(`edit.lang.${lang}`)}
-            {languageState(form, lang) === "incomplete" && <span className="ml-1 text-destructive">•</span>}
+            {languageState(form, lang) === "incomplete" && <span aria-hidden="true" className="ml-1 text-destructive">•</span>}
           </button>
         ))}
       </div>
 
-      <div role="tabpanel" className="mt-4 space-y-4">
+      <div id="faq-tabpanel" role="tabpanel" aria-labelledby={`faq-tab-${tab}`} className="mt-4 space-y-4">
         <label className="block space-y-1.5 text-sm">
           <span>{t("edit.question")}</span>
           <Input value={form[key("question", tab)]} onChange={(event) => update({ [key("question", tab)]: event.target.value })} />
@@ -273,7 +294,7 @@ export function StaffFaqEditPage() {
         ))}
         {error && (
           <p role="alert" className="text-destructive">
-            {t("edit.error", { message: isApiError(error) ? error.message : String(error) })}
+            {t("edit.error", { message: t(staffErrorKey(error)) })}
           </p>
         )}
         {notice && !dirty && <p role="status">{notice}</p>}

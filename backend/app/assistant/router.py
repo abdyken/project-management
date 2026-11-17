@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.api.client import assistant_rate_limit, too_many_requests_response
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
 from app.assistant.feedback import AnswerFeedback
 from app.assistant.language import detect_language
@@ -43,6 +44,10 @@ MAX_ANSWER_ID = 2**31 - 1
 
 SessionFactory = Callable[[], AbstractContextManager[Session]]
 
+TOO_MANY_ASKS = too_many_requests_response(
+    "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 60) questions from this address in a minute, /ask and /ask/stream together."
+)
+
 
 def _answer(
     open_session: SessionFactory, settings: Settings, body: AskRequest, timed_out: threading.Event
@@ -58,10 +63,13 @@ def _answer(
             question, body.session_id
         )
         if timed_out.is_set():
+            session.rollback()
             return None
         sources = [source.model_dump() for source in answer.sources] or None
-        record_question(session, body.session_id, body.question)
-        answer_turn = record_answer(session, body.session_id, answer.answer, sources)
+        # Inbox logs from the answer service are still pending: they commit with the turns.
+        record_question(session, body.session_id, body.question, commit=False)
+        answer_turn = record_answer(session, body.session_id, answer.answer, sources, commit=False)
+        session.commit()
         return AskResponse(answer=answer.answer, sources=answer.sources, answer_id=str(answer_turn.id))
 
 
@@ -159,9 +167,11 @@ def suggestions(
 
 @router.post(
     "/ask",
+    dependencies=[Depends(assistant_rate_limit)],
     response_model=AskResponse,
     responses={
         504: {"model": ErrorResponse, "description": "No answer within the time budget."},
+        **TOO_MANY_ASKS,
         **INVALID_REQUEST_RESPONSE,
         **DATABASE_UNAVAILABLE_RESPONSE,
     },
@@ -176,6 +186,7 @@ async def ask(
 
 @router.post(
     "/ask/stream",
+    dependencies=[Depends(assistant_rate_limit)],
     response_class=StreamingResponse,
     response_model=None,
     responses={
@@ -185,6 +196,7 @@ async def ask(
             "with answer_id and sources. See docs/api/assistant-stream.md.",
         },
         504: {"model": ErrorResponse, "description": "No answer within the time budget."},
+        **TOO_MANY_ASKS,
         **INVALID_REQUEST_RESPONSE,
         **DATABASE_UNAVAILABLE_RESPONSE,
     },

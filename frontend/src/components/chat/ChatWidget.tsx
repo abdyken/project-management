@@ -2,15 +2,10 @@ import { MessageCircle, Minus, SquarePen, X } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { ChatPanel } from "@/components/chat/ChatPanel"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { clampPosition, useDraggable, type Point, type Size } from "@/hooks/use-draggable"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { useWindowSize } from "@/hooks/use-window-size"
 import { useI18n } from "@/i18n"
-import { useChatStore, type CornerOffset } from "@/store/chat"
+import { useChatStore } from "@/store/chat"
 
-const FAB_SIZE: Size = { width: 56, height: 56 }
-const MINI_SIZE: Size = { width: 260, height: 48 }
-const EDGE = 24
 const TITLE_ID = "chat-title"
 const iconButton = "rounded p-1 text-muted-foreground hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/40"
 const fabClass =
@@ -24,19 +19,6 @@ function NewConversationButton() {
       <SquarePen className="size-4" />
     </button>
   )
-}
-
-type Viewport = { width: number; height: number }
-
-const DEFAULT_OFFSET: CornerOffset = { right: EDGE, bottom: EDGE }
-
-function fromCorner(viewport: Viewport, size: Size, offset: CornerOffset | null): Point {
-  const { right, bottom } = offset ?? DEFAULT_OFFSET
-  return clampPosition({ x: viewport.width - size.width - right, y: viewport.height - size.height - bottom }, size)
-}
-
-function toCorner(viewport: Viewport, size: Size, point: Point): CornerOffset {
-  return { right: viewport.width - size.width - point.x, bottom: viewport.height - size.height - point.y }
 }
 
 function MobileChat() {
@@ -87,24 +69,8 @@ function DesktopChat() {
   const { t } = useI18n()
   const open = useChatStore((state) => state.open)
   const minimized = useChatStore((state) => state.minimized)
-  const panelOffset = useChatStore((state) => state.panelOffset)
-  const fabOffset = useChatStore((state) => state.fabOffset)
   const setOpen = useChatStore((state) => state.setOpen)
   const setMinimized = useChatStore((state) => state.setMinimized)
-  const setPanelOffset = useChatStore((state) => state.setPanelOffset)
-  const setFabOffset = useChatStore((state) => state.setFabOffset)
-  const viewport = useWindowSize()
-
-  const panelSize: Size = {
-    width: Math.min(380, viewport.width - 16),
-    height: Math.min(560, Math.round(viewport.height * 0.7)),
-  }
-  const panelBox = minimized ? MINI_SIZE : panelSize
-  const panelPos = fromCorner(viewport, panelBox, panelOffset)
-  const fabPos = fromCorner(viewport, FAB_SIZE, fabOffset)
-
-  const panelDrag = useDraggable(panelPos, panelBox, (point) => setPanelOffset(toCorner(viewport, panelBox, point)))
-  const fabDrag = useDraggable(fabPos, FAB_SIZE, (point) => setFabOffset(toCorner(viewport, FAB_SIZE, point)))
   const panelRef = useRef<HTMLElement>(null)
   const fabRef = useRef<HTMLButtonElement>(null)
   const restoreRef = useRef<HTMLButtonElement>(null)
@@ -120,7 +86,7 @@ function DesktopChat() {
     if (!showPanel) return
     function onKeyDown(event: globalThis.KeyboardEvent) {
       const focus = document.activeElement
-      const focusInPanel = focus === document.body || Boolean(panelRef.current?.contains(focus))
+      const focusInPanel = Boolean(panelRef.current?.contains(focus))
       if (event.key === "Escape" && focusInPanel) setOpen(false)
     }
     window.addEventListener("keydown", onKeyDown)
@@ -129,18 +95,12 @@ function DesktopChat() {
 
   if (minimized) {
     return (
-      <div
-        className="fixed z-50 flex h-12 w-[260px] items-center gap-1 border border-border bg-background pr-2 shadow-lg"
-        style={{ left: panelPos.x, top: panelPos.y }}
-      >
+      <div className="fixed right-6 bottom-6 z-50 flex h-12 w-[260px] items-center gap-1 border border-border bg-background pr-2 shadow-lg">
         <button
           type="button"
-          {...panelDrag.handlers}
           ref={restoreRef}
-          onClick={(event) => {
-            if (!panelDrag.wasDragged(event)) setMinimized(false)
-          }}
-          className="flex h-full min-w-0 flex-1 cursor-grab touch-none items-center gap-2 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/40 active:cursor-grabbing"
+          onClick={() => setMinimized(false)}
+          className="flex h-full min-w-0 flex-1 items-center gap-2 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           aria-label={t("chat.restore")}
         >
           <MessageCircle className="size-4 shrink-0" />
@@ -157,14 +117,10 @@ function DesktopChat() {
     return (
       <button
         type="button"
-        {...fabDrag.handlers}
         ref={fabRef}
-        onClick={(event) => {
-          if (!fabDrag.wasDragged(event)) setOpen(true)
-        }}
+        onClick={() => setOpen(true)}
         aria-label={t("chat.open")}
-        className={`${fabClass} cursor-grab touch-none active:cursor-grabbing`}
-        style={{ left: fabPos.x, top: fabPos.y }}
+        className={`${fabClass} right-6 bottom-6`}
       >
         <MessageCircle className="size-5" />
       </button>
@@ -176,20 +132,17 @@ function DesktopChat() {
       ref={panelRef}
       role="dialog"
       aria-labelledby={TITLE_ID}
-      className="fixed z-50 flex flex-col border border-border bg-background shadow-lg"
-      style={{ left: panelPos.x, top: panelPos.y, width: panelSize.width, height: panelSize.height }}
+      tabIndex={-1}
+      className="fixed right-6 bottom-6 z-50 flex h-[min(560px,70vh)] w-[min(380px,calc(100vw-1rem))] flex-col border border-border bg-background shadow-lg outline-none"
     >
-      <div
-        {...panelDrag.handlers}
-        className="flex cursor-grab touch-none items-start justify-between gap-3 border-b border-border px-4 py-3 active:cursor-grabbing"
-      >
+      <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
         <div>
           <h2 id={TITLE_ID} className="text-lg font-semibold tracking-tight">
             {t("chat.title")}
           </h2>
           <p className="text-xs text-muted-foreground">{t("chat.subtitle")}</p>
         </div>
-        <div className="flex items-center gap-1" onPointerDown={(event) => event.stopPropagation()}>
+        <div className="flex items-center gap-1">
           <NewConversationButton />
           <button type="button" aria-label={t("chat.minimise")} className={iconButton} onClick={() => setMinimized(true)}>
             <Minus className="size-4" />

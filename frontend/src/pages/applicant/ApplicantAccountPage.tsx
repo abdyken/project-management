@@ -80,7 +80,7 @@ function SavedProgram({ checklist }: { checklist: SavedChecklist }) {
       </p>
       {checklist.total > 0 && (
         <progress
-          className="mt-2 h-2 w-full accent-primary"
+          className="mt-2 block h-2 w-full appearance-none overflow-hidden rounded-none border-0 bg-muted [&::-moz-progress-bar]:bg-primary [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-primary"
           value={checklist.prepared}
           max={checklist.total}
           aria-label={t("progress", { prepared: checklist.prepared, total: checklist.total })}
@@ -170,7 +170,7 @@ function Preferences({ user }: { user: Applicant }) {
         <label htmlFor="reminder-language">{t("language")}</label>
         <select
           id="reminder-language"
-          className="rounded-md border border-border bg-background p-2"
+          className="rounded-md border border-border bg-background p-2 text-base sm:text-sm"
           value={language}
           onChange={(event) => setLanguage(event.target.value as Language)}
         >

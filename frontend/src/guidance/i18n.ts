@@ -130,6 +130,18 @@ const messages = {
   ],
   program: ["Programme", "Программа", "Бағдарлама"],
   choose: ["Choose a programme", "Выберите программу", "Бағдарламаны таңдаңыз"],
+  chooseLanguageGroup: [
+    "Choose a language group",
+    "Выберите языковую группу",
+    "Тілдік топты таңдаңыз",
+  ],
+  chooseSubjectPair: [
+    "Choose a subject pair",
+    "Выберите пару предметов",
+    "Пән жұбын таңдаңыз",
+  ],
+  condition: ["Condition", "Условие", "Шарт"],
+  evidenceStatus: ["Source status", "Статус источника", "Дереккөз мәртебесі"],
   degree: ["Degree level", "Ступень обучения", "Білім деңгейі"],
   bachelor: ["Bachelor", "Бакалавриат", "Бакалавриат"],
   master: ["Master", "Магистратура", "Магистратура"],
@@ -222,6 +234,10 @@ const messages = {
   no: ["No", "Нет", "Жоқ"],
   submit: ["Check", "Проверить", "Тексеру"],
   calculate: ["Calculate", "Рассчитать", "Есептеу"],
+  tooMany: ["Too many requests in a short time. Please wait a minute and try again.", "Слишком много запросов за короткое время. Подождите минуту и попробуйте снова.", "Қысқа уақытта тым көп сұраныс жіберілді. Бір минут күтіп, қайталап көріңіз."],
+  needProgram: ["Choose a programme first.", "Сначала выберите программу.", "Алдымен бағдарламаны таңдаңыз."],
+  needInterest: ["Choose at least one interest.", "Выберите хотя бы один интерес.", "Кемінде бір қызығушылықты таңдаңыз."],
+  needCredits: ["Enter the profile ECTS credits.", "Введите кредиты ECTS по профильным дисциплинам.", "Бейіндік пәндер бойынша ECTS кредиттерін енгізіңіз."],
   working: ["Please wait…", "Подождите…", "Күтіңіз…"],
   error: [
     "Could not complete the request. Check your connection and try again.",
@@ -538,10 +554,10 @@ const messages = {
 export type GuidanceKey = keyof typeof messages
 export function useGuidanceT() {
   const language = useLanguageStore((s) => s.language)
-  return (key: string): string => {
-    const value = messages[key as GuidanceKey]
-    return value
-      ? value[language === "en" ? 0 : language === "ru" ? 1 : 2]
-      : key
-  }
+  const index = language === "en" ? 0 : language === "ru" ? 1 : 2
+  const t = (key: GuidanceKey): string => messages[key][index]
+  // Codes from the API may be new to this build; show them as they are.
+  const code = (value: string): string =>
+    value in messages ? t(value as GuidanceKey) : value
+  return Object.assign(t, { code })
 }
