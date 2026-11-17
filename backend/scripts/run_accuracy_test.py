@@ -15,6 +15,7 @@ import argparse
 import json
 import os
 import sys
+import time
 import uuid
 from collections import defaultdict
 from pathlib import Path
@@ -33,7 +34,11 @@ FAQ_PATH = BACKEND_ROOT / "app" / "data" / "faq.json"
 
 
 def ask(client: httpx.Client, question: str, session_id: str) -> dict:
-    response = client.post("/api/assistant/ask", json={"question": question, "session_id": session_id})
+    for _ in range(5):
+        response = client.post("/api/assistant/ask", json={"question": question, "session_id": session_id})
+        if response.status_code != 429:
+            break
+        time.sleep(61)
     response.raise_for_status()
     return response.json()
 

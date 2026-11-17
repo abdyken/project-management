@@ -4,6 +4,7 @@ import json
 import os
 import re
 import sys
+import time
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
@@ -113,9 +114,14 @@ def main() -> int:
     all_cases = cases(list(programs.values()))
     with httpx.Client(base_url=base_url, timeout=30.0) as client:
         for case in all_cases:
-            body = client.post(
-                "/api/assistant/ask", json={"question": case.question, "session_id": f"catalogue-{uuid.uuid4()}"}
-            ).json()
+            for _ in range(5):
+                response = client.post(
+                    "/api/assistant/ask", json={"question": case.question, "session_id": f"catalogue-{uuid.uuid4()}"}
+                )
+                if response.status_code != 429:
+                    break
+                time.sleep(61)
+            body = response.json()
             problem = check(case, body["answer"], programs[case.program_id])
             links = [source["link"] for source in body.get("sources", [])]
             if problem is None and not case.unpublished and programs[case.program_id]["source_url"] not in links:
