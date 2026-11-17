@@ -1,6 +1,7 @@
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { lazy, Suspense, useEffect } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { ErrorBoundary } from "@/components/common/ErrorBoundary"
 import { PageLoading } from "@/components/common/PageLoading"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { useLanguageStore } from "@/i18n"
@@ -67,9 +68,11 @@ export default function App() {
           <Route
             path="/staff/*"
             element={
-              <Suspense fallback={<PageLoading staff />}>
-                <StaffArea />
-              </Suspense>
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoading staff />}>
+                  <StaffArea />
+                </Suspense>
+              </ErrorBoundary>
             }
           />
           <Route element={<AppLayout />}>
