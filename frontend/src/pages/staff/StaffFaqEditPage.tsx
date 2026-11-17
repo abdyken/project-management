@@ -213,10 +213,16 @@ export function StaffFaqEditPage() {
         aria-label={t("edit.langGroup")}
         className="mt-6 flex border-b border-border text-sm"
         onKeyDown={(event) => {
-          const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0
-          if (!step) return
+          const index = LANGS.indexOf(tab)
+          const target =
+            event.key === "ArrowRight" ? (index + 1) % LANGS.length
+            : event.key === "ArrowLeft" ? (index - 1 + LANGS.length) % LANGS.length
+            : event.key === "Home" ? 0
+            : event.key === "End" ? LANGS.length - 1
+            : -1
+          if (target < 0) return
           event.preventDefault()
-          const next = LANGS[(LANGS.indexOf(tab) + step + LANGS.length) % LANGS.length]
+          const next = LANGS[target]
           setTab(next)
           document.getElementById(`faq-tab-${next}`)?.focus()
         }}
