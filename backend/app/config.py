@@ -40,8 +40,8 @@ class Settings(BaseSettings):
     grounding_top_k: int = 5
     # Public endpoints that may call Gemini: requests per client IP in a sliding minute.
     # /ask and /ask/stream share one limit. A campus network puts many applicants behind one address.
-    assistant_requests_per_minute: int = 20
-    recommendations_requests_per_minute: int = 10
+    assistant_requests_per_minute: int = 60
+    recommendations_requests_per_minute: int = 30
     # US19: staff login. The cookie is Secure (HTTPS only); browsers also accept it on
     # http://localhost, so the local Docker stack works without HTTPS.
     staff_session_hours: int = 8

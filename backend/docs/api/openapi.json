@@ -671,7 +671,7 @@
             }
           },
           "429": {
-            "description": "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 20) questions from this address in a minute, /ask and /ask/stream together.",
+            "description": "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 60) questions from this address in a minute, /ask and /ask/stream together.",
             "content": {
               "application/json": {
                 "schema": {
@@ -750,7 +750,7 @@
             }
           },
           "429": {
-            "description": "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 20) questions from this address in a minute, /ask and /ask/stream together.",
+            "description": "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 60) questions from this address in a minute, /ask and /ask/stream together.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3740,7 +3740,7 @@
             }
           },
           "429": {
-            "description": "More than `RECOMMENDATIONS_REQUESTS_PER_MINUTE` (default 10) requests from this address in a minute.",
+            "description": "More than `RECOMMENDATIONS_REQUESTS_PER_MINUTE` (default 30) requests from this address in a minute.",
             "content": {
               "application/json": {
                 "schema": {

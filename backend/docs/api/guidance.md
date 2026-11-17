@@ -75,7 +75,7 @@ failures and known teaching-language mismatches are excluded; missing requiremen
 and language remain explicit. No matches means an empty list.
 
 The endpoint may call Gemini, so it allows `RECOMMENDATIONS_REQUESTS_PER_MINUTE`
-(default 10) requests per client IP in a sliding minute; more get 429
+(default 30) requests per client IP in a sliding minute; more get 429
 `TOO_MANY_REQUESTS`. The client IP is taken as for the login limits (first
 `X-Forwarded-For` entry). The counters live in memory and reset on restart.
 

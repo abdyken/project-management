@@ -62,7 +62,7 @@ def check(body: EligibilityIn, session: Db):
     response_model=RecommendationsOut,
     dependencies=[Depends(recommendations_rate_limit)],
     responses=too_many_requests_response(
-        "More than `RECOMMENDATIONS_REQUESTS_PER_MINUTE` (default 10) requests from this address in a minute."
+        "More than `RECOMMENDATIONS_REQUESTS_PER_MINUTE` (default 30) requests from this address in a minute."
     ),
 )
 def recommend(body: RecommendationIn, session: Db):

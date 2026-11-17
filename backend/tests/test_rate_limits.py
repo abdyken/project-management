@@ -30,7 +30,7 @@ def _ask(client, path="/api/assistant/ask", ip=None):
 
 def test_defaults_are_generous_for_real_applicants():
     settings = Settings()
-    assert (settings.assistant_requests_per_minute, settings.recommendations_requests_per_minute) == (20, 10)
+    assert (settings.assistant_requests_per_minute, settings.recommendations_requests_per_minute) == (60, 30)
 
 
 def test_ask_and_stream_share_one_limit_per_client_ip(client, monkeypatch):

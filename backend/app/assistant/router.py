@@ -45,7 +45,7 @@ MAX_ANSWER_ID = 2**31 - 1
 SessionFactory = Callable[[], AbstractContextManager[Session]]
 
 TOO_MANY_ASKS = too_many_requests_response(
-    "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 20) questions from this address in a minute, /ask and /ask/stream together."
+    "More than `ASSISTANT_REQUESTS_PER_MINUTE` (default 60) questions from this address in a minute, /ask and /ask/stream together."
 )
 
 
