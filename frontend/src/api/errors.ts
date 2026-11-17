@@ -28,6 +28,7 @@ export function chatErrorKey(error: unknown): MessageKey {
   if (!isApiError(error)) return "chat.error.generic"
   if (error.code === "TIMEOUT" || error.code === "ASSISTANT_TIMEOUT") return "chat.error.timeout"
   if (error.code === "NETWORK") return "chat.error.network"
+  if (error.status === 429) return "chat.error.tooMany"
   if (error.code === "INVALID_REQUEST") return "chat.error.invalid"
   return "chat.error.unavailable"
 }

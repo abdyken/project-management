@@ -1,3 +1,4 @@
+import { isApiError } from "@/api/errors"
 import { cloneElement, isValidElement, useId, type ReactNode } from "react"
 import { useGuidanceT } from "@/guidance/i18n"
 
@@ -24,7 +25,7 @@ export function ErrorMessage({ error }: { error: unknown }) {
   const t = useGuidanceT()
   return error ? (
     <p role="alert" className="mt-4 text-sm text-destructive">
-      {t("error")}
+      {t(isApiError(error) && error.status === 429 ? "tooMany" : "error")}
     </p>
   ) : null
 }
