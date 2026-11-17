@@ -96,6 +96,7 @@ for that (Definition of Done, Sprint 4).
 
 A write that collides with a simultaneous one (two editors creating an FAQ item or the same
 program at once) gets `409 CONFLICT` in the usual error shape; trying again usually works.
+A missing required value or a failed check constraint is a server bug and returns 500 `INTERNAL_ERROR`.
 
 ---
 

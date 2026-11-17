@@ -89,8 +89,18 @@ async def invalid_data_handler(request: Request, exc: DataError) -> JSONResponse
     )
 
 
+NOT_NULL_VIOLATION = "23502"
+CHECK_VIOLATION = "23514"
+
+
 async def conflict_handler(request: Request, exc: IntegrityError) -> JSONResponse:
     # The request's session is closed (and rolled back) by its dependency.
+    if getattr(exc.orig, "sqlstate", None) in (NOT_NULL_VIOLATION, CHECK_VIOLATION):
+        logger.error("Invalid write on %s %s", request.method, request.url.path, exc_info=exc)
+        return JSONResponse(
+            status_code=500,
+            content=ErrorResponse(error_code="INTERNAL_ERROR", message="Something went wrong. Please try again later.").model_dump(),
+        )
     logger.warning("Conflicting write on %s %s: %s", request.method, request.url.path, exc.orig)
     return JSONResponse(
         status_code=409,

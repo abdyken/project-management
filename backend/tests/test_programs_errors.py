@@ -105,3 +105,25 @@ def test_integrity_error_returns_409_with_error_code():
         "error_code": "CONFLICT",
         "message": "Someone changed the same data at the same time. Please try again.",
     }
+
+
+def test_not_null_violation_is_a_server_error_not_a_conflict():
+    from fastapi import FastAPI
+    from sqlalchemy.exc import IntegrityError
+
+    from app.api.errors import register_error_handlers
+
+    class NotNull(Exception):
+        sqlstate = "23502"
+
+    broken = FastAPI()
+    register_error_handlers(broken)
+
+    @broken.post("/broken")
+    def write_a_null():
+        raise IntegrityError("INSERT ...", {}, NotNull("null value in column violates not-null constraint"))
+
+    response = TestClient(broken).post("/broken")
+
+    assert response.status_code == 500
+    assert response.json()["error_code"] == "INTERNAL_ERROR"
