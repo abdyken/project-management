@@ -241,7 +241,7 @@ export function StaffProgramEditPage() {
   if (!isNew && program.isError) {
     return (
       <div className="text-sm">
-        <p>{isNotFound(program.error) ? t("prog.notFound") : t("common.error")}</p>
+        <h1 className="text-base font-normal">{isNotFound(program.error) ? t("prog.notFound") : t("common.error")}</h1>
         <Link to="/staff/programs" className="mt-3 inline-block underline">
           {t("prog.back")}
         </Link>

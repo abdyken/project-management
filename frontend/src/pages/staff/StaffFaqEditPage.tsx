@@ -131,7 +131,7 @@ export function StaffFaqEditPage() {
   if (!isNew && item.isError) {
     return (
       <div className="text-sm">
-        <p>{isNotFound(item.error) ? t("edit.notFound") : t("common.error")}</p>
+        <h1 className="text-base font-normal">{isNotFound(item.error) ? t("edit.notFound") : t("common.error")}</h1>
         <Link to="/staff/faq" className="mt-3 inline-block underline">
           {t("edit.back")}
         </Link>
