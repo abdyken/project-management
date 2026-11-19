@@ -144,6 +144,13 @@ const en = {
   "app.currentNote": "Current note",
   "app.previous": "Previous",
   "app.next": "Next",
+  "app.program": "Programme",
+  "app.program.all": "All programmes",
+  "app.previousNote": "Note from the earlier review",
+  "app.statusSaved": "Status saved: {status}.",
+  "app.notFound": "Application not found.",
+  "app.pageEmpty": "This page is past the end of the list.",
+  "app.firstPage": "Back to the first page",
   "error.statusChange": "This status change is not possible any more. Reload the application.",
   "error.noteRequired": "Write a note to the applicant for this status.",
   "error.applicationNotFound": "Application not found.",
@@ -396,6 +403,13 @@ const ru: Record<StaffKey, string> = {
   "app.currentNote": "Текущий комментарий",
   "app.previous": "Назад",
   "app.next": "Далее",
+  "app.program": "Программа",
+  "app.program.all": "Все программы",
+  "app.previousNote": "Комментарий с прошлой проверки",
+  "app.statusSaved": "Статус сохранён: {status}.",
+  "app.notFound": "Заявка не найдена.",
+  "app.pageEmpty": "Эта страница за концом списка.",
+  "app.firstPage": "К первой странице",
   "error.statusChange": "Такое изменение статуса уже невозможно. Обновите заявку.",
   "error.noteRequired": "Для этого статуса напишите комментарий абитуриенту.",
   "error.applicationNotFound": "Заявка не найдена.",
@@ -526,11 +540,23 @@ const ERROR_KEYS: Record<string, StaffKey> = {
   NOTE_REQUIRED: "error.noteRequired",
   APPLICATION_NOT_FOUND: "error.applicationNotFound",
   APPLICATIONS_UNAVAILABLE: "error.applicationsUnavailable",
+  DOCUMENT_NOT_FOUND: "error.applicationNotFound",
 }
 
 // The API sends English messages; show a translated text for its error code instead.
 export function staffErrorKey(error: unknown): StaffKey {
   return (isApiError(error) && ERROR_KEYS[error.code]) || "error.generic"
+}
+
+export function useStaffLanguage() {
+  return useLanguageStore((state) => (state.language === "en" ? "en" : "ru"))
+}
+
+// Staff dates: "2026-11-20T10:00:00Z" -> 20.11.2026 / Nov 20, 2026.
+export function useStaffDate() {
+  const language = useStaffLanguage()
+  const format = new Intl.DateTimeFormat(language === "en" ? "en-US" : "ru-RU", { dateStyle: "medium" })
+  return (iso: string) => format.format(new Date(iso))
 }
 
 export function useStaffT() {

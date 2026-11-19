@@ -77,6 +77,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
     setSending(true)
     const { signal, token } = nextRequest()
     let statusQuestion = false
+    let statusText = ""
 
     try {
       const outcome = await streamAssistant(question, sessionId, signal, {
@@ -97,7 +98,10 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       if (outcome === "done" && statusQuestion) {
         // US6: a logged-in applicant also gets their own status; others keep the general answer.
         const status = await applicationStatus(language, signal).catch(() => null)
-        if (status && isCurrent(token)) addMessage({ role: "assistant", text: status.answer })
+        if (status && isCurrent(token)) {
+          addMessage({ role: "assistant", text: status.answer })
+          statusText = status.answer
+        }
       }
     } catch (error) {
       if (!isCurrent(token) || abortReason() === "new") return
@@ -107,7 +111,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       if (isCurrent(token)) {
         setSending(false)
         const answer = useChatStore.getState().messages.find((message) => message.id === assistantId)
-        if (answer) setAnnouncement(answer.isError && answer.errorKey ? t(answer.errorKey) : answer.text)
+        if (answer) setAnnouncement(answer.isError && answer.errorKey ? t(answer.errorKey) : [answer.text, statusText].filter(Boolean).join("\n\n"))
       }
     }
   }

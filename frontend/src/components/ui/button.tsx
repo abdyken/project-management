@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import type { ButtonHTMLAttributes } from "react"
+import type { ComponentProps } from "react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -27,7 +27,8 @@ const buttonVariants = cva(
   },
 )
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
+// ComponentProps includes `ref` (React 19 passes it as a prop).
+type ButtonProps = ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }

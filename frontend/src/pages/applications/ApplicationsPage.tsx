@@ -18,15 +18,16 @@ function ApplicationCard({ item }: { item: ApplicationSummary }) {
       <p className="text-xs text-muted-foreground">
         {item.program.program_id} · {t(item.applicant_type)}
       </p>
-      <h3 className="mt-2 text-xl font-semibold">{programTitle(item.program)}</h3>
+      <h2 className="mt-2 text-xl font-semibold">{programTitle(item.program)}</h2>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <StatusBadge status={item.status} />
         <span className="text-muted-foreground">{t("updated", { date: deadline(item.updated_at.slice(0, 10)) })}</span>
         <span className="text-muted-foreground">{t("documentsCount", { count: item.documents })}</span>
       </div>
+      <p className="mt-3 text-sm">{t(`help.${item.status}`)}</p>
       <Link
         to={`/account/applications/${item.id}`}
-        className="mt-4 inline-block text-sm font-medium underline"
+        className="mt-3 inline-block py-1 text-sm font-medium underline"
         aria-label={`${t("open")}: ${programTitle(item.program)}`}
       >
         {t("open")}
@@ -44,8 +45,13 @@ function StartFromSaved({ saved, live }: { saved: SavedChecklist[]; live: Applic
     mutationFn: (checklist: SavedChecklist) =>
       startApplication(checklist.program.program_id, checklist.applicant_type, language),
     onSuccess: (application) => {
-      void cache.invalidateQueries({ queryKey: applicationsKey })
+      cache.setQueryData([...applicationsKey, application.id], application)
+      void cache.invalidateQueries({ queryKey: applicationsKey, exact: true })
       navigate(`/account/applications/${application.id}`)
+    },
+    onError: (error) => {
+      // Started in another tab: refresh the list so the existing application shows up above.
+      if (isApiError(error) && error.code === "APPLICATION_EXISTS") void cache.invalidateQueries({ queryKey: applicationsKey, exact: true })
     },
   })
   const startable = saved.filter(

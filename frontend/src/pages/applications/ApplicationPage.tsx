@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type RefObject } from "react"
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom"
 import {
   ACCEPTED_FILES,
@@ -19,18 +19,46 @@ import {
 } from "@/api/applications"
 import { isApiError } from "@/api/errors"
 import { SAVED_PROGRAMS_KEY, useApplicant } from "@/applicant/session"
-import { applicationsErrorKey, useApplicationsT, type ApplicationsKey } from "@/applications/i18n"
+import { applicationsErrorKey, useApplicationsT } from "@/applications/i18n"
 import { StatusBadge } from "@/components/applications/StatusBadge"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { fieldClass } from "@/components/guidance/fields"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
+import { requirementNotes } from "@/lib/checklist"
 import { fileSize } from "@/lib/files"
 
-const FIELD_KEYS = ["full_name", "date_of_birth", "citizenship", "phone", "education_level", "graduation_year"] as const
+type T = ReturnType<typeof useApplicationsT>
+const FIELD_IDS = {
+  full_name: "application-full-name",
+  date_of_birth: "application-birth",
+  citizenship: "application-citizenship",
+  phone: "application-phone",
+  education_level: "application-education",
+  graduation_year: "application-graduation",
+  exam_total: "application-exam",
+} as const
+type FieldKey = keyof typeof FIELD_IDS
+const isField = (name: string): name is FieldKey => name in FIELD_IDS
+// Valid under the `v` flag browsers use for `pattern`: brackets and the dash are escaped.
+const PHONE_PATTERN = "\\+?[0-9 \\(\\)\\-]{6,30}"
+const today = () => new Date().toISOString().slice(0, 10)
 
-function errorText(t: ReturnType<typeof useApplicationsT>, error: unknown) {
+function errorText(t: T, error: unknown) {
   return t(isApiError(error) ? applicationsErrorKey(error.code, error.status) : "error")
+}
+
+// The API's INVALID_REQUEST message starts with the field: "phone: String should match pattern".
+function invalidField(error: unknown): FieldKey | null {
+  if (!isApiError(error) || error.code !== "INVALID_REQUEST") return null
+  const field = error.message.split(":")[0].trim()
+  return isField(field) ? field : null
+}
+
+function missingLabel(t: T, name: string) {
+  if (isField(name)) return t(name)
+  if (name === "consent" || name === "documents") return t(`missing.${name}`)
+  return name
 }
 
 function fieldsOf(application: Application): ApplicationFields {
@@ -39,7 +67,7 @@ function fieldsOf(application: Application): ApplicationFields {
   return { full_name, date_of_birth, citizenship, phone, education_level, graduation_year, exam_total, consent }
 }
 
-function Row({ id, label, hint, wide, children }: { id: string; label: string; hint?: string; wide?: boolean; children: ReactNode }) {
+function Row({ id, label, hint, error, wide, children }: { id: string; label: string; hint?: string; error?: string; wide?: boolean; children: ReactNode }) {
   return (
     <div className={wide ? "space-y-1 text-sm sm:col-span-2" : "space-y-1 text-sm"}>
       <label htmlFor={id} className="block">
@@ -51,23 +79,32 @@ function Row({ id, label, hint, wide, children }: { id: string; label: string; h
           {hint}
         </p>
       )}
+      {error && (
+        <p id={`${id}-error`} className="text-xs text-destructive">
+          {error}
+        </p>
+      )}
     </div>
   )
 }
 
-function DocumentRow({ application, document }: { application: Application; document: ApplicationDocument }) {
+function DocumentRow({ application, document, onRemoved }: { application: Application; document: ApplicationDocument; onRemoved: () => void }) {
   const t = useApplicationsT()
+  const { language } = useI18n()
   const cache = useQueryClient()
   const remove = useMutation({
     mutationFn: () => deleteDocument(application.id, document.id),
-    onSuccess: () => cache.invalidateQueries({ queryKey: [...applicationsKey, application.id] }),
+    onSuccess: async () => {
+      await cache.invalidateQueries({ queryKey: [...applicationsKey, application.id] })
+      onRemoved()
+    },
   })
   return (
     <li className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
       <span className="min-w-0 break-all">{document.original_name}</span>
-      <span className="text-xs text-muted-foreground">{fileSize(document.size_bytes)}</span>
+      <span className="text-xs text-muted-foreground">{fileSize(document.size_bytes, language)}</span>
       <a
-        className="underline"
+        className="inline-block py-1 underline"
         href={documentUrl(application.id, document.id)}
         download={document.original_name}
         aria-label={`${t("download")}: ${document.original_name}`}
@@ -77,7 +114,7 @@ function DocumentRow({ application, document }: { application: Application; docu
       {application.editable && (
         <button
           type="button"
-          className="underline"
+          className="py-1 underline"
           disabled={remove.isPending}
           aria-label={`${t("remove")}: ${document.original_name}`}
           onClick={() => remove.mutate()}
@@ -98,37 +135,46 @@ function UploadButton({ application, requirementId, label }: { application: Appl
   const t = useApplicationsT()
   const cache = useQueryClient()
   const input = useRef<HTMLInputElement>(null)
-  const id = useId()
+  const button = useRef<HTMLButtonElement>(null)
   const [tooLarge, setTooLarge] = useState(false)
+  const [done, setDone] = useState("")
   const upload = useMutation({
     mutationFn: (file: File) => uploadDocument(application.id, file, requirementId),
-    onSuccess: () => {
-      void cache.invalidateQueries({ queryKey: [...applicationsKey, application.id] })
+    onSuccess: async (document) => {
+      setDone(t("uploadedFile", { name: document.original_name }))
+      await cache.invalidateQueries({ queryKey: [...applicationsKey, application.id] })
       void cache.invalidateQueries({ queryKey: SAVED_PROGRAMS_KEY })
+      button.current?.focus()
     },
+    onError: () => button.current?.focus(),
   })
   function choose(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     event.target.value = ""
     if (!file) return
+    setDone("")
     setTooLarge(file.size > MAX_FILE_BYTES)
     if (file.size <= MAX_FILE_BYTES) upload.mutate(file)
+    else button.current?.focus()
   }
   return (
     <div className="mt-2">
-      <input
-        ref={input}
-        id={id}
-        type="file"
-        accept={ACCEPTED_FILES}
-        className="sr-only"
-        aria-label={`${t("chooseFile")}: ${label}`}
+      {/* The visible button opens the picker; the input itself stays out of the Tab order. */}
+      <input ref={input} type="file" accept={ACCEPTED_FILES} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={choose} />
+      <Button
+        ref={button}
+        type="button"
+        variant="outline"
+        size="sm"
         disabled={upload.isPending}
-        onChange={choose}
-      />
-      <Button type="button" variant="outline" size="sm" disabled={upload.isPending} onClick={() => input.current?.click()}>
+        aria-label={`${t("chooseFile")}: ${label}`}
+        onClick={() => input.current?.click()}
+      >
         {upload.isPending ? t("uploading") : t("chooseFile")}
       </Button>
+      <p role="status" className="sr-only">
+        {done}
+      </p>
       {(tooLarge || upload.isError) && (
         <p role="alert" className="mt-2 text-sm text-destructive">
           {tooLarge ? t("fileTooLarge") : errorText(t, upload.error)}
@@ -140,34 +186,38 @@ function UploadButton({ application, requirementId, label }: { application: Appl
 
 function Documents({ application }: { application: Application }) {
   const t = useApplicationsT()
+  const { t: portalT, language } = useI18n()
+  const heading = useRef<HTMLHeadingElement>(null)
   const requirementIds = new Set(application.requirements.map((item) => item.id))
   const other = application.documents.filter((document) => document.requirement_id === null || !requirementIds.has(document.requirement_id))
+  const focusHeading = () => heading.current?.focus()
   return (
     <section aria-labelledby="documents-title" className="mt-10">
-      <h2 id="documents-title" className="text-2xl font-semibold">
+      <h2 id="documents-title" ref={heading} tabIndex={-1} className="text-2xl font-semibold outline-none">
         {t("documentsTitle")}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("documentsLead")}</p>
-      <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">
-        {t("used", { used: fileSize(application.bytes_used), limit: fileSize(application.bytes_limit) })}
+      <p className="mt-1 text-xs text-muted-foreground">
+        {t("used", { used: fileSize(application.bytes_used, language), limit: fileSize(application.bytes_limit, language) })}
       </p>
       <ul className="mt-5 space-y-4">
         {application.requirements.map((requirement) => {
           const uploaded = application.documents.filter((document) => document.requirement_id === requirement.id)
-          const notes = [t(requirement.format), requirement.translation && t("translation"), requirement.notarisation && t("notarisation")]
           return (
             <li key={requirement.id} className="rounded-lg border border-border p-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-medium">{requirement.name}</p>
-                  <p className="text-xs text-muted-foreground">{notes.filter(Boolean).join(", ")} · {requirement.deadline}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {requirementNotes(requirement, portalT)} · {requirement.deadline}
+                  </p>
                 </div>
                 <span className="text-xs">{t(uploaded.length ? "uploaded" : "notUploaded")}</span>
               </div>
               {uploaded.length > 0 && (
                 <ul className="mt-3 space-y-1">
                   {uploaded.map((document) => (
-                    <DocumentRow key={document.id} application={application} document={document} />
+                    <DocumentRow key={document.id} application={application} document={document} onRemoved={focusHeading} />
                   ))}
                 </ul>
               )}
@@ -180,7 +230,7 @@ function Documents({ application }: { application: Application }) {
           {other.length > 0 && (
             <ul className="mt-3 space-y-1">
               {other.map((document) => (
-                <DocumentRow key={document.id} application={application} document={document} />
+                <DocumentRow key={document.id} application={application} document={document} onRemoved={focusHeading} />
               ))}
             </ul>
           )}
@@ -191,92 +241,131 @@ function Documents({ application }: { application: Application }) {
   )
 }
 
-function Form({ application }: { application: Application }) {
+function Form({ application, statusBox }: { application: Application; statusBox: RefObject<HTMLDivElement | null> }) {
   const t = useApplicationsT()
   const { language } = useI18n()
   const cache = useQueryClient()
   const navigate = useNavigate()
+  const formRef = useRef<HTMLFormElement>(null)
+  const deleteButton = useRef<HTMLButtonElement>(null)
+  const confirmText = useRef<HTMLParagraphElement>(null)
   const [fields, setFields] = useState<ApplicationFields>(() => fieldsOf(application))
   const [dirty, setDirty] = useState(false)
+  const [badField, setBadField] = useState<FieldKey | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const key = [...applicationsKey, application.id]
+
+  // Warn before the tab is closed or reloaded with unsaved changes.
+  useEffect(() => {
+    if (!dirty) return
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault()
+    window.addEventListener("beforeunload", warn)
+    return () => window.removeEventListener("beforeunload", warn)
+  }, [dirty])
+  useEffect(() => {
+    if (confirmDelete) confirmText.current?.focus()
+  }, [confirmDelete])
+
   const update = (patch: Partial<ApplicationFields>) => {
     setFields((current) => ({ ...current, ...patch }))
     setDirty(true)
+    setBadField(null)
   }
-  const text = (name: keyof ApplicationFields) => (event: ChangeEvent<HTMLInputElement>) =>
-    update({ [name]: event.target.value || null } as Partial<ApplicationFields>)
+  const text = (name: "full_name" | "date_of_birth" | "citizenship" | "phone") => (event: ChangeEvent<HTMLInputElement>) =>
+    update({ [name]: event.target.value || null })
   const number = (name: "graduation_year" | "exam_total") => (event: ChangeEvent<HTMLInputElement>) =>
     update({ [name]: event.target.value === "" ? null : Number(event.target.value) })
-  const save = useMutation({
-    mutationFn: () => saveApplication(application.id, fields, language),
-    onSuccess: (saved) => {
-      cache.setQueryData(key, saved)
-      setDirty(false)
-    },
-  })
+  const showInvalid = (error: unknown) => {
+    const field = invalidField(error)
+    setBadField(field)
+    if (field) window.setTimeout(() => document.getElementById(FIELD_IDS[field])?.focus())
+  }
+  const persist = async () => {
+    const saved = await saveApplication(application.id, fields, language)
+    cache.setQueryData(key, saved)
+    setDirty(false)
+    return saved
+  }
+  const save = useMutation({ mutationFn: persist, onError: showInvalid })
   const submit = useMutation({
+    // Unsaved edits are saved first; the cache then holds what the server has.
     mutationFn: async () => {
-      if (dirty) await saveApplication(application.id, fields, language)
+      if (dirty && (await persist()).missing.length) return null
       return submitApplication(application.id)
     },
     onSuccess: (submitted) => {
+      if (!submitted) return
       cache.setQueryData(key, submitted)
-      void cache.invalidateQueries({ queryKey: applicationsKey })
-      setDirty(false)
+      void cache.invalidateQueries({ queryKey: applicationsKey, exact: true })
+      window.setTimeout(() => statusBox.current?.focus())
     },
+    onError: showInvalid,
   })
   const remove = useMutation({
     mutationFn: () => deleteDraft(application.id),
     onSuccess: () => {
-      void cache.invalidateQueries({ queryKey: applicationsKey })
+      cache.removeQueries({ queryKey: key })
+      void cache.invalidateQueries({ queryKey: applicationsKey, exact: true })
       navigate("/account/applications", { replace: true })
     },
   })
+
   const locked = !application.editable
+  const busy = save.isPending || submit.isPending
   const missing = dirty ? [] : application.missing
   function onSubmit(event: FormEvent) {
     event.preventDefault()
-    save.mutate()
+    if (formRef.current?.reportValidity()) save.mutate()
   }
+  function onFinalSubmit() {
+    if (formRef.current?.reportValidity()) submit.mutate()
+  }
+  const errorFor = (name: FieldKey) => (badField === name ? t("invalidField") : undefined)
+  const described = (name: FieldKey, hint = false) =>
+    [hint && `${FIELD_IDS[name]}-hint`, badField === name && `${FIELD_IDS[name]}-error`].filter(Boolean).join(" ") || undefined
+  const field = (name: FieldKey, hint = false) => ({
+    id: FIELD_IDS[name],
+    "aria-invalid": badField === name || undefined,
+    "aria-describedby": described(name, hint),
+  })
+
   return (
     <>
-      <form onSubmit={onSubmit} className="mt-10" aria-labelledby="form-title">
+      <form ref={formRef} onSubmit={onSubmit} className="mt-10" aria-labelledby="form-title">
         <h2 id="form-title" className="text-2xl font-semibold">
           {t("formTitle")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">{t("noIdentityNumbers")}</p>
-        <fieldset disabled={locked || save.isPending || submit.isPending} className="mt-5 grid gap-4 sm:grid-cols-2">
+        <fieldset disabled={locked || busy} className="mt-5 grid gap-4 sm:grid-cols-2">
           {/* Explicit labels: a label wrapped around a select would also read out its options. */}
-          <Row id="application-full-name" label={t("full_name")} wide>
-            <input id="application-full-name" className={fieldClass} autoComplete="name" maxLength={200} value={fields.full_name ?? ""} onChange={text("full_name")} />
+          <Row id={FIELD_IDS.full_name} label={t("full_name")} error={errorFor("full_name")} wide>
+            <input {...field("full_name")} className={fieldClass} autoComplete="name" maxLength={200} value={fields.full_name ?? ""} onChange={text("full_name")} />
           </Row>
-          <Row id="application-birth" label={t("date_of_birth")}>
-            <input id="application-birth" className={fieldClass} type="date" autoComplete="bday" min="1900-01-01" value={fields.date_of_birth ?? ""} onChange={text("date_of_birth")} />
+          <Row id={FIELD_IDS.date_of_birth} label={t("date_of_birth")} error={errorFor("date_of_birth")}>
+            <input {...field("date_of_birth")} className={fieldClass} type="date" autoComplete="bday" min="1900-01-01" max={today()} value={fields.date_of_birth ?? ""} onChange={text("date_of_birth")} />
           </Row>
-          <Row id="application-citizenship" label={t("citizenship")}>
-            <input id="application-citizenship" className={fieldClass} autoComplete="country-name" maxLength={100} value={fields.citizenship ?? ""} onChange={text("citizenship")} />
+          <Row id={FIELD_IDS.citizenship} label={t("citizenship")} error={errorFor("citizenship")}>
+            <input {...field("citizenship")} className={fieldClass} autoComplete="country-name" maxLength={100} value={fields.citizenship ?? ""} onChange={text("citizenship")} />
           </Row>
-          <Row id="application-phone" label={t("phone")} hint={t("phoneHint")}>
+          <Row id={FIELD_IDS.phone} label={t("phone")} hint={t("phoneHint")} error={errorFor("phone")}>
             <input
-              id="application-phone"
+              {...field("phone", true)}
               className={fieldClass}
               type="tel"
               autoComplete="tel"
               inputMode="tel"
               maxLength={30}
-              pattern="\+?[0-9 ()\-]{6,30}"
-              aria-describedby="application-phone-hint"
+              pattern={PHONE_PATTERN}
               value={fields.phone ?? ""}
               onChange={text("phone")}
             />
           </Row>
-          <Row id="application-education" label={t("education_level")}>
+          <Row id={FIELD_IDS.education_level} label={t("education_level")} error={errorFor("education_level")}>
             <select
-              id="application-education"
+              {...field("education_level")}
               className={fieldClass}
               value={fields.education_level ?? ""}
-              onChange={(event) => update({ education_level: (event.target.value || null) as ApplicationFields["education_level"] })}
+              onChange={(event) => update({ education_level: EDUCATION_LEVELS.find((level) => level === event.target.value) ?? null })}
             >
               <option value="">{t("choose")}</option>
               {EDUCATION_LEVELS.map((level) => (
@@ -286,11 +375,11 @@ function Form({ application }: { application: Application }) {
               ))}
             </select>
           </Row>
-          <Row id="application-graduation" label={t("graduation_year")}>
-            <input id="application-graduation" className={fieldClass} type="number" inputMode="numeric" min={1950} max={2100} value={fields.graduation_year ?? ""} onChange={number("graduation_year")} />
+          <Row id={FIELD_IDS.graduation_year} label={t("graduation_year")} error={errorFor("graduation_year")}>
+            <input {...field("graduation_year")} className={fieldClass} type="number" inputMode="numeric" min={1950} max={2100} value={fields.graduation_year ?? ""} onChange={number("graduation_year")} />
           </Row>
-          <Row id="application-exam" label={t("exam_total")}>
-            <input id="application-exam" className={fieldClass} type="number" inputMode="numeric" min={0} max={150} value={fields.exam_total ?? ""} onChange={number("exam_total")} />
+          <Row id={FIELD_IDS.exam_total} label={t("exam_total")} error={errorFor("exam_total")}>
+            <input {...field("exam_total")} className={fieldClass} type="number" inputMode="numeric" min={0} max={150} value={fields.exam_total ?? ""} onChange={number("exam_total")} />
           </Row>
           <div className="flex items-start gap-3 text-sm sm:col-span-2">
             <input id="application-consent" type="checkbox" className="mt-1 h-4 w-4" checked={fields.consent} onChange={(event) => update({ consent: event.target.checked })} />
@@ -299,11 +388,12 @@ function Form({ application }: { application: Application }) {
         </fieldset>
         {!locked && (
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button type="submit" variant="outline" disabled={!dirty || save.isPending}>
+            {/* Stays enabled after saving so focus is never dropped from a disabled button. */}
+            <Button type="submit" variant="outline" disabled={busy}>
               {save.isPending ? t("working") : t("save")}
             </Button>
             <span role="status" className="text-sm text-muted-foreground">
-              {save.isSuccess && !dirty ? t("saved") : ""}
+              {dirty ? t("unsaved") : save.isSuccess ? t("saved") : ""}
             </span>
           </div>
         )}
@@ -327,16 +417,12 @@ function Form({ application }: { application: Application }) {
               <p>{t("missingTitle")}</p>
               <ul className="mt-1 list-disc pl-5">
                 {missing.map((name) => (
-                  <li key={name}>
-                    {(FIELD_KEYS as readonly string[]).includes(name)
-                      ? t(name as (typeof FIELD_KEYS)[number])
-                      : t(`missing.${name}` as ApplicationsKey)}
-                  </li>
+                  <li key={name}>{missingLabel(t, name)}</li>
                 ))}
               </ul>
             </div>
           )}
-          <Button className="mt-5" disabled={missing.length > 0 || submit.isPending} onClick={() => submit.mutate()}>
+          <Button className="mt-5" disabled={missing.length > 0 || busy} onClick={onFinalSubmit}>
             {submit.isPending ? t("working") : t("submit")}
           </Button>
           {submit.isError && (
@@ -348,18 +434,26 @@ function Form({ application }: { application: Application }) {
             <div className="mt-8">
               {confirmDelete ? (
                 <div className="space-y-3">
-                  <p className="text-sm">{t("confirmDelete")}</p>
+                  <p ref={confirmText} tabIndex={-1} className="text-sm outline-none">
+                    {t("confirmDelete")}
+                  </p>
                   <div className="flex flex-wrap gap-3">
                     <Button variant="outline" disabled={remove.isPending} onClick={() => remove.mutate()}>
                       {t("deleteDraft")}
                     </Button>
-                    <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setConfirmDelete(false)
+                        window.setTimeout(() => deleteButton.current?.focus())
+                      }}
+                    >
                       {t("cancel")}
                     </Button>
                   </div>
                 </div>
               ) : (
-                <Button variant="ghost" onClick={() => setConfirmDelete(true)}>
+                <Button ref={deleteButton} variant="ghost" onClick={() => setConfirmDelete(true)}>
                   {t("deleteDraft")}
                 </Button>
               )}
@@ -380,11 +474,13 @@ export function ApplicationPage() {
   const t = useApplicationsT()
   const { programTitle } = useI18n()
   const me = useApplicant()
-  const id = Number(useParams().id)
+  const statusBox = useRef<HTMLDivElement>(null)
+  const raw = useParams().id ?? ""
+  const id = /^[1-9][0-9]{0,15}$/.test(raw) ? Number(raw) : null
   const application = useQuery({
     queryKey: [...applicationsKey, id],
-    queryFn: ({ signal }) => getApplication(id, signal),
-    enabled: Boolean(me.data) && Number.isInteger(id),
+    queryFn: ({ signal }) => getApplication(id as number, signal),
+    enabled: Boolean(me.data) && id !== null,
     staleTime: 0,
     refetchOnWindowFocus: false,
   })
@@ -395,13 +491,16 @@ export function ApplicationPage() {
   const data = application.data
   if (!data) {
     const error = me.error ?? application.error
+    const notFound = id === null || (isApiError(error) && error.status === 404)
     return (
       <div className="mx-auto max-w-3xl px-4 py-12">
         <Link to="/account/applications" className="text-sm underline">
           ← {t("back")}
         </Link>
         <div className="mt-6">
-          {application.isPending && me.data ? (
+          {notFound ? (
+            <p role="alert">{t("notFound")}</p>
+          ) : application.isPending && me.data ? (
             <p>{t("working")}</p>
           ) : (
             <ConnectionError
@@ -415,6 +514,7 @@ export function ApplicationPage() {
     )
   }
 
+  // The note belongs to the status it came with; after a resubmission it is out of date.
   const showNote = data.staff_note && ["needs_changes", "accepted", "rejected"].includes(data.status)
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
@@ -425,7 +525,7 @@ export function ApplicationPage() {
         {data.program.program_id} · {t(data.applicant_type)}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">{programTitle(data.program)}</h1>
-      <div className="mt-4 rounded-xl border border-border p-5" role="status" aria-live="polite">
+      <div ref={statusBox} tabIndex={-1} className="mt-4 rounded-xl border border-border p-5 outline-none focus-visible:ring-2" role="status" aria-live="polite">
         <StatusBadge status={data.status} />
         <p className="mt-3 text-sm">{t(`help.${data.status}`)}</p>
         {showNote && (
@@ -436,7 +536,7 @@ export function ApplicationPage() {
         )}
       </div>
       {!data.editable && <p className="mt-4 text-sm text-muted-foreground">{t("locked")}</p>}
-      <Form key={`${data.id}:${data.status}`} application={data} />
+      <Form key={`${data.id}:${data.status}`} application={data} statusBox={statusBox} />
     </div>
   )
 }

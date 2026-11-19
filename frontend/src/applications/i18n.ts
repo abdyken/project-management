@@ -55,10 +55,6 @@ const en = {
   uploading: "Uploading…",
   download: "Download",
   remove: "Remove",
-  original: "Original",
-  copy: "Copy",
-  translation: "translation",
-  notarisation: "notarised",
   submitTitle: "Submit",
   submitLead: "After submitting, you can change the application only if the office asks for changes.",
   submit: "Submit application",
@@ -72,13 +68,20 @@ const en = {
   locked: "This application can no longer be changed.",
   error: "Something went wrong. Check the connection and try again.",
   unavailable: "Online applications are not available yet.",
-  exists: "You already have an application for this programme. Open it in the list below.",
+  exists: "You already have an application for this programme. Open it in the list above.",
   tooMany: "You have reached the maximum number of applications.",
   fileType: "Upload a PDF, JPEG or PNG file.",
   fileTooLarge: "The file is too large: up to 10 MB, and 40 MB per application.",
   tooManyDocuments: "An application can have at most 20 documents.",
   incomplete: "Complete the application first.",
   notFound: "Application not found.",
+  invalidField: "Check this field: the value is not accepted.",
+  invalid: "Some fields are not filled in correctly. Check the highlighted field.",
+  uploadedFile: "Uploaded: {name}",
+  unsaved: "You have unsaved changes.",
+  applicationsLink: "My applications",
+  accountFull: "Your account has reached its storage limit for documents. Remove an old document first.",
+  uploadsPaused: "Uploads are paused for a while. Please try again later.",
   local: "Local applicant",
   international: "International applicant",
 }
@@ -138,10 +141,6 @@ const ru: Record<Key, string> = {
   uploading: "Загрузка…",
   download: "Скачать",
   remove: "Удалить",
-  original: "Оригинал",
-  copy: "Копия",
-  translation: "перевод",
-  notarisation: "нотариально",
   submitTitle: "Отправка",
   submitLead: "После отправки изменить заявку можно, только если комиссия попросит исправления.",
   submit: "Отправить заявку",
@@ -155,20 +154,27 @@ const ru: Record<Key, string> = {
   locked: "Эту заявку больше нельзя изменить.",
   error: "Что-то пошло не так. Проверьте соединение и попробуйте ещё раз.",
   unavailable: "Онлайн-заявки пока недоступны.",
-  exists: "У вас уже есть заявка на эту программу. Откройте её в списке ниже.",
+  exists: "У вас уже есть заявка на эту программу. Откройте её в списке выше.",
   tooMany: "Вы достигли максимального числа заявок.",
   fileType: "Загрузите файл PDF, JPEG или PNG.",
   fileTooLarge: "Файл слишком большой: до 10 МБ и 40 МБ на заявку.",
   tooManyDocuments: "В заявке может быть не больше 20 документов.",
   incomplete: "Сначала заполните заявку.",
   notFound: "Заявка не найдена.",
+  invalidField: "Проверьте это поле: значение не принято.",
+  invalid: "Некоторые поля заполнены неверно. Проверьте выделенное поле.",
+  uploadedFile: "Загружено: {name}",
+  unsaved: "Есть несохранённые изменения.",
+  applicationsLink: "Мои заявки",
+  accountFull: "В вашем аккаунте закончилось место для документов. Сначала удалите старый документ.",
+  uploadsPaused: "Загрузка временно приостановлена. Попробуйте позже.",
   local: "Местный абитуриент",
   international: "Иностранный абитуриент",
 }
 
 const kk: Record<Key, string> = {
   title: "Менің өтініштерім",
-  lead: "Сақталған бағдарламаға онлайн өтініш беріңіз: форманы толтырып, құжат сканерлерін тіркеп, жіберіңіз.",
+  lead: "Сақталған бағдарламаға онлайн өтініш беріңіз: форманы толтырып, құжаттардың скан-көшірмелерін тіркеп, жіберіңіз.",
   startTitle: "Өтініш бастау",
   startLead: "Өтініш сақталған бағдарлама чек-парағынан басталады.",
   start: "Өтініш бастау",
@@ -211,19 +217,15 @@ const kk: Record<Key, string> = {
   save: "Сақтау",
   saved: "Сақталды",
   documentsTitle: "Құжаттар",
-  documentsLead: "PDF, JPEG немесе PNG сканерлері, әрқайсысы 10 МБ-қа дейін, барлығы 40 МБ.",
+  documentsLead: "PDF, JPEG немесе PNG скан-көшірмелері, әрқайсысы 10 МБ-қа дейін, барлығы 40 МБ.",
   used: "{limit} ішінен {used} пайдаланылды",
   uploaded: "Жүктелді",
   notUploaded: "Жүктелмеген",
   otherDocument: "Басқа құжат",
-  chooseFile: "Сканер жүктеу",
+  chooseFile: "Скан-көшірме жүктеу",
   uploading: "Жүктелуде…",
   download: "Жүктеп алу",
   remove: "Жою",
-  original: "Түпнұсқа",
-  copy: "Көшірме",
-  translation: "аударма",
-  notarisation: "нотариатпен куәландырылған",
   submitTitle: "Жіберу",
   submitLead: "Жібергеннен кейін өтінішті комиссия түзету сұраған жағдайда ғана өзгертуге болады.",
   submit: "Өтінішті жіберу",
@@ -237,13 +239,20 @@ const kk: Record<Key, string> = {
   locked: "Бұл өтінішті енді өзгерту мүмкін емес.",
   error: "Бір нәрсе дұрыс болмады. Байланысты тексеріп, қайталап көріңіз.",
   unavailable: "Онлайн өтініштер әзірге қолжетімсіз.",
-  exists: "Бұл бағдарламаға өтінішіңіз бар. Оны төмендегі тізімнен ашыңыз.",
+  exists: "Бұл бағдарламаға өтінішіңіз бар. Оны жоғарыдағы тізімнен ашыңыз.",
   tooMany: "Өтініштердің ең көп санына жеттіңіз.",
   fileType: "PDF, JPEG немесе PNG файлын жүктеңіз.",
   fileTooLarge: "Файл тым үлкен: 10 МБ-қа дейін, өтінішке 40 МБ.",
   tooManyDocuments: "Өтініште 20-дан көп құжат болмайды.",
   incomplete: "Алдымен өтінішті толтырыңыз.",
   notFound: "Өтініш табылмады.",
+  invalidField: "Осы өрісті тексеріңіз: мән қабылданбады.",
+  invalid: "Кейбір өрістер қате толтырылған. Белгіленген өрісті тексеріңіз.",
+  uploadedFile: "Жүктелді: {name}",
+  unsaved: "Сақталмаған өзгерістер бар.",
+  applicationsLink: "Менің өтініштерім",
+  accountFull: "Аккаунтыңыздағы құжаттарға арналған орын таусылды. Алдымен ескі құжатты жойыңыз.",
+  uploadsPaused: "Жүктеу уақытша тоқтатылды. Кейінірек қайталап көріңіз.",
   local: "Отандық талапкер",
   international: "Шетелдік талапкер",
 }
@@ -274,12 +283,18 @@ export function applicationsErrorKey(code: string | undefined, status?: number):
       return "fileTooLarge"
     case "TOO_MANY_DOCUMENTS":
       return "tooManyDocuments"
+    case "ACCOUNT_STORAGE_FULL":
+      return "accountFull"
+    case "UPLOADS_PAUSED":
+      return "uploadsPaused"
     case "APPLICATION_INCOMPLETE":
       return "incomplete"
     case "APPLICATION_LOCKED":
       return "locked"
     case "APPLICATION_NOT_FOUND":
       return "notFound"
+    case "INVALID_REQUEST":
+      return "invalid"
     default:
       return status === 413 ? "fileTooLarge" : "error"
   }

@@ -118,10 +118,11 @@ export async function uploadDocument(id: number, file: File, requirementId: numb
   }
 }
 
-export const listStaffApplications = (status: StaffQueueFilter, offset: number, signal?: AbortSignal) =>
+export const STAFF_PAGE = 30
+export const listStaffApplications = (status: StaffQueueFilter, programId: string, offset: number, signal?: AbortSignal) =>
   request<{ items: StaffApplicationSummary[]; total: number }>(STAFF, {
     ...options,
-    query: { status, offset: String(offset), limit: "30" },
+    query: { status, offset: String(offset), limit: String(STAFF_PAGE), ...(programId ? { program_id: programId } : {}) },
     signal,
   })
 export const getStaffApplication = (id: number, signal?: AbortSignal) =>
