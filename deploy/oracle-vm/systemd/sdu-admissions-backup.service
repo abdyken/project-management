@@ -1,0 +1,12 @@
+[Unit]
+Description=SDU Admissions Portal: back up the database and uploaded documents
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+ExecStart=/opt/sdu-admissions/backup.sh
+Nice=10
+IOSchedulingClass=idle
