@@ -10,7 +10,7 @@ private questions answered by the admissions office. Open `/admissions` on the p
 The [64-programme source audit](docs/sprint-6-data-review.md) distinguishes confirmed
 facts from missing or conflicting requirements; checks never promise admission or a grant.
 
-Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md), [`docs/sprint-4-tasks.md`](docs/sprint-4-tasks.md), [`docs/sprint-5-tasks.md`](docs/sprint-5-tasks.md).
+Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md), [`docs/sprint-4-tasks.md`](docs/sprint-4-tasks.md), [`docs/sprint-5-tasks.md`](docs/sprint-5-tasks.md), [`docs/sprint-5-review.md`](docs/sprint-5-review.md), [`docs/sprint-6-tasks.md`](docs/sprint-6-tasks.md), [`docs/sprint-6-review.md`](docs/sprint-6-review.md), [`docs/sprint-7-tasks.md`](docs/sprint-7-tasks.md). Backlog, story and QA sheets: [`docs/table.xlsx`](docs/table.xlsx).
 
 ## Start everything
 
