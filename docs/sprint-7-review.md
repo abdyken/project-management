@@ -79,9 +79,12 @@ five-failure login limit after several runs in a row.
 
 ## Open before production
 
-- **CO.7:** a daily backup of the database and the `uploads` volume on the VM, then
-  `APPLICATIONS_ENABLED=true` in the VM's `.env`. Until then the feature stays off in
-  production and its links are hidden.
+- **CO.7 done 20.11.2026:** a daily backup of the database and the `uploads` volume runs on
+  the VM (`deploy/oracle-vm/backup.sh`, systemd timer, 14 days). A test restore matched the
+  live database and an uploaded file came back byte for byte. The backups stay on the same
+  disk; an occasional copy off the server is recommended (`deploy/oracle-vm/README.md`).
+- Switching on: `APPLICATIONS_ENABLED=true` in the VM's `.env`, after the hosting record
+  below. Until then the feature stays off in production and its links are hidden.
 - The data-hosting record in `docs/applicant-hosting.md` for uploaded documents.
 - Live QA on the VM and Product Owner acceptance for US31, US32, US33 and US6.
 - Not in scope: antivirus scanning (staff open files in the browser's viewer only),

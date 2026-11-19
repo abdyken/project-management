@@ -13,8 +13,8 @@ plus a 2 GB swap file, Ubuntu 22.04) in `/opt/sdu-admissions`:
 | `caddy` | ports 80/443, free HTTPS certificate from Let's Encrypt for the sslip.io name |
 
 Volumes: `pgdata` (database) and `uploads` (Sprint 7 application documents, ADR 0003).
-Online applications are switched off on the VM (`APPLICATIONS_ENABLED=false` by default);
-switch them on in `.env` only after a daily backup of both volumes is in place.
+Both are backed up daily (see Backups). Online applications are switched off on the VM
+(`APPLICATIONS_ENABLED=false` by default) until the hosting record and PO acceptance allow it.
 
 ## Automatic deployment
 
@@ -69,6 +69,56 @@ Application secrets (`POSTGRES_PASSWORD`, `GEMINI_API_KEY`) live only in
 `deploy.sh` is not deployed by the workflow (the deploy key can only run it). After changing
 it, copy it to the VM: `scp deploy/oracle-vm/deploy.sh oracle-vm:/opt/sdu-admissions/`.
 
+## Backups
+
+`backup.sh` runs every day at 21:00 UTC (02:00 in Almaty) through the systemd timer
+`sdu-admissions-backup.timer`; a run missed while the VM was off happens at the next boot.
+Each run writes `/var/backups/sdu-admissions/<UTC time>/` (mode 700, user `ubuntu`, it holds
+personal data):
+
+| File | What |
+| ---- | ---- |
+| `database.dump` | `pg_dump --format=custom`, checked with `pg_restore --list` |
+| `database.list` | the dump's table of contents |
+| `uploads.tar.gz` | the `uploads` volume, checked with `gzip -t` |
+| `SHA256SUMS` | checksums of both |
+
+Backups older than 14 days are deleted, but the newest three are always kept. The script
+refuses to run with less than 3 GB free. Check it with:
+
+    systemctl list-timers sdu-admissions-backup.timer
+    journalctl -u sdu-admissions-backup.service -n 20
+    sudo systemctl start sdu-admissions-backup.service   # a backup now
+
+The backups are on the same disk as the data: they protect against mistakes, a bad
+migration and deleted files, not against losing the VM. Copy one off the server from time
+to time, e.g. `scp -r oracle-vm:/var/backups/sdu-admissions/<time> .` to an encrypted disk.
+
+**Restore** (stop the API first so nothing writes during the restore):
+
+    cd /opt/sdu-admissions && B=/var/backups/sdu-admissions/<time>
+    (cd $B && sha256sum -c SHA256SUMS)
+    docker compose stop api
+    docker compose exec -T db sh -c 'dropdb -U "$POSTGRES_USER" "$POSTGRES_DB" && createdb -U "$POSTGRES_USER" "$POSTGRES_DB"'
+    docker compose exec -T db sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --no-owner --exit-on-error' < $B/database.dump
+    docker run --rm -v sdu-admissions_uploads:/var/lib/sdu-admissions/uploads -v $B:/backup:ro alpine \
+      sh -c 'rm -rf /var/lib/sdu-admissions/uploads/* && tar -xzf /backup/uploads.tar.gz -C /var/lib/sdu-admissions'
+    docker compose up -d --wait
+
+To test a backup without touching production, restore the dump into a scratch database
+(`createdb restore_check`, `pg_restore -d restore_check ...`, compare counts, `dropdb
+restore_check`); this was done on 20.11.2026 and matched the live database.
+
+Installing (already done on the current VM; repeat on a new one):
+
+    scp deploy/oracle-vm/backup.sh oracle-vm:/opt/sdu-admissions/
+    scp deploy/oracle-vm/systemd/sdu-admissions-backup.* oracle-vm:/tmp/
+    sudo install -d -m 700 -o ubuntu -g ubuntu /var/backups/sdu-admissions
+    sudo install -m 644 /tmp/sdu-admissions-backup.service /tmp/sdu-admissions-backup.timer /etc/systemd/system/
+    sudo systemctl daemon-reload && sudo systemctl enable --now sdu-admissions-backup.timer
+
+Like `deploy.sh`, `backup.sh` is not deployed by the workflow: copy it after changing it.
+
 ## Setting up a new VM
 
 1. Install Docker Engine with the compose plugin and add `ubuntu` to the `docker` group; add swap.
@@ -77,3 +127,4 @@ it, copy it to the VM: `scp deploy/oracle-vm/deploy.sh oracle-vm:/opt/sdu-admiss
 3. Open TCP 80 and 443 in the subnet's security list.
 4. Add the deploy key to `authorized_keys` as above, update the secrets, and run the
    Deploy workflow.
+5. Install the daily backup (see Backups).
