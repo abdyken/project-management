@@ -31,8 +31,11 @@ not a URL query or request log; login preserves that draft and return path.
 An answer commits before notification and is immediately visible in the account.
 Repeated identical answer submissions are idempotent; a different second answer
 returns 409 `ALREADY_ANSWERED`. E-mail notifications contain only a link to the
-account, not the private question/answer. The hourly API worker retries unsent
-notifications with row locks, as does `python scripts/send_request_notifications.py`.
+account, not the private question/answer. The e-mail is sent right after the answer is
+saved (a background task after the response), so the applicant gets it within seconds. If
+that send fails, the hourly API worker retries unsent notifications with row locks, as does
+`python scripts/send_request_notifications.py`; the lock means the immediate send and a retry
+never both send it.
 An SMTP failure keeps the answer and pending delivery. Successful delivery is
 recorded; ordinary SMTP still has a possible duplicate on a crash between external
 acceptance and database commit. Request-reply notifications are transactional and
