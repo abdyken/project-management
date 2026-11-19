@@ -16,7 +16,7 @@ officer reviews submitted applications and sets their status.
 | 33.1-33.3 | US33 / Nurmek | Staff queue under `/api/staff/applications` (filter by status and programme, oldest first); detail view with documents; status change with a note to the applicant; e-mail notification through the hourly worker (same pattern as US30) |
 | 6.1-6.2 | US6 / Serdar | "Status of my application" answer for a logged-in applicant, built from the database, not from the model; chat and account page show the current stage and next step |
 | 7.QA | All | Backend tests per story, isolation (another applicant's files and applications return 404), browser QA in RU/KK/EN at 360/768/1280 px, QA cards `US31-QA.md` to `US33-QA.md` and `US6-QA.md` |
-| CO.7 | Dinmukhamed / Askhat | Daily database and uploads backup on the VM before uploads go live; record the data-hosting decision in `applicant-hosting.md`; Sprint 6 carry-over: US30 live test |
+| CO.7 | Dinmukhamed / Askhat | Daily database and uploads backup on the VM before uploads go live; record the data-hosting decision in `applicant-hosting.md` |
 
 Delivery order: 7.0 → 31 (model and API first, so 32 and 33 can start in parallel) →
 32 and 33 → 6 → QA. If time runs out, US6 moves to Sprint 8 first; US31-US33 are one
