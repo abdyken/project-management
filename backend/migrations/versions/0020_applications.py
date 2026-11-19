@@ -21,7 +21,7 @@ def upgrade():
         "application",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("applicant_id", sa.Integer(), sa.ForeignKey("applicant.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("program_id", sa.String(64), sa.ForeignKey("program.program_id", ondelete="CASCADE"), nullable=False),
+        sa.Column("program_id", sa.String(64), sa.ForeignKey("program.program_id", ondelete="RESTRICT"), nullable=False),
         sa.Column("applicant_type", sa.String(20), nullable=False),
         sa.Column("status", sa.String(20), nullable=False, server_default="draft"),
         sa.Column("language", sa.String(2), nullable=False, server_default="en"),
@@ -50,6 +50,7 @@ def upgrade():
     op.create_index("ix_application_applicant_id", "application", ["applicant_id"])
     op.create_index("ix_application_program_id", "application", ["program_id"])
     op.create_index("ix_application_queue", "application", ["status", "submitted_at"])
+    op.create_index("ix_application_reviewed_by_id", "application", ["reviewed_by_id"])
     op.create_index(
         "uq_application_live",
         "application",
@@ -76,6 +77,7 @@ def upgrade():
         sa.Column("uploaded_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
     )
     op.create_index("ix_application_document_application_id", "application_document", ["application_id"])
+    op.create_index("ix_application_document_requirement_id", "application_document", ["requirement_id"])
 
 
 def downgrade():

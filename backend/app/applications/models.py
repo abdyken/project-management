@@ -56,7 +56,8 @@ class Application(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     applicant_id: Mapped[int] = mapped_column(ForeignKey("applicant.id", ondelete="CASCADE"), index=True)
-    program_id: Mapped[str] = mapped_column(ForeignKey("program.program_id", ondelete="CASCADE"), index=True)
+    # RESTRICT: deleting a programme must not silently delete submitted applications and orphan their files.
+    program_id: Mapped[str] = mapped_column(ForeignKey("program.program_id", ondelete="RESTRICT"), index=True)
     applicant_type: Mapped[str] = mapped_column(String(20))
     status: Mapped[str] = mapped_column(String(20), server_default=DRAFT)
     language: Mapped[str] = mapped_column(String(2), server_default="en")
@@ -69,7 +70,7 @@ class Application(Base):
     exam_total: Mapped[int | None] = mapped_column(Integer)
     consent: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
     staff_note: Mapped[str | None] = mapped_column(Text)
-    reviewed_by_id: Mapped[int | None] = mapped_column(ForeignKey("staff_user.id", ondelete="SET NULL"))
+    reviewed_by_id: Mapped[int | None] = mapped_column(ForeignKey("staff_user.id", ondelete="SET NULL"), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -85,7 +86,7 @@ class ApplicationDocument(Base):
     application_id: Mapped[int] = mapped_column(ForeignKey("application.id", ondelete="CASCADE"), index=True)
     # The checklist document this scan is for; null for "other" or when staff removed the requirement.
     requirement_id: Mapped[int | None] = mapped_column(
-        ForeignKey("program_document_requirement.id", ondelete="SET NULL")
+        ForeignKey("program_document_requirement.id", ondelete="SET NULL"), index=True
     )
     original_name: Mapped[str] = mapped_column(String(255))
     content_type: Mapped[str] = mapped_column(String(50))

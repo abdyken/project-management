@@ -4,7 +4,8 @@ Decisions: `docs/adr/0001` (form fields), `0002` (statuses), `0003` (document st
 `0004` (status in the chat). All paths start with `/api`; errors use `{error_code, message}`.
 
 Everything here needs `APPLICANT_ACCOUNTS_ENABLED=true` and `APPLICATIONS_ENABLED=true`;
-otherwise `503 APPLICATIONS_UNAVAILABLE`. Applicant routes use the applicant cookie and its
+otherwise `503 APPLICATIONS_UNAVAILABLE` (checked before the login cookie). `GET /api/features`
+(public) returns `{applicant_accounts, applications}` so the frontend hides switched-off links. Applicant routes use the applicant cookie and its
 origin check (US23); staff routes use the staff cookie (US19). Private responses are
 `Cache-Control: no-store`.
 
@@ -37,16 +38,26 @@ applicant type, each with `uploaded`), `documents`, `bytes_used`, `bytes_limit` 
 
 - PDF, JPEG or PNG, recognised by the first bytes; the name and the browser's type are not
   trusted. Otherwise 415 `UNSUPPORTED_FILE_TYPE`; an empty file is 422 `EMPTY_FILE`.
-- At most 10 MB per file (`UPLOAD_MAX_BYTES`) and 40 MB per application
-  (`APPLICATION_MAX_BYTES`): 413 `FILE_TOO_LARGE` or `APPLICATION_FULL`. At most 20
-  documents: 409 `TOO_MANY_DOCUMENTS`. nginx accepts request bodies up to 11 MB.
+- At most 10 MB per file (`UPLOAD_MAX_BYTES`), 40 MB per application
+  (`APPLICATION_MAX_BYTES`) and 100 MB per account (`APPLICANT_MAX_BYTES`): 413
+  `FILE_TOO_LARGE`, `APPLICATION_FULL` or `ACCOUNT_STORAGE_FULL`, whichever limit the file
+  hits first. At most 20 documents: 409 `TOO_MANY_DOCUMENTS`. With less than
+  `UPLOAD_MIN_FREE_BYTES` (2 GB) free on the volume, uploads are 507 `UPLOADS_PAUSED`.
+  nginx accepts bodies up to 11 MB on the upload route only; every other API route keeps 1 MB.
+- The file is written without holding the application's row lock, then every limit is checked
+  again under the lock before the row is committed; a file that loses that race is deleted.
 - `requirement_id` must be on the application's checklist (422 `INVALID_REQUIREMENT`);
   the upload also ticks that document in the tracker (US25). Without it the scan is an
   "other document".
 - Files are streamed in 64 KB chunks to `UPLOAD_DIR` (the `uploads` volume) under a random
-  32-hex name; the original name is cleaned of folders and control characters. Downloads
-  are `Content-Disposition: attachment`, `X-Content-Type-Options: nosniff`, `no-store`.
-- Files are deleted with their document, the draft, or the account (`DELETE /applicant/me`).
+  32-hex name; the original name is cleaned of folders and control characters and its
+  extension is replaced by the detected type's (`Diploma.bat` that is a PDF becomes
+  `Diploma.pdf`). Downloads are `Content-Disposition: attachment`,
+  `X-Content-Type-Options: nosniff`, `no-store`. A file missing on disk is logged and is 404.
+- Files are deleted with their document, the draft, or the account (`DELETE /applicant/me`
+  locks the applicant's applications first, so an upload in flight is either collected or fails).
+- The hourly worker deletes drafts unchanged for `DRAFT_RETENTION_DAYS` (30) with their files,
+  and files older than an hour that no document refers to (including leftover `.part` files).
 
 ## Staff: `/staff/applications` (US33)
 
@@ -64,13 +75,22 @@ the applicant may start again.
 **E-mails:** `needs_changes`, `accepted` and `rejected` send "your application status
 changed" right after the change (a background task), with the stage, the next step and a
 link to the application, never the note. The hourly worker retries failed sends; the
-`notified_status` column makes each status e-mail go out once.
+`notified_status` column makes each status e-mail go out once. Every staff status change
+resets it, so a second "changes requested" is e-mailed again. The row is claimed and the
+lock released before talking to SMTP; a failed send gives the claim back for the retry.
+
+Deleting a programme that has applications is refused by the database (`ON DELETE RESTRICT`):
+archive it instead.
 
 ## Status in the chat (US6, ADR 0004)
 
 `POST /assistant/ask` and `/ask/stream` recognise status questions in English, Russian and
-Kazakh (a status word and an application word, e.g. "status of my application", "статус
-заявки", "өтініш мәртебесі"). They answer without the model and without personal data, and
+Kazakh when both switches are on: the visitor's own application ("my application", "моя
+заявка", "өтінішім") plus a status word ("status", "accepted", "где", "қайда" in "where is
+my…", …), e.g. "What is the status of my application?", "Моя заявка принята?",
+"Өтінішім қабылданды ма?". General questions ("How do I submit my application?", "Какие
+этапы подачи заявки?") still go to the FAQ. They answer without the model and without
+personal data (a pointer to My applications), and
 add `intent: "application_status"` to the response and the stream's `done` event (absent
 for all other answers). The widget then calls `GET /applicant/applications/status` when the
 visitor is logged in and shows the stage and next step for each application.

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from contextlib import AbstractContextManager
 from typing import Annotated, Literal
@@ -53,6 +54,8 @@ from app.db import get_db_session, get_session_factory
 from app.staff.models import StaffUser
 from app.staff.router import require_staff
 
+logger = logging.getLogger(__name__)
+
 MAX_LIVE_APPLICATIONS = 10
 MAX_DOCUMENTS = 20
 REQUIRED_FIELDS = ("full_name", "date_of_birth", "citizenship", "phone", "education_level", "graduation_year")
@@ -65,14 +68,15 @@ ERRORS = {code: {"model": ErrorResponse} for code in (401, 403, 404, 409, 413, 4
 
 
 def applications_on() -> None:
-    if not get_settings().applications_enabled:
+    settings = get_settings()
+    if not (settings.applications_enabled and settings.applicant_accounts_enabled):
         raise ApiProblem(503, "APPLICATIONS_UNAVAILABLE", "Online applications are not available yet.")
 
 
 applicant_router = APIRouter(
     prefix="/applicant/applications",
     tags=["applicant: applications"],
-    dependencies=[Depends(enabled), Depends(applications_on)],
+    dependencies=[Depends(applications_on), Depends(enabled)],
     responses=ERRORS,
 )
 staff_router = APIRouter(
@@ -167,6 +171,7 @@ def _document_counts(session: Session, ids: list[int]) -> dict[int, int]:
 def _file_response(settings: Settings, document: ApplicationDocument) -> FileResponse:
     path = storage.file_path(settings, document.storage_key)
     if not path.is_file():
+        logger.error("Uploaded file %s of document %s is missing on disk.", document.storage_key, document.id)
         raise ApiProblem(404, "DOCUMENT_NOT_FOUND", "Document not found.")
     return FileResponse(
         path,
@@ -310,6 +315,34 @@ def delete_draft(application_id: int, user: User, session: Db) -> Response:
     return Response(status_code=204)
 
 
+def _upload_room(
+    session: Session, settings: Settings, application: Application, user: Applicant, requirement_id: int | None
+) -> tuple[int, str]:
+    """Bytes this upload may use and the error code when it would go over (ADR 0003)."""
+    _editable(application)
+    documents = _documents(session, application)
+    if len(documents) >= MAX_DOCUMENTS:
+        raise ApiProblem(409, "TOO_MANY_DOCUMENTS", f"An application can have at most {MAX_DOCUMENTS} documents.")
+    if requirement_id is not None and requirement_id not in {
+        row.id for row in get_requirements(session, application.program_id, application.applicant_type)
+    }:
+        raise ApiProblem(422, "INVALID_REQUIREMENT", "This document is not on the programme's checklist.")
+    used_by_applicant = session.scalar(
+        select(func.coalesce(func.sum(ApplicationDocument.size_bytes), 0))
+        .join(Application, Application.id == ApplicationDocument.application_id)
+        .where(Application.applicant_id == user.id)
+    )
+    limits = [
+        (settings.upload_max_bytes, "FILE_TOO_LARGE"),
+        (settings.application_max_bytes - sum(document.size_bytes for document in documents), "APPLICATION_FULL"),
+        (settings.applicant_max_bytes - used_by_applicant, "ACCOUNT_STORAGE_FULL"),
+    ]
+    room, code = min(limits)
+    if room <= 0:
+        raise ApiProblem(413, code, "There is no room left for this file.")
+    return room, code
+
+
 @applicant_router.post("/{application_id}/documents", response_model=DocumentOut, status_code=201)
 def upload_document(
     application_id: int,
@@ -319,29 +352,31 @@ def upload_document(
     requirement_id: Annotated[int | None, Form()] = None,
 ) -> DocumentOut:
     settings = get_settings()
-    application = _own(session, user, application_id, lock=True)
-    _editable(application)
-    documents = _documents(session, application)
-    if len(documents) >= MAX_DOCUMENTS:
-        raise ApiProblem(409, "TOO_MANY_DOCUMENTS", f"An application can have at most {MAX_DOCUMENTS} documents.")
-    if requirement_id is not None and requirement_id not in {
-        row.id for row in get_requirements(session, application.program_id, application.applicant_type)
-    }:
-        raise ApiProblem(422, "INVALID_REQUIREMENT", "This document is not on the programme's checklist.")
-    remaining = settings.application_max_bytes - sum(document.size_bytes for document in documents)
-    if remaining <= 0:
-        raise ApiProblem(413, "APPLICATION_FULL", "The application has reached its total size limit.")
-    stored = storage.save_upload(file.file, settings, min(settings.upload_max_bytes, remaining))
-    document = ApplicationDocument(
-        application_id=application.id,
-        requirement_id=requirement_id,
-        original_name=storage.safe_name(file.filename),
-        content_type=stored.content_type,
-        size_bytes=stored.size_bytes,
-        sha256=stored.sha256,
-        storage_key=stored.storage_key,
-    )
+    storage.ensure_free_space(settings)
+    # Check first, write the file without holding the row lock, then check again under it:
+    # a slow disk must not block the applicant's other tabs or staff.
+    room, code = _upload_room(session, settings, _own(session, user, application_id), user, requirement_id)
+    session.rollback()
     try:
+        stored = storage.save_upload(file.file, settings, room)
+    except ApiProblem as problem:
+        if problem.code == "FILE_TOO_LARGE" and code != "FILE_TOO_LARGE":
+            raise ApiProblem(413, code, "There is no room left for this file.") from None
+        raise
+    try:
+        application = _own(session, user, application_id, lock=True)
+        room, code = _upload_room(session, settings, application, user, requirement_id)
+        if stored.size_bytes > room:
+            raise ApiProblem(413, code, "There is no room left for this file.")
+        document = ApplicationDocument(
+            application_id=application.id,
+            requirement_id=requirement_id,
+            original_name=storage.download_name(file.filename, stored.content_type),
+            content_type=stored.content_type,
+            size_bytes=stored.size_bytes,
+            sha256=stored.sha256,
+            storage_key=stored.storage_key,
+        )
         session.add(document)
         if requirement_id is not None:
             # A scan of a checklist document also ticks it in the tracker (US25).
@@ -483,6 +518,8 @@ def set_status(
         raise ApiProblem(422, "NOTE_REQUIRED", "Write a note to the applicant.")
     application.status, application.staff_note = body.status, body.note
     application.reviewed_by_id, application.status_changed_at = user.id, now()
+    # Every change is a new event: a second "changes requested" must be e-mailed again.
+    application.notified_status = None
     touch(application)
     try:
         session.commit()

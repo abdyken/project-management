@@ -204,6 +204,11 @@ def delete_account(user: User, session: Db) -> Response:
     from app.applications.storage import delete_files
 
     # Uploaded scans live on disk: collect them before the rows cascade away (ADR 0003).
+    # Locking the applications first (in id order, like every upload) makes an upload that is
+    # in flight either finish before the keys are read or fail after the account is gone.
+    session.execute(
+        select(Application.id).where(Application.applicant_id == user.id).order_by(Application.id).with_for_update()
+    ).all()
     keys = list(
         session.scalars(
             select(ApplicationDocument.storage_key)

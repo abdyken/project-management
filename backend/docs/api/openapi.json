@@ -24,6 +24,27 @@
         }
       }
     },
+    "/api/features": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Which optional features are switched on",
+        "operationId": "features_api_features_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Features"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/programs": {
       "get": {
         "tags": [
@@ -8527,6 +8548,24 @@
           "categories"
         ],
         "title": "FaqListResponse"
+      },
+      "Features": {
+        "properties": {
+          "applicant_accounts": {
+            "type": "boolean",
+            "title": "Applicant Accounts"
+          },
+          "applications": {
+            "type": "boolean",
+            "title": "Applications"
+          }
+        },
+        "type": "object",
+        "required": [
+          "applicant_accounts",
+          "applications"
+        ],
+        "title": "Features"
       },
       "FeedbackRequest": {
         "properties": {

@@ -66,6 +66,11 @@ class Settings(BaseSettings):
     upload_dir: str = "/var/lib/sdu-admissions/uploads"
     upload_max_bytes: int = 10 * 1024 * 1024
     application_max_bytes: int = 40 * 1024 * 1024
+    # One account (all its applications) and a free-space floor for the volume the database shares.
+    applicant_max_bytes: int = 100 * 1024 * 1024
+    upload_min_free_bytes: int = 2 * 1024 * 1024 * 1024
+    # Drafts nobody touched for this long are deleted with their files.
+    draft_retention_days: int = 30
     admissions_office_contact: str = (
         "SDU Admissions Office, Abylai Khan 1/1, 040900 Kaskelen. Tel. +7 727 307 95 65"
     )

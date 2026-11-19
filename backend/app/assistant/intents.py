@@ -251,19 +251,26 @@ def is_contextual_follow_up(question: str) -> bool:
     return 0 < len(tokens) <= _FOLLOW_UP_MAX_WORDS and any(token in _FOLLOW_UP_MARKERS for token in tokens)
 
 
-# US6: "what is the status of my application?" in EN/RU/KK. Both a status word and an
-# application word are needed, so "What is the application deadline?" stays a FAQ question.
-_STATUS_WORDS = ("status", "stage", "progress", "статус", "стади", "этап", "состояни", "мәртебе", "кезең", "жағдай")
-_APPLICATION_WORDS = ("application", "applied", "заявк", "заявлен", "өтініш")
+# US6: "what is the status of my application?" in EN/RU/KK. Two things are required: the
+# applicant's own application ("my application", "моя заявка", "өтінішім") and a word about
+# its state. "What are the stages of the application process?" or "How do I submit my
+# application?" stay FAQ questions.
 _MY_APPLICATION = re.compile(
-    r"\bmy application\b|\b(?:моя|моей|мою|моё|мое)\s+(?:заявк|заявлени)|менің өтініш|өтінішім"
+    r"\bmy\s+(?:\w+\s+)?applications?\b"
+    r"|\b(?:моя|моей|мою|моё|мое|мои|моих|моим|моего|моему)\s+(?:\w+\s+)?(?:заявк|заявлени)\w*"
+    r"|(?:менің\s+)?өтінішім\w*|менің\s+өтініш\w*"
 )
-_WHERE_WORDS = ("where", "what", "how", "где", "что", "как", "қайда", "қалай", "не ")
+_STATE_WORDS = re.compile(
+    r"\b(?:status|state|stage|progress|decision|result|reviewed|accepted|rejected|approved|happening|news|update)\b"
+    r"|статус|стади|этап\w*\s+(?:сейчас|находит)|рассмотр|решени|принят|принял|одобр|отклон|что с\b|новост"
+    r"|мәртебе|қаралды|қаралып|шешім|қабылданды|кезең\w*\s+қандай|не болды|жағдайы"
+)
+# "Where" only in "where is my application", not in "where do I submit my application".
+_WHERE_IS = re.compile(r"\bwhere(?:'s|\s+is)\s+my\b|\bгде\s+(?:сейчас\s+)?мо[яеи]\b|өтінішім\s+қайда|менің\s+өтінішім\s+қайда")
 
 
 def is_application_status_question(text: str) -> bool:
     lowered = " ".join(text.lower().split())
-    has_application = any(word in lowered for word in _APPLICATION_WORDS)
-    if has_application and any(word in lowered for word in _STATUS_WORDS):
-        return True
-    return bool(_MY_APPLICATION.search(lowered)) and any(word in lowered for word in _WHERE_WORDS)
+    if not _MY_APPLICATION.search(lowered):
+        return False
+    return bool(_STATE_WORDS.search(lowered) or _WHERE_IS.search(lowered))

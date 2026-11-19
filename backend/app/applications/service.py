@@ -7,7 +7,7 @@ import smtplib
 from collections.abc import Callable
 from contextlib import AbstractContextManager
 
-from sqlalchemy import or_, select
+from sqlalchemy import delete, or_, select, update
 from sqlalchemy.orm import Session
 
 from app.applicant import mail
@@ -69,9 +69,9 @@ NO_APPLICATIONS = {
     "kk": "Сізде әлі өтініш жоқ. Бағдарламаның чек-парағын сақтап, жеке кабинетте өтініш бастаңыз.",
 }
 ANONYMOUS_STATUS = {
-    "en": "I can show the status of your application once you log in to your applicant account. It is also on the Applications page of your account.",
-    "ru": "Я покажу статус вашей заявки, когда вы войдёте в аккаунт абитуриента. Он также есть на странице «Заявки» в личном кабинете.",
-    "kk": "Талапкер аккаунтына кіргенде өтініш мәртебесін көрсетемін. Ол жеке кабинеттегі «Өтініштер» бетінде де бар.",
+    "en": "You can follow your applications under My applications in your account (/account/applications). If you are logged in, your current status appears right below.",
+    "ru": "Следить за заявками можно в личном кабинете в разделе «Мои заявки» (/account/applications). Если вы вошли в аккаунт, текущий статус появится ниже.",
+    "kk": "Өтініштеріңізді жеке кабинеттегі «Менің өтініштерім» бөлімінен қадағалай аласыз (/account/applications). Аккаунтқа кірген болсаңыз, ағымдағы мәртебе төменде шығады.",
 }
 EMAIL_TEXT = {
     "en": ("SDU: your application status changed", "Open your application"),
@@ -111,7 +111,12 @@ def status_answer(session: Session, applicant: Applicant, language: str) -> str:
 
 
 def _notify(session: Session, settings: Settings, application_id: int) -> bool:
-    """E-mail the applicant about the current status once; SMTP errors propagate after a rollback."""
+    """E-mail the applicant about the current status once.
+
+    The row is claimed (notified_status set) and the lock released before talking to SMTP,
+    so a slow mail server never blocks the applicant or staff. A failed send gives the claim
+    back for the hourly retry; a crash between claim and send loses that one e-mail.
+    """
     application = session.scalar(
         select(Application)
         .where(
@@ -125,20 +130,27 @@ def _notify(session: Session, settings: Settings, application_id: int) -> bool:
     if application is None or not user or not user.verified:
         session.commit()
         return False
-    subject, link_text = EMAIL_TEXT[application.language]
-    stage, next_step = status_lines(session, [application], application.language)[0]
+    status, recipient, language = application.status, user.email, application.language
+    subject, link_text = EMAIL_TEXT[language]
+    stage, next_step = status_lines(session, [application], language)[0]
     # The office's note stays in the account; the e-mail carries no personal details.
     body = (
         f"{stage}\n{next_step}\n\n{link_text}: "
         f"{settings.public_base_url.rstrip('/')}/account/applications/{application.id}\n"
     )
+    application.notified_status = status
+    session.commit()
     try:
-        mail.send_mail(settings, user.email, subject, body)
+        mail.send_mail(settings, recipient, subject, body)
     except (OSError, smtplib.SMTPException):
         session.rollback()
+        session.execute(
+            update(Application)
+            .where(Application.id == application_id, Application.status == status, Application.notified_status == status)
+            .values(notified_status=None)
+        )
+        session.commit()
         raise
-    application.notified_status = application.status
-    session.commit()
     return True
 
 
@@ -180,3 +192,27 @@ def send_status_notifications(session: Session, settings: Settings) -> int:
 
 def touch(application: Application) -> None:
     application.updated_at = now()
+
+
+def storage_maintenance(session: Session, settings: Settings) -> None:
+    """Hourly: delete drafts nobody touched for `draft_retention_days`, then orphaned files."""
+    from datetime import timedelta
+
+    from app.applications import storage
+    from app.applications.models import ApplicationDocument
+
+    if not settings.applications_enabled:
+        return
+    stale = select(Application.id).where(
+        Application.status == DRAFT, Application.updated_at < now() - timedelta(days=settings.draft_retention_days)
+    )
+    keys = list(
+        session.scalars(select(ApplicationDocument.storage_key).where(ApplicationDocument.application_id.in_(stale)))
+    )
+    deleted = session.execute(delete(Application).where(Application.id.in_(stale))).rowcount
+    session.commit()
+    storage.delete_files(settings, keys)
+    if deleted:
+        logger.info("Deleted %d stale draft application(s).", deleted)
+    known = set(session.scalars(select(ApplicationDocument.storage_key)))
+    storage.sweep_orphans(settings, known)

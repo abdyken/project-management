@@ -1,9 +1,14 @@
 """Sprint 7: online application (US31), document upload (US32), review queue (US33) and
 application status in the chat (US6). Decisions: docs/adr/0001-0004."""
 
+import json
+import os
 import smtplib
+import time
+from collections import namedtuple
 
 import pytest
+from pathlib import Path
 from sqlalchemy import select
 
 from app.applicant import mail
@@ -109,7 +114,9 @@ def test_draft_form_and_submit(app_client):
     application = created.json()
     assert application["status"] == "draft" and application["editable"] is True
     assert [item["name"] for item in application["requirements"]] == ["School certificate", "National ID"]
-    assert set(application["missing"]) >= {"full_name", "consent", "documents"}
+    assert application["missing"] == [
+        "full_name", "date_of_birth", "citizenship", "phone", "education_level", "graduation_year", "consent", "documents"
+    ]
     assert start(client).json()["error_code"] == "APPLICATION_EXISTS"
 
     saved = client.put(f"{ROOT}/{application['id']}", json=FORM).json()
@@ -202,6 +209,7 @@ def test_upload_rejects_wrong_content(app_client, content, name, code):
     client, _, _, folder = app_client
     application_id = start(client).json()["id"]
     response = upload(client, application_id, content=content, name=name)
+    assert response.status_code == (415 if code == "UNSUPPORTED_FILE_TYPE" else 422)
     assert response.json()["error_code"] == code
     assert not folder.exists() or list(folder.iterdir()) == []
 
@@ -217,7 +225,8 @@ def test_upload_limits(app_client, monkeypatch):
     assert upload(client, application["id"]).status_code == 201  # 2057 bytes
     assert upload(client, application["id"], content=PNG).status_code == 201  # 520 bytes
     # 6000 - 2577 left: a third file of 3500 bytes passes the per-file limit but not the total.
-    assert upload(client, application["id"], content=b"%PDF-" + b"0" * 3500).json()["error_code"] == "FILE_TOO_LARGE"
+    full = upload(client, application["id"], content=b"%PDF-" + b"0" * 3500)
+    assert full.status_code == 413 and full.json()["error_code"] == "APPLICATION_FULL"
     other = session_requirement_from_other_programme(client, application["id"])
     assert other.status_code == 422 and other.json()["error_code"] == "INVALID_REQUIREMENT"
     assert len(list(folder.iterdir())) == 2
@@ -266,6 +275,9 @@ def test_storage_paths_cannot_escape_the_folder(uploads):
     assert storage.safe_name("C:\\Users\\x\\..\\scan.pdf") == "scan.pdf"
     assert storage.safe_name('a"b<c>.pdf') == "abc.pdf"
     assert storage.safe_name("   ") == "document"
+    assert storage.download_name("Diploma.bat", "application/pdf") == "Diploma.pdf"
+    assert storage.download_name("scan.PNG", "image/png") == "scan.png"
+    assert storage.download_name("no extension", "image/jpeg") == "no extension.jpg"
     assert storage.safe_name("scan\x00\x1b[31m.pdf") == "scan[31m.pdf"
 
 
@@ -355,9 +367,9 @@ def test_status_answer_for_the_chat(app_client):
 @pytest.mark.parametrize(
     "question,language_marker",
     [
-        ("What is the status of my application?", "log in"),
-        ("Какой статус моей заявки?", "войдёте"),
-        ("Өтінішімнің мәртебесі қандай?", "кіргенде"),
+        ("What is the status of my application?", "My applications"),
+        ("Какой статус моей заявки?", "Мои заявки"),
+        ("Өтінішімнің мәртебесі қандай?", "Менің өтініштерім"),
     ],
 )
 def test_chat_recognises_status_questions(app_client, question, language_marker):
@@ -374,7 +386,300 @@ def test_chat_status_intent_in_the_stream(app_client):
     client, _, _, _ = app_client
     response = client.post(
         "/api/assistant/ask/stream",
-        json={"question": "application status?", "session_id": "00000000-0000-4000-8000-000000000072"},
+        json={"question": "What is the status of my application?", "session_id": "00000000-0000-4000-8000-000000000072"},
     )
     assert response.status_code == 200
-    assert '"intent": "application_status"' in response.text
+    done = [line for line in response.text.splitlines() if line.startswith("data:") and "answer_id" in line][-1]
+    assert json.loads(done.removeprefix("data:"))["intent"] == "application_status"
+
+
+
+# ---- review follow-ups (ECC and gstack reviews, 20.11.2026)
+
+
+def test_every_new_status_is_e_mailed_again(app_client):
+    client, session, messages, _ = app_client
+    application = submitted(client)
+    officer(client, session)
+    before = len(messages)
+    for round_ in (1, 2):
+        assert client.post(f"{STAFF}/{application['id']}/status", json={"status": "needs_changes", "note": f"Fix {round_}"}).status_code == 200
+        assert len(messages) == before + round_  # the second request for changes is e-mailed too
+        assert client.post(f"{ROOT}/{application['id']}/submit").status_code == 200
+    assert send_status_notifications(session, get_settings()) == 0
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Has my application been accepted?",
+        "Is my application approved?",
+        "Where is my application?",
+        "Моя заявка принята?",
+        "Где моя заявка?",
+        "Өтінішім қабылданды ма?",
+        "Менің өтінішім қайда?",
+    ],
+)
+def test_status_questions_are_recognised(question):
+    from app.assistant.intents import is_application_status_question
+
+    assert is_application_status_question(question)
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What documents do I need for my application?",
+        "How do I submit my application?",
+        "Where do I submit my application?",
+        "What are the stages of the application process?",
+        "What is the application deadline?",
+        "application status",
+        "Какие этапы подачи заявки?",
+        "Как отправить мою заявку?",
+        "Где подать мою заявку?",
+        "Нужна ли справка о состоянии здоровья для заявления?",
+        "Өтініш беру кезеңдері қандай?",
+        "Өтініш беру үшін қандай жағдай керек?",
+        "Can I progress to a master after applied physics?",
+    ],
+)
+def test_ordinary_questions_are_not_status_questions(question):
+    from app.assistant.intents import is_application_status_question
+
+    assert not is_application_status_question(question)
+
+
+def test_chat_has_no_status_intent_when_applications_are_off(app_client, monkeypatch):
+    from app.assistant import router as assistant_router
+    from app.assistant.schemas import Answer
+
+    client, _, _, _ = app_client
+    monkeypatch.setenv("APPLICATIONS_ENABLED", "false")
+    get_settings.cache_clear()
+
+    class FakeService:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def answer(self, question, session_id):
+            return Answer(answer="FAQ answer", sources=[], source_link=None, faq_id=None, similarity_score=None)
+
+    monkeypatch.setattr(assistant_router, "AssistantService", FakeService)
+    body = client.post(
+        "/api/assistant/ask", json={"question": "What is the status of my application?", "session_id": "00000000-0000-4000-8000-000000000073"}
+    ).json()
+    assert body["answer"] == "FAQ answer" and "intent" not in body
+
+
+def test_documents_are_only_reachable_through_their_own_application(app_client):
+    client, _, _, _ = app_client
+    first = start(client).json()
+    assert upload(client, first["id"]).status_code == 201
+    document_id = client.get(f"{ROOT}/{first['id']}").json()["documents"][0]["id"]
+    second = start(client, kind="international").json()
+    assert client.get(f"{ROOT}/{second['id']}/documents/{document_id}").status_code == 404
+    assert client.delete(f"{ROOT}/{second['id']}/documents/{document_id}").status_code == 404
+
+
+def test_download_name_takes_the_detected_extension(app_client):
+    client, _, _, _ = app_client
+    application_id = start(client).json()["id"]
+    document = upload(client, application_id, name="Diploma.bat").json()
+    assert document["original_name"] == "Diploma.pdf"
+    download = client.get(f"{ROOT}/{application_id}/documents/{document['id']}")
+    assert 'filename="Diploma.pdf"' in download.headers["content-disposition"]
+    jpeg = upload(client, application_id, content=b"\xff\xd8\xff\xe0" + b"2" * 300, name="photo.png").json()
+    assert jpeg["content_type"] == "image/jpeg" and jpeg["original_name"] == "photo.jpg"
+
+
+def test_count_and_storage_limits(app_client, monkeypatch):
+    from app.applications import router as applications_router
+
+    client, _, _, folder = app_client
+    monkeypatch.setattr(applications_router, "MAX_DOCUMENTS", 2)
+    monkeypatch.setattr(applications_router, "MAX_LIVE_APPLICATIONS", 2)
+    monkeypatch.setenv("APPLICANT_MAX_BYTES", str(len(PDF) * 3 + 10))
+    get_settings.cache_clear()
+    first = start(client).json()
+    assert upload(client, first["id"]).status_code == 201
+    assert upload(client, first["id"]).status_code == 201
+    third = upload(client, first["id"])
+    assert third.status_code == 409 and third.json()["error_code"] == "TOO_MANY_DOCUMENTS"
+    second = start(client, kind="international").json()
+    assert upload(client, second["id"]).status_code == 201  # 3 PDFs: the account limit is now almost reached
+    full = upload(client, second["id"])
+    assert full.status_code == 413 and full.json()["error_code"] == "ACCOUNT_STORAGE_FULL"
+    assert client.delete(f"{ROOT}/{second['id']}").status_code == 204
+    start(client, kind="international")
+    assert start(client, program="empty").json()["error_code"] == "TOO_MANY_APPLICATIONS"
+    assert len(list(folder.iterdir())) == 2
+
+
+def test_uploads_pause_when_the_disk_is_nearly_full(app_client, monkeypatch):
+    client, _, _, folder = app_client
+    application_id = start(client).json()["id"]
+    usage = namedtuple("usage", "total used free")
+    monkeypatch.setattr(storage.shutil, "disk_usage", lambda path: usage(10**12, 10**12 - 10**6, 10**6))
+    paused = upload(client, application_id)
+    assert paused.status_code == 507 and paused.json()["error_code"] == "UPLOADS_PAUSED"
+    assert not folder.exists() or list(folder.iterdir()) == []
+
+
+def test_start_rules_for_archived_programmes_and_locked_deletes(app_client):
+    from app.catalogue.models import Program
+
+    client, session, _, _ = app_client
+    application = submitted(client)
+    officer(client, session)
+    assert client.post(f"{STAFF}/{application['id']}/status", json={"status": "needs_changes", "note": "x"}).status_code == 200
+    assert client.delete(f"{ROOT}/{application['id']}").json()["error_code"] == "APPLICATION_LOCKED"
+    session.get(Program, "cs").is_active = False
+    session.flush()
+    assert start(client, kind="international").json()["error_code"] == "PROGRAM_NOT_FOUND"
+
+
+@pytest.mark.parametrize(
+    "first,second,code",
+    [
+        ("in_review", "in_review", 409),
+        ("rejected", None, None),
+        ("in_review", "submitted", 422),
+    ],
+)
+def test_status_change_rules(app_client, first, second, code):
+    client, session, _, _ = app_client
+    application = submitted(client)
+    officer(client, session)
+    if first == "rejected":
+        assert client.post(f"{STAFF}/{application['id']}/status", json={"status": "rejected"}).json()["error_code"] == "NOTE_REQUIRED"
+        assert client.post(f"{STAFF}/{application['id']}/status", json={"status": "rejected", "note": "   "}).json()["error_code"] == "NOTE_REQUIRED"
+        return
+    assert client.post(f"{STAFF}/{application['id']}/status", json={"status": first}).status_code == 200
+    assert client.post(f"{STAFF}/{application['id']}/status", json={"status": second}).status_code == code
+
+
+def test_staff_status_change_rejects_other_origins(app_client):
+    client, session, _, _ = app_client
+    application = submitted(client)
+    officer(client, session)
+    response = client.post(
+        f"{STAFF}/{application['id']}/status", json={"status": "in_review"}, headers={"Origin": "https://evil.example"}
+    )
+    assert response.status_code == 403
+
+
+def test_queue_order_filters_and_paging(app_client):
+    client, session, _, _ = app_client
+    local = start(client).json()
+    international = start(client, kind="international").json()
+    for application in (international, local):  # the later id is submitted first
+        ready(client, application["id"])
+        assert client.post(f"{ROOT}/{application['id']}/submit").status_code == 200
+    officer(client, session)
+    assert [item["id"] for item in client.get(STAFF).json()["items"]] == [international["id"], local["id"]]
+    assert client.get(STAFF, params={"program_id": "cs"}).json()["total"] == 2
+    assert client.get(STAFF, params={"program_id": "empty"}).json()["total"] == 0
+    page = client.get(STAFF, params={"limit": 1, "offset": 1}).json()
+    assert page["total"] == 2 and [item["id"] for item in page["items"]] == [local["id"]]
+    assert client.get(STAFF, params={"limit": 101}).status_code == 422
+    client.post(f"{STAFF}/{local['id']}/status", json={"status": "needs_changes", "note": "x"})
+    assert [item["id"] for item in client.get(STAFF).json()["items"]] == [international["id"]]  # "open" excludes it
+    assert client.get(STAFF, params={"status": "needs_changes"}).json()["total"] == 1
+
+
+def test_both_switches_are_needed(logged_in, uploads, monkeypatch):
+    client, _, _ = logged_in
+    monkeypatch.setenv("APPLICANT_ACCOUNTS_ENABLED", "false")
+    get_settings.cache_clear()
+    for path in (ROOT, STAFF):
+        response = client.get(path)
+        assert response.status_code == 503 and response.json()["error_code"] == "APPLICATIONS_UNAVAILABLE"
+    assert client.get("/api/features").json() == {"applicant_accounts": False, "applications": False}
+    monkeypatch.setenv("APPLICANT_ACCOUNTS_ENABLED", "true")
+    get_settings.cache_clear()
+    assert client.get("/api/features").json() == {"applicant_accounts": True, "applications": True}
+
+
+def test_failed_file_delete_does_not_fail_the_request(app_client, monkeypatch):
+    client, _, _, _ = app_client
+    application_id = start(client).json()["id"]
+    document_id = upload(client, application_id).json()["id"]
+
+    def broken(self, missing_ok=False):
+        raise PermissionError("read-only volume")
+
+    monkeypatch.setattr(Path, "unlink", broken)
+    assert client.delete(f"{ROOT}/{application_id}/documents/{document_id}").status_code == 204
+
+
+def test_stale_drafts_and_orphaned_files_are_cleaned_up(app_client):
+    from datetime import timedelta
+
+    from app.applicant.service import now
+    from app.applications.service import storage_maintenance
+
+    client, session, _, folder = app_client
+    stale = start(client).json()
+    assert upload(client, stale["id"]).status_code == 201
+    kept = start(client, kind="international").json()
+    assert upload(client, kept["id"]).status_code == 201
+    session.get(Application, stale["id"]).updated_at = now() - timedelta(days=31)
+    session.flush()
+    old, recent, partial = folder / ("a" * 32), folder / ("b" * 32), folder / ".cccc.part"
+    for path in (old, recent, partial):
+        path.write_bytes(b"x")
+    hour_ago = time.time() - 7200
+    os.utime(old, (hour_ago, hour_ago))
+    os.utime(partial, (hour_ago, hour_ago))
+    storage_maintenance(session, get_settings())
+    assert session.get(Application, stale["id"]) is None
+    assert session.get(Application, kept["id"]) is not None
+    remaining = {path.name for path in folder.iterdir()}
+    assert old.name not in remaining and partial.name not in remaining and recent.name in remaining
+    assert len(remaining) == 2  # the kept application's scan and the recent file
+
+
+def test_hourly_run_includes_status_e_mails_and_storage_maintenance(monkeypatch):
+    from app.applicant import reminders
+    from app.applications import service
+
+    calls = []
+
+    class Session:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr(reminders, "get_session", lambda settings: Session())
+    monkeypatch.setattr(reminders, "send_due_reminders", lambda session, settings: calls.append("reminders"))
+    monkeypatch.setattr("app.applicant.requests.send_request_notifications", lambda session, settings: calls.append("replies"))
+    monkeypatch.setattr(service, "send_status_notifications", lambda session, settings: calls.append("status"))
+    monkeypatch.setattr(service, "storage_maintenance", lambda session, settings: calls.append("storage"))
+    reminders._run(get_settings())
+    assert calls == ["reminders", "replies", "status", "storage"]
+
+
+def test_account_deletion_locks_applications_before_collecting_files(app_client):
+    # An upload in flight holds its application's row lock; locking the applications first
+    # makes deletion wait for it, so its file is collected too (ADR 0003, review H1).
+    from sqlalchemy import event
+
+    client, session, _, _ = app_client
+    application_id = start(client).json()["id"]
+    assert upload(client, application_id).status_code == 201
+    statements = []
+    engine = session.get_bind()
+    listener = lambda conn, cursor, statement, *args: statements.append(" ".join(statement.split()).lower())  # noqa: E731
+    event.listen(engine, "before_cursor_execute", listener)
+    try:
+        assert client.delete("/api/applicant/me").status_code == 204
+    finally:
+        event.remove(engine, "before_cursor_execute", listener)
+    lock = next(i for i, sql in enumerate(statements) if sql.startswith("select application.id") and "for update" in sql)
+    keys = next(i for i, sql in enumerate(statements) if "select application_document.storage_key" in sql)
+    removal = next(i for i, sql in enumerate(statements) if sql.startswith("delete from applicant"))
+    assert lock < keys < removal

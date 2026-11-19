@@ -55,7 +55,11 @@ def _answer(
     open_session: SessionFactory, settings: Settings, body: AskRequest, timed_out: threading.Event
 ) -> AskResponse | None:
     with open_session() as session:
-        if settings.applications_enabled and is_application_status_question(body.question):
+        if (
+            settings.applications_enabled
+            and settings.applicant_accounts_enabled
+            and is_application_status_question(body.question)
+        ):
             # US6: no model and no personal data here; the widget fetches the status itself.
             text = ANONYMOUS_STATUS[detect_language(body.question)]
             record_question(session, body.session_id, body.question, commit=False)

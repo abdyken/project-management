@@ -11,6 +11,8 @@ import logging
 import os
 import re
 import secrets
+import shutil
+import time
 import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
@@ -59,6 +61,24 @@ def safe_name(name: str | None) -> str:
     return name or "document"
 
 
+def download_name(name: str | None, content_type: str) -> str:
+    """The name staff and the applicant download: always the detected type's extension, so a
+    PDF named "Diploma.bat" cannot be started by a double click (ADR 0003)."""
+    stem = safe_name(name)
+    extension = next(ext for _, kind, ext in SIGNATURES if kind == content_type)
+    if "." in stem:
+        stem = stem.rsplit(".", 1)[0].rstrip(" .") or "document"
+    return f"{stem[: 255 - len(extension)]}{extension}"
+
+
+def ensure_free_space(settings: Settings) -> None:
+    """Refuse uploads before they can fill the disk the database shares."""
+    free = shutil.disk_usage(upload_dir(settings)).free
+    if free < settings.upload_min_free_bytes:
+        logger.error("Uploads paused: %d MB free on the uploads volume.", free // (1024 * 1024))
+        raise ApiProblem(507, "UPLOADS_PAUSED", "Uploads are paused. Please try again later.")
+
+
 def _content_type(head: bytes) -> str:
     for signature, content_type, _ in SIGNATURES:
         if head.startswith(signature):
@@ -100,3 +120,21 @@ def delete_files(settings: Settings, storage_keys: list[str]) -> None:
             file_path(settings, key).unlink(missing_ok=True)
         except (OSError, ValueError):
             logger.exception("Could not delete an uploaded file; it is no longer referenced.")
+
+
+def sweep_orphans(settings: Settings, known_keys: set[str], older_than_seconds: int = 3600) -> int:
+    """Delete files no document refers to (crash between write and commit, failed deletes,
+    leftover .part files). Recent files are skipped: their upload may still be committing."""
+    directory = upload_dir(settings)
+    cutoff = time.time() - older_than_seconds
+    removed = 0
+    for path in directory.iterdir():
+        key = path.name.removeprefix(".").removesuffix(".part")
+        if path.name in known_keys or not path.is_file() or path.stat().st_mtime > cutoff:
+            continue
+        if path.name.endswith(".part") or re.fullmatch(r"[0-9a-f]{32}", key):
+            path.unlink(missing_ok=True)
+            removed += 1
+    if removed:
+        logger.warning("Removed %d orphaned upload file(s).", removed)
+    return removed
