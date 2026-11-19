@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import { StaffLayout } from "@/components/staff/StaffLayout"
 import { StaffRequestsPage } from "@/pages/guidance/RequestsPage"
+import { StaffApplicationPage } from "@/pages/staff/StaffApplicationPage"
+import { StaffApplicationsPage } from "@/pages/staff/StaffApplicationsPage"
 import { StaffDashboardPage } from "@/pages/staff/StaffDashboardPage"
 import { StaffFaqEditPage } from "@/pages/staff/StaffFaqEditPage"
 import { StaffFaqListPage } from "@/pages/staff/StaffFaqListPage"
@@ -15,6 +17,8 @@ export default function StaffArea() {
     <Routes>
       <Route path="login" element={<StaffLoginPage />} />
       <Route element={<StaffLayout />}>
+        <Route path="applications" element={<StaffApplicationsPage />} />
+        <Route path="applications/:applicationId" element={<StaffApplicationPage />} />
         <Route path="requests" element={<StaffRequestsPage />} />
         <Route index element={<StaffHomePage />} />
         <Route path="faq" element={<StaffFaqListPage />} />

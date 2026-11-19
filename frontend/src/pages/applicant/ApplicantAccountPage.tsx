@@ -14,6 +14,8 @@ import {
 } from "@/api/applicant"
 import { isApiError } from "@/api/errors"
 import { useApplicantT } from "@/applicant/i18n"
+import { useFeatures } from "@/api/features"
+import { useApplicationsT } from "@/applications/i18n"
 import { APPLICANT_KEY, APPLICANT_ME_KEY, SAVED_PROGRAMS_KEY, useApplicant } from "@/applicant/session"
 import { ChecklistPdfButton } from "@/components/catalog/ChecklistPdfButton"
 import { requirementNotes } from "@/lib/checklist"
@@ -200,6 +202,8 @@ function Preferences({ user }: { user: Applicant }) {
 
 export function ApplicantAccountPage() {
   const guidanceT = useGuidanceT()
+  const applicationsT = useApplicationsT()
+  const features = useFeatures()
   const t = useApplicantT()
   const me = useApplicant()
   const cache = useQueryClient()
@@ -260,7 +264,14 @@ export function ApplicantAccountPage() {
           {t("error")}
         </p>
       )}
-      <Link className="mt-6 inline-block underline" to="/account/requests">{guidanceT("requests")}</Link>
+      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+        {features.data?.applications && (
+          <Link className="underline" to="/account/applications">
+            {applicationsT("title")}
+          </Link>
+        )}
+        <Link className="underline" to="/account/requests">{guidanceT("requests")}</Link>
+      </div>
       <h2 className="mt-10 text-2xl font-semibold">{t("saved")}</h2>
       <Link className="mt-3 inline-block text-sm underline" to="/programs">
         {t("browse")}

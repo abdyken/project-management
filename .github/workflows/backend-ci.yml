@@ -68,6 +68,8 @@ jobs:
       - name: Start the local stack for applicant QA
         env:
           APPLICANT_ACCOUNTS_ENABLED: "true"
+          APPLICATIONS_ENABLED: "true"
+          UPLOAD_DIR: /tmp/admissions-uploads
           PUBLIC_BASE_URL: http://localhost:5173
           SMTP_HOST: localhost
           SMTP_PORT: "1025"
@@ -103,6 +105,13 @@ jobs:
           SMTP_STARTTLS: "false"
           QA_RUN_NOTIFICATIONS: "true"
         run: npm run qa:guidance
+      - name: Run Sprint 7 application browser QA
+        working-directory: frontend
+        env:
+          STAFF_EMAIL: qa-sprint6@example.test
+          STAFF_PASSWORD: Sprint6-browser-local-only
+          RUNS: chromium:360,chromium:1280,firefox:1280
+        run: npm run qa:applications
       - name: Stop browser QA services
         if: always()
         run: |

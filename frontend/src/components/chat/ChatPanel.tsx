@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react"
+import { applicationStatus } from "@/api/applications"
 import { getSuggestions, streamAssistant } from "@/api/assistant"
 import { chatErrorKey } from "@/api/errors"
 import { Button } from "@/components/ui/button"
@@ -75,6 +76,8 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
     const assistantId = addMessage({ role: "assistant", text: "", streaming: true, replyTo: question })
     setSending(true)
     const { signal, token } = nextRequest()
+    let statusQuestion = false
+    let statusText = ""
 
     try {
       const outcome = await streamAssistant(question, sessionId, signal, {
@@ -83,6 +86,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
         },
         onDone: (done) => {
           if (!isCurrent(token)) return
+          statusQuestion = done.intent === "application_status"
           completeAssistantMessage(assistantId, {
             sources: sourcesFromApi(done.sources),
             answerId: done.answer_id,
@@ -91,6 +95,14 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       })
       if (!isCurrent(token)) return
       if (outcome === "interrupted" || outcome === "aborted") interruptMessage(assistantId)
+      if (outcome === "done" && statusQuestion) {
+        // US6: a logged-in applicant also gets their own status; others keep the general answer.
+        const status = await applicationStatus(language, signal).catch(() => null)
+        if (status && isCurrent(token)) {
+          addMessage({ role: "assistant", text: status.answer })
+          statusText = status.answer
+        }
+      }
     } catch (error) {
       if (!isCurrent(token) || abortReason() === "new") return
       failMessage(assistantId, chatErrorKey(error))
@@ -99,7 +111,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
       if (isCurrent(token)) {
         setSending(false)
         const answer = useChatStore.getState().messages.find((message) => message.id === assistantId)
-        if (answer) setAnnouncement(answer.isError && answer.errorKey ? t(answer.errorKey) : answer.text)
+        if (answer) setAnnouncement(answer.isError && answer.errorKey ? t(answer.errorKey) : [answer.text, statusText].filter(Boolean).join("\n\n"))
       }
     }
   }

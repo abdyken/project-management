@@ -24,6 +24,7 @@ from app.staff.router import register_staff_error_handler
 from app.staff.router import router as staff_router
 from app.guidance.router import router as guidance_router
 from app.applicant.requests import applicant_router as requests_router, staff_router as staff_requests_router
+from app.applications.router import applicant_router as applications_router, staff_router as staff_applications_router
 
 settings = get_settings()
 
@@ -72,11 +73,13 @@ app.include_router(applicant_router, prefix="/api")
 app.include_router(guidance_router, prefix="/api")
 app.include_router(requests_router, prefix="/api")
 app.include_router(staff_requests_router, prefix="/api")
+app.include_router(applications_router, prefix="/api")
+app.include_router(staff_applications_router, prefix="/api")
 
 
 @app.middleware("http")
 async def private_applicant_responses(request, call_next):
     response = await call_next(request)
-    if request.url.path.startswith(("/api/applicant", "/api/staff/requests")):
+    if request.url.path.startswith(("/api/applicant", "/api/staff/requests", "/api/staff/applications")):
         response.headers["Cache-Control"] = "no-store"
     return response

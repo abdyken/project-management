@@ -6,6 +6,15 @@ The current live portal uses the Oracle VM described in `deploy/oracle-vm/README
 
 The account area stores e-mail, a salted scrypt password hash, language/reminder preferences, timestamps, hashed session/verification tokens, saved program/type pairs, document preparation flags and a reminder delivery ledger. It does not collect document files, grades, identity-document numbers or application forms. Verification expires after 24 hours; sessions expire after seven days by default. Account deletion cascades through sessions, saved programs, progress and reminder history. SMTP providers receive the destination address and the reminder/verification message. Operational access logs must not log request bodies or cookies; verification secrets travel in URL fragments and are stored only as hashes.
 
+## Sprint 7: applications and uploaded documents
+
+Sprint 7 adds the most sensitive data so far: application forms (name, date of birth,
+citizenship, phone, education) and scans of personal documents, stored on the `uploads`
+volume of the same VM (ADR 0001, 0003). No IIN or passport numbers are collected.
+Applications and files are deleted with the account. Uploads stay off in production
+(`APPLICATIONS_ENABLED=false`) until a daily backup of the database **and** the uploads
+volume runs and this record names who keeps the backups.
+
 ## Live enablement record
 
 Sprint 6 also stores private admissions questions, office replies, their timestamps,

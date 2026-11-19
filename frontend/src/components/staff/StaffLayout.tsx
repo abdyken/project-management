@@ -4,11 +4,12 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary"
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher"
 import { Button } from "@/components/ui/button"
 import { useStaffT } from "@/staff/i18n"
-import { STAFF_NAV } from "@/staff/nav"
+import { useStaffNav } from "@/staff/nav"
 import { isNotLoggedIn, useStaffLogout, useStaffMe } from "@/staff/session"
 
 export function StaffLayout() {
   const t = useStaffT()
+  const nav = useStaffNav()
   const location = useLocation()
   const navigate = useNavigate()
   const me = useStaffMe()
@@ -48,7 +49,7 @@ export function StaffLayout() {
             </span>
           </Link>
           <nav className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-2 text-sm sm:order-none sm:w-auto sm:flex-1">
-            {STAFF_NAV.map((item) => (
+            {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}

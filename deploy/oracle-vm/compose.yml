@@ -35,6 +35,10 @@ services:
       SMTP_FROM: ${SMTP_FROM:-admissions@localhost}
       SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
       REMINDER_DAILY_LIMIT: ${REMINDER_DAILY_LIMIT:-300}
+      # Sprint 7 uploads stay off until the database and uploads volume are backed up (ADR 0003).
+      APPLICATIONS_ENABLED: ${APPLICATIONS_ENABLED:-false}
+    volumes:
+      - uploads:/var/lib/sdu-admissions/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -71,5 +75,6 @@ services:
 
 volumes:
   pgdata:
+  uploads:
   caddy_data:
   caddy_config:

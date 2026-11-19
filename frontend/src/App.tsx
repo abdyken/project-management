@@ -25,6 +25,11 @@ const ApplicantRequestsPage = lazy(() =>
 const ApplicantAccountPage = lazy(() =>
   import("@/pages/applicant/ApplicantAccountPage").then((m) => ({ default: m.ApplicantAccountPage })),
 )
+const applications = () => import("@/pages/applications/ApplicationsPage")
+const ApplicationsPage = lazy(() => applications().then((m) => ({ default: m.ApplicationsPage })))
+const ApplicationPage = lazy(() =>
+  import("@/pages/applications/ApplicationPage").then((m) => ({ default: m.ApplicationPage })),
+)
 const applicantLogin = () => import("@/pages/applicant/ApplicantLoginPage")
 const ApplicantLoginPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantLoginPage })))
 const ApplicantVerifyPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantVerifyPage })))
@@ -82,6 +87,8 @@ export default function App() {
             <Route path="/cost-calculator" element={<CostPage />} />
             <Route path="/funding" element={<FundingPage />} />
             <Route path="/account/requests" element={<ApplicantRequestsPage />} />
+            <Route path="/account/applications" element={<ApplicationsPage />} />
+            <Route path="/account/applications/:id" element={<ApplicationPage />} />
             <Route path="/account" element={<ApplicantAccountPage />} />
             <Route path="/account/login" element={<ApplicantLoginPage key="login" />} />
             <Route path="/account/register" element={<ApplicantLoginPage key="register" register />} />

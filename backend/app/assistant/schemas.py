@@ -97,6 +97,9 @@ class AskResponse(BaseModel):
     answer: str
     sources: list[AnswerSource]
     answer_id: str
+    # US6: "application_status" when the question is about the applicant's own application;
+    # the widget then asks /api/applicant/applications/status (ADR 0004).
+    intent: Literal["application_status"] | None = None
 
 
 class SuggestionsResponse(BaseModel):

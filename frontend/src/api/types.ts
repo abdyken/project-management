@@ -56,6 +56,8 @@ export type AnswerSource = {
 export type StreamDone = {
   answer_id: string
   sources: AnswerSource[]
+  // US6: the question was about the applicant's own application (ADR 0004).
+  intent?: "application_status"
 }
 
 export type SuggestionsResponse = {
