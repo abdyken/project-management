@@ -77,15 +77,21 @@ Synthetic archived programmes left by earlier guidance runs changed the expected
 programme count, and the suite's deliberate wrong-password checks reached the
 five-failure login limit after several runs in a row.
 
-## Open before production
+## Production
 
 - **CO.7 done 20.11.2026:** a daily backup of the database and the `uploads` volume runs on
   the VM (`deploy/oracle-vm/backup.sh`, systemd timer, 14 days). A test restore matched the
   live database and an uploaded file came back byte for byte. The backups stay on the same
   disk; an occasional copy off the server is recommended (`deploy/oracle-vm/README.md`).
-- Switching on: `APPLICATIONS_ENABLED=true` in the VM's `.env`, after the hosting record
-  below. Until then the feature stays off in production and its links are hidden.
-- The data-hosting record in `docs/applicant-hosting.md` for uploaded documents.
-- Live QA on the VM and Product Owner acceptance for US31, US32, US33 and US6.
+- **Hosting record** written in `docs/applicant-hosting.md` (20.11.2026).
+- **Switched on 20.11.2026:** `APPLICATIONS_ENABLED=true` in the VM's `.env` (previous file
+  kept as `.env.bak-2026-11-20`). Live checks on https://193-123-95-102.sslip.io:
+  `/api/features` reports applications on; the applicant and staff application APIs ask
+  for a login (401, not 503); the pages load; nginx refuses a 2.5 MB body on an ordinary
+  API route (413) and passes it to the API on the upload route; the chat recognises a status
+  question and gives a visitor the general pointer; no errors in the API log; 35 GB free.
+- **Open:** a logged-in click-through on the live site with a real verified applicant and
+  the staff account (start, fill in, upload, submit, request changes, e-mail arrives,
+  resubmit, accept, ask the chat), then Product Owner acceptance of US31, US32, US33 and US6.
 - Not in scope: antivirus scanning (staff open files in the browser's viewer only),
   admission decisions, payments, the university's own application system.

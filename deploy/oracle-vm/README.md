@@ -13,8 +13,9 @@ plus a 2 GB swap file, Ubuntu 22.04) in `/opt/sdu-admissions`:
 | `caddy` | ports 80/443, free HTTPS certificate from Let's Encrypt for the sslip.io name |
 
 Volumes: `pgdata` (database) and `uploads` (Sprint 7 application documents, ADR 0003).
-Both are backed up daily (see Backups). Online applications are switched off on the VM
-(`APPLICATIONS_ENABLED=false` by default) until the hosting record and PO acceptance allow it.
+Both are backed up daily (see Backups). Online applications are switched on in the VM's
+`.env` since 20.11.2026 (`APPLICATIONS_ENABLED=true`; the compose default stays `false`);
+the hosting record is in `docs/applicant-hosting.md`.
 
 ## Automatic deployment
 

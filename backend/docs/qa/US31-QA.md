@@ -1,6 +1,6 @@
 # US31 - Online application form QA
 
-**Record:** 19.11.2026, updated 20.11.2026 after the code reviews. **Status:** implemented and verified locally and in CI; live run and PO acceptance open.
+**Record:** 19.11.2026, updated 20.11.2026 after the code reviews. **Status:** implemented, verified locally and in CI, switched on in production 20.11.2026 with live smoke checks (`docs/sprint-7-review.md`); logged-in live run and PO acceptance open.
 
 ## Acceptance scenarios
 
@@ -18,5 +18,5 @@
 
 ## Boundaries
 
-- Local and CI results, not production: `APPLICATIONS_ENABLED` stays false on the VM until a daily backup of the database and the uploads volume runs (ADR 0003, Sprint 7 CO.7).
+- Production: switched on 20.11.2026 after the daily backup of the database and uploads (CO.7) and the hosting record in `docs/applicant-hosting.md`.
 - No admission decisions, payments, antivirus scanning or connection to the university's own application system.
