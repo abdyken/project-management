@@ -22,6 +22,7 @@ from app.followups.models import AdmissionsFollowup
 from app.staff.models import StaffSession, StaffUser
 from app.guidance.models import ProgramGuidance
 from app.applicant.requests import AdmissionsRequest
+from app.applications.models import Application, ApplicationDocument
 
 config = context.config
 if config.config_file_name is not None:

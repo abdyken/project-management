@@ -17,6 +17,7 @@ dependencies = [
     "fastembed>=0.5",
     "google-genai>=2.27.0",
     "reportlab>=5.1.0",
+    "python-multipart>=0.0.33,<0.0.34",
 ]
 
 [dependency-groups]

@@ -249,3 +249,21 @@ def faculty_mentioned(text: str, faculties: list[str]) -> str | None:
 def is_contextual_follow_up(question: str) -> bool:
     tokens = _tokens(question)
     return 0 < len(tokens) <= _FOLLOW_UP_MAX_WORDS and any(token in _FOLLOW_UP_MARKERS for token in tokens)
+
+
+# US6: "what is the status of my application?" in EN/RU/KK. Both a status word and an
+# application word are needed, so "What is the application deadline?" stays a FAQ question.
+_STATUS_WORDS = ("status", "stage", "progress", "статус", "стади", "этап", "состояни", "мәртебе", "кезең", "жағдай")
+_APPLICATION_WORDS = ("application", "applied", "заявк", "заявлен", "өтініш")
+_MY_APPLICATION = re.compile(
+    r"\bmy application\b|\b(?:моя|моей|мою|моё|мое)\s+(?:заявк|заявлени)|менің өтініш|өтінішім"
+)
+_WHERE_WORDS = ("where", "what", "how", "где", "что", "как", "қайда", "қалай", "не ")
+
+
+def is_application_status_question(text: str) -> bool:
+    lowered = " ".join(text.lower().split())
+    has_application = any(word in lowered for word in _APPLICATION_WORDS)
+    if has_application and any(word in lowered for word in _STATUS_WORDS):
+        return True
+    return bool(_MY_APPLICATION.search(lowered)) and any(word in lowered for word in _WHERE_WORDS)

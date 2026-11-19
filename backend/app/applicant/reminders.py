@@ -216,9 +216,10 @@ def _send_digest(
 
 def _run(settings: Settings) -> None:
     from app.applicant.requests import send_request_notifications
+    from app.applications.service import send_status_notifications
 
-    # Separate sessions: a reminder failure must not hold back reply notifications.
-    for job in (send_due_reminders, send_request_notifications):
+    # Separate sessions: a reminder failure must not hold back reply or status e-mails.
+    for job in (send_due_reminders, send_request_notifications, send_status_notifications):
         try:
             with get_session(settings) as session:
                 job(session, settings)

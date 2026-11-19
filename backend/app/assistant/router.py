@@ -15,6 +15,8 @@ from sqlalchemy.orm import Session
 from app.api.client import assistant_rate_limit, too_many_requests_response
 from app.api.errors import DATABASE_UNAVAILABLE_RESPONSE, INVALID_REQUEST_RESPONSE, ErrorResponse
 from app.assistant.feedback import AnswerFeedback
+from app.applications.service import ANONYMOUS_STATUS
+from app.assistant.intents import is_application_status_question
 from app.assistant.language import detect_language
 from app.assistant.schemas import (
     AskRequest,
@@ -53,6 +55,13 @@ def _answer(
     open_session: SessionFactory, settings: Settings, body: AskRequest, timed_out: threading.Event
 ) -> AskResponse | None:
     with open_session() as session:
+        if settings.applications_enabled and is_application_status_question(body.question):
+            # US6: no model and no personal data here; the widget fetches the status itself.
+            text = ANONYMOUS_STATUS[detect_language(body.question)]
+            record_question(session, body.session_id, body.question, commit=False)
+            answer_turn = record_answer(session, body.session_id, text, None, commit=False)
+            session.commit()
+            return AskResponse(answer=text, sources=[], answer_id=str(answer_turn.id), intent="application_status")
         history = recent_turns(session, body.session_id)
         programs = search_programs(session)
         question = standalone_question(body.question, history, programs) if history else body.question
@@ -181,7 +190,10 @@ async def ask(
     body: AskRequest, open_session: Annotated[SessionFactory, Depends(get_session_factory)]
 ) -> AskResponse | JSONResponse:
     answered = await _answer_in_time(open_session, get_settings(), body)
-    return _timeout_response() if answered is None else answered
+    if answered is None:
+        return _timeout_response()
+    # `intent` only appears for US6 status questions, so other answers keep their contract.
+    return JSONResponse(answered.model_dump(mode="json", exclude=None if answered.intent else {"intent"}))
 
 
 @router.post(

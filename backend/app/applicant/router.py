@@ -200,8 +200,20 @@ def preferences(body: PreferencesIn, user: User, session: Db) -> ApplicantOut:
 
 @router.delete("/me", status_code=204)
 def delete_account(user: User, session: Db) -> Response:
+    from app.applications.models import Application, ApplicationDocument
+    from app.applications.storage import delete_files
+
+    # Uploaded scans live on disk: collect them before the rows cascade away (ADR 0003).
+    keys = list(
+        session.scalars(
+            select(ApplicationDocument.storage_key)
+            .join(Application, Application.id == ApplicationDocument.application_id)
+            .where(Application.applicant_id == user.id)
+        )
+    )
     session.delete(user)
     session.commit()
+    delete_files(get_settings(), keys)
     response = Response(status_code=204, headers={"Cache-Control": "no-store"})
     response.delete_cookie(COOKIE_NAME, path=COOKIE_PATH)
     return response

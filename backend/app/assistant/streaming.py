@@ -57,7 +57,8 @@ def sse_event(event: str, data: dict[str, Any]) -> str:
 
 def done_payload(response: AskResponse) -> dict[str, Any]:
     """Everything of the /ask response except the answer text, which went out as chunks."""
-    return response.model_dump(exclude={"answer"})
+    exclude = {"answer"} if response.intent else {"answer", "intent"}
+    return response.model_dump(exclude=exclude)
 
 
 def pacing(chunk_count: int, chunk_delay_seconds: float, max_seconds: float = MAX_STREAM_SECONDS) -> float:

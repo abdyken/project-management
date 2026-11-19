@@ -26,6 +26,9 @@ services:
       SMTP_HOST: mailpit
       SMTP_PORT: 1025
       SMTP_STARTTLS: "false"
+      APPLICATIONS_ENABLED: "true"
+    volumes:
+      - uploads:/var/lib/sdu-admissions/uploads
     ports:
       - "8000:8000"
     depends_on:
@@ -55,3 +58,4 @@ services:
 
 volumes:
   pgdata:
+  uploads:

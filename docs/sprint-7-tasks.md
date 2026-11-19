@@ -1,8 +1,10 @@
 # Sprint 7 - online application
 
 **Original sprint:** 31.10-06.11.2026 (not started; no practice sessions in early November).
-**Re-planned:** 20.11-27.11.2026 (proposed; Product Owner to confirm). Sprint 8 moves to
+**Re-planned:** 20.11-27.11.2026, confirmed by the Product Owner; Sprint 8 moves to
 28.11-04.12.2026.
+**Delivery:** the team now gives each sprint to one member (Product Owner decision);
+Sprint 7 is delivered by Dinmukhamed. The backlog owners below stay as story contacts.
 
 Goal: an applicant with a verified account submits an application for one programme,
 attaches scans of the required documents, and follows its status; an admissions
@@ -22,7 +24,9 @@ Delivery order: 7.0 → 31 (model and API first, so 32 and 33 can start in paral
 32 and 33 → 6 → QA. If time runs out, US6 moves to Sprint 8 first; US31-US33 are one
 feature and ship together.
 
-## Decisions needed before coding (7.0)
+## Decisions (7.0), accepted 19.11.2026
+
+Recorded as decision records in `docs/adr/0001`-`0004`.
 
 1. **Form fields.** Proposal until the admissions office gives the official form:
    full name, date of birth, citizenship, phone, programme and applicant type (from a
