@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import logging
 import smtplib
+from collections.abc import Callable
+from contextlib import AbstractContextManager
 from datetime import datetime, timedelta
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy import (
     CheckConstraint,
@@ -27,8 +29,8 @@ from app.applicant import mail
 from app.applicant.models import Applicant
 from app.applicant.router import User, enabled
 from app.applicant.service import now
-from app.config import Settings
-from app.db import Base, get_db_session
+from app.config import Settings, get_settings
+from app.db import Base, get_db_session, get_session_factory
 from app.staff.models import StaffUser
 from app.staff.router import require_staff
 
@@ -231,7 +233,15 @@ def staff_request(request_id: int, session: Db, _: Staff):
 
 
 @staff_router.post("/{request_id}/answer", response_model=RequestOut)
-def answer(request_id: int, body: AnswerIn, request: Request, session: Db, user: Staff):
+def answer(
+    request_id: int,
+    body: AnswerIn,
+    request: Request,
+    session: Db,
+    user: Staff,
+    background: BackgroundTasks,
+    open_session: Annotated[Callable[[], AbstractContextManager[Session]], Depends(get_session_factory)],
+):
     # Staff cookies are protected by SameSite=Strict; reject untrusted origins too.
     enabled(request)
     row = session.scalar(
@@ -250,10 +260,64 @@ def answer(request_id: int, body: AnswerIn, request: Request, session: Db, user:
     row.answer, row.answered_by_id, row.answered_at = body.answer, user.id, now()
     session.commit()  # Notification failures cannot discard the answer.
     session.refresh(row)
+    # E-mail right after the response; if it fails, the hourly run retries it.
+    background.add_task(notify_now, open_session, get_settings(), row.id)
     return row
 
 
+_NOTIFICATION = {
+    "en": ("SDU: the admissions office answered your question", "Read your answer in your account"),
+    "ru": ("SDU: приёмная комиссия ответила на ваш вопрос", "Прочитайте ответ в личном кабинете"),
+    "kk": ("SDU: қабылдау комиссиясы сұрағыңызға жауап берді", "Жауапты жеке кабинеттен оқыңыз"),
+}
+
+
+def _notify(session: Session, settings: Settings, request_id: int) -> bool:
+    """Send the "answered" e-mail for one request; False when there is nothing to send.
+
+    The row lock and the sent check mean the immediate send and the hourly retry never
+    both send it. SMTP errors propagate to the caller after a rollback.
+    """
+    row = session.scalar(
+        select(AdmissionsRequest)
+        .where(
+            AdmissionsRequest.id == request_id,
+            AdmissionsRequest.answer.is_not(None),
+            AdmissionsRequest.notification_sent_at.is_(None),
+        )
+        .with_for_update(skip_locked=True)
+    )
+    user = session.get(Applicant, row.applicant_id) if row is not None else None
+    if row is None or not user or not user.verified:
+        session.commit()
+        return False
+    subject, text = _NOTIFICATION[row.language]
+    # No private question/answer text or tracking token in an e-mail.
+    try:
+        mail.send_mail(settings, user.email, subject, f"{text}: {settings.public_base_url.rstrip('/')}/account/requests\n")
+    except (OSError, smtplib.SMTPException):
+        session.rollback()
+        raise
+    row.notification_sent_at = now()
+    session.commit()
+    return True
+
+
+def notify_now(open_session: Callable[[], AbstractContextManager[Session]], settings: Settings, request_id: int) -> None:
+    """Background task after a staff answer, so the applicant does not wait for the hourly run."""
+    if not settings.applicant_accounts_enabled or not settings.smtp_host:
+        return
+    try:
+        with open_session() as session:
+            _notify(session, settings, request_id)
+    except (OSError, smtplib.SMTPException) as error:
+        logger.warning("Reply notification failed (%s); the hourly run retries it.", mail.describe_error(error))
+    except Exception:
+        logger.exception("Reply notification failed; the hourly run retries it.")
+
+
 def send_request_notifications(session: Session, settings: Settings) -> int:
+    """Hourly retry for answers whose immediate e-mail failed."""
     if not settings.applicant_accounts_enabled or not settings.smtp_host:
         return 0
     sent = 0
@@ -266,52 +330,12 @@ def send_request_notifications(session: Session, settings: Settings) -> int:
         )
     )
     for request_id in ids:
-        row = session.scalar(
-            select(AdmissionsRequest)
-            .where(
-                AdmissionsRequest.id == request_id,
-                AdmissionsRequest.notification_sent_at.is_(None),
-            )
-            .with_for_update(skip_locked=True)
-        )
-        if row is None:
-            session.commit()
-            continue
-        user = session.get(Applicant, row.applicant_id)
-        if not user or not user.verified:
-            session.commit()
-            continue
-        subject, text = {
-            "en": (
-                "SDU: the admissions office answered your question",
-                "Read your answer in your account",
-            ),
-            "ru": (
-                "SDU: приёмная комиссия ответила на ваш вопрос",
-                "Прочитайте ответ в личном кабинете",
-            ),
-            "kk": (
-                "SDU: қабылдау комиссиясы сұрағыңызға жауап берді",
-                "Жауапты жеке кабинеттен оқыңыз",
-            ),
-        }[row.language]
-        # No private question/answer text or tracking token in an e-mail.
         try:
-            mail.send_mail(
-                settings,
-                user.email,
-                subject,
-                f"{text}: {settings.public_base_url.rstrip('/')}/account/requests\n",
-            )
+            sent += _notify(session, settings, request_id)
         except (OSError, smtplib.SMTPException) as error:
-            session.rollback()
             logger.warning(
                 "Reply notification failed (%s); it will be retried on the next run.", mail.describe_error(error)
             )
             if mail.stops_batch(error):
                 break
-            continue
-        row.notification_sent_at = now()
-        session.commit()
-        sent += 1
     return sent

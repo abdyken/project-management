@@ -56,11 +56,16 @@ def test_full_roundtrip_deduplication_mail_retry_and_deletion(logged_in, monkeyp
     assert client.get("/api/applicant/requests").json()["total"] == 1
     officer(client, session)
     assert client.get("/api/staff/requests").json()["total"] == 1
-    reply = client.post(
-        f"/api/staff/requests/{request_id}/answer",
-        json={"answer": "Please contact the office with your programme code."},
-    )
+    before = len(messages)
+    # SMTP is down when staff answer: the answer is kept and the e-mail stays pending.
+    with monkeypatch.context() as patch:
+        patch.setattr(mail, "send_mail", lambda *args: (_ for _ in ()).throw(OSError("SMTP down")))
+        reply = client.post(
+            f"/api/staff/requests/{request_id}/answer",
+            json={"answer": "Please contact the office with your programme code."},
+        )
     assert reply.status_code == 200 and reply.json()["answered_at"]
+    assert len(messages) == before and session.get(AdmissionsRequest, request_id).notification_sent_at is None
     assert (
         client.post(
             f"/api/staff/requests/{request_id}/answer",
@@ -70,13 +75,13 @@ def test_full_roundtrip_deduplication_mail_retry_and_deletion(logged_in, monkeyp
     )
     assert client.get("/api/staff/requests?status=new").json()["total"] == 0
     assert client.get("/api/staff/requests?status=answered").json()["total"] == 1
-    before = len(messages)
     with monkeypatch.context() as patch:
         patch.setattr(
             mail, "send_mail", lambda *args: (_ for _ in ()).throw(OSError("SMTP down"))
         )
         assert send_request_notifications(session, get_settings()) == 0
     assert client.get(f"/api/applicant/requests/{request_id}").json()["answer"]
+    # The hourly run retries the failed e-mail once SMTP works again.
     assert send_request_notifications(session, get_settings()) == 1
     assert len(messages) == before + 1 and "жеке" in messages[-1][2]
     assert "Please help" not in messages[-1][2]
@@ -140,3 +145,20 @@ def test_accounts_gate_and_mail_not_configured(logged_in, monkeypatch):
     monkeypatch.setenv("APPLICANT_ACCOUNTS_ENABLED", "false")
     get_settings.cache_clear()
     assert client.get("/api/applicant/requests").status_code == 503
+
+
+def test_answer_e_mails_the_applicant_immediately(logged_in):
+    client, session, messages = logged_in
+    request_id = send(client).json()["id"]
+    officer(client, session)
+    before = len(messages)
+    reply = client.post(f"/api/staff/requests/{request_id}/answer", json={"answer": "Here is the answer."})
+    assert reply.status_code == 200
+    # Sent right after the response, not on the next hourly run.
+    assert len(messages) == before + 1 and "/account/requests" in messages[-1][2]
+    assert "Here is the answer." not in messages[-1][2]
+    assert session.get(AdmissionsRequest, request_id).notification_sent_at is not None
+    assert send_request_notifications(session, get_settings()) == 0  # nothing left for the hourly run
+    # Repeating the same answer (an idempotent retry) does not send a second e-mail.
+    assert client.post(f"/api/staff/requests/{request_id}/answer", json={"answer": "Here is the answer."}).status_code == 200
+    assert len(messages) == before + 1

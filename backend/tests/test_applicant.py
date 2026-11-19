@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from datetime import date, timedelta
 from io import BytesIO
 
@@ -12,7 +13,7 @@ from app.applicant.reminders import send_due_reminders
 from app.catalogue.models import Program
 from app.checklist.models import ProgramDocumentRequirement
 from app.config import get_settings
-from app.db import get_db_session
+from app.db import get_db_session, get_session_factory
 from app.main import app
 from app.staff.service import LoginLimiter
 
@@ -85,6 +86,8 @@ def applicant_env(catalogue_session, monkeypatch):
     )
     session.commit()
     app.dependency_overrides[get_db_session] = lambda: session
+    # Background tasks (the reply e-mail) open their own session: give them this one.
+    app.dependency_overrides[get_session_factory] = lambda: lambda: nullcontext(session)
     # No context manager: lifespan's independent workers must not use the test database.
     client = TestClient(app, base_url="https://localhost")
     try:
@@ -92,6 +95,7 @@ def applicant_env(catalogue_session, monkeypatch):
     finally:
         client.close()
         app.dependency_overrides.pop(get_db_session, None)
+        app.dependency_overrides.pop(get_session_factory, None)
 
 
 def register(client, email="applicant@example.com", language="en"):
