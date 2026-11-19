@@ -63,6 +63,9 @@ data: {"answer_id": "43", "sources": [{"faq_id": "faq-003", "question": "How do 
 
 A stream that ends without `done` was interrupted (network, closed tab): treat it like `error`.
 
+For a question about the applicant's own application (US6) the `done` event also carries
+`"intent": "application_status"`; it is absent for every other answer (`applications.md`).
+
 ## Timing
 
 - The first `chunk` arrives as soon as the answer is ready: under 1 s without a model, about 6–8 s for a model answer (US10), never later than `ASSISTANT_TIMEOUT_SECONDS` (15 s). The widget's timeout counts to the first chunk and must be at least 15 s.

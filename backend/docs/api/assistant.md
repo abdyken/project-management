@@ -35,6 +35,7 @@
 | `answer` | string | The answer text. Document lists are one line per document, separated by `\n`. |
 | `sources` | `[{faq_id, question, link, title}]` | Official sources of the answer, in the order they are used; `[]` when there is none (fallback, document checklist, "which program?" questions). A FAQ source has `faq_id`, `question` and `link`, and `title` equals the question. A catalogue source (US12) is the official page of a program: `faq_id` and `question` are `null`, `title` is `<Program> (<code>)`. One answer can cite several sources. Show `title` as the link text. |
 | `answer_id` | string | Id of the stored answer, the same as in the stream's `done` event. Use it to rate the answer (`POST /api/assistant/feedback`). |
+| `intent` | string, optional | Only `"application_status"`, and only for questions about the applicant's own application (US6). The answer then comes without the model; the widget fetches the personal status from `GET /api/applicant/applications/status` (see `applications.md`). Absent for every other answer. |
 
 `answer` is always one of:
 

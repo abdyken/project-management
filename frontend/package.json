@@ -9,7 +9,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "qa:applications": "node e2e/applications-qa.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

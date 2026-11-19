@@ -12,6 +12,10 @@ plus a 2 GB swap file, Ubuntu 22.04) in `/opt/sdu-admissions`:
 | `web` | frontend image, nginx proxies `/api/` to `api` |
 | `caddy` | ports 80/443, free HTTPS certificate from Let's Encrypt for the sslip.io name |
 
+Volumes: `pgdata` (database) and `uploads` (Sprint 7 application documents, ADR 0003).
+Online applications are switched off on the VM (`APPLICATIONS_ENABLED=false` by default);
+switch them on in `.env` only after a daily backup of both volumes is in place.
+
 ## Automatic deployment
 
 `.github/workflows/deploy.yml` runs on every push to `main` that changes `backend/`,
