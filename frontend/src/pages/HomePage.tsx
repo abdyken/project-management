@@ -253,8 +253,8 @@ export function HomePage() {
               const range =
                 row && row.min !== null && row.max !== null
                   ? row.min === row.max
-                    ? `${numbers.format(row.min)} ₸`
-                    : `${numbers.format(row.min)}–${numbers.format(row.max)} ₸`
+                    ? `${numbers.format(row.min)}\u00a0₸`
+                    : `${numbers.format(row.min)}–${numbers.format(row.max)}\u00a0₸`
                   : null
               return (
                 <div key={level} className="grid gap-1 py-6 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-6">
