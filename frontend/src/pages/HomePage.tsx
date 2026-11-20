@@ -363,7 +363,7 @@ export function HomePage() {
 function SectionHeading({ id, title, lead, onField }: { id: string; title: string; lead?: string; onField?: boolean }) {
   return (
     <div>
-      <h2 id={id} className="max-w-[16ch] text-[clamp(2.5rem,5.5vw,4.25rem)] leading-[0.9] font-extrabold uppercase">
+      <h2 id={id} className="max-w-[16ch] text-[clamp(2.25rem,4.4vw,3.75rem)] leading-[0.9] font-extrabold uppercase">
         {title}
       </h2>
       {lead ? <p className={cn("mt-5 max-w-[52ch] text-lg", onField ? "text-field-muted" : "text-muted-foreground")}>{lead}</p> : null}

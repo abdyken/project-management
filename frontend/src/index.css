@@ -121,8 +121,8 @@
   h1,
   h2,
   h3 {
+    /* Last resort only: sizes are set so whole words fit; this just prevents overflow. */
     overflow-wrap: break-word;
-    hyphens: auto;
   }
 
   h1,

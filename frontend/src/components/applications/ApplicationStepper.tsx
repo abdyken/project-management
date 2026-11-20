@@ -4,7 +4,7 @@ import { useApplicationsT } from "@/applications/i18n"
 import { cn } from "@/lib/utils"
 
 // ADR 0002: draft → submitted → in review (or changes requested) → accepted / not accepted.
-// The current step carries the status label, so the status text appears once on the page.
+// The current step carries the status label; the status text appears once on the page.
 const CURRENT_STEP: Record<ApplicationStatus, number> = {
   draft: 0,
   submitted: 1,
@@ -17,12 +17,10 @@ const CURRENT_STEP: Record<ApplicationStatus, number> = {
 export function ApplicationStepper({ status }: { status: ApplicationStatus }) {
   const t = useApplicationsT()
   const current = CURRENT_STEP[status]
-  const labels = [
-    t("status.draft"),
-    t("status.submitted"),
-    status === "needs_changes" ? t("status.needs_changes") : t("status.in_review"),
-    status === "accepted" || status === "rejected" ? t(`status.${status}`) : t("step.decision"),
-  ]
+  // Only the current step names the status; the others use stage names that never repeat a
+  // status word, so "Submitted" (for example) is on the page only once it is true.
+  const stages = [t("step.form"), t("step.sent"), t("step.review"), t("step.decision")]
+  const labels = stages.map((stage, index) => (index === current ? t(`status.${status}`) : stage))
   const currentTile =
     status === "needs_changes" ? "bg-ochre text-ink" : status === "rejected" ? "bg-terracotta text-white" : "bg-primary text-primary-foreground"
 
