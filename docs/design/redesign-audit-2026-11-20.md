@@ -46,3 +46,58 @@ Fira Sans Extra Condensed + Golos Text. See `DESIGN.md` and `PRODUCT.md`.
 | Gradients / glass / soft shadows | no | no (flat ink ring on overlays; one sanctioned globe exception) |
 
 `impeccable detect --json frontend/src` returns no findings.
+
+## Premium refinement (21.11.2026)
+
+**Why:** Dimash said some places "look like a kid website" and asked for a premium,
+institutional feel like Purdue's.
+
+**Evidence:** a read-only critique of the screenshots, plus research into Purdue, Stanford,
+Yale, Cambridge, ETH and Tate (their CSS and brand guides). Both pointed at the same
+causes:
+- four saturated hues used as blocks side by side
+- random multicolour "confetti" tile edges
+- sticker tile clusters
+- pop-in animation
+- coloured and dashed program cards
+- uppercase condensed headings everywhere
+
+**Changes:**
+- **Headings:** Source Serif 4 in sentence case. Condensed caps are kept only for short
+  labels, numerals and the primary action.
+- **Colour:** one brand hue (turquoise + deep) on cool neutrals. Ochre is used only for
+  Apply and Search, terracotta only for errors, glacier only for selection.
+- **Tiles:** path and hub tiles are one turquoise main tile carrying a real campus photo,
+  plus quiet white cards.
+- **Mosaic:** it is now a signature used twice per page: a stepped edge of 16 px tesserae
+  with grout lines, where the hero band and the footer rise.
+- **Program cards and filters:** cards are plain white with hairlines, and filters are a
+  hairline checklist.
+- **Photo:** the studio photo is replaced with the natural-light main-hall photo.
+
+**Not changed:** program name casing ("Applied law" / "Applied Law") is SDU's official
+catalogue data. It is left for the catalogue owner to clean up, not rewritten in the UI.
+
+| Dimension | Before redesign | After redesign | After refinement |
+| --- | --- | --- | --- |
+| Colour consistency | 5 | 9 | 10 |
+| Typography hierarchy | 4 | 9 | 10 |
+| Spacing rhythm | 5 | 8 | 8 |
+| Component consistency | 4 | 8 | 9 |
+| Responsive | 6 | 9 | 9 |
+| Dark mode (out of scope) | 0 | 0 | 0 |
+| Animation | 6 | 7 | 8 |
+| Accessibility | 8 | 9 | 9 |
+| Information density | 5 | 8 | 8 |
+| Polish | 5 | 8 | 9 |
+| **Total** | **48** | **75** | **80** |
+
+**Measured saturated share** (pixels within 6% of turquoise, deep turquoise or ochre in
+full-page 1280 px captures):
+
+| Page | Turquoise / deep | Ochre | Notes |
+| --- | --- | --- | --- |
+| Home | 27.5% | 0.5% | The hero band, the cost ledger and the footer. The path cards, the International band and the lists are neutral or a light tint. |
+| Admissions hub | 56% | 0.3% | A short page, so the title band and the deep footer take a large share of its height. The tool tiles are white apart from the one photo tile. |
+
+Before the refinement, the hub tiles alone were four saturated hues side by side.

@@ -99,7 +99,7 @@ export function ProgramsPage() {
           ) : null}
 
           {data && data.total === 0 ? (
-            <div className="border-2 border-dashed border-input p-8">
+            <div className="border border-border bg-card p-8">
               <p className="font-heading text-2xl font-medium">{t("programs.noneTitle")}</p>
               <p className="mt-2 max-w-[52ch] text-muted-foreground">{t("programs.noneText")}</p>
             </div>

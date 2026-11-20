@@ -55,7 +55,7 @@ function Decide({ application, statusBox, onSaved }: { application: StaffApplica
   }
   return (
     <form onSubmit={onSubmit} className="mt-10 max-w-2xl border-t border-border pt-6" aria-labelledby="decide-title">
-      <h2 id="decide-title" className="text-lg font-semibold">
+      <h2 id="decide-title" className="text-lg font-medium">
         {t("app.decide")}
       </h2>
       <div className="mt-4 space-y-1 text-sm">
@@ -183,7 +183,7 @@ export function StaffApplicationPage() {
         </div>
       )}
 
-      <h2 className="mt-8 text-lg font-semibold">{t("app.form")}</h2>
+      <h2 className="mt-8 text-lg font-medium">{t("app.form")}</h2>
       <dl className="mt-3 grid max-w-2xl gap-x-6 gap-y-2 text-sm sm:grid-cols-[14rem_1fr]">
         <dt className="text-muted-foreground">{t("app.field.email")}</dt>
         <dd className="break-all">{application.applicant_email}</dd>
@@ -197,7 +197,7 @@ export function StaffApplicationPage() {
         <dd>{t(application.consent ? "app.yes" : "app.no")}</dd>
       </dl>
 
-      <h2 className="mt-8 text-lg font-semibold">{t("app.docs")}</h2>
+      <h2 className="mt-8 text-lg font-medium">{t("app.docs")}</h2>
       {groups.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">{t("app.docs.none")}</p>
       ) : (

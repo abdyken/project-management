@@ -33,7 +33,7 @@ export function MosaicTile({
   large?: boolean
   headingLevel?: 2 | 3
   // Optional real photograph across the top of the tile (decorative; the title carries meaning).
-  image?: { src: string; srcSet: string }
+  image?: { src: string; srcSet: string; position?: string }
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3"
   return (
@@ -49,6 +49,7 @@ export function MosaicTile({
             sizes="(min-width: 1024px) 45vw, 100vw"
             alt=""
             loading="lazy"
+            style={image.position ? { objectPosition: image.position } : undefined}
             className="-mx-6 -mt-6 mb-6 block h-44 w-[calc(100%+3rem)] max-w-none object-cover sm:-mx-8 sm:-mt-8 sm:mb-8 sm:h-56 sm:w-[calc(100%+4rem)] lg:-mx-6 lg:-mt-6 lg:mb-6 lg:w-[calc(100%+3rem)] xl:-mx-8 xl:-mt-8 xl:mb-8 xl:h-64 xl:w-[calc(100%+4rem)]"
           />
         ) : null}

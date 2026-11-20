@@ -34,7 +34,7 @@ export function ApplicationStepper({ status }: { status: ApplicationStatus }) {
             <span
               className={cn(
                 "flex h-10 items-center justify-center font-display text-lg font-bold",
-                active ? currentTile : done ? "bg-field-deep text-field-foreground" : "border-2 border-dashed border-input text-muted-foreground",
+                active ? currentTile : done ? "bg-field-deep text-field-foreground" : "bg-muted text-muted-foreground",
               )}
             >
               {done ? <Check className="size-5" aria-hidden="true" /> : <span className="tabular">{index + 1}</span>}

@@ -305,7 +305,7 @@ export function StaffFaqEditPage() {
           {save.isPending ? t("edit.saving") : isNew ? t("edit.saveDraft") : t("edit.save")}
         </Button>
         {!isNew && status !== "published" && (
-          <Button type="button" variant="gold" disabled={!canSave} onClick={() => changeStatus.mutate("publish")}>
+          <Button type="button" disabled={!canSave} onClick={() => changeStatus.mutate("publish")}>
             {t("edit.publish")}
           </Button>
         )}

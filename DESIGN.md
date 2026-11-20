@@ -1,43 +1,61 @@
 ---
 name: SDU Admissions Portal
-description: Almaty Mosaic. Flat turquoise fields on one 8px tessera grid, square corners, monumental condensed caps.
+description: Almaty Mosaic, refined. A calm institutional document in one turquoise hue, serif headings, hairline ledgers and one stepped mosaic signature.
 colors:
   smalt-turquoise: "#0a6c74"
   deep-turquoise: "#074f55"
-  glacier: "#19a7a8"
+  field-tint: "#e3efee"
+  field-mist: "#cdebe9"
   ochre: "#e3a33a"
   ochre-hover: "#d2912a"
   terracotta: "#c5532f"
   terracotta-text: "#b0432a"
-  ink: "#121417"
+  glacier: "#19a7a8"
+  slate-ink: "#17222a"
   cool-white: "#f5f7f6"
   card-white: "#ffffff"
-  field-mist: "#cdebe9"
   pale-turquoise: "#e4eeed"
   muted-surface: "#e9efee"
   accent-wash: "#d6ebea"
-  slate-ink: "#4a5553"
+  muted-text: "#4a5553"
   hairline: "#c9d4d2"
   input-stroke: "#7e908d"
 typography:
   display:
-    fontFamily: "Fira Sans Extra Condensed, Arial Narrow, ui-sans-serif, sans-serif"
-    fontSize: "clamp(3.25rem, 8.2vw, 6rem)"
-    fontWeight: 800
-    lineHeight: 0.86
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, serif"
+    fontSize: "clamp(2.75rem, 5vw, 4.5rem)"
+    fontWeight: 500
+    lineHeight: 1.04
+    letterSpacing: "-0.01em"
+    fontVariation: "opsz auto"
+  headline-page:
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, serif"
+    fontSize: "clamp(2.25rem, 4vw, 3.5rem)"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "-0.01em"
+  headline-band:
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, serif"
+    fontSize: "clamp(2.5rem, 4.5vw, 4rem)"
+    fontWeight: 500
+    lineHeight: 1.06
     letterSpacing: "-0.01em"
   headline:
-    fontFamily: "Fira Sans Extra Condensed, Arial Narrow, ui-sans-serif, sans-serif"
-    fontSize: "clamp(2.25rem, 4.4vw, 3.75rem)"
-    fontWeight: 800
-    lineHeight: 0.9
-    letterSpacing: "0em"
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, serif"
+    fontSize: "clamp(1.875rem, 3vw, 2.75rem)"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "-0.01em"
   title:
-    fontFamily: "Fira Sans Extra Condensed, Arial Narrow, ui-sans-serif, sans-serif"
-    fontSize: "1.75rem"
-    fontWeight: 800
-    lineHeight: 1
-    letterSpacing: "0em"
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, serif"
+    fontSize: "1.5rem"
+    fontWeight: 500
+    lineHeight: 1.15
+  title-large:
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, serif"
+    fontSize: "clamp(1.75rem, 2.6vw, 2.25rem)"
+    fontWeight: 500
+    lineHeight: 1.15
   body:
     fontFamily: "Golos Text, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1rem"
@@ -50,35 +68,45 @@ typography:
     lineHeight: 1.55
   label:
     fontFamily: "Fira Sans Extra Condensed, Arial Narrow, ui-sans-serif, sans-serif"
-    fontSize: "1.125rem"
-    fontWeight: 700
+    fontSize: "0.875rem"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "0.08em"
+  label-action:
+    fontFamily: "Fira Sans Extra Condensed, Arial Narrow, ui-sans-serif, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 600
     lineHeight: 1.25
-    letterSpacing: "0.04em"
+    letterSpacing: "0.06em"
+  numeral:
+    fontFamily: "Fira Sans Extra Condensed, Arial Narrow, ui-sans-serif, sans-serif"
+    fontSize: "clamp(2.25rem, 4.4vw, 3.25rem)"
+    fontWeight: 700
+    lineHeight: 1
+    fontFeature: "tnum"
 rounded:
   none: "0px"
   operate: "2px"
 spacing:
-  tessera: "8px"
-  tile-gap: "4px"
-  tile-gap-wide: "8px"
+  module: "8px"
+  tessera: "16px"
+  tile-gap: "8px"
   gutter-sm: "16px"
   gutter-md: "24px"
   gutter-lg: "32px"
   band: "80px"
   band-lg: "112px"
-  tessera-edge: "24px"
-  tessera-edge-lg: "32px"
 components:
   button-primary:
     backgroundColor: "{colors.ochre}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
+    textColor: "{colors.slate-ink}"
+    typography: "{typography.label-action}"
     rounded: "{rounded.none}"
     padding: "8px 24px"
     height: "48px"
   button-primary-hover:
     backgroundColor: "{colors.ochre-hover}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.slate-ink}"
   button-default:
     backgroundColor: "{colors.smalt-turquoise}"
     textColor: "{colors.card-white}"
@@ -109,35 +137,55 @@ components:
     textColor: "{colors.smalt-turquoise}"
   button-ghost-hover:
     backgroundColor: "{colors.pale-turquoise}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.slate-ink}"
   input:
     backgroundColor: "{colors.card-white}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.slate-ink}"
     rounded: "{rounded.none}"
     padding: "0 12px"
     height: "44px"
+  filter-option:
+    backgroundColor: "transparent"
+    textColor: "{colors.muted-text}"
+    typography: "{typography.body-small}"
+    height: "44px"
+  filter-check-checked:
+    backgroundColor: "{colors.smalt-turquoise}"
+    textColor: "{colors.card-white}"
+    size: "18px"
   badge-field:
     backgroundColor: "{colors.pale-turquoise}"
     textColor: "{colors.deep-turquoise}"
     rounded: "{rounded.none}"
     padding: "4px 8px"
-  programme-tile:
+  program-card:
     backgroundColor: "{colors.card-white}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.slate-ink}"
     typography: "{typography.title}"
     rounded: "{rounded.none}"
-    padding: "28px 24px 24px"
-  programme-tile-unpublished:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    padding: "24px"
   mosaic-tile-field:
     backgroundColor: "{colors.smalt-turquoise}"
     textColor: "{colors.card-white}"
+    typography: "{typography.title-large}"
     rounded: "{rounded.none}"
     padding: "32px"
   mosaic-tile-field-hover:
     backgroundColor: "{colors.deep-turquoise}"
+  mosaic-tile-card:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.slate-ink}"
+    typography: "{typography.title}"
+    rounded: "{rounded.none}"
+    padding: "32px"
+  date-tile:
+    backgroundColor: "{colors.smalt-turquoise}"
+    textColor: "{colors.card-white}"
+    size: "104px"
+  date-tile-unpublished:
+    backgroundColor: "{colors.muted-surface}"
+    textColor: "{colors.muted-text}"
+    size: "104px"
   header-bar:
     backgroundColor: "{colors.smalt-turquoise}"
     textColor: "{colors.field-mist}"
@@ -151,164 +199,181 @@ components:
 
 ## Overview
 
-**Creative North Star: "Almaty Mosaic"**
+**Creative North Star: "Almaty Mosaic, refined"**
 
-The portal is set like an Almaty modernist mosaic panel. Every section is a flat colour field laid on one 8px tessera grid, so programmes, dates, costs and application steps read as tiles of one monumental wall. Smalt turquoise carries whole bands; small square tesserae of glacier, ochre and terracotta set the edges where fields meet, and the same colours mark state. Headlines are monumental condensed capitals; everything else is a sturdy text sans built for Kazakh, Russian and English at equal quality.
+The portal reads as a calm institutional document that carries one Almaty-mosaic signature. Sections are white and cool-neutral pages, structured by sentence-case serif headings and hairline ledgers. One turquoise field per group carries the main path; everything around it is quiet. Neutrals outnumber the brand colour by a wide margin, so the turquoise reads as SDU's voice and not as wallpaper.
 
-The system is flat and square by conviction: no gradients, no soft shadows, no rounded cards. Depth comes from field against field (turquoise on cool white, deep turquoise on turquoise) and from a single flat 2px ink ring on floating overlays. Real SDU campus photography sits inside the mosaic frame, and the SDU emblem appears in one colour only. The official SDU navy and peach are deliberately not used: the portal must not read as a copy of sdu.edu.kz.
+The mosaic survives as a signature, not a wall. It appears at most twice per page: a stepped edge of 16px turquoise tesserae where the hero band rises into the campus photo, and the same profile where the footer rises into the page. The system is flat and square by conviction, with no gradients, no soft shadows and no rounded cards. Depth comes from field against neutral and from a flat 2px ink ring on floating overlays. Real SDU photography carries the warmth, including inside the main path tile. The official SDU navy and peach are not used, so the portal does not read as a copy of sdu.edu.kz.
 
-Density follows the visitor mode. Persuade (home, programmes) uses full-bleed bands and large tiles; Read (admissions planning guides) puts a turquoise title band over a reading column; Operate (account, application, staff) is quieter, with lighter containers and the display face in sentence case for staff headings. The world is light only: applicants use it on phones in daylight.
+Density follows the visitor mode. Persuade (home, programmes) uses full-bleed bands, a mosaic of unequal tiles and ledgers. Read (admissions planning guides) puts a turquoise title band over a reading column. Operate (account, application, staff) is quieter, with plain hairline containers. The world is light only, because applicants use it on phones in daylight.
 
 **Key Characteristics:**
-- Smalt turquoise solid fields cover 30–60% of a public page.
-- One 8px module; tesserae at 24px and 32px; tile gaps of 4–8px.
-- Square corners everywhere on public surfaces.
-- Fira Sans Extra Condensed 800 caps for display, Golos Text for text, both with full Kazakh Cyrillic.
-- State as material: solid tiles are open or published, dashed outline tiles are closed or unpublished.
-- One ochre action per band; ochre is never decoration.
+- One brand hue: smalt turquoise and its deep shade on cool white, white and a light tint.
+- Source Serif 4 headings in sentence case at weight 500; Golos Text for everything you read.
+- Condensed caps only for short labels, numerals and the large action label.
+- Square corners, 1px hairlines, ledgers opened by a 2px ink rule.
+- The mosaic is one stepped 16px edge, at most twice per page.
+- Ochre marks only the primary action.
 
 ## Colors
 
-A cold turquoise wall with three warm-and-cool tesserae accents and ink-on-cool-white reading surfaces.
+One cold turquoise hue and its deep shade on calm cool neutrals, with three reserved accents that each have exactly one job.
 
 ### Primary
-- **Smalt Turquoise** (smalt-turquoise): the field colour. Header bar, hero band, guide title bands, the International band, the default working button, bachelor degree edges, focus ring on light surfaces. Carries 30–60% of a public page as solid fields.
-- **Deep Turquoise** (deep-turquoise): the footer, the cost band, hover on turquoise buttons and tiles, completed stepper steps, inactive guide tabs, the mobile menu sheet.
+- **Smalt Turquoise** (smalt-turquoise): the brand field. Header bar, hero band, guide title bands, the one main path tile per group, published date tiles, the default working button, checked filter squares, the focus ring on light surfaces, links.
+- **Deep Turquoise** (deep-turquoise): the footer, the cost ledger band, the mobile menu sheet, hover on turquoise buttons and tiles, completed stepper steps, inactive guide tabs, the cap tiles of the hero signature.
+- **Field Tint** (field-tint): the one quiet band colour, used for the International band.
+- **Field Mist** (field-mist): secondary text, inactive nav and footer column titles on turquoise fields.
 
 ### Secondary
-- **Apricot Ochre** (ochre, hover ochre-hover): the primary action (Apply, Search, the band's one call to action), the active nav underline, PhD degree edges, "needs changes" state, footer column titles, and tesserae. Text on ochre is always ink.
+- **Apricot Ochre** (ochre, hover ochre-hover): the primary action only, meaning the header Apply and the hero (and finder) Search. Text on ochre is always slate ink.
 
 ### Tertiary
-- **Glacier Turquoise** (glacier): tesserae, master degree edges, text selection, one path tile on the home page. Text on glacier is ink.
-- **Terracotta** (terracotta): tesserae, the international path tile, the rejected stepper step. **Terracotta Text** (terracotta-text) is its darker, legible form for error and destructive text and "not published yet" notes.
+- **Terracotta** (terracotta) and **Terracotta Text** (terracotta-text): errors and destructive actions only; terracotta-text is the legible form for error text and invalid input borders.
+- **Glacier** (glacier): text selection only, with slate ink text.
 
 ### Neutral
-- **Ink** (ink): all reading text; the 2px overlay ring; the heavy 2px rules that open lists and the date band.
+- **Slate Ink** (slate-ink): all reading text, the 2px rule that opens a ledger, the 2px overlay ring, the hero search input stroke.
 - **Cool White** (cool-white): page background.
-- **Card White** (card-white): tiles, inputs, the hero search tile, and text on fields.
-- **Field Mist** (field-mist): secondary text and inactive nav on turquoise fields.
-- **Pale Turquoise** (pale-turquoise), **Muted Surface** (muted-surface), **Accent Wash** (accent-wash): quiet badge boxes, ghost-button hover, list-row hover.
-- **Slate Ink** (slate-ink): secondary text on light.
-- **Hairline** (hairline): 1px dividers and borders. **Input Stroke** (input-stroke): 2px input and dashed-outline strokes.
+- **Card White** (card-white): cards, inputs, the hero search tile, the date band, and text on fields.
+- **Pale Turquoise** (pale-turquoise), **Muted Surface** (muted-surface), **Accent Wash** (accent-wash): badge boxes, removable filter chips, ghost and list-row hover, unpublished date tiles.
+- **Muted Text** (muted-text): secondary text on light, unpublished deadlines, unchecked filter options.
+- **Hairline** (hairline): every 1px divider and card border. **Input Stroke** (input-stroke): 2px input borders and unchecked filter squares.
 
 ### Named Rules
-**The Field Rule.** Turquoise appears as solid fields, never as a tint wash or a gradient. Glacier, ochre and terracotta appear only as square tesserae and as state, never as a section background behind body text (the coloured path tiles are tesserae at tile scale, and they carry ink or white text only).
+**The One Hue Rule.** Turquoise and deep turquoise are the only brand fields, set solid on cool white, white or field tint. No other hue fills a section, a tile or a decoration.
 
-**The One Ochre Rule.** Ochre marks the one primary action in a band (Apply in the header, Search in the hero, one call to action per band). A second ochre button in the same band is a defect.
+**The One Job Rule.** Ochre is only the primary action (header Apply, hero Search). Terracotta is only errors and destructive actions. Glacier is only selection. An ochre, terracotta or glacier tile, band or decoration is a defect. The one sanctioned use beyond that is application state: in `Badge` and `ApplicationStepper`, ochre marks "changes requested" and terracotta marks "not accepted", always as a small tile plus words, because there the colour carries meaning the applicant must act on.
 
-**The Not-SDU-Navy Rule.** The official SDU navy and peach are not used anywhere. The portal is SDU's admissions world, not a copy of sdu.edu.kz.
+**The White Marker Rule.** On turquoise, emphasis is white: the active nav underline is a 2px white bar and the globe marker is a white square. Ochre is not used to mark position.
+
+**The Not-SDU-Navy Rule.** The official SDU navy and peach are not used anywhere.
 
 ## Typography
 
-**Display Font:** Fira Sans Extra Condensed 600/700/800 (with Arial Narrow, sans-serif)
+**Display Font:** Source Serif 4 Variable with optical sizing (with Source Serif 4, Georgia, serif)
 **Body Font:** Golos Text 400/500/600/700 (with ui-sans-serif, system-ui)
+**Label/Numeral Font:** Fira Sans Extra Condensed 600/700 (with Arial Narrow, sans-serif)
 
-**Character:** Monumental, narrow, all-caps display set tight like letters cast into a mosaic panel, paired with a plain, sturdy Cyrillic-native text sans. Both are self-hosted via @fontsource and were chosen for complete Kazakh Cyrillic coverage (ә ғ қ ң ө ұ ү һ і).
+**Character:** A sober text serif for headings, set in sentence case like a university prospectus, over a plain, sturdy Cyrillic-native sans. Condensed capitals survive only as a small label voice and in figures, where they read as cast numbers. All three faces are self-hosted via @fontsource and cover Kazakh Cyrillic (ә ғ қ ң ө ұ ү һ і).
 
 ### Hierarchy
-- **Display** (800, uppercase, clamp(3.25rem, 8.2vw, 6rem), line-height 0.86): the home hero headline only. Page h1s on programmes, programme detail and guides use the same face at clamp(2.5rem, 6–7vw, 5–5.5rem), line-height 0.88.
-- **Headline** (800, uppercase, clamp(2.25rem, 4.4vw, 3.75rem), line-height 0.9): section h2s, max 16ch.
-- **Title** (800, uppercase, 1.5rem to 1.75rem, line-height 1): programme tile titles; mosaic tile titles at clamp(1.375rem, 1.9vw, 2.125rem), line-height 0.9. Big facts and figures (dates, tuition) use the display face 700–800 with tabular numerals.
-- **Body** (400, 1rem, line-height 1.55): running text; leads at 1.125rem, max 46–60ch.
-- **Body small** (500–600, 0.9375rem): nav links, button text, tile meta lines, form labels.
-- **Label** (display 700, 1.125rem, letter-spacing 0.04em, uppercase): large buttons and the header Apply; list and filter legends at 1.25rem without tracking.
+- **Display** (500, clamp(2.75rem, 5vw, 4.5rem), line-height 1.04, max 14ch): the home hero h1 only.
+- **Headline, page** (500, clamp(2.25rem, 4vw, 3.5rem), line-height about 1.1): page h1s on programmes, programme detail, account and staff. On turquoise band pages (admissions planning) the h1 is clamp(2.5rem, 4.5vw, 4rem), line-height 1.06, max 20ch.
+- **Headline** (500, clamp(1.875rem, 3vw, 2.75rem), line-height 1.1, max 20ch): section h2s.
+- **Title** (500, 1.25 to 2.25rem, line-height 1.15 to 1.18): mosaic tile titles (1.25 to 1.5rem, or clamp(1.75rem, 2.6vw, 2.25rem) on the large main tile), programme card titles (1.375rem, 1.5rem from sm), the hero search label, the footer tagline (1.875rem, weight 400), mobile menu links (1.5rem).
+- **Body** (400, 1rem, line-height 1.55): running text; leads at 1.125rem, 46 to 52ch.
+- **Body small** (500 to 600, 0.9375rem): nav links, default button text, card meta lines, filter options, form labels.
+- **Label** (Fira Sans Extra Condensed 600, 0.875rem, +0.08em, uppercase): the "Admissions" lockup label, filter legends, footer column titles, date month abbreviations, the dates tally, tile facts.
+- **Action label** (Fira Sans Extra Condensed 600, 0.9375rem, +0.06em, uppercase): large buttons and the header Apply.
+- **Numeral** (Fira Sans Extra Condensed 700, tabular): date-tile day numbers (3rem), the cost ledger (clamp(2.25rem, 4.4vw, 3.25rem)), school counts (1.5rem), stepper numbers (1.125rem).
 
 ### Named Rules
-**The Cyrillic Air Rule.** In Kazakh and Russian, h1–h3 take line-height 1.04 so diacritics on capitals (Ң, Қ, Ұ, Ё, Й) clear the line above. This outranks the tight display leading.
+**The Sentence Case Rule.** Every heading is serif, sentence case, weight 500, letter-spacing −0.01em, line-height 1.04 to 1.15. No heading is set in capitals.
 
-**The Whole Word Rule.** Headings are never hyphenated. Sizes are set so whole words fit at 360, 1024 and 1440px in KK, RU and EN; overflow-wrap is a last-resort guard only.
+**The Small Caps Voice Rule.** Condensed caps appear only in the label utility, in numerals and in the large-button and Apply labels. Anything longer than three words is not a label.
+
+**The Heading Order Rule.** A tile or card title is never larger than its own section heading.
+
+**The Cyrillic Air Rule.** In Kazakh and Russian, h1 to h3 take line-height 1.16 so diacritics on capitals (Ң, Қ, Ұ, Ё, Й) clear the line above. This outranks the tight leading utilities.
+
+**The Whole Word Rule.** Headings are never hyphenated and are balanced; sizes are set so whole words fit at 360, 1024 and 1440px in KK, RU and EN. overflow-wrap is a last-resort guard only.
 
 **The Plain Heading Rule.** No eyebrow or kicker label above a heading, and no section numbers. A real tally (for example "2 published · 2 not published yet") may sit below a heading as content.
 
 ## Layout
 
-One 8px tessera module governs everything. Three container widths: wide (84rem) for public bands, finders and the header and footer; content (72rem) for default pages and guide bodies; text (48rem) for forms and reading. Gutters step 16 / 24 / 32px at mobile / sm / lg. Public sections are full-bleed bands with 80px vertical padding, 112px on large screens.
+One 8px module governs spacing. Public bands and the header and footer sit in an 84rem container; reading and form columns narrow to max-w-3xl (48rem). Gutters step 16, 24 and 32px at mobile, sm and lg. Public sections are full-bleed bands with 80px vertical padding, 96 to 112px on large screens.
 
-Bands alternate field and light: turquoise hero band, cool-white paths, white date band between 2px ink rules, deep turquoise cost band, light schools, turquoise International band, light ask band, deep turquoise footer. Two-column bands put the heading and lead left (1fr) and the evidence right (1.6fr). Mosaic tiles sit in a 12-column grid with 8px gaps, one large tile spanning two rows.
+On the home page the bands run: campus photo with the turquoise hero band rising into it, cool-white paths, the white date ledger between 2px ink rules, the deep turquoise cost ledger, light schools beside a student photo, the field-tint International band with the globe, the light ask band, then the deep turquoise footer. Two-column bands put the heading and lead left (1fr) and the evidence right (1.6fr). Path and hub tiles sit in a 12-column grid with 8px gaps: one large field tile spans six columns and two rows, quiet card tiles fill the rest.
 
-Tessera edges mark where fields meet: two rows of `mosaicRow` tiles (a sparse upper row over a denser row touching the field) at 32px above the hero band, 24px under guide title bands and above the footer. Rows are seeded and deterministic, so the edge is identical on every render.
+Structure comes from lists, not boxes. Ledgers (dates, costs, schools, questions, documents) open with a 2px ink rule and divide rows with 1px hairlines. Band edges are clean cuts except the two signature edges.
 
-Filters are square tile groups that wrap on mobile and stack in a column beside the results from lg. The header is 64px tall on mobile and 72px from lg; full navigation shows from 1280px, a full-screen deep turquoise sheet below it.
+The finder stacks filters in a column beside the results from lg; below lg they sit behind a single hairline toggle. The header is 64px tall on mobile and 72px from lg; full navigation shows from 1280px, a full-screen deep turquoise sheet below it.
 
 ## Elevation & Depth
 
-The system is flat. There are no gradients and no soft shadows. Depth comes from field against field (white tile on turquoise band, deep turquoise against turquoise) and from heavy 2px ink rules. Only floating overlays get an edge, and that edge is a flat ring, not a shadow.
+The system is flat. There are no gradients and no soft shadows. Depth comes from a turquoise field against neutral pages, a white search tile overlapping the photo, and the 2px ink rule over a ledger. Only floating overlays get an edge, and that edge is a flat ring, not a shadow.
 
 ### Shadow Vocabulary
-- **Overlay ring** (`box-shadow: 0 0 0 2px #121417`, token `--shadow-overlay`): the chat launcher and panel, the compare bar and sheets. Nothing in the page flow uses it.
+- **Overlay ring** (`box-shadow: 0 0 0 2px var(--ink)`, token `--shadow-overlay`): the chat launcher, chat bar and panel, the compare bar, sheets. Nothing in the page flow uses it.
 
 ### Named Rules
-**The Flat Wall Rule.** No gradient and no blurred shadow on any surface, tile, button or image.
+**The Flat Page Rule.** No gradient and no blurred shadow on any surface, tile, button or image.
 
-**The Globe Exception.** The shaded cobe `HeroGlobe` in the home International band is the one sanctioned departure from the Flat Wall Rule. It is kept because the team chose to preserve a teammate's component, and it is rendered as flat as cobe allows: diffuse 0, glow colour equal to the field so there is no halo. Nothing else may copy its shading.
+**The Globe Exception.** The shaded cobe HeroGlobe in the home International band is the one sanctioned departure from the Flat Page Rule, kept as Daniyar's component. It is rendered as flat as cobe allows: diffuse 0, dark 0, glow equal to the field tint so there is no halo, and a white marker. Nothing else may copy its shading.
 
 ## Shapes
 
-Corners are square (0px) on every public surface: buttons, inputs, tiles, badges, tabs, overlays, tesserae. The quieter Operate areas may use a 2px corner on plain bordered containers; nothing rounder exists. Borders are 2px for interactive and stateful edges (inputs, outline buttons, filter tiles, dashed state outlines, hover outlines on tiles) and 1px hairlines for dividers.
+Corners are square (0px) on every public surface: buttons, inputs, tiles, cards, badges, tabs, overlays, tesserae, date tiles. The quieter Operate areas may use a 2px corner on plain bordered containers; nothing rounder exists. Borders are 1px hairlines for cards, tiles and dividers, and 2px for inputs, outline buttons and the ink rule that opens a ledger.
 
-State is a material change: a solid tile means open, published or done; a 2px dashed input-stroke outline tile on a transparent ground means closed, unpublished or not yet reached. The recurring silhouette is the square tessera: 10px status squares in badges, 8px degree bars on tile tops, 24–32px tiles at field edges, a 12px ochre square on the chat launcher's corner.
+The recurring silhouette is the square: 16px tesserae in the signature edge, 18px filter check squares, 10px status squares in badges, square date tiles, the 8px white globe marker.
 
 ## Components
 
 ### Buttons
 Square, solid and quick; the arrow is the only flourish.
 - **Shape:** square corners (0px).
-- **Primary (ochre):** ochre field, ink text, display label 700 caps with 0.04em tracking at 48px tall (large) or Golos 600 at 44px (default). One per band.
-- **Default:** smalt turquoise field, white Golos 600 text, 44px tall, 20px side padding; hover deep turquoise.
+- **Primary (ochre):** ochre with slate-ink text, action label (condensed 600 caps, 0.9375rem, +0.06em) at 48px or more. Only the header Apply and the hero and finder Search.
+- **Default:** turquoise with white Golos 600 text, 44px tall, 20px side padding; hover deep turquoise.
 - **Outline:** 2px turquoise border and text on transparent; hover fills turquoise with white text.
-- **On field:** 2px white border and text on a turquoise field; hover fills white with turquoise text.
-- **Ghost / Link:** ghost is ink text with a pale turquoise hover; link is turquoise text with a 2px underline that turns ochre on hover.
-- **Hover / Focus:** 0.2s colour transitions; 1px press on active; a trailing arrow icon slides 3px right on hover. Focus is a 2px ring outline offset 2px (turquoise on light, white on fields). Disabled is 45% opacity.
+- **On field:** 2px white border and text on turquoise; hover fills white with turquoise text.
+- **Ghost / Link:** ghost is ink text with a pale turquoise hover; link is turquoise text with a 2px underline.
+- **Large size:** any variant at the large size takes the action label and a 48px minimum height.
+- **Hover / Focus:** 0.2s colour transitions, a 1px press on active, a trailing arrow that slides 3px right on hover. Focus is a 2px ring outline offset 2px (turquoise on light, white on fields). Disabled is 45% opacity.
 
-### Chips (status badges)
-- **Style:** a square box (4px 8px padding, 0.875rem semibold) holding a 10px tessera of colour plus the words.
-- **State:** tones are neutral (an outlined tessera), field, glacier, ochre, terracotta and solid (turquoise box with an ochre tessera). Status is never colour alone: always tessera plus words.
+### Chips (status badges and filter chips)
+- **Badge:** a square box (4px 8px, 0.875rem semibold) holding a 10px colour square plus the words; status is never colour alone.
+- **Filter chip:** a pale turquoise box with deep turquoise semibold text and a close icon, 36px tall; hover accent wash.
 
 ### Cards / Containers
-- **Programme tile:** three fixed lines. The full title in display caps (never truncated), then degree · language · code in small muted text (this line may truncate), then one deciding fact above a hairline: the local deadline, or tuition when the deadline is unpublished. A 6px degree bar sits on the top edge (bachelor turquoise, master glacier, PhD ochre). Published: white tile with a transparent 2px border that turns turquoise on hover. Unpublished: dashed 2px outline on transparent.
-- **Mosaic tile:** a linked colour field (turquoise, glacier, ochre, terracotta or white) at least 224px tall with 24–32px padding, a display title, one line of purpose, and one hard fact with an arrow that slides on hover. Hover darkens the field.
-- **Date tile:** a square turquoise tile holding the day number and month in display face; an unpublished date is a dashed outline tile with a dash and a terracotta "not published yet".
-- **Background / Shadow:** card white or field colours; no shadow (see Elevation & Depth).
+- **Programme card:** white, 1px hairline that turns turquoise on hover, 20 to 24px padding, three fixed lines. The full serif title (never truncated), then degree · language · code in small muted text (this line may truncate), then the local deadline above a hairline. A published deadline is semibold; an unpublished one is stated in muted words. No colour stripe and no dashed state.
+- **Mosaic tile:** a linked tile at least 192px tall with 24 to 32px padding, a serif title, one line of purpose and one fact set as a label with a sliding arrow. Two tones only. `field` is turquoise with white text, the one main path per group, hover deep turquoise, and may carry a real SDU photo bled across its top. `card` is white with a 1px hairline that turns turquoise on hover, muted purpose text and a turquoise fact.
+- **Date tile:** a square in the ledger. Published: turquoise, white condensed day number and label month. Unpublished: muted surface square with a muted dash, and the words "not published yet" beside it.
+- **Background / Shadow:** card white, cool white, field tint or turquoise fields; no shadow (see Elevation & Depth).
 
 ### Inputs / Fields
-- **Style:** 44px tall, 2px input-stroke border, white ground, square corners; hover darkens the border to ink. Search fields on bands are 56px tall, joined flush to the ochre search button, with a turquoise search icon.
-- **Focus:** border turns turquoise and a 2px ring outline sits 2px outside.
-- **Error / Disabled:** aria-invalid turns the border terracotta text colour; disabled is 50% opacity.
-- **Filters:** native radios inside 44px square tiles; checked is a solid turquoise tile with white semibold text, unchecked is a white tile with a hairline border that turns turquoise on hover.
+- **Style:** 44px tall, 2px input-stroke border, white ground, square corners; hover darkens the border to ink. The hero search is 56px with a 2px ink border; the finder search is 56px, borderless on the turquoise band and joined flush to the ochre Search. Both carry a turquoise search icon.
+- **Focus:** the border turns turquoise and a 2px ring outline sits 2px outside.
+- **Error / Disabled:** aria-invalid turns the border terracotta-text; disabled is 50% opacity.
+- **Filters:** a hairline list under a label legend. Each option is a 44px row with an 18px square check indicator: unchecked is white with an input-stroke border and muted text; checked is a turquoise square with a white tick, and the option text is set at 600 in ink. Hover turns the text turquoise. Native radios underneath.
 
 ### Navigation
-- **Header:** a smalt turquoise bar with the white SDU lockup, a hairline divider and the "Admissions" label in display caps, four links in Golos 500 (field-mist, white when hovered or active, with a 4px ochre underline that scales in from the left on the active link), the language switcher, and the ochre Apply with an arrow.
-- **Mobile:** below 1280px a square menu button opens a full-screen deep turquoise sheet with display-caps links (active in ochre), the Apply button, and a small tesserae cluster in the bottom corner.
+- **Header:** a turquoise bar with the white SDU lockup, a hairline divider and the "Admissions" label, four links in Golos 500 (field mist, white when hovered or active, with a 2px white underline that scales in from the left on the active link), the language switcher and the ochre Apply with an arrow.
+- **Mobile:** below 1280px a square outlined menu button opens a full-screen deep turquoise sheet with serif links (1.5rem) on hairlines, the active one underlined in white, then the Apply.
 - **Guide tabs:** square tiles on the turquoise band; active is white with turquoise text, inactive deep turquoise, hover ink.
-- **Footer:** deep turquoise with a tessera edge, the white lockup and the tagline in display caps, ochre display-caps column titles.
+- **Footer:** deep turquoise rising into the page through the signature edge, the white lockup, a serif tagline (1.875rem, weight 400), label column titles in field mist, and white links with a faint underline.
 
 ### Application Stepper
-Four equal square steps with 4px gaps: done is deep turquoise with a check, current is a solid tile (turquoise; ochre with ink text for changes requested; terracotta for not accepted) carrying the status word, upcoming is a dashed outline with its number. Only the current step names the status.
+Four equal square steps with 4px gaps and condensed numerals. Done is deep turquoise with a check; current is a solid tile carrying the status word; only the current step names the status.
 
-### Tesserae
-A decorative, aria-hidden grid of square tiles in token colours (null cells are gaps), sized in multiples of 8px. Tiles set in once when their band enters the viewport: a short, scattered stagger (45ms steps in a loose order, never a sweep), 0.5s, expo-out (cubic-bezier(0.16, 1, 0.3, 1)), from 60% scale and transparent. Static under prefers-reduced-motion.
+### Mosaic Signature
+The one decorative motif. `signatureSteps` builds a deterministic stepped edge of 16px tesserae: runs of 3 to 8 columns step up and down one tile at a time and rise across the first 90 columns, each column a darker cap tile on a body that joins the band below. The hero band rises into the photo with three rows (deep cap on field body); the footer rises into the page with two rows (field cap on deep body). It is aria-hidden, monochrome turquoise, and fades in once over 0.4s (opacity only, expo-out) when it enters the viewport; static under reduced motion.
 
 ### Logo and Photography
-The SDU emblem and lockup are SDU's own SVG paths in one colour: white on fields, ink on light (frontend/public/brand/). Photography is real SDU campus and student photography, credited in frontend/public/images/sdu/CREDITS.md, set square-cornered and framed by fields or a small tesserae cluster.
+The SDU emblem and lockup are SDU's own SVG paths in one colour: white on fields, ink on light. Photography is real SDU campus and student photography, credited in frontend/public/images/sdu/CREDITS.md, set square-cornered: the full-bleed hero, the main path tile, a student photo beside the schools ledger.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** lay public sections as full-bleed solid fields, with smalt turquoise covering 30–60% of the page.
-- **Do** use one ochre action per band, with ink text.
-- **Do** show every status as a tessera plus words; solid tile for open or published, dashed outline tile for closed or unpublished.
-- **Do** keep programme tiles to three fixed lines with the degree colour as the top edge, and never truncate the title.
-- **Do** give Kazakh and Russian headings line-height 1.04 and size headings so whole words fit at 360, 1024 and 1440px.
+- **Do** keep turquoise and deep turquoise as the only brand fields, on cool white, white and the field tint.
+- **Do** reserve ochre for the header Apply and the hero Search, terracotta for errors and destructive actions, glacier for selection.
+- **Do** set headings in Source Serif 4, sentence case, weight 500, letter-spacing −0.01em, and keep tile titles smaller than their section heading.
+- **Do** use the label utility (condensed 600, 0.875rem, +0.08em, caps) for labels of three words or fewer, and condensed tabular figures for numerals.
+- **Do** make one mosaic tile per group the turquoise `field` main path, optionally with a real SDU photo across its top; the rest are white `card` tiles.
+- **Do** state unpublished deadlines in muted words and show unpublished dates as muted squares.
+- **Do** build structure from ledgers: a 2px ink rule over 1px hairline rows.
 - **Do** use the flat 2px ink ring (`--shadow-overlay`) for floating overlays only.
-- **Do** set the SDU logo in one colour: white on fields, ink on light.
-- **Do** keep motion to the tesserae set-in, 0.2s colour transitions and the 3px arrow slide, all static under reduced motion.
-- **Do** keep Operate areas quieter: plain hairline containers, staff headings in the display face in sentence case.
+- **Do** give Kazakh and Russian headings line-height 1.16.
+- **Do** keep motion to the 0.4s signature fade, 0.2s colour transitions and the 3px arrow slide, all static under reduced motion.
 
 ### Don't:
-- **Don't** use gradients or soft shadows anywhere; the cobe HeroGlobe is the one sanctioned exception and nothing may copy its shading.
+- **Don't** use the mosaic signature more than twice per page, or as random, multicoloured edges or sticker clusters.
+- **Don't** make glacier, ochre or terracotta tiles, bands or decorations.
+- **Don't** set headings in capitals or in the condensed face.
+- **Don't** add colour stripes or dashed outlines to cards to show state.
+- **Don't** use gradients or soft shadows; the cobe HeroGlobe is the one sanctioned exception and nothing may copy its shading.
 - **Don't** round corners on public surfaces.
 - **Don't** put eyebrow or kicker labels above headings, or number sections.
 - **Don't** use the official SDU navy or peach.
-- **Don't** use glacier, ochre or terracotta as tint washes or as backgrounds behind body text.
-- **Don't** hyphenate headings.
 - **Don't** add a dark mode; the world is light only.

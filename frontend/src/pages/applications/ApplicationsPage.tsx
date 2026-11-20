@@ -18,7 +18,7 @@ function ApplicationCard({ item }: { item: ApplicationSummary }) {
       <p className="text-xs text-muted-foreground">
         {item.program.program_id} · {t(item.applicant_type)}
       </p>
-      <h2 className="mt-2 text-xl font-semibold">{programTitle(item.program)}</h2>
+      <h2 className="mt-2 text-xl font-medium">{programTitle(item.program)}</h2>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <StatusBadge status={item.status} />
         <span className="text-muted-foreground">{t("updated", { date: deadline(item.updated_at.slice(0, 10)) })}</span>
@@ -66,7 +66,7 @@ function StartFromSaved({ saved, live }: { saved: SavedChecklist[]; live: Applic
   )
   return (
     <section aria-labelledby="start-title" className="mt-10">
-      <h2 id="start-title" className="text-2xl font-semibold">
+      <h2 id="start-title" className="text-2xl font-medium">
         {t("startTitle")}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("startLead")}</p>

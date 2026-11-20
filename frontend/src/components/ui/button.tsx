@@ -22,7 +22,7 @@ const buttonVariants = cva(
         gold: "bg-ochre text-ink hover:bg-ochre-hover",
         outline: "border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground",
         ghost: "text-foreground hover:bg-secondary",
-        link: "h-auto px-0 text-primary underline decoration-2 underline-offset-4 hover:decoration-ochre",
+        link: "h-auto px-0 text-primary underline decoration-primary/40 decoration-2 underline-offset-4 hover:decoration-primary",
         onField: "border-2 border-field-foreground bg-transparent text-field-foreground hover:bg-field-foreground hover:text-field",
       },
       size: {

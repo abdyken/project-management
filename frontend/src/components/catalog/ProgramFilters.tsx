@@ -190,7 +190,7 @@ export function ActiveFilters({ values, onChange }: { values: FilterValues; onCh
       <button
         type="button"
         onClick={() => onChange({ q: "", faculty: "", degree_level: "", language: "" })}
-        className="min-h-9 px-2 text-sm font-semibold text-primary underline decoration-2 underline-offset-4 hover:decoration-ochre"
+        className="min-h-9 px-2 text-sm font-semibold text-primary underline decoration-2 underline-offset-4 hover:decoration-primary"
       >
         {t("filters.clearAll")}
       </button>

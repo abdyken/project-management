@@ -8,10 +8,10 @@ import { useI18n } from "@/i18n"
 import { useStaffT } from "@/staff/i18n"
 import { selectClass } from "@/staff/styles"
 
-// Palette tokens: turquoise vs terracotta keep 3:1+ contrast on the white card and stay
-// distinct for colour-blind readers (blue-green against orange-red).
+// Palette tokens: turquoise (answered) against slate grey (unanswered) differ in hue and
+// lightness, keep 3:1+ contrast on the white card and stay distinct for colour-blind readers.
 const ANSWERED = "var(--field)"
-const UNANSWERED = "var(--terracotta)"
+const UNANSWERED = "var(--muted-foreground)"
 const PERIODS = [7, 14, 30]
 const PLOT_HEIGHT = 160
 const REASONS = ["none", "wrong", "outdated", "unclear", "other"] as const
@@ -243,7 +243,7 @@ export function StaffDashboardPage() {
                 {data.ratings.up}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <ThumbsDown className="size-5 text-terracotta" aria-hidden="true" />
+                <ThumbsDown className="size-5 text-muted-foreground" aria-hidden="true" />
                 <span className="sr-only">{chatT("chat.notHelpful")}:</span>
                 {data.ratings.down}
               </span>

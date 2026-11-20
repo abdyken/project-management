@@ -61,7 +61,7 @@ function SavedProgram({ checklist }: { checklist: SavedChecklist }) {
       <p className="text-xs text-muted-foreground">
         {program.program_id} · {t(checklist.applicant_type)}
       </p>
-      <h2 className="mt-2 text-2xl font-semibold">
+      <h2 className="mt-2 text-2xl font-medium">
         <Link
           to={`/programs/${encodeURIComponent(program.program_id)}?applicant=${checklist.applicant_type}`}
           className="hover:underline"
@@ -272,7 +272,7 @@ export function ApplicantAccountPage() {
         )}
         <Link className="underline" to="/account/requests">{guidanceT("requests")}</Link>
       </div>
-      <h2 className="mt-10 text-2xl font-semibold">{t("saved")}</h2>
+      <h2 className="mt-10 text-2xl font-medium">{t("saved")}</h2>
       <Link className="mt-3 inline-block text-sm underline" to="/programs">
         {t("browse")}
       </Link>

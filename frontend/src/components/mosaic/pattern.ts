@@ -1,9 +1,10 @@
 export type Tile = "field" | "deep" | "tint" | "white" | null
 
 // The portal's mosaic signature: a stepped edge of 16px tesserae, after the step profiles of
-// Almaty's modernist mosaic panels. Runs of 3-8 tiles step up and down one tile at a time and
-// rise across the first ~90 columns. Each column has a darker cap tile on a body that joins
-// the band below. Deterministic, monochrome turquoise, used at most twice per page.
+// Almaty's modernist mosaic panels. Short runs (2-5 tiles) step up or down one tile at a
+// time from the very first column, so even a phone shows several steps. Each column has a
+// cap tile on a body that joins the band below. Deterministic and monochrome turquoise;
+// used at most twice per page.
 export function signatureSteps(length: number, rows = 3, cap: Tile = "deep", body: Tile = "field", seed = 1996): Tile[][] {
   let state = seed >>> 0 || 1
   const next = () => {
@@ -13,16 +14,16 @@ export function signatureSteps(length: number, rows = 3, cap: Tile = "deep", bod
     return (state >>> 0) / 4294967296
   }
   const heights: number[] = []
+  let height = 1
   while (heights.length < length) {
-    const column = heights.length
-    const rising = 1 + Math.floor((Math.min(column, 89) / 90) * rows)
-    const height = Math.max(1, Math.min(rows, rising - (next() < 0.3 ? 1 : 0)))
-    const run = 3 + Math.floor(next() * 6)
+    const run = 2 + Math.floor(next() * 4)
     for (let i = 0; i < run && heights.length < length; i++) heights.push(height)
+    const step = height === 1 ? 1 : height === rows ? -1 : next() < 0.5 ? 1 : -1
+    height += step
   }
   return Array.from({ length: rows }, (_, row) =>
-    heights.map((height) => {
-      const top = rows - height
+    heights.map((columnHeight) => {
+      const top = rows - columnHeight
       return row < top ? null : row === top ? cap : body
     }),
   )

@@ -54,7 +54,7 @@ export function StaffLayout() {
                 to={item.to}
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center bg-secondary px-3 py-2 text-[0.9375rem] font-semibold text-secondary-foreground shadow-[inset_0_-4px_0_var(--ochre)] sm:py-0"
+                    ? "flex items-center bg-secondary px-3 py-2 text-[0.9375rem] font-semibold text-secondary-foreground shadow-[inset_0_-3px_0_var(--primary)] sm:py-0"
                     : "flex items-center px-3 py-2 text-[0.9375rem] font-medium text-muted-foreground hover:bg-muted hover:text-foreground sm:py-0"
                 }
               >

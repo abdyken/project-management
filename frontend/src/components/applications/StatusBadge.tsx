@@ -4,8 +4,8 @@ import { Badge, type BadgeTone } from "@/components/ui/badge"
 
 const STATUS_TONE: Record<ApplicationStatus, BadgeTone> = {
   draft: "neutral",
-  submitted: "field",
-  in_review: "glacier",
+  submitted: "neutral",
+  in_review: "field",
   needs_changes: "ochre",
   accepted: "solid",
   rejected: "terracotta",

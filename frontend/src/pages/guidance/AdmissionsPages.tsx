@@ -73,7 +73,7 @@ export function AdmissionsPage() {
             large={"large" in tile}
             fact={facts[tile.key]}
             headingLevel={2}
-            image={tile.key === "eligibility" ? { src: "/images/sdu/campus-facade-960.webp", srcSet: "/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w" } : undefined}
+            image={tile.key === "eligibility" ? { src: "/images/sdu/campus-facade-960.webp", srcSet: "/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w", position: "50% 30%" } : undefined}
           />
         ))}
       </div>
@@ -138,7 +138,7 @@ export function EligibilityResult({ result }: { result: Eligibility }) {
       aria-live="polite"
       className="mt-8 border-2 border-border bg-card p-6"
     >
-      <h2 className="text-xl font-semibold">{t(result.status)}</h2>
+      <h2 className="text-xl font-medium">{t(result.status)}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("disclaimer")}</p>
       <GapList gaps={result.gaps} />
       <ul className="mt-4 divide-y divide-border">
@@ -590,7 +590,7 @@ export function RecommendationsPage() {
               <p className="text-xs text-muted-foreground">
                 {item.program.program_id}
               </p>
-              <h2 className="mt-1 text-xl font-semibold">
+              <h2 className="mt-1 text-xl font-medium">
                 {programTitle(item.program)}
               </h2>
               <p className="mt-2 text-sm">
@@ -773,7 +773,7 @@ export function CostPage() {
           aria-live="polite"
           className="mt-8 border-2 border-border bg-card p-6"
         >
-          <h2 className="text-xl font-semibold">
+          <h2 className="text-xl font-medium">
             {t("total")}: {number(mutation.data.estimated_total)} {currency}
           </h2>
           {mutation.data.estimated_total == null && (

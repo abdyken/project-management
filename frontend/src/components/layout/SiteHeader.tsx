@@ -43,7 +43,7 @@ export function SiteHeader() {
     <header className="on-field relative z-30 bg-field">
       <a
         href="#main"
-        className="absolute top-2 left-2 z-50 -translate-y-24 bg-ochre px-4 py-2 font-semibold text-ink focus:translate-y-0"
+        className="absolute top-2 left-2 z-50 -translate-y-24 bg-white px-4 py-2 font-semibold text-ink focus:translate-y-0"
       >
         {t("header.skip")}
       </a>

@@ -170,8 +170,8 @@
 }
 
 .on-field ::selection {
-  background: var(--ochre);
-  color: var(--ink);
+  background: #ffffff;
+  color: var(--field-deep);
 }
 
 .sdu-globe-marker {

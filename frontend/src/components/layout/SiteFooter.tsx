@@ -74,7 +74,7 @@ function FooterColumn({ title, children }: { title: string; children: ReactNode 
 type FooterLinkProps = { children: ReactNode; tabular?: boolean } & ({ to: string; href?: never } | { href: string; to?: never })
 
 function FooterLink({ children, to, href, tabular }: FooterLinkProps) {
-  const className = `text-field-foreground underline decoration-field-foreground/30 decoration-1 underline-offset-4 transition-colors hover:decoration-ochre hover:decoration-2${tabular ? " tabular" : ""}`
+  const className = `text-field-foreground underline decoration-field-foreground/30 decoration-1 underline-offset-4 transition-colors hover:decoration-field-foreground hover:decoration-2${tabular ? " tabular" : ""}`
   return (
     <li>
       {to ? (

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react"
 import { cn } from "@/lib/utils"
 
 // The mosaic signature: a decorative run of square tiles in turquoise shades (null = gap).
+// Each tile carries a faint 1px grout line so the 16px module reads as laid tesserae.
 // It fades in once when it enters the viewport (static under reduced motion; see index.css).
 // Purely decorative, so hidden from assistive technology.
 import type { Tile } from "@/components/mosaic/pattern"
@@ -62,7 +63,7 @@ export function Tesserae({ rows, size = 24, className, style }: TesseraeProps) {
           return (
             <span
               key={`${r}-${c}`}
-              className={tile ? TILE_CLASS[tile] : undefined}
+              className={tile ? `${TILE_CLASS[tile]} shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]` : undefined}
             />
           )
         }),

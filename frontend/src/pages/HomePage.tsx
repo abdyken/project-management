@@ -103,14 +103,15 @@ export function HomePage() {
           />
         </picture>
         <div className="on-field relative bg-field">
-          <div className="absolute inset-x-0 bottom-full overflow-hidden">
+          {/* On desktop the steps stop before the search tile, so the photo edge behind it stays straight. */}
+          <div className="absolute inset-x-0 bottom-full overflow-hidden lg:right-[45%]">
             <Tesserae size={16} rows={HERO_STEPS} />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>
               <h1
                 id="home-title"
-                className="max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.015em]"
+                className="max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.01em]"
               >
                 {t("home.title")}
               </h1>
@@ -146,7 +147,7 @@ export function HomePage() {
               <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="mt-4 text-[0.9375rem] font-medium text-primary underline decoration-2 underline-offset-4 hover:decoration-ochre"
+                className="mt-4 text-[0.9375rem] font-medium text-primary underline decoration-2 underline-offset-4 hover:decoration-primary"
               >
                 {t("home.askQuestion")}
               </button>
@@ -196,7 +197,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Key dates as a board: published dates are solid tiles, unpublished ones outline tiles. */}
+      {/* Key dates as a board: published dates are turquoise tiles, unpublished ones quiet muted tiles. */}
       <section aria-labelledby="dates-title" className="border-y-2 border-ink bg-card">
         <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16 lg:px-8 lg:py-24">
           <div>

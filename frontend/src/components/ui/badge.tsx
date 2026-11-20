@@ -6,10 +6,9 @@ import { cn } from "@/lib/utils"
 const TONES = {
   neutral: { box: "bg-muted text-foreground", tile: "border-2 border-input" },
   field: { box: "bg-secondary text-secondary-foreground", tile: "bg-field" },
-  glacier: { box: "bg-secondary text-secondary-foreground", tile: "bg-glacier" },
   ochre: { box: "bg-ochre/20 text-foreground", tile: "bg-ochre" },
   terracotta: { box: "bg-terracotta/12 text-destructive", tile: "bg-terracotta" },
-  solid: { box: "bg-primary text-primary-foreground", tile: "bg-ochre" },
+  solid: { box: "bg-primary text-primary-foreground", tile: "bg-white" },
 } as const
 
 export type BadgeTone = keyof typeof TONES

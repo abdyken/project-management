@@ -194,7 +194,7 @@ function Documents({ application }: { application: Application }) {
   const focusHeading = () => heading.current?.focus()
   return (
     <section aria-labelledby="documents-title" className="mt-10">
-      <h2 id="documents-title" ref={heading} tabIndex={-1} className="text-2xl font-semibold outline-none">
+      <h2 id="documents-title" ref={heading} tabIndex={-1} className="text-2xl font-medium outline-none">
         {t("documentsTitle")}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("documentsLead")}</p>
@@ -333,7 +333,7 @@ function Form({ application, statusBox }: { application: Application; statusBox:
   return (
     <>
       <form ref={formRef} onSubmit={onSubmit} className="mt-10" aria-labelledby="form-title">
-        <h2 id="form-title" className="text-2xl font-semibold">
+        <h2 id="form-title" className="text-2xl font-medium">
           {t("formTitle")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">{t("noIdentityNumbers")}</p>
@@ -409,7 +409,7 @@ function Form({ application, statusBox }: { application: Application; statusBox:
 
       {!locked && (
         <section aria-labelledby="submit-title" className="mt-10 border-t border-border pt-8">
-          <h2 id="submit-title" className="text-2xl font-semibold">
+          <h2 id="submit-title" className="text-2xl font-medium">
             {t("submitTitle")}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">{t("submitLead")}</p>
@@ -532,7 +532,7 @@ export function ApplicationPage() {
         <p className="mt-6 max-w-[60ch]">{t(`help.${data.status}`)}</p>
         {showNote && (
           <div className="mt-5 bg-secondary p-4">
-            <h2 className="font-sans text-[0.9375rem] font-semibold">{t("note")}</h2>
+            <h2 className="font-sans text-[0.9375rem] font-medium">{t("note")}</h2>
             <p className="mt-1 whitespace-pre-wrap break-words">{data.staff_note}</p>
           </div>
         )}
