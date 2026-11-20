@@ -31,13 +31,14 @@ export function HeroGlobe() {
       height: width * 2,
       phi,
       theta,
+      // Drawn on the turquoise International band (--field #0a6c74): glacier sphere, white land dots.
       dark: 0,
-      diffuse: 1.15,
-      mapSamples: 14000,
-      mapBrightness: 4.5,
-      baseColor: [0.106, 0.227, 0.294],
-      markerColor: [0.769, 0.647, 0.455],
-      glowColor: [0.965, 0.953, 0.933],
+      diffuse: 1.6,
+      mapSamples: 16000,
+      mapBrightness: 5,
+      baseColor: [0.098, 0.655, 0.659],
+      markerColor: [0.89, 0.639, 0.227],
+      glowColor: [0.039, 0.424, 0.455],
       markers: [{ location: ALMATY, size: 0.028, id: "sdu" }],
     })
 
@@ -132,7 +133,6 @@ export function HeroGlobe() {
         role="img"
         aria-label={t("home.globe")}
       >
-        <div className="absolute inset-[12%] rounded-full bg-primary/5 blur-2xl" aria-hidden />
         <canvas ref={canvasRef} className="relative h-full w-full" style={{ contain: "layout paint size" }} />
         <div className="sdu-globe-marker" aria-hidden>
           <span className="sdu-globe-marker__ring" />

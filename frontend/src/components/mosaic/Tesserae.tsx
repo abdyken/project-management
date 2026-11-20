@@ -49,7 +49,6 @@ export function Tesserae({ rows, size = 24, className, style }: TesseraeProps) {
   }, [set])
 
   const columns = Math.max(...rows.map((row) => row.length))
-  let index = 0
 
   return (
     <div
@@ -63,7 +62,8 @@ export function Tesserae({ rows, size = 24, className, style }: TesseraeProps) {
       {rows.flatMap((row, r) =>
         Array.from({ length: columns }, (_, c) => {
           const tile = row[c] ?? null
-          const i = index++
+          // Scattered, short stagger: tiles set in a loose order, never in a long sweep.
+          const i = (c * 7 + r * 11) % 17
           return (
             <span
               key={`${r}-${c}`}
