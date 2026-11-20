@@ -51,8 +51,8 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-[84rem] items-center gap-3 px-4 sm:px-6 lg:h-[4.5rem] lg:gap-6 lg:px-8">
         <Link to="/" aria-label={t("header.home")} className="flex shrink-0 items-center gap-3">
           <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto lg:h-10" width={108} height={34} />
-          <span aria-hidden="true" className="hidden h-7 w-px bg-field-foreground/40 sm:block" />
-          <span className="hidden font-display text-xl font-bold tracking-[0.02em] uppercase sm:block">
+          <span aria-hidden="true" className="hidden h-7 w-px bg-field-foreground/40 sm:block lg:hidden xl:block" />
+          <span className="hidden font-display text-xl font-bold tracking-[0.02em] uppercase sm:block lg:hidden xl:block">
             {t("header.admissions")}
           </span>
         </Link>
