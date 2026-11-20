@@ -21,7 +21,7 @@ function Tile({ label, value, note }: { label: string; value: ReactNode; note?: 
   return (
     <div className="border-t-4 border-primary bg-card p-4">
       <p className="text-sm font-semibold text-muted-foreground">{label}</p>
-      <p className="mt-1 font-display text-3xl font-extrabold tabular-nums">{value}</p>
+      <p className="mt-1 font-display text-3xl font-bold tabular-nums">{value}</p>
       {note && <p className="mt-0.5 text-xs text-muted-foreground">{note}</p>}
     </div>
   )
@@ -189,7 +189,7 @@ export function StaffDashboardPage() {
   const header = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-4xl leading-[0.95] font-extrabold">{t("dash.title")}</h1>
+        <h1 className="text-3xl leading-[1.12] font-medium">{t("dash.title")}</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("dash.lead")}</p>
       </div>
       <select

@@ -35,10 +35,10 @@ function SubmitHint({ id, text }: { id: string; text: string | null }) {
 
 const HUB_TILES = [
   { key: "eligibility", text: "eligibilityText", tone: "field", className: "sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[28rem]", large: true },
-  { key: "recommendations", text: "recommendationsText", tone: "glacier", className: "lg:col-span-3" },
-  { key: "cost", text: "costText", tone: "ochre", className: "lg:col-span-3" },
+  { key: "recommendations", text: "recommendationsText", tone: "card", className: "lg:col-span-3" },
+  { key: "cost", text: "costText", tone: "card", className: "lg:col-span-3" },
   { key: "funding", text: "fundingText", tone: "card", className: "lg:col-span-3" },
-  { key: "requests", text: "requestsText", tone: "terracotta", className: "lg:col-span-3" },
+  { key: "requests", text: "requestsText", tone: "card", className: "lg:col-span-3" },
 ] as const
 
 export function AdmissionsPage() {

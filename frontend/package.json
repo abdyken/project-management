@@ -13,6 +13,7 @@
     "qa:applications": "node e2e/applications-qa.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/source-serif-4": "^5.3.1",
     "@fontsource/fira-sans-extra-condensed": "^5.3.0",
     "@fontsource/golos-text": "^5.3.0",
     "@radix-ui/react-dialog": "^1.1.23",

@@ -85,7 +85,7 @@ export function ComparePage() {
         <ArrowLeft className="size-4" aria-hidden="true" />
         {t("detail.backToPrograms").replace(/^←\s*/, "")}
       </Link>
-      <h1 className="mt-8 text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] font-extrabold uppercase">{t("compare.title")}</h1>
+      <h1 className="mt-8 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("compare.title")}</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
         {t("compare.lead", { max: MAX_COMPARED })}
       </p>

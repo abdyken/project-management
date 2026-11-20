@@ -297,7 +297,7 @@ export function StaffRequestsPage() {
   const t = useStaffT()
   return (
     <div>
-      <h1 className="mb-8 text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t("nav.requests")}</h1>
+      <h1 className="mb-8 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("nav.requests")}</h1>
       <RequestsContent staff />
     </div>
   )

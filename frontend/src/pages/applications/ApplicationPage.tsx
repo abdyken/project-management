@@ -526,7 +526,7 @@ export function ApplicationPage() {
       <p className="tabular mt-8 text-muted-foreground">
         {data.program.program_id} · {t(data.applicant_type)}
       </p>
-      <h1 className="mt-2 text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{programTitle(data.program)}</h1>
+      <h1 className="mt-2 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{programTitle(data.program)}</h1>
       <div ref={statusBox} tabIndex={-1} className="mt-8 bg-card p-6 outline-none focus-visible:outline-2 focus-visible:outline-ring" role="status" aria-live="polite">
         <ApplicationStepper status={data.status} />
         <p className="mt-6 max-w-[60ch]">{t(`help.${data.status}`)}</p>

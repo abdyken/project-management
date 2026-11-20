@@ -144,7 +144,7 @@ export function ApplicationsPage() {
       <Link to="/account" className="text-sm underline">
         ← {me.data.email}
       </Link>
-      <h1 className="mt-4 text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t("title")}</h1>
+      <h1 className="mt-4 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("title")}</h1>
       <p className="mt-3 text-muted-foreground">{t("lead")}</p>
       {applications.isPending ? (
         <p className="mt-8">{t("working")}</p>

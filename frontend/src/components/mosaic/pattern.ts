@@ -1,7 +1,9 @@
-export type Tile = "field" | "deep" | "glacier" | "ochre" | "terracotta" | "white" | "ink" | null
+export type Tile = "field" | "deep" | "tint" | "white" | null
 
-// A deterministic pseudo-random tile row (same seed, same edge on every render and server).
-export function mosaicRow(seed: number, length: number, density = 0.45, palette: Tile[] = ["field", "glacier", "ochre", "field", "terracotta", "deep"]): Tile[] {
+// The portal's mosaic signature: a quiet tonal band of small turquoise tesserae (field and
+// deep only), laid irregularly like a real mosaic. Deterministic, so it never changes between
+// renders. Used at most twice per page (hero band edge, footer edge); never warm hues.
+export function signatureBand(rows: number, length: number, seed = 1996, share = 0.38): Tile[][] {
   let state = seed >>> 0 || 1
   const next = () => {
     state ^= state << 13
@@ -9,5 +11,5 @@ export function mosaicRow(seed: number, length: number, density = 0.45, palette:
     state ^= state << 5
     return (state >>> 0) / 4294967296
   }
-  return Array.from({ length }, () => (next() < density ? palette[Math.floor(next() * palette.length)] : null))
+  return Array.from({ length: rows }, () => Array.from({ length }, () => (next() < share ? "field" : "deep")))
 }

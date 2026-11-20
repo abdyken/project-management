@@ -10,7 +10,7 @@ const TITLE_ID = "chat-title"
 const iconButton = "grid size-9 place-items-center text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground outline-none focus-visible:outline-2 focus-visible:outline-ring"
 const fieldIconButton = "grid size-9 place-items-center text-field-foreground transition-colors hover:bg-field-deep outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
 const fabClass =
-  "fixed z-50 flex size-14 items-center justify-center bg-primary text-primary-foreground shadow-overlay outline-none transition-colors hover:bg-field-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring after:absolute after:-top-1.5 after:-right-1.5 after:size-3 after:bg-ochre"
+  "fixed z-50 flex size-14 items-center justify-center bg-primary text-primary-foreground shadow-overlay outline-none transition-colors hover:bg-field-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
 
 function NewConversationButton({ onField = false }: { onField?: boolean }) {
   const { t } = useI18n()
@@ -138,7 +138,7 @@ function DesktopChat() {
     >
       <div className="on-field flex items-start justify-between gap-3 bg-field px-4 py-3">
         <div>
-          <h2 id={TITLE_ID} className="text-2xl leading-none font-extrabold uppercase">
+          <h2 id={TITLE_ID} className="text-xl leading-tight font-medium">
             {t("chat.title")}
           </h2>
           <p className="mt-1 text-sm text-field-muted">{t("chat.subtitle")}</p>

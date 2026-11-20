@@ -1,12 +1,9 @@
 import type { ReactNode } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
-import { mosaicRow } from "@/components/mosaic/pattern"
-import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useGuidanceT } from "@/guidance/i18n"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
 import { cn } from "@/lib/utils"
 
-const BAND_EDGE = [mosaicRow(140, 70, 0.5, ["deep", "field", "glacier", "ochre", "deep"])]
 
 // Admissions planning pages: a turquoise band with the title and the tools as tile tabs,
 // then a reading column. Mode: Read.
@@ -24,7 +21,7 @@ export function GuidanceShell({ title, lead, children }: { title: string; lead?:
               {t("hub")}
             </Link>
           )}
-          <h1 className={cn("max-w-[20ch] text-[clamp(2.5rem,6vw,5rem)] leading-[0.88] font-extrabold uppercase", onHub ? "mt-4" : "mt-6")}>
+          <h1 className={cn("max-w-[20ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium", onHub ? "mt-4" : "mt-6")}>
             {title}
           </h1>
           {lead ? <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{lead}</p> : null}
@@ -46,9 +43,6 @@ export function GuidanceShell({ title, lead, children }: { title: string; lead?:
             ))}
           </nav>
           )}
-        </div>
-        <div className="absolute inset-x-0 top-full overflow-hidden">
-          <Tesserae size={24} rows={BAND_EDGE} />
         </div>
       </section>
       <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", onHub ? "max-w-[84rem]" : "max-w-6xl")}>{children}</div>

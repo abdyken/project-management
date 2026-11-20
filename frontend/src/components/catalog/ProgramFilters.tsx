@@ -72,7 +72,7 @@ function TileGroup({
 
   return (
     <fieldset>
-      <legend className="font-display text-xl font-bold uppercase">{legend}</legend>
+      <legend className="label text-foreground">{legend}</legend>
       <div className="mt-3 flex flex-wrap gap-1.5 lg:flex-col lg:items-stretch">
         {all.map((option) => {
           const checked = value === option.value
@@ -126,7 +126,7 @@ export function FilterPanel({
         aria-expanded={open}
         aria-controls="filter-panel"
         onClick={() => setOpen((value) => !value)}
-        className="flex h-12 w-full items-center justify-between border-2 border-ink px-4 font-display text-lg font-bold uppercase lg:hidden"
+        className="label flex h-12 w-full items-center justify-between border border-ink px-4 text-foreground lg:hidden"
       >
         {active ? t("filters.activeCount", { count: active }) : t("filters.title")}
         <SlidersHorizontal className="size-5" aria-hidden="true" />

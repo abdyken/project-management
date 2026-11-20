@@ -3,14 +3,16 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Almaty Mosaic design tokens. Direction contract:
+ * Almaty Mosaic design tokens, refined. Direction contract:
  * .impeccable/surfaces/frontend-src-pages-homepage-tsx.md
- * Smalt turquoise carries whole fields; glacier, ochre and terracotta appear only as
- * tesserae and state. Corners are square, the module is 8px.
+ * One brand hue: smalt turquoise and its deep shade on calm cool neutrals. Ochre is only
+ * the primary action; terracotta only errors; glacier only selection. The mosaic is a
+ * monochrome signature, never wallpaper. Corners are square, the module is 8px.
  */
 @theme inline {
   --font-sans: "Golos Text", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Fira Sans Extra Condensed", "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-heading: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -35,6 +37,7 @@
   --color-field-deep: var(--field-deep);
   --color-field-foreground: var(--field-foreground);
   --color-field-muted: var(--field-muted);
+  --color-field-tint: var(--field-tint);
   --color-glacier: var(--glacier);
   --color-ochre: var(--ochre);
   --color-ochre-hover: var(--ochre-hover);
@@ -56,11 +59,11 @@
 
   /* Reading surfaces */
   --background: #f5f7f6;
-  --foreground: #121417;
+  --foreground: #17222a;
   --card: #ffffff;
-  --card-foreground: #121417;
+  --card-foreground: #17222a;
   --popover: #ffffff;
-  --popover-foreground: #121417;
+  --popover-foreground: #17222a;
   --primary: #0a6c74;
   --primary-foreground: #ffffff;
   --secondary: #e4eeed;
@@ -79,11 +82,12 @@
   --field-deep: #074f55;
   --field-foreground: #ffffff;
   --field-muted: #cdebe9;
+  --field-tint: #e3efee;
   --glacier: #19a7a8;
   --ochre: #e3a33a;
   --ochre-hover: #d2912a;
   --terracotta: #c5532f;
-  --ink: #121417;
+  --ink: #17222a;
 }
 
 @layer base {
@@ -127,10 +131,11 @@
 
   h1,
   h2 {
-    font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: 0;
-    line-height: 1;
+    font-family: var(--font-heading);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
     text-wrap: balance;
   }
 
@@ -231,20 +236,15 @@ select:not([multiple]):not([size]) {
   background-size: 1rem;
 }
 
-/* Tesserae set in place once, when their band first enters the viewport. */
+/* The signature strip fades in once (no scaling, no stagger sweep); static under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
-  [data-tesserae] > span {
+  [data-tesserae] {
     opacity: 0;
-    transform: scale(0.6);
-    transition:
-      opacity 0.5s var(--ease-out-expo),
-      transform 0.5s var(--ease-out-expo);
-    transition-delay: calc(var(--i, 0) * 45ms);
+    transition: opacity 0.4s var(--ease-out-expo);
   }
 
-  [data-tesserae][data-set="true"] > span {
+  [data-tesserae][data-set="true"] {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -252,5 +252,16 @@ select:not([multiple]):not([size]) {
    in Kazakh and Russian. Unlayered, so it outranks the tight leading utilities on headings. */
 html:lang(kk) :is(h1, h2, h3),
 html:lang(ru) :is(h1, h2, h3) {
-  line-height: 1.04;
+  line-height: 1.16;
+}
+
+/* Short labels of 1-3 words (nav label, column titles, legends, dates, facts): the only
+   place condensed capitals appear besides numerals and the primary action. */
+@utility label {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
 }

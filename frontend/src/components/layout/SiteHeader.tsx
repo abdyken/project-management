@@ -4,7 +4,6 @@ import { useState } from "react"
 import { Link, NavLink } from "react-router-dom"
 import { useFeatures } from "@/api/features"
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher"
-import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
@@ -52,7 +51,7 @@ export function SiteHeader() {
         <Link to="/" aria-label={t("header.home")} className="flex shrink-0 items-center gap-3">
           <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto lg:h-10" width={108} height={34} />
           <span aria-hidden="true" className="hidden h-7 w-px bg-field-foreground/40 sm:block" />
-          <span className="hidden font-display text-xl font-bold tracking-[0.02em] uppercase sm:block">
+          <span className="label hidden text-[0.9375rem] sm:block">
             {t("header.admissions")}
           </span>
         </Link>
@@ -125,7 +124,7 @@ export function SiteHeader() {
                       onClick={() => setMenuOpen(false)}
                       className={({ isActive }) =>
                         cn(
-                          "flex items-center justify-between border-b border-field-foreground/20 py-4 font-display text-3xl font-bold uppercase",
+                          "flex items-center justify-between border-b border-field-foreground/20 py-4 font-heading text-2xl font-medium",
                           isActive ? "text-ochre" : "text-field-foreground",
                         )
                       }
@@ -140,7 +139,7 @@ export function SiteHeader() {
                       setMenuOpen(false)
                       setChatOpen(true)
                     }}
-                    className="flex items-center justify-between border-b border-field-foreground/20 py-4 text-left font-display text-3xl font-bold uppercase"
+                    className="flex items-center justify-between border-b border-field-foreground/20 py-4 text-left font-heading text-2xl font-medium"
                   >
                     {t("nav.ask")}
                     <ArrowRight className="size-6" aria-hidden="true" />
@@ -149,15 +148,6 @@ export function SiteHeader() {
                 <div className="mt-8 px-4 sm:px-6" onClick={() => setMenuOpen(false)}>
                   {apply}
                 </div>
-                <Tesserae
-                  className="mt-auto self-end"
-                  size={32}
-                  rows={[
-                    [null, null, null, "glacier"],
-                    [null, "ochre", "field", "white"],
-                    ["terracotta", "glacier", "ochre", "field"],
-                  ]}
-                />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -168,4 +158,4 @@ export function SiteHeader() {
 }
 
 const applyClass =
-  "group/button inline-flex h-11 items-center gap-2 whitespace-nowrap bg-ochre px-5 font-display text-lg font-bold tracking-[0.04em] text-ink uppercase transition-colors duration-200 hover:bg-ochre-hover [&_svg]:size-4 [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:translate-x-[3px]"
+  "group/button inline-flex h-11 items-center gap-2 whitespace-nowrap bg-ochre px-5 font-display text-[0.9375rem] font-semibold tracking-[0.06em] text-ink uppercase transition-colors duration-200 hover:bg-ochre-hover [&_svg]:size-4 [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:translate-x-[3px]"

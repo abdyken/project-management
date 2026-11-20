@@ -1,14 +1,14 @@
 import type { ReactNode } from "react"
 import { Link } from "react-router-dom"
-import { mosaicRow } from "@/components/mosaic/pattern"
+import { signatureBand } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 import { ADMISSIONS_PHONE, ADMISSIONS_WEBSITE } from "@/lib/constants"
 
-// Stepped mosaic edge: a sparse upper row over a denser row that meets the field.
-const FOOTER_EDGE = [mosaicRow(19960, 80, 0.22), mosaicRow(2026, 80, 0.7, ["deep", "field", "glacier", "ochre", "deep", "terracotta"])]
+// Signature 2 of 2: a tonal mosaic band at the top of the footer.
+const FOOTER_SIGNATURE = signatureBand(3, 240, 1996, 0.4)
 
 export function SiteFooter() {
   const { t, language } = useI18n()
@@ -18,13 +18,13 @@ export function SiteFooter() {
 
   return (
     <footer className="on-field mt-auto bg-field-deep">
-      <div className="-mt-px overflow-hidden">
-        <Tesserae size={24} rows={FOOTER_EDGE} />
+      <div className="overflow-hidden">
+        <Tesserae size={8} rows={FOOTER_SIGNATURE} />
       </div>
       <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:px-8">
         <div>
           <img src="/brand/sdu-lockup-white.svg" alt="SDU University" className="h-11 w-auto" width={150} height={47} />
-          <p className="mt-6 max-w-[14ch] font-display text-4xl leading-[0.95] font-extrabold uppercase">
+          <p className="mt-6 max-w-[16ch] font-heading text-3xl leading-[1.12] font-normal">
             {t("footer.tagline")}
           </p>
         </div>
@@ -65,7 +65,7 @@ export function SiteFooter() {
 function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h2 className="font-display text-xl font-bold tracking-[0.06em] text-ochre uppercase">{title}</h2>
+      <h2 className="label text-field-muted">{title}</h2>
       <ul className="mt-4 space-y-2.5 text-[0.9375rem]">{children}</ul>
     </div>
   )

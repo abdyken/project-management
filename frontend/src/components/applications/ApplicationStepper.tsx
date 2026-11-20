@@ -33,7 +33,7 @@ export function ApplicationStepper({ status }: { status: ApplicationStatus }) {
           <li key={index} aria-current={active ? "step" : undefined} className="min-w-0">
             <span
               className={cn(
-                "flex h-10 items-center justify-center font-display text-lg font-extrabold",
+                "flex h-10 items-center justify-center font-display text-lg font-bold",
                 active ? currentTile : done ? "bg-field-deep text-field-foreground" : "border-2 border-dashed border-input text-muted-foreground",
               )}
             >

@@ -3,14 +3,12 @@ import type { ReactNode } from "react"
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
-// A linked colour-field tile: title, one line of purpose, one hard fact with an arrow.
+// A linked tile: title, one line of purpose, one hard fact with an arrow. One tile per
+// group may be the turquoise field (the main path); the rest are quiet white cards.
 // Used for paths on the home page and tools on the admissions hub.
 const TONES = {
   field: "on-field bg-field text-field-foreground hover:bg-field-deep",
-  glacier: "bg-glacier text-ink hover:bg-[#1597a0]",
-  ochre: "bg-ochre text-ink hover:bg-ochre-hover",
-  terracotta: "bg-terracotta text-white hover:bg-[#b2482a] [--ring:#fff]",
-  card: "bg-card text-card-foreground outline-2 -outline-offset-2 outline-transparent hover:outline-primary",
+  card: "border border-border bg-card text-card-foreground hover:border-primary",
 } as const
 
 export type MosaicTone = keyof typeof TONES
@@ -38,17 +36,17 @@ export function MosaicTile({
   return (
     <Link
       to={to}
-      className={cn("group relative flex min-h-56 min-w-0 flex-col justify-between p-6 transition-colors duration-200 sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
+      className={cn("group relative flex min-h-48 min-w-0 flex-col justify-between p-6 transition-colors duration-200 sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
     >
       <div>
-        <Heading className={cn("font-display font-extrabold uppercase", large ? "text-[clamp(2.75rem,5vw,4.5rem)]" : "text-[clamp(1.375rem,1.9vw,2.125rem)]", "leading-[0.9]")}>
+        <Heading className={cn("font-heading font-medium", large ? "text-[clamp(1.75rem,2.6vw,2.25rem)]" : "text-[clamp(1.25rem,1.6vw,1.5rem)]", "leading-[1.15]")}>
           {title}
         </Heading>
-        <p className={cn("mt-3 max-w-[34ch]", large ? "text-xl" : "text-lg")}>{text}</p>
+        <p className={cn("mt-3 max-w-[38ch]", large ? "text-lg" : "text-base", tone === "card" && "text-muted-foreground")}>{text}</p>
       </div>
-      <p className="tabular mt-8 flex items-center justify-between gap-4 font-display text-2xl font-bold uppercase">
+      <p className={cn("label tabular mt-8 flex items-center justify-between gap-4", tone === "card" && "text-primary")}>
         {fact === undefined ? <span /> : (fact ?? "…")}
-        <ArrowRight className="size-6 shrink-0 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+        <ArrowRight className="size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
       </p>
     </Link>
   )

@@ -6,7 +6,7 @@ import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { DegreeLevel, Program } from "@/api/types"
 import { HeroGlobe } from "@/components/home/HeroGlobe"
 import { MosaicTile } from "@/components/mosaic/MosaicTile"
-import { mosaicRow, type Tile } from "@/components/mosaic/pattern"
+import { signatureBand } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
@@ -19,12 +19,8 @@ const LEVELS: DegreeLevel[] = ["bachelor", "master", "phd"]
 const NUMBER_LOCALE: Record<Language, string> = { en: "en-GB", ru: "ru-RU", kk: "ru-RU" }
 const KK_MONTHS_SHORT = ["қаң", "ақп", "нау", "сәу", "мам", "мау", "шіл", "там", "қыр", "қаз", "қар", "жел"]
 
-// The hero band's stepped edge rising into the photo: sparse on top, dense where it meets the field.
-const HERO_EDGE: Tile[][] = [
-  mosaicRow(1996, 70, 0.12, ["field", "glacier", "ochre"]),
-  mosaicRow(64, 70, 0.4, ["field", "glacier", "ochre", "terracotta", "field"]),
-  mosaicRow(2026, 70, 0.85, ["field", "field", "glacier", "deep", "ochre"]),
-]
+// Signature 1 of 2 on this page: a fine tonal mosaic seam where the photo meets the band.
+const HERO_KEYLINE = signatureBand(2, 240, 2026, 0.55)
 
 type Facts = {
   total: number
@@ -107,14 +103,14 @@ export function HomePage() {
           />
         </picture>
         <div className="on-field relative bg-field">
-          <div className="absolute inset-x-0 bottom-full overflow-hidden" style={{ height: 96 }}>
-            <Tesserae size={32} rows={HERO_EDGE} className="absolute bottom-0 left-0" />
+          <div className="absolute inset-x-0 top-0 overflow-hidden">
+            <Tesserae size={8} rows={HERO_KEYLINE} />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>
               <h1
                 id="home-title"
-                className="max-w-[12ch] text-[clamp(3.25rem,8.2vw,6rem)] leading-[0.86] font-extrabold tracking-[-0.01em] uppercase"
+                className="max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.015em]"
               >
                 {t("home.title")}
               </h1>
@@ -128,12 +124,7 @@ export function HomePage() {
               onSubmit={search}
               className="relative mr-14 bg-card p-4 text-card-foreground sm:mr-0 sm:p-7 lg:-mt-36 lg:p-8"
             >
-              <Tesserae
-                size={16}
-                className="absolute -top-4 right-0"
-                rows={[[null, "ochre", "glacier"]]}
-              />
-              <label htmlFor="home-search" className="block font-display text-3xl font-extrabold uppercase sm:text-4xl">
+              <label htmlFor="home-search" className="block font-heading text-2xl font-medium sm:text-3xl">
                 {t("home.search.label")}
               </label>
               <div className="relative mt-5">
@@ -179,7 +170,7 @@ export function HomePage() {
           />
           <MosaicTile
             to="/programs?degree_level=master"
-            tone="glacier"
+            tone="card"
             title={t("home.path.master.title")}
             text={t("home.path.master.text")}
             fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.master.count) }) : null}
@@ -187,7 +178,7 @@ export function HomePage() {
           />
           <MosaicTile
             to="/programs?degree_level=phd"
-            tone="ochre"
+            tone="card"
             title={t("home.path.phd.title")}
             text={t("home.path.phd.text")}
             fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.phd.count) }) : null}
@@ -195,7 +186,7 @@ export function HomePage() {
           />
           <MosaicTile
             to="/eligibility"
-            tone="terracotta"
+            tone="card"
             title={t("home.path.intl.title")}
             text={t("home.path.intl.text")}
             fact={guidanceT("eligibility")}
@@ -210,7 +201,7 @@ export function HomePage() {
           <div>
             <SectionHeading id="dates-title" title={t("home.dates.title")} />
             {facts ? (
-              <p className="tabular mt-5 font-display text-2xl font-bold uppercase">
+              <p className="label tabular mt-5 text-primary">
                 {(() => {
                   const dates = [facts.byLevel.bachelor.deadlineLocal, facts.byLevel.bachelor.deadlineIntl, facts.byLevel.master.deadlineLocal, facts.byLevel.phd.deadlineLocal]
                   const published = dates.filter(Boolean).length
@@ -236,7 +227,7 @@ export function HomePage() {
             <SectionHeading id="cost-title" title={t("home.cost.title")} onField />
             <p className="mt-5 max-w-[46ch] text-field-muted">{t("home.cost.lead")}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild variant="ochre" size="lg">
+              <Button asChild variant="onField" size="lg">
                 <Link to="/cost-calculator">
                   {guidanceT("cost")}
                   <ArrowRight aria-hidden="true" />
@@ -258,9 +249,9 @@ export function HomePage() {
                   : null
               return (
                 <div key={level} className="grid gap-1 py-6 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-6">
-                  <dt className="font-display text-2xl font-bold uppercase">{degree(level)}</dt>
+                  <dt className="font-heading text-xl font-medium">{degree(level)}</dt>
                   <dd>
-                    <span className="tabular block font-display text-[clamp(2.25rem,5vw,3.5rem)] leading-none font-extrabold">
+                    <span className="tabular block font-display text-[clamp(2.25rem,4.4vw,3.25rem)] leading-none font-bold">
                       {range ?? (facts ? t("home.dates.notPublished") : "…")}
                     </span>
                     <span className="mt-1 block text-field-muted">{t("home.cost.perCredit")}</span>
@@ -285,7 +276,6 @@ export function HomePage() {
             loading="lazy"
             className="aspect-[4/3] w-full object-cover"
           />
-          <Tesserae size={24} className="absolute -right-3 -bottom-3" rows={[[null, "glacier"], ["ochre", "field"]]} />
         </figure>
         <div className="lg:col-span-7">
           <SectionHeading id="schools-title" title={t("home.schools.title")} />
@@ -314,14 +304,14 @@ export function HomePage() {
       </section>
 
       {/* International applicants, with Daniyar's globe. */}
-      <section aria-labelledby="intl-title" className="on-field overflow-hidden bg-field">
+      <section aria-labelledby="intl-title" className="overflow-hidden bg-field-tint">
         <div className="mx-auto grid max-w-[84rem] grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:px-8 lg:py-24">
           <div>
-            <SectionHeading id="intl-title" title={t("home.intl.title")} onField />
-            <p className="mt-5 max-w-[52ch] text-lg text-field-muted">
+            <SectionHeading id="intl-title" title={t("home.intl.title")} />
+            <p className="mt-5 max-w-[52ch] text-lg text-muted-foreground">
               {t("home.intl.text", { count: facts ? numbers.format(facts.english) : "…" })}
             </p>
-            <Button asChild variant="ochre" size="lg" className="mt-8">
+            <Button asChild variant="outline" size="lg" className="mt-8">
               <Link to="/programs?language=English">
                 {t("home.intl.cta")}
                 <ArrowRight aria-hidden="true" />
@@ -363,7 +353,7 @@ export function HomePage() {
 function SectionHeading({ id, title, lead, onField }: { id: string; title: string; lead?: string; onField?: boolean }) {
   return (
     <div>
-      <h2 id={id} className="max-w-[16ch] text-[clamp(2.25rem,4.4vw,3.75rem)] leading-[0.9] font-extrabold uppercase">
+      <h2 id={id} className="max-w-[20ch] text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
         {title}
       </h2>
       {lead ? <p className={cn("mt-5 max-w-[52ch] text-lg", onField ? "text-field-muted" : "text-muted-foreground")}>{lead}</p> : null}
@@ -386,16 +376,16 @@ function DateRow({ date, label, language, notPublished }: { date: string | null 
       <span
         className={cn(
           "grid aspect-square place-content-center text-center",
-          value ? "on-field bg-field" : "border-2 border-dashed border-input text-muted-foreground",
+          value ? "on-field bg-field" : "bg-muted text-muted-foreground",
         )}
       >
         {value ? (
           <>
-            <span className="tabular font-display text-5xl leading-none font-extrabold">{value.getUTCDate()}</span>
-            <span className="mt-1 font-display text-lg font-bold uppercase">{month?.replace(".", "")}</span>
+            <span className="tabular font-display text-5xl leading-none font-bold">{value.getUTCDate()}</span>
+            <span className="label mt-1">{month?.replace(".", "")}</span>
           </>
         ) : (
-          <span className="font-display text-4xl font-extrabold" aria-hidden="true">
+          <span className="font-display text-4xl font-bold" aria-hidden="true">
             —
           </span>
         )}

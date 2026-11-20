@@ -248,7 +248,7 @@ export function ApplicantAccountPage() {
     <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t("account")}</h1>
+          <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("account")}</h1>
           <p className="mt-2 break-all text-sm text-muted-foreground">{me.data.email}</p>
         </div>
         <Button

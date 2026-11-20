@@ -5,13 +5,10 @@ import { allProgramsQuery, filterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
 import { ActiveFilters, FilterPanel, ProgramSearch, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { ConnectionError } from "@/components/common/ConnectionError"
-import { mosaicRow } from "@/components/mosaic/pattern"
-import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
 
 const NO_OPTIONS = { faculties: [], degreeLevels: [], languages: [] }
-const BAND_EDGE = [mosaicRow(33, 70, 0.55, ["deep", "field", "glacier", "ochre", "deep"])]
 
 function readFilters(params: URLSearchParams): FilterValues {
   return {
@@ -54,14 +51,11 @@ export function ProgramsPage() {
     <div>
       <section className="on-field relative bg-field">
         <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-16 sm:px-6 lg:px-8 lg:pt-16 lg:pb-20">
-          <h1 className="text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.88] font-extrabold uppercase">{t("programs.title")}</h1>
+          <h1 className="text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{t("programs.title")}</h1>
           <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{t("programs.lead")}</p>
           <div className="mt-8">
             <ProgramSearch key={filters.q} values={filters} onChange={updateFilters} />
           </div>
-        </div>
-        <div className="absolute inset-x-0 top-full overflow-hidden">
-          <Tesserae size={24} rows={BAND_EDGE} />
         </div>
       </section>
 
@@ -83,7 +77,7 @@ export function ProgramsPage() {
 
           {query.isError && isInvalidRequest(query.error) ? (
             <div role="alert" className="border-2 border-ink bg-card p-6">
-              <p className="font-display text-3xl font-extrabold uppercase">{t("programs.invalidTitle")}</p>
+              <p className="font-heading text-2xl font-medium">{t("programs.invalidTitle")}</p>
               <p className="mt-2 text-muted-foreground">{t("programs.invalidText")}</p>
               <Button className="mt-5" onClick={() => setSearchParams(new URLSearchParams())}>
                 {t("programs.clearSearch")}
@@ -97,7 +91,7 @@ export function ProgramsPage() {
 
           {data ? (
             <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b-2 border-ink pb-4">
-              <p role="status" className="tabular font-display text-3xl font-extrabold uppercase">
+              <p role="status" className="tabular font-heading text-2xl font-medium">
                 {tn("programs.found", data.total)}
               </p>
               <ActiveFilters values={filters} onChange={updateFilters} />
@@ -106,7 +100,7 @@ export function ProgramsPage() {
 
           {data && data.total === 0 ? (
             <div className="border-2 border-dashed border-input p-8">
-              <p className="font-display text-3xl font-extrabold uppercase">{t("programs.noneTitle")}</p>
+              <p className="font-heading text-2xl font-medium">{t("programs.noneTitle")}</p>
               <p className="mt-2 max-w-[52ch] text-muted-foreground">{t("programs.noneText")}</p>
             </div>
           ) : null}

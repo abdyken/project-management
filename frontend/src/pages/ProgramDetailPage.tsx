@@ -11,8 +11,6 @@ import { SaveChecklistButton } from "@/components/catalog/SaveChecklistButton"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { CompareToggle } from "@/components/compare/CompareToggle"
 import { PageShell } from "@/components/layout/PageShell"
-import { mosaicRow } from "@/components/mosaic/pattern"
-import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
@@ -20,7 +18,6 @@ import { cn } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
 const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
-const BAND_EDGE = [mosaicRow(6102, 70, 0.5, ["deep", "field", "glacier", "ochre", "deep"])]
 
 export function ProgramDetailPage() {
   const guidanceT = useGuidanceT()
@@ -62,7 +59,7 @@ export function ProgramDetailPage() {
     return (
       <PageShell>
         {isNotFound(programQuery.error) ? (
-          <h1 className="text-5xl leading-[0.9] font-extrabold uppercase">{t("detail.notFound")}</h1>
+          <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("detail.notFound")}</h1>
         ) : (
           <ConnectionError message={t("detail.loadError")} retrying={programQuery.isFetching} onRetry={() => void programQuery.refetch()} />
         )}
@@ -91,7 +88,7 @@ export function ProgramDetailPage() {
           </Link>
           <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
             <div className="min-w-0">
-              <h1 className="max-w-[18ch] text-[clamp(2.75rem,6.5vw,5.5rem)] leading-[0.88] font-extrabold uppercase">{title}</h1>
+              <h1 className="max-w-[18ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{title}</h1>
               <p className="tabular mt-4 text-lg text-field-muted">
                 {degree(program.degree_level)} · {program.program_id}
               </p>
@@ -116,16 +113,13 @@ export function ProgramDetailPage() {
             </Fact>
           </dl>
         </div>
-        <div className="absolute inset-x-0 top-full overflow-hidden">
-          <Tesserae size={24} rows={BAND_EDGE} />
-        </div>
       </section>
 
       <div className="mx-auto grid max-w-[84rem] gap-12 px-4 pt-16 pb-24 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16 lg:px-8 lg:pt-20">
         <section aria-labelledby="documents-heading" className="min-w-0">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 id="documents-heading" className="text-[clamp(2.25rem,4.5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">
+              <h2 id="documents-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
                 {t("detail.documents")}
               </h2>
               <p className="mt-3 text-muted-foreground">{t("detail.documentsNote")}</p>
@@ -162,7 +156,7 @@ export function ProgramDetailPage() {
 
         <aside aria-labelledby="next-steps" className="lg:sticky lg:top-6 lg:self-start">
           <div className="bg-card p-6">
-            <h2 id="next-steps" className="text-3xl leading-[0.9] font-extrabold uppercase">
+            <h2 id="next-steps" className="text-2xl leading-[1.15] font-medium">
               {t("detail.nextSteps")}
             </h2>
             <ul className="mt-5 border-t-2 border-ink">
@@ -183,7 +177,7 @@ export function ProgramDetailPage() {
                 </li>
               ) : null}
             </ul>
-            <Button variant="ochre" className="mt-6 w-full justify-between" onClick={askInChat}>
+            <Button className="mt-6 w-full justify-between" onClick={askInChat}>
               {t("detail.askInChat")}
               <MessageCircleQuestion aria-hidden="true" />
             </Button>
@@ -196,7 +190,7 @@ export function ProgramDetailPage() {
 
 function Fact({ label, children, published = true }: { label: string; children: ReactNode; published?: boolean }) {
   return (
-    <div className={cn("p-5", published ? "bg-field-deep" : "border-2 border-dashed border-field-foreground/40")}>
+    <div className={cn("p-5", published ? "bg-field-deep" : "bg-field-deep/50")}>
       <dt className="text-sm font-semibold text-field-muted">{label}</dt>
       <dd className="tabular mt-2 text-lg leading-snug font-semibold">{children}</dd>
     </div>

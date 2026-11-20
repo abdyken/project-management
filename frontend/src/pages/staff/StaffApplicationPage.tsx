@@ -166,7 +166,7 @@ export function StaffApplicationPage() {
       <p className="mt-6 text-xs text-muted-foreground">
         #{application.id} · {application.program.program_id} · {t(`app.type.${application.applicant_type}`)}
       </p>
-      <h1 className="mt-1 text-4xl leading-[0.95] font-extrabold">{application.full_name ?? application.applicant_email}</h1>
+      <h1 className="mt-1 text-3xl leading-[1.12] font-medium">{application.full_name ?? application.applicant_email}</h1>
       <p className="text-muted-foreground">{programTitle(application.program)}</p>
       <div ref={statusBox} tabIndex={-1} className="mt-3 flex flex-wrap items-center gap-3 rounded text-sm outline-none focus-visible:ring-2">
         <StatusBadge status={application.status} label={t(`app.status.${application.status}`)} />

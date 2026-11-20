@@ -31,14 +31,15 @@ export function HeroGlobe() {
       height: width * 2,
       phi,
       theta,
-      // Flat material on the turquoise International band (--field #0a6c74): no lighting, no halo.
+      // On the light turquoise-tint International band (--field-tint #e3efee): a turquoise sphere,
+// no lighting, no halo (the one sanctioned exception to the flat rule, see DESIGN.md).
       dark: 0,
       diffuse: 0,
       mapSamples: 16000,
       mapBrightness: 5,
-      baseColor: [0.098, 0.655, 0.659],
+      baseColor: [0.039, 0.424, 0.455],
       markerColor: [0.89, 0.639, 0.227],
-      glowColor: [0.039, 0.424, 0.455], // same as the field: no visible halo
+      glowColor: [0.89, 0.937, 0.933], // same as the tint band: no visible halo
       markers: [{ location: ALMATY, size: 0.028, id: "sdu" }],
     })
 
