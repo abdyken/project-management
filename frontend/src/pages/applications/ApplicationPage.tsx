@@ -20,7 +20,8 @@ import {
 import { isApiError } from "@/api/errors"
 import { SAVED_PROGRAMS_KEY, useApplicant } from "@/applicant/session"
 import { applicationsErrorKey, useApplicationsT } from "@/applications/i18n"
-import { StatusBadge } from "@/components/applications/StatusBadge"
+import { ArrowLeft } from "lucide-react"
+import { ApplicationStepper } from "@/components/applications/ApplicationStepper"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { fieldClass } from "@/components/guidance/fields"
 import { Button } from "@/components/ui/button"
@@ -485,7 +486,7 @@ export function ApplicationPage() {
     refetchOnWindowFocus: false,
   })
 
-  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 py-12">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (isApiError(me.error) && me.error.status === 401) return <Navigate to="/account/login" replace />
   if (isApiError(application.error) && application.error.status === 401) return <Navigate to="/account/login" replace />
   const data = application.data
@@ -493,7 +494,7 @@ export function ApplicationPage() {
     const error = me.error ?? application.error
     const notFound = id === null || (isApiError(error) && error.status === 404)
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
         <Link to="/account/applications" className="text-sm underline">
           ← {t("back")}
         </Link>
@@ -517,21 +518,22 @@ export function ApplicationPage() {
   // The note belongs to the status it came with; after a resubmission it is out of date.
   const showNote = data.staff_note && ["needs_changes", "accepted", "rejected"].includes(data.status)
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <Link to="/account/applications" className="text-sm underline">
-        ← {t("back")}
+    <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+      <Link to="/account/applications" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-primary hover:underline">
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {t("back")}
       </Link>
-      <p className="mt-6 text-xs text-muted-foreground">
+      <p className="tabular mt-8 text-muted-foreground">
         {data.program.program_id} · {t(data.applicant_type)}
       </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">{programTitle(data.program)}</h1>
-      <div ref={statusBox} tabIndex={-1} className="mt-4 rounded-xl border border-border p-5 outline-none focus-visible:ring-2" role="status" aria-live="polite">
-        <StatusBadge status={data.status} />
-        <p className="mt-3 text-sm">{t(`help.${data.status}`)}</p>
+      <h1 className="mt-2 text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{programTitle(data.program)}</h1>
+      <div ref={statusBox} tabIndex={-1} className="mt-8 bg-card p-6 outline-none focus-visible:outline-2 focus-visible:outline-ring" role="status" aria-live="polite">
+        <ApplicationStepper status={data.status} />
+        <p className="mt-6 max-w-[60ch]">{t(`help.${data.status}`)}</p>
         {showNote && (
-          <div className="mt-4 border-l-2 border-primary pl-4">
-            <h2 className="text-sm font-medium">{t("note")}</h2>
-            <p className="mt-1 whitespace-pre-wrap break-words text-sm">{data.staff_note}</p>
+          <div className="mt-5 bg-secondary p-4">
+            <h2 className="font-sans text-[0.9375rem] font-semibold">{t("note")}</h2>
+            <p className="mt-1 whitespace-pre-wrap break-words">{data.staff_note}</p>
           </div>
         )}
       </div>

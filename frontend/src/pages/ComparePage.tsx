@@ -11,7 +11,7 @@ import { useI18n, type I18n } from "@/i18n"
 import type { MessageKey } from "@/i18n/messages"
 import { MAX_COMPARED, useCompareStore } from "@/store/compare"
 
-const labelClass = "text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
+const labelClass = "text-sm font-semibold text-muted-foreground"
 
 type Row = { label: MessageKey; value: (program: ComparedProgram, i18n: I18n) => string }
 
@@ -80,12 +80,12 @@ export function ComparePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
       <Link to="/programs" className="text-sm text-muted-foreground hover:text-foreground">
         {t("detail.backToPrograms")}
       </Link>
       <p className={`mt-6 ${labelClass}`}>{t("compare.kicker")}</p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{t("compare.title")}</h1>
+      <h1 className="mt-3 text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] font-extrabold uppercase">{t("compare.title")}</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
         {t("compare.lead", { max: MAX_COMPARED })}
       </p>

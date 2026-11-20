@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 import { mosaicRow } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
-import { useApplicationsT } from "@/applications/i18n"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 import { ADMISSIONS_PHONE, ADMISSIONS_WEBSITE } from "@/lib/constants"
@@ -14,7 +13,6 @@ const FOOTER_EDGE = [mosaicRow(19960, 80, 0.22), mosaicRow(2026, 80, 0.7, ["deep
 export function SiteFooter() {
   const { t, language } = useI18n()
   const applicantT = useApplicantT()
-  const applicationsT = useApplicationsT()
   const guidanceT = useGuidanceT()
   const email = t("footer.email")
 
@@ -41,7 +39,6 @@ export function SiteFooter() {
 
         <FooterColumn title={t("footer.applyTitle")}>
           <FooterLink to="/account">{applicantT("account")}</FooterLink>
-          <FooterLink to="/account/applications">{applicationsT("title")}</FooterLink>
           <FooterLink to="/account/requests">{guidanceT("requests")}</FooterLink>
           <FooterLink href="https://admissions.sdu.edu.kz">{t("footer.applicationPortal")}</FooterLink>
         </FooterColumn>

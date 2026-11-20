@@ -55,8 +55,8 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-semibold tracking-tight">{t(register ? "register" : "login")}</h1>
+    <div className="mx-auto max-w-md px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+      <h1 className="text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t(register ? "register" : "login")}</h1>
       {register && <p className="mt-3 text-sm text-muted-foreground">{t("signupLead")}</p>}
       {register && mutation.isSuccess ? (
         <p role="status" className="mt-6">
@@ -132,7 +132,7 @@ export function ApplicantVerifyPage() {
   }
   return (
     <div className="mx-auto max-w-md space-y-5 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("verify")}</h1>
+      <h1 className="text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t("verify")}</h1>
       <p>{t("verifyLead")}</p>
       {(!token || verification.isError) && (
         <p role="alert" className="text-sm text-destructive">

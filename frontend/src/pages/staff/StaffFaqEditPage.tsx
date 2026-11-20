@@ -165,7 +165,7 @@ export function StaffFaqEditPage() {
         {t("edit.back")}
       </Link>
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{isNew ? t("edit.newTitle") : faqId}</h1>
+        <h1 className="text-4xl leading-[0.95] font-extrabold">{isNew ? t("edit.newTitle") : faqId}</h1>
         {status && <StatusBadge status={status} />}
       </div>
       {item.data && (

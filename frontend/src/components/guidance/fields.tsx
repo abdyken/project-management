@@ -3,7 +3,7 @@ import { cloneElement, isValidElement, useId, type ReactNode } from "react"
 import { useGuidanceT } from "@/guidance/i18n"
 
 export const fieldClass =
-  "w-full min-w-0 rounded-md border border-border bg-background px-3 py-2 text-base sm:text-sm"
+  "h-11 w-full min-w-0 rounded-none border-2 border-input bg-card px-3 text-base outline-none transition-colors hover:border-ink focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
 export function Field({
   label,
   children,
@@ -15,8 +15,8 @@ export function Field({
   const control = isValidElement<{ id?: string }>(children) ? children : null
   const id = control?.props.id ?? generatedId
   return (
-    <div className="block min-w-0 space-y-1 text-sm">
-      <label htmlFor={id} className="block"><span>{label}</span></label>
+    <div className="block min-w-0 space-y-1.5">
+      <label htmlFor={id} className="block text-[0.9375rem] font-semibold"><span>{label}</span></label>
       {control ? cloneElement(control, { id }) : children}
     </div>
   )

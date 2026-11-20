@@ -44,7 +44,7 @@ export function StaffLayout() {
           <Link to="/staff" className="flex shrink-0 items-center gap-2">
             <img src="/brand/sdu-emblem-ink.svg" alt="" className="h-7 w-auto" />
             <span className="text-xl font-semibold tracking-tight">SDU</span>
-            <span className="hidden text-[11px] tracking-[0.12em] text-muted-foreground uppercase md:inline">
+            <span className="hidden text-sm font-semibold text-muted-foreground md:inline">
               {t("staff.title")}
             </span>
           </Link>

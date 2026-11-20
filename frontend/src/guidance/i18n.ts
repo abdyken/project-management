@@ -128,6 +128,31 @@ const messages = {
     "Обращения в приёмную комиссию",
     "Қабылдау комиссиясына сұрақтар",
   ],
+  eligibilityText: [
+    "See which published requirements of a programme you already meet.",
+    "Узнайте, каким опубликованным требованиям программы вы уже соответствуете.",
+    "Бағдарламаның жарияланған талаптарының қайсысына сай келетініңізді біліңіз.",
+  ],
+  recommendationsText: [
+    "Get programmes that fit your profile and their published requirements.",
+    "Подберите программы под ваш профиль и их опубликованные требования.",
+    "Профиліңізге және жарияланған талаптарға сай бағдарламаларды табыңыз.",
+  ],
+  costText: [
+    "Estimate tuition from the credits in your study plan.",
+    "Рассчитайте стоимость по кредитам вашего учебного плана.",
+    "Оқу жоспарыңыздағы кредиттер бойынша оқу ақысын есептеңіз.",
+  ],
+  fundingText: [
+    "State grants, SDU discounts and how to apply for them.",
+    "Государственные гранты, скидки SDU и как их получить.",
+    "Мемлекеттік гранттар, SDU жеңілдіктері және оларды алу жолы.",
+  ],
+  requestsText: [
+    "Send a private question and get an answer from the office.",
+    "Задайте личный вопрос и получите ответ приёмной комиссии.",
+    "Жеке сұрақ қойып, қабылдау комиссиясынан жауап алыңыз.",
+  ],
   program: ["Programme", "Программа", "Бағдарлама"],
   choose: ["Choose a programme", "Выберите программу", "Бағдарламаны таңдаңыз"],
   chooseLanguageGroup: [

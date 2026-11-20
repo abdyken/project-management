@@ -23,6 +23,7 @@ import { useI18n } from "@/i18n"
 import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
+import { MosaicTile } from "@/components/mosaic/MosaicTile"
 
 function SubmitHint({ id, text }: { id: string; text: string | null }) {
   return text ? (
@@ -32,21 +33,31 @@ function SubmitHint({ id, text }: { id: string; text: string | null }) {
   ) : null
 }
 
+const HUB_TILES = [
+  { key: "eligibility", text: "eligibilityText", tone: "field", className: "sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[28rem]", large: true },
+  { key: "recommendations", text: "recommendationsText", tone: "glacier", className: "lg:col-span-3" },
+  { key: "cost", text: "costText", tone: "ochre", className: "lg:col-span-3" },
+  { key: "funding", text: "fundingText", tone: "card", className: "lg:col-span-3" },
+  { key: "requests", text: "requestsText", tone: "terracotta", className: "lg:col-span-3" },
+] as const
+
 export function AdmissionsPage() {
   const t = useGuidanceT()
+  const routes = Object.fromEntries(GUIDANCE_ROUTES)
   return (
-    <GuidanceShell title={t("hub")}>
-      <p className="max-w-2xl text-muted-foreground">{t("lead")}</p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {GUIDANCE_ROUTES.map(([key, to], i) => (
-          <Link
-            className="rounded-xl border border-border p-6 hover:bg-secondary"
-            key={key}
-            to={to}
-          >
-            <p className="text-xs text-muted-foreground">0{i + 1}</p>
-            <h2 className="mt-2 text-xl font-medium">{t(key)}</h2>
-          </Link>
+    <GuidanceShell title={t("hub")} lead={t("lead")}>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-12">
+        {HUB_TILES.map((tile) => (
+          <MosaicTile
+            key={tile.key}
+            to={routes[tile.key]}
+            tone={tile.tone}
+            title={t(tile.key)}
+            text={t(tile.text)}
+            className={tile.className}
+            large={"large" in tile}
+            headingLevel={2}
+          />
         ))}
       </div>
     </GuidanceShell>
@@ -108,7 +119,7 @@ export function EligibilityResult({ result }: { result: Eligibility }) {
   return (
     <section
       aria-live="polite"
-      className="mt-8 rounded-xl border border-border p-5"
+      className="mt-8 border-2 border-border bg-card p-6"
     >
       <h2 className="text-xl font-semibold">{t(result.status)}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("disclaimer")}</p>
@@ -556,7 +567,7 @@ export function RecommendationsPage() {
           {mutation.data.items.length === 0 && <p>{t("noMatches")}</p>}
           {mutation.data.items.map((item) => (
             <article
-              className="rounded-xl border border-border p-5"
+              className="border-2 border-border bg-card p-6"
               key={item.program.program_id}
             >
               <p className="text-xs text-muted-foreground">
@@ -743,7 +754,7 @@ export function CostPage() {
       {mutation.data && (
         <section
           aria-live="polite"
-          className="mt-8 rounded-xl border border-border p-5"
+          className="mt-8 border-2 border-border bg-card p-6"
         >
           <h2 className="text-xl font-semibold">
             {t("total")}: {number(mutation.data.estimated_total)} {currency}
@@ -832,7 +843,7 @@ export function FundingPage() {
         {data.data?.items.map((item) => (
           <article
             key={item.faq_id}
-            className="rounded-xl border border-border p-5"
+            className="border-2 border-border bg-card p-6"
           >
             <p className="text-xs text-muted-foreground">
               {t.code(item.status)} · {t("checked")}: {item.last_checked}

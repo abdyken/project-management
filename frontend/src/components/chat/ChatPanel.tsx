@@ -190,9 +190,9 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
           placeholder={t("chat.placeholder")}
           className="w-full resize-none bg-transparent text-base outline-none sm:text-sm placeholder:text-muted-foreground"
         />
-        <p className="mt-2 text-[11px] text-muted-foreground">{t("chat.noPersonalData")}</p>
+        <p className="mt-2 text-xs text-muted-foreground">{t("chat.noPersonalData")}</p>
         <div className="mt-2 flex items-center justify-between gap-3">
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {draft.length}/{MESSAGE_MAX_LENGTH}
           </span>
           <Button type="submit" size="sm" disabled={!canSend}>

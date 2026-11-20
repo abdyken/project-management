@@ -14,7 +14,7 @@ function ApplicationCard({ item }: { item: ApplicationSummary }) {
   const t = useApplicationsT()
   const { programTitle, deadline } = useI18n()
   return (
-    <li className="rounded-xl border border-border p-5">
+    <li className="border-2 border-border bg-card p-6">
       <p className="text-xs text-muted-foreground">
         {item.program.program_id} · {t(item.applicant_type)}
       </p>
@@ -123,12 +123,12 @@ export function ApplicationsPage() {
     staleTime: 0,
   })
 
-  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 py-12">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (isApiError(me.error) && me.error.status === 401) return <Navigate to="/account/login" replace />
   const error = me.error ?? applications.error
   if (!me.data || applications.isError) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
         <ConnectionError
           message={t(isApiError(error) ? applicationsErrorKey(error.code, error.status) : "error")}
           onRetry={() => void (me.data ? applications.refetch() : me.refetch())}
@@ -140,11 +140,11 @@ export function ApplicationsPage() {
 
   const items = applications.data?.items ?? []
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
       <Link to="/account" className="text-sm underline">
         ← {me.data.email}
       </Link>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{t("title")}</h1>
+      <h1 className="mt-4 text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t("title")}</h1>
       <p className="mt-3 text-muted-foreground">{t("lead")}</p>
       {applications.isPending ? (
         <p className="mt-8">{t("working")}</p>

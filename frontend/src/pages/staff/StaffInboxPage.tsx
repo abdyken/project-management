@@ -39,7 +39,7 @@ export function StaffInboxPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight">{t("inbox.title")}</h1>
+      <h1 className="text-4xl leading-[0.95] font-extrabold">{t("inbox.title")}</h1>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("inbox.lead")}</p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">

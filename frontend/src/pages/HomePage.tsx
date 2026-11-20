@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, Search } from "lucide-react"
-import { useMemo, useState, type FormEvent, type ReactNode } from "react"
+import { useMemo, useState, type FormEvent } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { DegreeLevel, Program } from "@/api/types"
 import { HeroGlobe } from "@/components/home/HeroGlobe"
+import { MosaicTile } from "@/components/mosaic/MosaicTile"
 import { mosaicRow, type Tile } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
@@ -167,37 +168,37 @@ export function HomePage() {
       <section aria-labelledby="paths-title" className="mx-auto max-w-[84rem] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <SectionHeading id="paths-title" title={t("home.paths.title")} lead={t("home.paths.lead")} />
         <div className="mt-10 grid gap-2 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[auto_auto]">
-          <PathTile
+          <MosaicTile
             to="/programs?degree_level=bachelor"
             tone="field"
             title={t("home.path.bachelor.title")}
             text={t("home.path.bachelor.text")}
-            count={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.bachelor.count) }) : null}
+            fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.bachelor.count) }) : null}
             className="sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[26rem]"
             large
           />
-          <PathTile
+          <MosaicTile
             to="/programs?degree_level=master"
             tone="glacier"
             title={t("home.path.master.title")}
             text={t("home.path.master.text")}
-            count={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.master.count) }) : null}
+            fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.master.count) }) : null}
             className="lg:col-span-3"
           />
-          <PathTile
+          <MosaicTile
             to="/programs?degree_level=phd"
             tone="ochre"
             title={t("home.path.phd.title")}
             text={t("home.path.phd.text")}
-            count={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.phd.count) }) : null}
+            fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.phd.count) }) : null}
             className="lg:col-span-3"
           />
-          <PathTile
+          <MosaicTile
             to="/eligibility"
             tone="terracotta"
             title={t("home.path.intl.title")}
             text={t("home.path.intl.text")}
-            count={guidanceT("eligibility")}
+            fact={guidanceT("eligibility")}
             className="sm:col-span-2 lg:col-span-6"
           />
         </div>
@@ -358,49 +359,6 @@ function SectionHeading({ id, title, lead, onField }: { id: string; title: strin
       </h2>
       {lead ? <p className={cn("mt-5 max-w-[52ch] text-lg", onField ? "text-field-muted" : "text-muted-foreground")}>{lead}</p> : null}
     </div>
-  )
-}
-
-const TONES = {
-  field: "on-field bg-field text-field-foreground hover:bg-field-deep",
-  glacier: "bg-glacier text-ink hover:bg-[#1597a0]",
-  ochre: "bg-ochre text-ink hover:bg-ochre-hover",
-  terracotta: "bg-terracotta text-white hover:bg-[#b2482a] [--ring:#fff]",
-} as const
-
-function PathTile({
-  to,
-  tone,
-  title,
-  text,
-  count,
-  className,
-  large,
-}: {
-  to: string
-  tone: keyof typeof TONES
-  title: string
-  text: string
-  count: ReactNode
-  className?: string
-  large?: boolean
-}) {
-  return (
-    <Link
-      to={to}
-      className={cn("group relative flex min-h-56 flex-col justify-between p-6 transition-colors duration-200 sm:p-8", TONES[tone], className)}
-    >
-      <div>
-        <h3 className={cn("font-display font-extrabold uppercase", large ? "text-[clamp(2.75rem,5vw,4.5rem)]" : "text-4xl", "leading-[0.9]")}>
-          {title}
-        </h3>
-        <p className={cn("mt-3 max-w-[30ch]", large ? "text-xl" : "text-lg")}>{text}</p>
-      </div>
-      <p className="tabular mt-8 flex items-center justify-between gap-4 font-display text-2xl font-bold uppercase">
-        {count ?? "…"}
-        <ArrowRight className="size-6 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
-      </p>
-    </Link>
   )
 }
 

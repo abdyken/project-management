@@ -57,7 +57,7 @@ function SavedProgram({ checklist }: { checklist: SavedChecklist }) {
     onSuccess: refresh,
   })
   return (
-    <article className="rounded-xl border border-border p-5 sm:p-6">
+    <article className="border-2 border-border bg-card p-6 sm:p-6">
       <p className="text-xs text-muted-foreground">
         {program.program_id} · {t(checklist.applicant_type)}
       </p>
@@ -152,7 +152,7 @@ function Preferences({ user }: { user: Applicant }) {
   })
   return (
     <form
-      className="mt-10 space-y-4 rounded-xl border border-border p-5"
+      className="mt-10 space-y-4 border-2 border-border bg-card p-6"
       onSubmit={(event) => {
         event.preventDefault()
         preferences.mutate()
@@ -225,7 +225,7 @@ export function ApplicantAccountPage() {
   const logout = useMutation({ mutationFn: logoutApplicant, onSuccess: clear })
   const deletion = useMutation({ mutationFn: deleteApplicant, onSuccess: clear })
 
-  if (me.isPending) return <p className="mx-auto max-w-5xl px-4 py-12">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (
     (isApiError(me.error) && me.error.status === 401) ||
     (isApiError(saved.error) && saved.error.status === 401)
@@ -233,7 +233,7 @@ export function ApplicantAccountPage() {
     return <Navigate to="/account/login" replace />
   if (!me.data)
     return (
-      <div className="mx-auto max-w-5xl px-4 py-12">
+      <div className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
         <ConnectionError
           message={
             isApiError(me.error) && me.error.code === "ACCOUNTS_UNAVAILABLE" ? t("unavailable") : t("error")
@@ -245,10 +245,10 @@ export function ApplicantAccountPage() {
     )
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">{t("account")}</h1>
+          <h1 className="text-[clamp(2.25rem,5vw,3.5rem)] leading-[0.9] font-extrabold uppercase">{t("account")}</h1>
           <p className="mt-2 break-all text-sm text-muted-foreground">{me.data.email}</p>
         </div>
         <Button

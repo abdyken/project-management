@@ -49,9 +49,9 @@ export function StaffLoginPage() {
         <Link to="/" className="mb-8 flex items-center gap-2">
           <img src="/brand/sdu-emblem-ink.svg" alt="" className="h-7 w-auto" />
           <span className="text-xl font-semibold tracking-tight">SDU</span>
-          <span className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">{t("staff.title")}</span>
+          <span className="text-sm font-semibold text-muted-foreground">{t("staff.title")}</span>
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("login.title")}</h1>
+        <h1 className="text-4xl leading-[0.95] font-extrabold">{t("login.title")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{t("login.lead")}</p>
         <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
           <label className="block space-y-1.5 text-sm">

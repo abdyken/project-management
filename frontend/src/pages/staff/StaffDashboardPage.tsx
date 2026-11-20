@@ -61,7 +61,7 @@ function PerDayChart({ data }: { data: Analytics["per_day"] }) {
     <div>
       <Legend />
       <div className="mt-3 flex gap-2">
-        <div className="relative w-6 shrink-0 text-right text-[10px] text-muted-foreground tabular-nums" style={{ height: PLOT_HEIGHT }}>
+        <div className="relative w-6 shrink-0 text-right text-xs text-muted-foreground tabular-nums" style={{ height: PLOT_HEIGHT }}>
           {ticks.map((value) => (
             <span key={value} className="absolute right-0 -translate-y-1/2" style={{ top: PLOT_HEIGHT - (value / max) * PLOT_HEIGHT }}>
               {value}
@@ -122,7 +122,7 @@ function PerDayChart({ data }: { data: Analytics["per_day"] }) {
               )
             })}
           </div>
-          <div className="mt-1 flex justify-between text-[10px] text-muted-foreground tabular-nums">
+          <div className="mt-1 flex justify-between text-xs text-muted-foreground tabular-nums">
             <span>{data[0]?.date.slice(5)}</span>
             <span>{data[data.length - 1]?.date.slice(5)}</span>
           </div>
@@ -186,7 +186,7 @@ export function StaffDashboardPage() {
   const header = (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("dash.title")}</h1>
+        <h1 className="text-4xl leading-[0.95] font-extrabold">{t("dash.title")}</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("dash.lead")}</p>
       </div>
       <select
