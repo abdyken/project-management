@@ -6,7 +6,7 @@ import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { DegreeLevel, Program } from "@/api/types"
 import { HeroGlobe } from "@/components/home/HeroGlobe"
 import { MosaicTile } from "@/components/mosaic/MosaicTile"
-import { signatureBand } from "@/components/mosaic/pattern"
+import { signatureSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
@@ -19,8 +19,8 @@ const LEVELS: DegreeLevel[] = ["bachelor", "master", "phd"]
 const NUMBER_LOCALE: Record<Language, string> = { en: "en-GB", ru: "ru-RU", kk: "ru-RU" }
 const KK_MONTHS_SHORT = ["қаң", "ақп", "нау", "сәу", "мам", "мау", "шіл", "там", "қыр", "қаз", "қар", "жел"]
 
-// Signature 1 of 2 on this page: a fine tonal mosaic seam where the photo meets the band.
-const HERO_KEYLINE = signatureBand(2, 240, 2026, 0.55)
+// Signature 1 of 2 on this page: the band rises into the photo as a stepped mosaic edge.
+const HERO_STEPS = signatureSteps(240, 3, "deep", "field", 2026)
 
 type Facts = {
   total: number
@@ -103,8 +103,8 @@ export function HomePage() {
           />
         </picture>
         <div className="on-field relative bg-field">
-          <div className="absolute inset-x-0 top-0 overflow-hidden">
-            <Tesserae size={8} rows={HERO_KEYLINE} />
+          <div className="absolute inset-x-0 bottom-full overflow-hidden">
+            <Tesserae size={16} rows={HERO_STEPS} />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>
@@ -163,6 +163,7 @@ export function HomePage() {
             to="/programs?degree_level=bachelor"
             tone="field"
             title={t("home.path.bachelor.title")}
+            image={{ src: "/images/sdu/campus-summer-1280.webp", srcSet: "/images/sdu/campus-summer-640.webp 640w, /images/sdu/campus-summer-1280.webp 1280w" }}
             text={t("home.path.bachelor.text")}
             fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.bachelor.count) }) : null}
             className="sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[26rem]"
@@ -267,14 +268,14 @@ export function HomePage() {
       <section aria-labelledby="schools-title" className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-28">
         <figure className="relative self-start lg:col-span-5">
           <img
-            src="/images/sdu/students-laptop-1280.webp"
-            srcSet="/images/sdu/students-laptop-640.webp 640w, /images/sdu/students-laptop-1280.webp 1280w, /images/sdu/students-laptop-1920.webp 1920w"
+            src="/images/sdu/students-international-1280.webp"
+            srcSet="/images/sdu/students-international-640.webp 640w, /images/sdu/students-international-1280.webp 1280w, /images/sdu/students-international-1920.webp 1920w"
             sizes="(min-width: 1024px) 40vw, 100vw"
             alt=""
             width={1920}
             height={1280}
             loading="lazy"
-            className="aspect-[4/3] w-full object-cover"
+            className="aspect-[4/3] w-full object-cover object-[50%_35%]"
           />
         </figure>
         <div className="lg:col-span-7">
@@ -392,7 +393,7 @@ function DateRow({ date, label, language, notPublished }: { date: string | null 
       </span>
       <span>
         <span className="block text-lg font-semibold">{label}</span>
-        <span className={cn("tabular mt-1 block", value ? "text-muted-foreground" : "font-medium text-terracotta")}>
+        <span className="tabular mt-1 block text-muted-foreground">
           {value && parsed ? `${parsed[3]}.${parsed[2]}.${parsed[1]}` : notPublished}
         </span>
       </span>

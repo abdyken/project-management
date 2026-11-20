@@ -38,7 +38,7 @@ export function HeroGlobe() {
       mapSamples: 16000,
       mapBrightness: 5,
       baseColor: [0.039, 0.424, 0.455],
-      markerColor: [0.89, 0.639, 0.227],
+      markerColor: [1, 1, 1],
       glowColor: [0.89, 0.937, 0.933], // same as the tint band: no visible halo
       markers: [{ location: ALMATY, size: 0.028, id: "sdu" }],
     })

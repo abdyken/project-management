@@ -74,7 +74,7 @@ export function SiteHeader() {
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "absolute inset-x-4 bottom-0 h-1 origin-left bg-ochre transition-transform duration-300 ease-out",
+                      "absolute inset-x-4 bottom-0 h-0.5 origin-left bg-field-foreground transition-transform duration-300 ease-out",
                       isActive ? "scale-x-100" : "scale-x-0",
                     )}
                   />
@@ -125,7 +125,7 @@ export function SiteHeader() {
                       className={({ isActive }) =>
                         cn(
                           "flex items-center justify-between border-b border-field-foreground/20 py-4 font-heading text-2xl font-medium",
-                          isActive ? "text-ochre" : "text-field-foreground",
+                          isActive ? "text-field-foreground underline decoration-2 underline-offset-8" : "text-field-muted",
                         )
                       }
                     >

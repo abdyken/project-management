@@ -17,7 +17,7 @@ export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse 
 
   if (checklist.warning) {
     return (
-      <div role="status" className="border-2 border-ochre bg-ochre/10 p-5">
+      <div role="status" className="border border-primary bg-field-tint p-5">
         <p>{t("checklist.missing")}</p>
         {checklist.contact ? <p className="mt-3 text-muted-foreground">{checklist.contact}</p> : null}
       </div>

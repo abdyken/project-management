@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, X } from "lucide-react"
+import { Check, Search, SlidersHorizontal, X } from "lucide-react"
 import { useState, type FormEvent } from "react"
 import type { FilterOptions } from "@/api/programs"
 import { Button } from "@/components/ui/button"
@@ -52,7 +52,7 @@ export function ProgramSearch({ values, onChange }: { values: FilterValues; onCh
 
 type Option = { value: string; label: string; lang?: string }
 
-// One filter as a group of square tiles backed by native radio inputs.
+// One filter as a hairline list of options backed by native radio inputs.
 function TileGroup({
   name,
   legend,
@@ -73,7 +73,7 @@ function TileGroup({
   return (
     <fieldset>
       <legend className="label text-foreground">{legend}</legend>
-      <div className="mt-3 flex flex-wrap gap-1.5 lg:flex-col lg:items-stretch">
+      <div className="mt-3 border-t border-border">
         {all.map((option) => {
           const checked = value === option.value
           const id = `${name}-${option.value || "all"}`
@@ -82,9 +82,9 @@ function TileGroup({
               key={id}
               htmlFor={id}
               className={cn(
-                "flex min-h-11 cursor-pointer items-center gap-3 border-2 px-3 py-2 text-[0.9375rem] transition-colors duration-200",
+                "flex min-h-11 cursor-pointer items-center gap-3 border-b border-border py-2.5 text-[0.9375rem] transition-colors duration-200 hover:text-primary",
                 "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
-                checked ? "border-primary bg-primary font-semibold text-primary-foreground" : "border-border bg-card hover:border-primary",
+                checked ? "font-semibold text-foreground" : "text-muted-foreground",
               )}
             >
               <input
@@ -96,7 +96,12 @@ function TileGroup({
                 onChange={() => onChange(option.value)}
                 className="sr-only"
               />
-              <span aria-hidden="true" className={cn("size-3 shrink-0", checked ? "bg-ochre" : "border-2 border-input")} />
+              <span
+                aria-hidden="true"
+                className={cn("grid size-[1.125rem] shrink-0 place-items-center border", checked ? "border-primary bg-primary text-primary-foreground" : "border-input bg-card")}
+              >
+                {checked ? <Check className="size-3.5" strokeWidth={3} /> : null}
+              </span>
               <span lang={option.lang}>{option.label}</span>
             </label>
           )

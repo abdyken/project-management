@@ -22,6 +22,7 @@ export function MosaicTile({
   className,
   large,
   headingLevel = 3,
+  image,
 }: {
   to: string
   tone: MosaicTone
@@ -31,6 +32,8 @@ export function MosaicTile({
   className?: string
   large?: boolean
   headingLevel?: 2 | 3
+  // Optional real photograph across the top of the tile (decorative; the title carries meaning).
+  image?: { src: string; srcSet: string }
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3"
   return (
@@ -39,6 +42,16 @@ export function MosaicTile({
       className={cn("group relative flex min-h-48 min-w-0 flex-col justify-between p-6 transition-colors duration-200 sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
     >
       <div>
+        {image ? (
+          <img
+            src={image.src}
+            srcSet={image.srcSet}
+            sizes="(min-width: 1024px) 45vw, 100vw"
+            alt=""
+            loading="lazy"
+            className="-mx-6 -mt-6 mb-6 block h-44 w-[calc(100%+3rem)] max-w-none object-cover sm:-mx-8 sm:-mt-8 sm:mb-8 sm:h-56 sm:w-[calc(100%+4rem)] lg:-mx-6 lg:-mt-6 lg:mb-6 lg:w-[calc(100%+3rem)] xl:-mx-8 xl:-mt-8 xl:mb-8 xl:h-64 xl:w-[calc(100%+4rem)]"
+          />
+        ) : null}
         <Heading className={cn("font-heading font-medium", large ? "text-[clamp(1.75rem,2.6vw,2.25rem)]" : "text-[clamp(1.25rem,1.6vw,1.5rem)]", "leading-[1.15]")}>
           {title}
         </Heading>

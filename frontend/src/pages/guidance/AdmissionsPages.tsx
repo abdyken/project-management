@@ -73,6 +73,7 @@ export function AdmissionsPage() {
             large={"large" in tile}
             fact={facts[tile.key]}
             headingLevel={2}
+            image={tile.key === "eligibility" ? { src: "/images/sdu/campus-facade-960.webp", srcSet: "/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w" } : undefined}
           />
         ))}
       </div>

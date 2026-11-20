@@ -1,14 +1,14 @@
 import type { ReactNode } from "react"
 import { Link } from "react-router-dom"
-import { signatureBand } from "@/components/mosaic/pattern"
+import { signatureSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 import { ADMISSIONS_PHONE, ADMISSIONS_WEBSITE } from "@/lib/constants"
 
-// Signature 2 of 2: a tonal mosaic band at the top of the footer.
-const FOOTER_SIGNATURE = signatureBand(3, 240, 1996, 0.4)
+// Signature 2 of 2: the footer rises into the page with the same stepped mosaic edge.
+const FOOTER_SIGNATURE = signatureSteps(240, 2, "field", "deep", 1996)
 
 export function SiteFooter() {
   const { t, language } = useI18n()
@@ -17,9 +17,9 @@ export function SiteFooter() {
   const email = t("footer.email")
 
   return (
-    <footer className="on-field mt-auto bg-field-deep">
-      <div className="overflow-hidden">
-        <Tesserae size={8} rows={FOOTER_SIGNATURE} />
+    <footer className="on-field relative mt-auto bg-field-deep">
+      <div className="absolute inset-x-0 bottom-full overflow-hidden">
+        <Tesserae size={16} rows={FOOTER_SIGNATURE} />
       </div>
       <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:px-8">
         <div>
