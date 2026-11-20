@@ -166,7 +166,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
                 key={suggestion}
                 type="button"
                 onClick={() => void ask(suggestion)}
-                className="max-w-full rounded-full border border-border px-3 py-1.5 text-left text-xs break-words text-muted-foreground hover:bg-secondary hover:text-foreground"
+                className="max-w-full border-2 border-border bg-card px-3 py-2 text-left text-sm break-words text-muted-foreground hover:bg-secondary hover:text-foreground"
               >
                 {suggestion}
               </button>

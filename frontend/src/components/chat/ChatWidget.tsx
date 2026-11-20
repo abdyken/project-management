@@ -7,15 +7,16 @@ import { useI18n } from "@/i18n"
 import { useChatStore } from "@/store/chat"
 
 const TITLE_ID = "chat-title"
-const iconButton = "rounded p-1 text-muted-foreground hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/40"
+const iconButton = "grid size-9 place-items-center text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground outline-none focus-visible:outline-2 focus-visible:outline-ring"
+const fieldIconButton = "grid size-9 place-items-center text-field-foreground transition-colors hover:bg-field-deep outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
 const fabClass =
-  "fixed z-50 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md outline-none focus-visible:ring-4 focus-visible:ring-ring/30"
+  "fixed z-50 flex size-14 items-center justify-center bg-primary text-primary-foreground shadow-overlay outline-none transition-colors hover:bg-field-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring after:absolute after:-top-1.5 after:-right-1.5 after:size-3 after:bg-ochre"
 
-function NewConversationButton() {
+function NewConversationButton({ onField = false }: { onField?: boolean }) {
   const { t } = useI18n()
   const startNewConversation = useChatStore((state) => state.startNewConversation)
   return (
-    <button type="button" aria-label={t("chat.newConversation")} className={iconButton} onClick={startNewConversation}>
+    <button type="button" aria-label={t("chat.newConversation")} className={onField ? fieldIconButton : iconButton} onClick={startNewConversation}>
       <SquarePen className="size-4" />
     </button>
   )
@@ -95,18 +96,18 @@ function DesktopChat() {
 
   if (minimized) {
     return (
-      <div className="fixed right-6 bottom-6 z-50 flex h-12 w-[260px] items-center gap-1 border border-border bg-background pr-2 shadow-lg">
+      <div className="on-field fixed right-6 bottom-6 z-50 flex h-12 w-[260px] items-center gap-1 bg-field pr-2 shadow-overlay">
         <button
           type="button"
           ref={restoreRef}
           onClick={() => setMinimized(false)}
-          className="flex h-full min-w-0 flex-1 items-center gap-2 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="flex h-full min-w-0 flex-1 items-center gap-2 px-3 text-left font-semibold outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
           aria-label={t("chat.restore")}
         >
           <MessageCircle className="size-4 shrink-0" />
           <span className="truncate">{t("chat.title")}</span>
         </button>
-        <button type="button" aria-label={t("chat.close")} className={iconButton} onClick={() => setOpen(false)}>
+        <button type="button" aria-label={t("chat.close")} className={fieldIconButton} onClick={() => setOpen(false)}>
           <X className="size-4" />
         </button>
       </div>
@@ -133,21 +134,21 @@ function DesktopChat() {
       role="dialog"
       aria-labelledby={TITLE_ID}
       tabIndex={-1}
-      className="fixed right-6 bottom-6 z-50 flex h-[min(560px,70vh)] w-[min(380px,calc(100vw-1rem))] flex-col border border-border bg-background shadow-lg outline-none"
+      className="fixed right-6 bottom-6 z-50 flex h-[min(600px,72vh)] w-[min(400px,calc(100vw-1rem))] flex-col bg-background shadow-overlay outline-none"
     >
-      <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
+      <div className="on-field flex items-start justify-between gap-3 bg-field px-4 py-3">
         <div>
-          <h2 id={TITLE_ID} className="text-lg font-semibold tracking-tight">
+          <h2 id={TITLE_ID} className="text-2xl leading-none font-extrabold uppercase">
             {t("chat.title")}
           </h2>
-          <p className="text-xs text-muted-foreground">{t("chat.subtitle")}</p>
+          <p className="mt-1 text-sm text-field-muted">{t("chat.subtitle")}</p>
         </div>
         <div className="flex items-center gap-1">
-          <NewConversationButton />
-          <button type="button" aria-label={t("chat.minimise")} className={iconButton} onClick={() => setMinimized(true)}>
+          <NewConversationButton onField />
+          <button type="button" aria-label={t("chat.minimise")} className={fieldIconButton} onClick={() => setMinimized(true)}>
             <Minus className="size-4" />
           </button>
-          <button type="button" aria-label={t("chat.close")} className={iconButton} onClick={() => setOpen(false)}>
+          <button type="button" aria-label={t("chat.close")} className={fieldIconButton} onClick={() => setOpen(false)}>
             <X className="size-4" />
           </button>
         </div>

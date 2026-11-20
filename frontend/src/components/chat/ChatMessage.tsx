@@ -88,7 +88,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
           disabled={Boolean(selected) || sending}
           onClick={() => commit("up", null)}
           className={cn(
-            "rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
+            "p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
             selected?.rating === "up" && "text-foreground",
           )}
         >
@@ -104,7 +104,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
             setPicking(true)
           }}
           className={cn(
-            "rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
+            "p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
             selected?.rating === "down" && "text-foreground",
           )}
         >
@@ -124,7 +124,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
               type="button"
               disabled={sending}
               onClick={() => commit("down", reason)}
-              className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="border-2 border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               {t(`chat.reason.${reason}`)}
             </button>
@@ -133,7 +133,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
             type="button"
             disabled={sending}
             onClick={() => commit("down", null)}
-            className="rounded-full px-2.5 py-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            className="px-2.5 py-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           >
             {t("chat.skipReason")}
           </button>

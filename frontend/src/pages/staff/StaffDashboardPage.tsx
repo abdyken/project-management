@@ -2,24 +2,26 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { type ReactNode, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { type Analytics, getAnalytics } from "@/api/staff"
+import { ThumbsDown, ThumbsUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/i18n"
 import { useStaffT } from "@/staff/i18n"
 import { selectClass } from "@/staff/styles"
 
-// Validated with the dataviz palette checks on the card surface #fffcf7
-// (lightness band, chroma, colour-blind separation, 3:1 contrast all pass).
-const ANSWERED = "#2a78d6"
-const UNANSWERED = "#eb6834"
+// Palette tokens: turquoise vs terracotta keep 3:1+ contrast on the white card and stay
+// distinct for colour-blind readers (blue-green against orange-red).
+const ANSWERED = "var(--field)"
+const UNANSWERED = "var(--terracotta)"
 const PERIODS = [7, 14, 30]
 const PLOT_HEIGHT = 160
 const REASONS = ["none", "wrong", "outdated", "unclear", "other"] as const
 type Reason = (typeof REASONS)[number]
 
-function Tile({ label, value, note }: { label: string; value: string; note?: string }) {
+function Tile({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
   return (
-    <div className="rounded-md border border-border bg-card p-4">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
+    <div className="border-t-4 border-primary bg-card p-4">
+      <p className="text-sm font-semibold text-muted-foreground">{label}</p>
+      <p className="mt-1 font-display text-3xl font-extrabold tabular-nums">{value}</p>
       {note && <p className="mt-0.5 text-xs text-muted-foreground">{note}</p>}
     </div>
   )
@@ -27,7 +29,7 @@ function Tile({ label, value, note }: { label: string; value: string; note?: str
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-md border border-border bg-card p-4">
+    <section className="bg-card p-5">
       <h2 className="text-sm font-medium">{title}</h2>
       <div className="mt-3">{children}</div>
     </section>
@@ -174,6 +176,7 @@ function Bars({ rows }: { rows: { label: string; value: number }[] }) {
 
 export function StaffDashboardPage() {
   const t = useStaffT()
+  const { t: chatT } = useI18n()
   const [params, setParams] = useSearchParams()
   const days = PERIODS.find((value) => String(value) === params.get("days")) ?? 7
 
@@ -230,7 +233,23 @@ export function StaffDashboardPage() {
         <Tile label={t("dash.questions")} value={String(data.questions)} note={`${t("dash.sessions")}: ${data.sessions}`} />
         <Tile label={t("dash.answered")} value={share(answered)} note={String(answered)} />
         <Tile label={t("dash.unanswered")} value={share(data.unanswered)} note={String(data.unanswered)} />
-        <Tile label={t("dash.ratings")} value={`👍 ${data.ratings.up} · 👎 ${data.ratings.down}`} />
+        <Tile
+          label={t("dash.ratings")}
+          value={
+            <span className="inline-flex items-center gap-4">
+              <span className="inline-flex items-center gap-1.5">
+                <ThumbsUp className="size-5 text-primary" aria-hidden="true" />
+                <span className="sr-only">{chatT("chat.helpful")}:</span>
+                {data.ratings.up}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <ThumbsDown className="size-5 text-terracotta" aria-hidden="true" />
+                <span className="sr-only">{chatT("chat.notHelpful")}:</span>
+                {data.ratings.down}
+              </span>
+            </span>
+          }
+        />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
