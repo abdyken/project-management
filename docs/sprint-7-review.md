@@ -18,10 +18,10 @@ database, not from the model.
 
 | Story | Implementation | Evidence | Acceptance |
 | --- | --- | --- | --- |
-| US31 | Draft/edit/submit API and RU/KK/EN form; one live application per programme and type; read-only after submitting; browser and server validation | `backend/docs/qa/US31-QA.md` | Live QA / PO open |
-| US32 | Content-checked uploads to the `uploads` volume, per-file/application/account limits, disk floor, downloads as attachments, cleanup of abandoned drafts and orphaned files | `backend/docs/qa/US32-QA.md` | CO.7 backup, live QA / PO open |
-| US33 | Staff queue and detail, status rules (ADR 0002), required notes, link-only e-mail with retry | `backend/docs/qa/US33-QA.md` | Live QA / PO open |
-| US6 | Status questions in EN/RU/KK recognised without the model; own status for a logged-in applicant, a general pointer for visitors | `backend/docs/qa/US6-QA.md` | Live QA / PO open |
+| US31 | Draft/edit/submit API and RU/KK/EN form; one live application per programme and type; read-only after submitting; browser and server validation | `backend/docs/qa/US31-QA.md` | Live run passed, accepted by PO 20.11.2026 |
+| US32 | Content-checked uploads to the `uploads` volume, per-file/application/account limits, disk floor, downloads as attachments, cleanup of abandoned drafts and orphaned files | `backend/docs/qa/US32-QA.md` | CO.7 backup done; live run passed, accepted by PO 20.11.2026 |
+| US33 | Staff queue and detail, status rules (ADR 0002), required notes, link-only e-mail with retry | `backend/docs/qa/US33-QA.md` | Live run passed, accepted by PO 20.11.2026 |
+| US6 | Status questions in EN/RU/KK recognised without the model; own status for a logged-in applicant, a general pointer for visitors | `backend/docs/qa/US6-QA.md` | Live run passed, accepted by PO 20.11.2026 |
 
 Decisions: `docs/adr/0001`-`0004`. API contract: `backend/docs/api/applications.md`.
 
@@ -90,8 +90,10 @@ five-failure login limit after several runs in a row.
   for a login (401, not 503); the pages load; nginx refuses a 2.5 MB body on an ordinary
   API route (413) and passes it to the API on the upload route; the chat recognises a status
   question and gives a visitor the general pointer; no errors in the API log; 35 GB free.
-- **Open:** a logged-in click-through on the live site with a real verified applicant and
-  the staff account (start, fill in, upload, submit, request changes, e-mail arrives,
-  resubmit, accept, ask the chat), then Product Owner acceptance of US31, US32, US33 and US6.
+- **Live run 20.11.2026:** Dinmukhamed did the logged-in click-through on the live site
+  with a real verified applicant and the staff account (start, fill in, upload, submit,
+  request changes, e-mail arrives, resubmit, accept, ask the chat). Everything worked.
+- **Accepted 20.11.2026:** Askhat (Product Owner) reviewed the live result and accepted
+  US31, US32, US33 and US6. Sprint 7 is closed.
 - Not in scope: antivirus scanning (staff open files in the browser's viewer only),
   admission decisions, payments, the university's own application system.
