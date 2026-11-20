@@ -1,6 +1,6 @@
 # US6 - Application status in the chat QA
 
-**Record:** 19.11.2026, updated 20.11.2026 after the code reviews. **Status:** implemented, verified locally and in CI, switched on in production 20.11.2026 with live smoke checks (`docs/sprint-7-review.md`); logged-in live run and PO acceptance open.
+**Record:** 19.11.2026, updated 20.11.2026 after the code reviews. **Status:** implemented, verified locally and in CI, switched on in production 20.11.2026 with live smoke checks (`docs/sprint-7-review.md`); logged-in live run passed and accepted by the Product Owner 20.11.2026.
 
 ## Acceptance scenarios
 

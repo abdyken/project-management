@@ -5,6 +5,8 @@
 28.11-04.12.2026.
 **Delivery:** the team now gives each sprint to one member (Product Owner decision);
 Sprint 7 is delivered by Dinmukhamed. The backlog owners below stay as story contacts.
+**Status:** done. Live run passed and all four stories accepted by the Product Owner on
+20.11.2026 (`sprint-7-review.md`).
 
 Goal: an applicant with a verified account submits an application for one programme,
 attaches scans of the required documents, and follows its status; an admissions
