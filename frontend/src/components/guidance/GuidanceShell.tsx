@@ -28,6 +28,7 @@ export function GuidanceShell({ title, lead, children }: { title: string; lead?:
             {title}
           </h1>
           {lead ? <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{lead}</p> : null}
+          {onHub ? null : (
           <nav aria-label={t("hub")} className="mt-10 flex flex-wrap gap-1.5">
             {GUIDANCE_ROUTES.map(([key, to]) => (
               <NavLink
@@ -44,12 +45,13 @@ export function GuidanceShell({ title, lead, children }: { title: string; lead?:
               </NavLink>
             ))}
           </nav>
+          )}
         </div>
         <div className="absolute inset-x-0 top-full overflow-hidden">
           <Tesserae size={24} rows={BAND_EDGE} />
         </div>
       </section>
-      <div className="mx-auto max-w-6xl px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20">{children}</div>
+      <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", onHub ? "max-w-[84rem]" : "max-w-6xl")}>{children}</div>
     </div>
   )
 }

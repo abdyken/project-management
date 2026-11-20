@@ -43,7 +43,22 @@ const HUB_TILES = [
 
 export function AdmissionsPage() {
   const t = useGuidanceT()
+  const { t: appT, degree, deadline, language } = useI18n()
   const routes = Object.fromEntries(GUIDANCE_ROUTES)
+  const catalogue = useQuery(allProgramsQuery)
+  const programs = catalogue.data?.programs ?? []
+  const bachelors = programs.filter((program) => program.degree_level === "bachelor")
+  const bachelorDeadline = bachelors.find((program) => program.deadline_local)?.deadline_local ?? null
+  const fees = bachelors.map((program) => program.tuition_per_ects_kzt).filter((fee): fee is number => fee !== null)
+  const numbers = new Intl.NumberFormat(language === "en" ? "en-GB" : "ru-RU")
+  // One deciding fact per tool, from the live catalogue; nothing when it is not loaded.
+  const facts: Partial<Record<(typeof HUB_TILES)[number]["key"], string>> = catalogue.data
+    ? {
+        eligibility: bachelorDeadline ? `${degree("bachelor")} · ${deadline(bachelorDeadline)}` : undefined,
+        recommendations: appT("home.path.count", { count: numbers.format(programs.length) }),
+        cost: fees.length ? `${numbers.format(Math.min(...fees))}–${numbers.format(Math.max(...fees))} ₸` : undefined,
+      }
+    : {}
   return (
     <GuidanceShell title={t("hub")} lead={t("lead")}>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-12">
@@ -56,6 +71,7 @@ export function AdmissionsPage() {
             text={t(tile.text)}
             className={tile.className}
             large={"large" in tile}
+            fact={facts[tile.key]}
             headingLevel={2}
           />
         ))}

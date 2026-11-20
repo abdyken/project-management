@@ -126,7 +126,7 @@ export function HomePage() {
             <form
               role="search"
               onSubmit={search}
-              className="relative bg-card p-5 text-card-foreground sm:p-7 lg:-mt-36 lg:p-8"
+              className="relative mr-14 bg-card p-5 text-card-foreground sm:mr-0 sm:p-7 lg:-mt-36 lg:p-8"
             >
               <Tesserae
                 size={16}
@@ -209,7 +209,16 @@ export function HomePage() {
         <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16 lg:px-8 lg:py-24">
           <div>
             <SectionHeading id="dates-title" title={t("home.dates.title")} />
-            <p className="mt-5 max-w-[46ch] text-muted-foreground">{t("home.dates.note")}</p>
+            {facts ? (
+              <p className="tabular mt-5 font-display text-2xl font-bold uppercase">
+                {(() => {
+                  const dates = [facts.byLevel.bachelor.deadlineLocal, facts.byLevel.bachelor.deadlineIntl, facts.byLevel.master.deadlineLocal, facts.byLevel.phd.deadlineLocal]
+                  const published = dates.filter(Boolean).length
+                  return t("home.dates.tally", { published: numbers.format(published), pending: numbers.format(dates.length - published) })
+                })()}
+              </p>
+            ) : null}
+            <p className="mt-4 max-w-[46ch] text-muted-foreground">{t("home.dates.note")}</p>
           </div>
           <ol className="divide-y divide-border border-y border-border">
             <DateRow date={facts?.byLevel.bachelor.deadlineLocal} language={language} label={t("home.dates.bachelorLocal")} notPublished={t("home.dates.notPublished")} />
@@ -265,7 +274,7 @@ export function HomePage() {
 
       {/* Schools beside a real photo of SDU students. */}
       <section aria-labelledby="schools-title" className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-28">
-        <figure className="relative lg:col-span-5">
+        <figure className="relative self-start lg:col-span-5">
           <img
             src="/images/sdu/students-laptop-1280.webp"
             srcSet="/images/sdu/students-laptop-640.webp 640w, /images/sdu/students-laptop-1280.webp 1280w, /images/sdu/students-laptop-1920.webp 1920w"

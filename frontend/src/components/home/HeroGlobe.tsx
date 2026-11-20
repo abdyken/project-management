@@ -31,14 +31,14 @@ export function HeroGlobe() {
       height: width * 2,
       phi,
       theta,
-      // Drawn on the turquoise International band (--field #0a6c74): glacier sphere, white land dots.
+      // Flat material on the turquoise International band (--field #0a6c74): no lighting, no halo.
       dark: 0,
-      diffuse: 1.6,
+      diffuse: 0,
       mapSamples: 16000,
       mapBrightness: 5,
       baseColor: [0.098, 0.655, 0.659],
       markerColor: [0.89, 0.639, 0.227],
-      glowColor: [0.039, 0.424, 0.455],
+      glowColor: [0.039, 0.424, 0.455], // same as the field: no visible halo
       markers: [{ location: ALMATY, size: 0.028, id: "sdu" }],
     })
 

@@ -41,7 +41,7 @@ export function MosaicTile({
       className={cn("group relative flex min-h-56 min-w-0 flex-col justify-between p-6 transition-colors duration-200 sm:p-8", TONES[tone], className)}
     >
       <div>
-        <Heading className={cn("font-display font-extrabold uppercase", large ? "text-[clamp(2.75rem,5vw,4.5rem)]" : "text-4xl", "leading-[0.9]")}>
+        <Heading className={cn("font-display font-extrabold uppercase", large ? "text-[clamp(2.75rem,5vw,4.5rem)]" : "text-[clamp(1.875rem,2.3vw,2.25rem)]", "leading-[0.9]")}>
           {title}
         </Heading>
         <p className={cn("mt-3 max-w-[34ch]", large ? "text-xl" : "text-lg")}>{text}</p>

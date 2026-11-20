@@ -91,10 +91,10 @@ export function ProgramDetailPage() {
           </Link>
           <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
             <div className="min-w-0">
-              <p className="tabular text-lg text-field-muted">
+              <h1 className="max-w-[18ch] text-[clamp(2.75rem,6.5vw,5.5rem)] leading-[0.88] font-extrabold uppercase">{title}</h1>
+              <p className="tabular mt-4 text-lg text-field-muted">
                 {degree(program.degree_level)} · {program.program_id}
               </p>
-              <h1 className="mt-2 max-w-[18ch] text-[clamp(2.75rem,6.5vw,5.5rem)] leading-[0.88] font-extrabold uppercase">{title}</h1>
             </div>
             <CompareToggle programId={program.program_id} title={title} tone="field" />
           </div>

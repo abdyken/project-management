@@ -15,7 +15,7 @@ export function CompareBar() {
     <div
       role="region"
       aria-label={t("compare.bar")}
-      className="fixed bottom-4 left-4 z-40 flex max-w-[calc(100vw-6.5rem)] items-center gap-2 border border-border bg-background py-2 pr-2 pl-4 shadow-lg"
+      className="fixed bottom-4 left-4 z-40 flex max-w-[calc(100vw-6.5rem)] items-center gap-2 bg-background py-2 pr-2 pl-4 shadow-overlay"
     >
       <p className="text-sm">
         {ids.length}/{MAX_COMPARED} <span className="hidden sm:inline">{t("compare.programsSelected")}</span>

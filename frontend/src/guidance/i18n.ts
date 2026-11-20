@@ -2,7 +2,7 @@ import { useLanguageStore } from "@/i18n"
 
 const messages = {
   profile_subjects: [
-    "Programme profile subjects",
+    "Program profile subjects",
     "Профильные предметы программы",
     "Бағдарламаның бейіндік пәндері",
   ],
@@ -93,7 +93,7 @@ const messages = {
     "Ресми дереккөз қосу",
   ],
   professional_tariff_needs_confirmation: [
-    "The programme tariff changed; the office must reconfirm its source.",
+    "The program tariff changed; the office must reconfirm its source.",
     "Тариф программы изменился; комиссия должна повторно подтвердить источник.",
     "Бағдарлама тарифі өзгерді; комиссия дереккөзді қайта растауы керек.",
   ],
@@ -103,7 +103,7 @@ const messages = {
     "Оқуға түсуді жоспарлау",
   ],
   lead: [
-    "Explore programmes, check published requirements and plan your budget.",
+    "Explore programs, check published requirements and plan your budget.",
     "Подберите программу, проверьте опубликованные требования и рассчитайте бюджет.",
     "Бағдарламаны таңдап, жарияланған талаптарды тексеріп, бюджетіңізді есептеңіз.",
   ],
@@ -113,7 +113,7 @@ const messages = {
     "Талаптарды тексеру",
   ],
   recommendations: [
-    "Find my programmes",
+    "Find my programs",
     "Подобрать программы",
     "Бағдарламаларды таңдау",
   ],
@@ -129,12 +129,12 @@ const messages = {
     "Қабылдау комиссиясына сұрақтар",
   ],
   eligibilityText: [
-    "See which published requirements of a programme you already meet.",
+    "See which published requirements of a program you already meet.",
     "Узнайте, каким опубликованным требованиям программы вы уже соответствуете.",
     "Бағдарламаның жарияланған талаптарының қайсысына сай келетініңізді біліңіз.",
   ],
   recommendationsText: [
-    "Get programmes that fit your profile and their published requirements.",
+    "Get programs that fit your profile and their published requirements.",
     "Подберите программы под ваш профиль и их опубликованные требования.",
     "Профиліңізге және жарияланған талаптарға сай бағдарламаларды табыңыз.",
   ],
@@ -153,8 +153,8 @@ const messages = {
     "Задайте личный вопрос и получите ответ приёмной комиссии.",
     "Жеке сұрақ қойып, қабылдау комиссиясынан жауап алыңыз.",
   ],
-  program: ["Programme", "Программа", "Бағдарлама"],
-  choose: ["Choose a programme", "Выберите программу", "Бағдарламаны таңдаңыз"],
+  program: ["Program", "Программа", "Бағдарлама"],
+  choose: ["Choose a program", "Выберите программу", "Бағдарламаны таңдаңыз"],
   chooseLanguageGroup: [
     "Choose a language group",
     "Выберите языковую группу",
@@ -260,7 +260,7 @@ const messages = {
   submit: ["Check", "Проверить", "Тексеру"],
   calculate: ["Calculate", "Рассчитать", "Есептеу"],
   tooMany: ["Too many requests in a short time. Please wait a minute and try again.", "Слишком много запросов за короткое время. Подождите минуту и попробуйте снова.", "Қысқа уақытта тым көп сұраныс жіберілді. Бір минут күтіп, қайталап көріңіз."],
-  needProgram: ["Choose a programme first.", "Сначала выберите программу.", "Алдымен бағдарламаны таңдаңыз."],
+  needProgram: ["Choose a program first.", "Сначала выберите программу.", "Алдымен бағдарламаны таңдаңыз."],
   needInterest: ["Choose at least one interest.", "Выберите хотя бы один интерес.", "Кемінде бір қызығушылықты таңдаңыз."],
   needCredits: ["Enter the profile ECTS credits.", "Введите кредиты ECTS по профильным дисциплинам.", "Бейіндік пәндер бойынша ECTS кредиттерін енгізіңіз."],
   working: ["Please wait…", "Подождите…", "Күтіңіз…"],
@@ -344,7 +344,7 @@ const messages = {
     "Магистратура бағытын растау қажет.",
   ],
   credit_split_missing: [
-    "The programme's professional/MDE credit split needs confirmation.",
+    "The program's professional/MDE credit split needs confirmation.",
     "Распределение кредитов программы между профильными курсами и MDE требует подтверждения.",
     "Бағдарламадағы бейіндік/MDE кредиттерінің бөлінуін растау қажет.",
   ],
@@ -354,7 +354,7 @@ const messages = {
     "MDE тарифі расталмаған.",
   ],
   professional_rate_missing: [
-    "The programme tariff is not confirmed.",
+    "The program tariff is not confirmed.",
     "Профильный тариф не подтверждён.",
     "Бейіндік тариф расталмаған.",
   ],
@@ -369,7 +369,7 @@ const messages = {
     "Ресми дереккөздердегі айырмашылықтар шешілмеген.",
   ],
   doctoral_requirements_unconfirmed: [
-    "Programme-specific doctoral requirements need confirmation.",
+    "Program-specific doctoral requirements need confirmation.",
     "Требования конкретной программы PhD требуют подтверждения.",
     "PhD бағдарламасының талаптарын растау қажет.",
   ],
@@ -409,7 +409,7 @@ const messages = {
     "Расталған есеп бөлігі",
   ],
   costNote: [
-    "Enter the professional and MDE credits in your study plan. For a full-degree estimate, use the whole programme's split; a single tariff × all credits is not a full quote.",
+    "Enter the professional and MDE credits in your study plan. For a full-degree estimate, use the whole program's split; a single tariff × all credits is not a full quote.",
     "Укажите профильные и MDE-кредиты учебного плана. Для оценки всей программы нужен полный состав кредитов; одна ставка × все кредиты не даёт полной стоимости.",
     "Оқу жоспарындағы бейіндік және MDE кредиттерін енгізіңіз. Толық бағдарлама үшін барлық кредиттердің бөлінуі қажет; бір тарифті барлық кредитке көбейту толық баға емес.",
   ],
@@ -470,7 +470,7 @@ const messages = {
   ],
   psychology: ["Psychology", "Психология", "Психология"],
   noMatches: [
-    "No matching programmes. Review your preferences and checked requirements.",
+    "No matching programs. Review your preferences and checked requirements.",
     "Подходящих программ нет. Проверьте предпочтения и требования.",
     "Сәйкес бағдарламалар жоқ. Қалауларыңыз бен талаптарды тексеріңіз.",
   ],
@@ -479,9 +479,9 @@ const messages = {
     "Соответствует интересам",
     "Қызығушылықтарыңызға сәйкес",
   ],
-  details: ["Programme details", "О программе", "Бағдарлама туралы"],
+  details: ["Program details", "О программе", "Бағдарлама туралы"],
   compare: [
-    "Compare these programmes",
+    "Compare these programs",
     "Сравнить программы",
     "Бағдарламаларды салыстыру",
   ],

@@ -118,12 +118,12 @@ async function run(type, name, width) {
     await page.goto(`${BASE}/recommendations`)
     await page.getByLabel("Computing and technology", { exact: true }).check()
     await page
-      .getByRole("button", { name: "Find my programmes", exact: true })
+      .getByRole("button", { name: "Find my programs", exact: true })
       .click()
     await page.locator("article").first().waitFor()
     assert((await page.locator("article").count()) <= 3)
     await page
-      .getByRole("link", { name: "Compare these programmes", exact: true })
+      .getByRole("link", { name: "Compare these programs", exact: true })
       .click()
     await page.waitForURL(/\/compare\?ids=/)
     record(name, width, "US5 recommendations link to the existing comparison")

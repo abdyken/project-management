@@ -65,7 +65,7 @@ export function SiteFooter() {
 function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h2 className="font-display text-lg font-bold tracking-[0.06em] text-ochre uppercase">{title}</h2>
+      <h2 className="font-display text-xl font-bold tracking-[0.06em] text-ochre uppercase">{title}</h2>
       <ul className="mt-4 space-y-2.5 text-[0.9375rem]">{children}</ul>
     </div>
   )
