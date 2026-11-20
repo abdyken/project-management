@@ -12,6 +12,8 @@ facts from missing or conflicting requirements; checks never promise admission o
 
 Sprint plans and reviews: [`docs/sprint-2-tasks.md`](docs/sprint-2-tasks.md), [`docs/sprint-2-review.md`](docs/sprint-2-review.md), [`docs/sprint-3-tasks.md`](docs/sprint-3-tasks.md), [`docs/sprint-3-review.md`](docs/sprint-3-review.md), [`docs/sprint-4-tasks.md`](docs/sprint-4-tasks.md), [`docs/sprint-5-tasks.md`](docs/sprint-5-tasks.md), [`docs/sprint-5-review.md`](docs/sprint-5-review.md), [`docs/sprint-6-tasks.md`](docs/sprint-6-tasks.md), [`docs/sprint-6-review.md`](docs/sprint-6-review.md), [`docs/sprint-7-tasks.md`](docs/sprint-7-tasks.md), [`docs/sprint-7-review.md`](docs/sprint-7-review.md). Backlog, story and QA sheets: [`docs/table.xlsx`](docs/table.xlsx).
 
+Design: the portal uses its own "Almaty Mosaic" identity (smalt turquoise fields on a tessera grid, SDU logo and credited SDU photos). Product context: [`PRODUCT.md`](PRODUCT.md). Visual system and tokens: [`DESIGN.md`](DESIGN.md). Before/after audits: [`docs/design/baseline-audit-2026-11-20.md`](docs/design/baseline-audit-2026-11-20.md), [`docs/design/redesign-audit-2026-11-20.md`](docs/design/redesign-audit-2026-11-20.md).
+
 ## Start everything
 
 Requirement: Docker Desktop.

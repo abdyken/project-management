@@ -1,0 +1,516 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-20T18:22:32+00:00",
+  "title": "Design System: SDU Admissions Portal",
+  "extensions": {
+    "colorMeta": {
+      "smalt-turquoise": {
+        "role": "primary",
+        "displayName": "Smalt Turquoise",
+        "canonical": "#0a6c74",
+        "purpose": "Field colour: header, hero, guide and International bands, default button, focus ring on light.",
+        "tonalRamp": [
+          "#00171c",
+          "#003439",
+          "#00535a",
+          "#1e737b",
+          "#519299",
+          "#7cb3b8",
+          "#a7d4d9",
+          "#d3f6fa"
+        ]
+      },
+      "deep-turquoise": {
+        "role": "primary",
+        "displayName": "Deep Turquoise",
+        "canonical": "#074f55",
+        "purpose": "Footer, cost band, hover on turquoise, completed steps, mobile menu sheet.",
+        "tonalRamp": [
+          "#00171c",
+          "#003338",
+          "#0d5157",
+          "#3b7075",
+          "#628f94",
+          "#89b0b4",
+          "#b0d2d5",
+          "#d9f5f7"
+        ]
+      },
+      "glacier": {
+        "role": "tertiary",
+        "displayName": "Glacier Turquoise",
+        "canonical": "#19a7a8",
+        "purpose": "Tesserae, master degree edge, selection. Ink text only.",
+        "tonalRamp": [
+          "#00191a",
+          "#003637",
+          "#005556",
+          "#007677",
+          "#07999a",
+          "#49bcbc",
+          "#7ddddd",
+          "#adffff"
+        ]
+      },
+      "ochre": {
+        "role": "secondary",
+        "displayName": "Apricot Ochre",
+        "canonical": "#e3a33a",
+        "purpose": "The one primary action per band, active nav underline, PhD edge, needs-changes state, tesserae. Ink text only.",
+        "tonalRamp": [
+          "#230900",
+          "#432300",
+          "#663e00",
+          "#8a5b00",
+          "#b07a18",
+          "#d89a33",
+          "#fbbe62",
+          "#ffe492"
+        ]
+      },
+      "ochre-hover": {
+        "role": "secondary",
+        "displayName": "Ochre Pressed",
+        "canonical": "#d2912a",
+        "purpose": "Hover on ochre actions.",
+        "tonalRamp": [
+          "#240800",
+          "#442200",
+          "#673d00",
+          "#8c5a00",
+          "#b37814",
+          "#d99939",
+          "#fabe6d",
+          "#ffe49c"
+        ]
+      },
+      "terracotta": {
+        "role": "tertiary",
+        "displayName": "Terracotta",
+        "canonical": "#c5532f",
+        "purpose": "Tesserae, international path tile, rejected step.",
+        "tonalRamp": [
+          "#2f0000",
+          "#540c00",
+          "#7d2707",
+          "#a74120",
+          "#cf603e",
+          "#ed886a",
+          "#ffb094",
+          "#ffd9c0"
+        ]
+      },
+      "terracotta-text": {
+        "role": "tertiary",
+        "displayName": "Terracotta Text",
+        "canonical": "#b0432a",
+        "purpose": "Legible terracotta for errors and not-published notes.",
+        "tonalRamp": [
+          "#2e0000",
+          "#550b00",
+          "#7d2510",
+          "#a93f26",
+          "#c9654e",
+          "#e68c77",
+          "#ffb4a1",
+          "#ffddcd"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#121417",
+        "purpose": "Reading text, overlay ring, heavy 2px rules.",
+        "tonalRamp": [
+          "#101215",
+          "#292b2f",
+          "#45484b",
+          "#64666a",
+          "#84868a",
+          "#a5a8ac",
+          "#c8cbcf",
+          "#eceff3"
+        ]
+      },
+      "cool-white": {
+        "role": "neutral",
+        "displayName": "Cool White",
+        "canonical": "#f5f7f6",
+        "purpose": "Page background.",
+        "tonalRamp": [
+          "#111211",
+          "#2a2c2b",
+          "#464847",
+          "#656666",
+          "#858786",
+          "#a6a8a7",
+          "#c9cbca",
+          "#edefee"
+        ]
+      },
+      "card-white": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "purpose": "Tiles, inputs, text on fields.",
+        "tonalRamp": [
+          "#121212",
+          "#2b2b2b",
+          "#484848",
+          "#666666",
+          "#868686",
+          "#a8a8a8",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "field-mist": {
+        "role": "neutral",
+        "displayName": "Field Mist",
+        "canonical": "#cdebe9",
+        "purpose": "Secondary text and inactive nav on turquoise fields.",
+        "tonalRamp": [
+          "#091413",
+          "#212e2e",
+          "#3b4b4a",
+          "#576b69",
+          "#758b8a",
+          "#95aeac",
+          "#b5d1cf",
+          "#d8f6f4"
+        ]
+      },
+      "pale-turquoise": {
+        "role": "neutral",
+        "displayName": "Pale Turquoise",
+        "canonical": "#e4eeed",
+        "purpose": "Badge boxes, ghost hover.",
+        "tonalRamp": [
+          "#0c1313",
+          "#252d2c",
+          "#414a49",
+          "#5f6867",
+          "#7f8887",
+          "#a1aaa9",
+          "#c3cdcc",
+          "#e7f1f0"
+        ]
+      },
+      "muted-surface": {
+        "role": "neutral",
+        "displayName": "Muted Surface",
+        "canonical": "#e9efee",
+        "purpose": "Neutral badge box, quiet surfaces.",
+        "tonalRamp": [
+          "#0e1312",
+          "#282c2c",
+          "#444948",
+          "#626766",
+          "#828787",
+          "#a3a9a8",
+          "#c6cccb",
+          "#eaf0ef"
+        ]
+      },
+      "accent-wash": {
+        "role": "neutral",
+        "displayName": "Accent Wash",
+        "canonical": "#d6ebea",
+        "purpose": "Quiet accent surfaces.",
+        "tonalRamp": [
+          "#0c1313",
+          "#242d2d",
+          "#3f4a4a",
+          "#5c6969",
+          "#7a8a89",
+          "#9aacab",
+          "#bccfce",
+          "#dff3f2"
+        ]
+      },
+      "slate-ink": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#4a5553",
+        "purpose": "Secondary text on light.",
+        "tonalRamp": [
+          "#0a1412",
+          "#242e2c",
+          "#404a48",
+          "#5e6967",
+          "#7d8987",
+          "#9eaba8",
+          "#c1cecb",
+          "#e5f2ef"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#c9d4d2",
+        "purpose": "1px dividers and borders.",
+        "tonalRamp": [
+          "#0c1312",
+          "#252d2c",
+          "#414a48",
+          "#5f6867",
+          "#7e8987",
+          "#a0aaa8",
+          "#c2cdcb",
+          "#e6f1ef"
+        ]
+      },
+      "input-stroke": {
+        "role": "neutral",
+        "displayName": "Input Stroke",
+        "canonical": "#7e908d",
+        "purpose": "2px input borders and dashed state outlines.",
+        "tonalRamp": [
+          "#0c1312",
+          "#242e2c",
+          "#3e4b49",
+          "#5b6a67",
+          "#798a88",
+          "#9baca9",
+          "#bfcecc",
+          "#e4f2f0"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home hero headline; page h1s use the same face at clamp(2.5rem, 6-7vw, 5-5.5rem). Uppercase. KK/RU headings line-height 1.04."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section h2s, uppercase, max 16ch."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Programme and mosaic tile titles, uppercase."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text, 46-60ch."
+      },
+      "body-small": {
+        "displayName": "Body small",
+        "purpose": "Nav links, button text, tile meta, labels."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Large buttons and header Apply, uppercase with 0.04em tracking."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 0 0 2px #121417",
+        "purpose": "Flat ink ring for floating overlays only: chat launcher and panel, compare bar, sheets. Token --shadow-overlay."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Tesserae set-in."
+      },
+      {
+        "name": "tesserae-set",
+        "value": "opacity and scale(0.6 to 1) over 0.5s, delay (scattered index 0-16) x 45ms",
+        "purpose": "Tiles set once when a band enters the viewport. Static under reduced motion."
+      },
+      {
+        "name": "colour-transition",
+        "value": "0.2s ease-out",
+        "purpose": "Buttons, links, tiles, nav."
+      },
+      {
+        "name": "arrow-slide",
+        "value": "translateX(3px) over 0.2s",
+        "purpose": "Trailing arrow icons on hover."
+      },
+      {
+        "name": "nav-underline",
+        "value": "scaleX 0.3s ease-out",
+        "purpose": "Ochre active-link underline in the header."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Everything static; no smooth scroll; globe does not spin."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (Ochre)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action per band: Apply, Search.",
+      "html": "<button class=\"ds-btn-ochre\">Search 64 programmes <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-ochre{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;cursor:pointer;transition:background-color .2s ease-out,color .2s ease-out,border-color .2s ease-out;min-height:48px;padding:8px 24px;background:#e3a33a;color:#121417;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:1.125rem;letter-spacing:.04em;text-transform:uppercase;} .ds-btn-ochre svg{transition:transform .2s ease-out;} .ds-btn-ochre:hover{background:#d2912a;} .ds-btn-ochre:hover svg{transform:translateX(3px);} .ds-btn-ochre:active{transform:translateY(1px);} .ds-btn-ochre:focus-visible{outline:2px solid #0a6c74;outline-offset:2px;}"
+    },
+    {
+      "name": "Default Button (Turquoise)",
+      "kind": "button",
+      "refersTo": "button-default",
+      "description": "The turquoise working button.",
+      "html": "<button class=\"ds-btn-default\">Ask a question</button>",
+      "css": ".ds-btn-default{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;cursor:pointer;transition:background-color .2s ease-out,color .2s ease-out,border-color .2s ease-out;height:44px;padding:0 20px;background:#0a6c74;color:#fff;font-family:'Golos Text',system-ui,sans-serif;font-weight:600;font-size:.9375rem;} .ds-btn-default:hover{background:#074f55;} .ds-btn-default:active{transform:translateY(1px);} .ds-btn-default:focus-visible{outline:2px solid #0a6c74;outline-offset:2px;}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action on light surfaces.",
+      "html": "<button class=\"ds-btn-outline\">Compare programmes</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;cursor:pointer;transition:background-color .2s ease-out,color .2s ease-out,border-color .2s ease-out;height:44px;padding:0 20px;background:transparent;color:#0a6c74;border:2px solid #0a6c74;font-family:'Golos Text',system-ui,sans-serif;font-weight:600;font-size:.9375rem;} .ds-btn-outline:hover{background:#0a6c74;color:#fff;} .ds-btn-outline:focus-visible{outline:2px solid #0a6c74;outline-offset:2px;}"
+    },
+    {
+      "name": "On-Field Button",
+      "kind": "button",
+      "refersTo": "button-on-field",
+      "description": "Secondary action on a turquoise field.",
+      "html": "<div style=\"background:#074f55;padding:24px\"><button class=\"ds-btn-onfield\">Grants and scholarships</button></div>",
+      "css": ".ds-btn-onfield{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;cursor:pointer;transition:background-color .2s ease-out,color .2s ease-out,border-color .2s ease-out;height:44px;padding:0 20px;background:transparent;color:#fff;border:2px solid #fff;font-family:'Golos Text',system-ui,sans-serif;font-weight:600;font-size:.9375rem;} .ds-btn-onfield:hover{background:#fff;color:#0a6c74;} .ds-btn-onfield:focus-visible{outline:2px solid #fff;outline-offset:2px;}"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Square 2px-stroke field; band searches are 56px with a turquoise icon.",
+      "html": "<label class=\"ds-input-wrap\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-input\" type=\"search\" placeholder=\"Program or code\"></label>",
+      "css": ".ds-input-wrap{position:relative;display:block;max-width:420px;color:#0a6c74;} .ds-input-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;} .ds-input{width:100%;height:56px;padding:0 12px 0 44px;border:2px solid #7e908d;border-radius:0;background:#fff;color:#121417;font-family:'Golos Text',system-ui,sans-serif;font-size:1rem;outline:none;transition:border-color .2s;} .ds-input::placeholder{color:#4a5553;} .ds-input:hover{border-color:#121417;} .ds-input:focus-visible{border-color:#0a6c74;outline:2px solid #0a6c74;outline-offset:2px;}"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-field",
+      "description": "A tessera plus words; status is never colour alone.",
+      "html": "<span class=\"ds-badge ds-badge-field\"><span class=\"ds-tess\" style=\"background:#0a6c74\"></span>Open</span> <span class=\"ds-badge ds-badge-ochre\"><span class=\"ds-tess\" style=\"background:#e3a33a\"></span>Changes requested</span> <span class=\"ds-badge ds-badge-neutral\"><span class=\"ds-tess\" style=\"border:2px solid #7e908d\"></span>Not published</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:8px;padding:4px 8px;font-family:'Golos Text',system-ui,sans-serif;font-size:.875rem;font-weight:600;} .ds-tess{width:10px;height:10px;flex-shrink:0;box-sizing:border-box;} .ds-badge-field{background:#e4eeed;color:#074f55;} .ds-badge-ochre{background:rgb(227 163 58 / 20%);color:#121417;} .ds-badge-neutral{background:#e9efee;color:#121417;}"
+    },
+    {
+      "name": "Programme Tile",
+      "kind": "card",
+      "refersTo": "programme-tile",
+      "description": "Three fixed lines, degree colour as top edge; dashed outline when the deadline is unpublished.",
+      "html": "<div class=\"ds-ptiles\"><article class=\"ds-ptile\"><span class=\"ds-pedge\" style=\"background:#0a6c74\"></span><h3 class=\"ds-ptitle\">Computer Science</h3><p class=\"ds-pmeta\">Bachelor · English · 6B06102</p><p class=\"ds-pfact\">Local deadline: 25.08.2026</p></article><article class=\"ds-ptile ds-ptile-off\"><span class=\"ds-pedge\" style=\"background:#e3a33a\"></span><h3 class=\"ds-ptitle\">Mathematics</h3><p class=\"ds-pmeta\">PhD · English · 8D05401</p><p class=\"ds-pfact\">35,000 ₸ per ECTS credit</p></article></div>",
+      "css": ".ds-ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;} .ds-ptile{position:relative;display:flex;flex-direction:column;padding:28px 24px 24px;background:#fff;border:2px solid transparent;color:#121417;transition:border-color .2s;} .ds-ptile:hover{border-color:#0a6c74;} .ds-ptile-off{background:transparent;border:2px dashed #7e908d;} .ds-pedge{position:absolute;left:0;right:0;top:-2px;height:6px;} .ds-ptitle{margin:0;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.75rem;line-height:1;text-transform:uppercase;} .ds-pmeta{margin:12px 0 20px;color:#4a5553;font-family:'Golos Text',system-ui,sans-serif;font-size:.9375rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .ds-pfact{margin:auto 0 0;padding-top:16px;border-top:1px solid #c9d4d2;font-family:'Golos Text',system-ui,sans-serif;font-size:.9375rem;font-weight:600;font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Mosaic Tile",
+      "kind": "card",
+      "refersTo": "mosaic-tile-field",
+      "description": "A linked colour field with title, purpose and one hard fact.",
+      "html": "<a class=\"ds-mtile\" href=\"#\"><div><h3 class=\"ds-mtitle\">School leavers</h3><p class=\"ds-mtext\">Bachelor's programs with UNT results</p></div><p class=\"ds-mfact\"><span>33 programs</span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></p></a>",
+      "css": ".ds-mtile{display:flex;flex-direction:column;justify-content:space-between;min-height:224px;max-width:420px;padding:32px;background:#0a6c74;color:#fff;text-decoration:none;transition:background-color .2s;} .ds-mtile:hover{background:#074f55;} .ds-mtile:focus-visible{outline:2px solid #fff;outline-offset:2px;} .ds-mtitle{margin:0;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:2.125rem;line-height:.9;text-transform:uppercase;} .ds-mtext{margin:12px 0 0;font-family:'Golos Text',system-ui,sans-serif;font-size:1.125rem;} .ds-mfact{margin:32px 0 0;display:flex;justify-content:space-between;align-items:center;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:1.5rem;text-transform:uppercase;} .ds-mfact svg{width:24px;height:24px;transition:transform .2s;} .ds-mtile:hover .ds-mfact svg{transform:translateX(4px);}"
+    },
+    {
+      "name": "Header Bar",
+      "kind": "nav",
+      "refersTo": "header-bar",
+      "description": "Turquoise bar, white lockup, field-mist links with an ochre active underline, ochre Apply.",
+      "html": "<header class=\"ds-head\"><span class=\"ds-brand\">SDU <i></i> Admissions</span><nav class=\"ds-nav\"><a href=\"#\" class=\"is-active\">Programs</a><a href=\"#\">Plan your admission</a><a href=\"#\">My account</a></nav><a class=\"ds-apply\" href=\"#\">Apply <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></header>",
+      "css": ".ds-head{display:flex;align-items:stretch;gap:24px;height:72px;padding:0 32px;background:#0a6c74;color:#fff;} .ds-brand{display:flex;align-items:center;gap:12px;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:1.25rem;letter-spacing:.02em;text-transform:uppercase;} .ds-brand i{width:1px;height:28px;background:rgb(255 255 255 / 40%);} .ds-nav{display:flex;margin-left:auto;} .ds-nav a{position:relative;display:flex;align-items:center;padding:0 16px;color:#cdebe9;text-decoration:none;font-family:'Golos Text',system-ui,sans-serif;font-weight:500;font-size:.9375rem;transition:color .2s;} .ds-nav a:hover,.ds-nav a.is-active{color:#fff;} .ds-nav a::after{content:'';position:absolute;left:16px;right:16px;bottom:0;height:4px;background:#e3a33a;transform:scaleX(0);transform-origin:left;transition:transform .3s ease-out;} .ds-nav a.is-active::after{transform:scaleX(1);} .ds-nav a:focus-visible,.ds-apply:focus-visible{outline:2px solid #fff;outline-offset:2px;} .ds-apply{align-self:center;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;background:#e3a33a;color:#121417;text-decoration:none;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:1.125rem;letter-spacing:.04em;text-transform:uppercase;transition:background-color .2s;} .ds-apply svg{transition:transform .2s;} .ds-apply:hover{background:#d2912a;} .ds-apply:hover svg{transform:translateX(3px);}"
+    },
+    {
+      "name": "Tessera Edge",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Stepped two-row tile edge where a field meets light: sparse row over dense row.",
+      "html": "<div class=\"ds-edge\"><div class=\"ds-row\"><span style=\"background:transparent\"></span><span style=\"background:transparent\"></span><span style=\"background:#19a7a8\"></span><span style=\"background:transparent\"></span><span style=\"background:transparent\"></span><span style=\"background:transparent\"></span><span style=\"background:#e3a33a\"></span><span style=\"background:transparent\"></span><span style=\"background:transparent\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:transparent\"></span><span style=\"background:transparent\"></span></div><div class=\"ds-row\"><span style=\"background:#0a6c74\"></span><span style=\"background:#e3a33a\"></span><span style=\"background:transparent\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:#c5532f\"></span><span style=\"background:#19a7a8\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:transparent\"></span><span style=\"background:#074f55\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:#e3a33a\"></span><span style=\"background:#0a6c74\"></span></div><div class=\"ds-field\"></div></div>",
+      "css": ".ds-edge{max-width:384px;} .ds-row{display:grid;grid-template-columns:repeat(12,32px);grid-auto-rows:32px;} .ds-field{height:48px;background:#0a6c74;} @media (prefers-reduced-motion:no-preference){.ds-row span{animation:ds-set .5s cubic-bezier(.16,1,.3,1) both;} .ds-row span:nth-child(3n){animation-delay:90ms;} .ds-row span:nth-child(5n){animation-delay:180ms;}} @keyframes ds-set{from{opacity:0;transform:scale(.6);}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Almaty Mosaic",
+    "overview": "The portal is set like an Almaty modernist mosaic panel. Every section is a flat colour field laid on one 8px tessera grid, so programmes, dates, costs and application steps read as tiles of one monumental wall. Smalt turquoise carries whole bands; small square tesserae of glacier, ochre and terracotta set the edges where fields meet, and the same colours mark state. Headlines are monumental condensed capitals; everything else is a sturdy text sans built for Kazakh, Russian and English at equal quality.\n\nThe system is flat and square by conviction: no gradients, no soft shadows, no rounded cards. Depth comes from field against field (turquoise on cool white, deep turquoise on turquoise) and from a single flat 2px ink ring on floating overlays. Real SDU campus photography sits inside the mosaic frame, and the SDU emblem appears in one colour only. The official SDU navy and peach are deliberately not used: the portal must not read as a copy of sdu.edu.kz.\n\nDensity follows the visitor mode. Persuade (home, programmes) uses full-bleed bands and large tiles; Read (admissions planning guides) puts a turquoise title band over a reading column; Operate (account, application, staff) is quieter, with lighter containers and the display face in sentence case for staff headings. The world is light only: applicants use it on phones in daylight.",
+    "keyCharacteristics": [
+      "Smalt turquoise solid fields cover 30–60% of a public page.",
+      "One 8px module; tesserae at 24px and 32px; tile gaps of 4–8px.",
+      "Square corners everywhere on public surfaces.",
+      "Fira Sans Extra Condensed 800 caps for display, Golos Text for text, both with full Kazakh Cyrillic.",
+      "State as material: solid tiles are open or published, dashed outline tiles are closed or unpublished.",
+      "One ochre action per band; ochre is never decoration."
+    ],
+    "rules": [
+      {
+        "name": "The Field Rule",
+        "body": "Turquoise appears as solid fields, never as a tint wash or a gradient. Glacier, ochre and terracotta appear only as square tesserae and as state, never as a section background behind body text (the coloured path tiles are tesserae at tile scale, and they carry ink or white text only).",
+        "section": "colors"
+      },
+      {
+        "name": "The One Ochre Rule",
+        "body": "Ochre marks the one primary action in a band (Apply in the header, Search in the hero, one call to action per band). A second ochre button in the same band is a defect.",
+        "section": "colors"
+      },
+      {
+        "name": "The Not-SDU-Navy Rule",
+        "body": "The official SDU navy and peach are not used anywhere. The portal is SDU's admissions world, not a copy of sdu.edu.kz.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cyrillic Air Rule",
+        "body": "In Kazakh and Russian, h1–h3 take line-height 1.04 so diacritics on capitals (Ң, Қ, Ұ, Ё, Й) clear the line above. This outranks the tight display leading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Whole Word Rule",
+        "body": "Headings are never hyphenated. Sizes are set so whole words fit at 360, 1024 and 1440px in KK, RU and EN; overflow-wrap is a last-resort guard only.",
+        "section": "typography"
+      },
+      {
+        "name": "The Plain Heading Rule",
+        "body": "No eyebrow or kicker label above a heading, and no section numbers. A real tally (for example \"2 published · 2 not published yet\") may sit below a heading as content.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Wall Rule",
+        "body": "No gradient and no blurred shadow on any surface, tile, button or image.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Globe Exception",
+        "body": "The shaded cobe `HeroGlobe` in the home International band is the one sanctioned departure from the Flat Wall Rule. It is kept because the team chose to preserve a teammate's component, and it is rendered as flat as cobe allows: diffuse 0, glow colour equal to the field so there is no halo. Nothing else may copy its shading.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** lay public sections as full-bleed solid fields, with smalt turquoise covering 30–60% of the page.",
+      "**Do** use one ochre action per band, with ink text.",
+      "**Do** show every status as a tessera plus words; solid tile for open or published, dashed outline tile for closed or unpublished.",
+      "**Do** keep programme tiles to three fixed lines with the degree colour as the top edge, and never truncate the title.",
+      "**Do** give Kazakh and Russian headings line-height 1.04 and size headings so whole words fit at 360, 1024 and 1440px.",
+      "**Do** use the flat 2px ink ring (`--shadow-overlay`) for floating overlays only.",
+      "**Do** set the SDU logo in one colour: white on fields, ink on light.",
+      "**Do** keep motion to the tesserae set-in, 0.2s colour transitions and the 3px arrow slide, all static under reduced motion.",
+      "**Do** keep Operate areas quieter: plain hairline containers, staff headings in the display face in sentence case."
+    ],
+    "donts": [
+      "**Don't** use gradients or soft shadows anywhere; the cobe HeroGlobe is the one sanctioned exception and nothing may copy its shading.",
+      "**Don't** round corners on public surfaces.",
+      "**Don't** put eyebrow or kicker labels above headings, or number sections.",
+      "**Don't** use the official SDU navy or peach.",
+      "**Don't** use glacier, ochre or terracotta as tint washes or as backgrounds behind body text.",
+      "**Don't** hyphenate headings.",
+      "**Don't** add a dark mode; the world is light only."
+    ]
+  }
+}

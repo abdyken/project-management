@@ -10,7 +10,7 @@ export function StaffHomePage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("staff.welcome", { name: user?.name ?? "" })}</h1>
+      <h1 className="text-4xl leading-[0.95] font-extrabold">{t("staff.welcome", { name: user?.name ?? "" })}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{t("staff.welcomeText")}</p>
       <ul className="mt-6 space-y-2 text-sm">
         {nav.map((item) => (

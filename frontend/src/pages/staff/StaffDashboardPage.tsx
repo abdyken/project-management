@@ -109,7 +109,7 @@ function PerDayChart({ data }: { data: Analytics["per_day"] }) {
                   {active === index && (
                     <span
                       role="tooltip"
-                      className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 w-max -translate-x-1/2 rounded border border-border bg-card px-2 py-1 text-left text-xs shadow-sm"
+                      className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 w-max -translate-x-1/2 bg-card px-2 py-1 text-left text-xs shadow-overlay"
                     >
                       <span className="block font-medium">{day.date}</span>
                       <span className="block">

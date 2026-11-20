@@ -166,7 +166,6 @@ const en = {
   "compare.programsSelected": "programs selected",
   "compare.addOneMore": "Add one more",
   "compare.clear": "Clear comparison",
-  "compare.kicker": "Comparison",
   "compare.title": "Compare programs",
   "compare.lead":
     "Up to {max} programs side by side, from the admissions catalogue. Confirm fees and deadlines with the Admissions Office before you apply.",
@@ -409,7 +408,6 @@ const kk: Messages = {
   "compare.programsSelected": "бағдарлама таңдалды",
   "compare.addOneMore": "Тағы біреуін қосыңыз",
   "compare.clear": "Салыстыруды тазалау",
-  "compare.kicker": "Салыстыру",
   "compare.title": "Бағдарламаларды салыстыру",
   "compare.lead":
     "Қабылдау каталогынан ең көбі {max} бағдарлама қатар. Өтінім бермес бұрын ақы мен мерзімдерді қабылдау комиссиясынан нақтылаңыз.",
@@ -649,7 +647,6 @@ const ru: Messages = {
   "compare.programsSelected": "программы выбрано",
   "compare.addOneMore": "Добавьте ещё одну",
   "compare.clear": "Очистить сравнение",
-  "compare.kicker": "Сравнение",
   "compare.title": "Сравнение программ",
   "compare.lead":
     "До {max} программ рядом, по данным каталога приёмной комиссии. Уточните стоимость и сроки в приёмной комиссии перед подачей заявления.",

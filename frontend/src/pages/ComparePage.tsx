@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { X } from "lucide-react"
+import { X, ArrowLeft } from "lucide-react"
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { isNotFound } from "@/api/errors"
@@ -81,11 +81,11 @@ export function ComparePage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
-      <Link to="/programs" className="text-sm text-muted-foreground hover:text-foreground">
-        {t("detail.backToPrograms")}
+      <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-primary hover:underline">
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {t("detail.backToPrograms").replace(/^←\s*/, "")}
       </Link>
-      <p className={`mt-6 ${labelClass}`}>{t("compare.kicker")}</p>
-      <h1 className="mt-3 text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] font-extrabold uppercase">{t("compare.title")}</h1>
+      <h1 className="mt-8 text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] font-extrabold uppercase">{t("compare.title")}</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
         {t("compare.lead", { max: MAX_COMPARED })}
       </p>
