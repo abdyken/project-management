@@ -8,7 +8,7 @@ import { useI18n } from "@/i18n"
 import { ADMISSIONS_PHONE, ADMISSIONS_WEBSITE } from "@/lib/constants"
 
 // Signature 2 of 2: the footer rises into the page with the same stepped mosaic edge.
-const FOOTER_SIGNATURE = signatureSteps(240, 2, "field", "deep", 1996)
+const FOOTER_SIGNATURE = signatureSteps(240, 3, "field", "deep", 2026)
 
 export function SiteFooter() {
   const { t, language } = useI18n()
