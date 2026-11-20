@@ -42,7 +42,7 @@ export function StaffLayout() {
         {/* Phones: logo and controls on the first row, the page links on the second. */}
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-3 sm:h-16 sm:flex-nowrap sm:py-0 sm:px-6">
           <Link to="/staff" className="flex shrink-0 items-center gap-2">
-            <img src="/logo.svg" alt="" className="size-6" />
+            <img src="/brand/sdu-emblem-ink.svg" alt="" className="h-7 w-auto" />
             <span className="text-xl font-semibold tracking-tight">SDU</span>
             <span className="hidden text-[11px] tracking-[0.12em] text-muted-foreground uppercase md:inline">
               {t("staff.title")}

@@ -138,7 +138,7 @@ export function HeroGlobe() {
           <span className="sdu-globe-marker__ring" />
           <span className="sdu-globe-marker__stem" />
           <div className="sdu-globe-marker__card">
-            <img src="/logo.svg" alt="" className="sdu-globe-marker__logo" width={40} height={40} draggable={false} />
+            <img src="/brand/sdu-emblem-white.svg" alt="" className="sdu-globe-marker__logo" width={40} height={40} draggable={false} />
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ Files are resized WebP copies (`-strip -quality 72`); the content is unchanged.
 
 - **Source:** https://sdu.edu.kz/wp-content/uploads/2025/09/logo_sdu_general_02-1.svg
   (white + peach, for dark backgrounds).
-- **`*-on-light.svg`:** the same paths, with the white parts recoloured to SDU navy
-  `#212153`.
+- **`*-white.svg` / `*-ink.svg`:** the same paths in one colour, white `#ffffff` or ink
+  `#121417`. The portal uses its own palette rather than SDU's navy and peach.
 - **`sdu-lockup-*`** (emblem beside "SDU / UNIVERSITY") and **`sdu-emblem-*`:** cropped
   views of the same paths. No letterform was redrawn.

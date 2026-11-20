@@ -47,7 +47,7 @@ export function StaffLoginPage() {
     <div className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
         <Link to="/" className="mb-8 flex items-center gap-2">
-          <img src="/logo.svg" alt="" className="size-6" />
+          <img src="/brand/sdu-emblem-ink.svg" alt="" className="h-7 w-auto" />
           <span className="text-xl font-semibold tracking-tight">SDU</span>
           <span className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">{t("staff.title")}</span>
         </Link>
