@@ -45,8 +45,10 @@ async function visibleText(page) {
   })
 }
 
+// Headings are set in uppercase by CSS and innerText returns the rendered case, so compare case-insensitively.
 function leftovers(text) {
-  return ENGLISH_LABELS.filter((label) => text.includes(label))
+  const lower = text.toLowerCase()
+  return ENGLISH_LABELS.filter((label) => lower.includes(label.toLowerCase()))
 }
 
 async function run(browserType, name, width, language) {
@@ -65,7 +67,7 @@ async function run(browserType, name, width, language) {
     await page.getByText(expected.programs).waitFor()
     await page.locator("article").first().waitFor()
     const catalogue = await visibleText(page)
-    record(name, width, language, "choice survives navigation and reload", catalogue.includes(expected.programs))
+    record(name, width, language, "choice survives navigation and reload", catalogue.toLowerCase().includes(expected.programs.toLowerCase()))
     record(name, width, language, "catalogue has no English labels", leftovers(catalogue).length === 0, leftovers(catalogue).join(", "))
     record(name, width, language, "catalogue no horizontal overflow", await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))
     await page.screenshot({ path: `${OUT}/language-${name}-${width}-${language}-programs.png` })

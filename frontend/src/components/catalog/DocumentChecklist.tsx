@@ -8,7 +8,7 @@ export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse 
 
   if (checklist.warning) {
     return (
-      <div role="status" className="border border-gold/50 bg-gold/10 p-5">
+      <div role="status" className="border-2 border-ochre bg-ochre/10 p-5">
         <p className="text-sm">{t("checklist.missing")}</p>
         {checklist.contact ? <p className="mt-3 text-sm text-muted-foreground">{checklist.contact}</p> : null}
       </div>
@@ -17,41 +17,41 @@ export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse 
 
   return (
     <>
-      {note ? <p className="mb-4 text-xs text-muted-foreground">{note}</p> : null}
-      <ol className="divide-y divide-border border-y border-border sm:hidden">
+      {note ? <p className="mb-4 text-sm text-muted-foreground">{note}</p> : null}
+      <ol className="divide-y divide-border border-y-2 border-ink sm:hidden">
         {checklist.items.map((item) => (
           <li key={item.name} className="py-4">
-            <p className="text-sm font-medium" lang="en">
+            <p className="font-semibold" lang="en">
               {item.name}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">{requirementNotes(item, t)}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground">{requirementNotes(item, t)}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
               {t("checklist.deadline")}: <span lang="en">{item.deadline}</span>
             </p>
           </li>
         ))}
       </ol>
-      <div className="hidden border border-border sm:block">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-secondary/70 text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+      <div className="hidden border-t-2 border-ink sm:block">
+        <table className="w-full text-left text-[0.9375rem]">
+          <thead className="border-b border-ink text-sm text-muted-foreground">
             <tr>
-              <th scope="col" className="px-4 py-3 font-medium">{t("checklist.document")}</th>
-              <th scope="col" className="px-4 py-3 font-medium">{t("checklist.format")}</th>
-              <th scope="col" className="px-4 py-3 font-medium">{t("checklist.translationColumn")}</th>
-              <th scope="col" className="px-4 py-3 font-medium">{t("checklist.notary")}</th>
-              <th scope="col" className="px-4 py-3 font-medium">{t("checklist.deadline")}</th>
+              <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.document")}</th>
+              <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.format")}</th>
+              <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.translationColumn")}</th>
+              <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.notary")}</th>
+              <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.deadline")}</th>
             </tr>
           </thead>
           <tbody>
             {checklist.items.map((item) => (
-              <tr key={item.name} className="border-t border-border">
-                <td className="px-4 py-3" lang="en">
+              <tr key={item.name} className="border-b border-border align-top">
+                <td className="px-3 py-4 font-medium" lang="en">
                   {item.name}
                 </td>
-                <td className="px-4 py-3">{item.format === "original" ? t("checklist.original") : t("checklist.copy")}</td>
-                <td className="px-4 py-3">{item.translation ? t("checklist.required") : "—"}</td>
-                <td className="px-4 py-3">{item.notarisation ? t("checklist.required") : "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground" lang="en">
+                <td className="px-3 py-4">{item.format === "original" ? t("checklist.original") : t("checklist.copy")}</td>
+                <td className="px-3 py-4">{item.translation ? t("checklist.required") : "—"}</td>
+                <td className="px-3 py-4">{item.notarisation ? t("checklist.required") : "—"}</td>
+                <td className="px-3 py-4 text-muted-foreground" lang="en">
                   {item.deadline}
                 </td>
               </tr>

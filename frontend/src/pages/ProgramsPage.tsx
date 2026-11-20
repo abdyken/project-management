@@ -3,12 +3,15 @@ import { useSearchParams } from "react-router-dom"
 import { isInvalidRequest } from "@/api/errors"
 import { allProgramsQuery, filterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
-import { ProgramFilters, type FilterValues } from "@/components/catalog/ProgramFilters"
+import { ActiveFilters, FilterPanel, ProgramSearch, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { ConnectionError } from "@/components/common/ConnectionError"
+import { mosaicRow } from "@/components/mosaic/pattern"
+import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
 
 const NO_OPTIONS = { faculties: [], degreeLevels: [], languages: [] }
+const BAND_EDGE = [mosaicRow(33, 70, 0.55, ["deep", "field", "glacier", "ochre", "deep"])]
 
 function readFilters(params: URLSearchParams): FilterValues {
   return {
@@ -48,74 +51,76 @@ export function ProgramsPage() {
   const data = query.isError ? undefined : query.data
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <p className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">{t("programs.kicker")}</p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{t("programs.title")}</h1>
-      <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        {t("programs.lead")}
-      </p>
-
-      <div className="mt-10">
-        <ProgramFilters
-          key={filters.q}
-          values={filters}
-          options={optionsQuery.data ?? NO_OPTIONS}
-          onChange={updateFilters}
-        />
-        {optionsQuery.isError && !query.isError ? (
-          <div role="alert" className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <p>{t("filters.optionsError")}</p>
-            <Button variant="outline" size="sm" onClick={() => void optionsQuery.refetch()} disabled={optionsQuery.isFetching}>
-              {optionsQuery.isFetching ? t("error.tryingAgain") : t("error.tryAgain")}
-            </Button>
+    <div>
+      <section className="on-field relative bg-field">
+        <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-16 sm:px-6 lg:px-8 lg:pt-16 lg:pb-20">
+          <h1 className="text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.88] font-extrabold uppercase">{t("programs.title")}</h1>
+          <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{t("programs.lead")}</p>
+          <div className="mt-8">
+            <ProgramSearch key={filters.q} values={filters} onChange={updateFilters} />
           </div>
-        ) : null}
-      </div>
+        </div>
+        <div className="absolute inset-x-0 top-full overflow-hidden">
+          <Tesserae size={24} rows={BAND_EDGE} />
+        </div>
+      </section>
 
-      <div className="mt-8" aria-busy={query.isFetching}>
-        {query.isPending ? <p className="text-sm text-muted-foreground">{t("programs.loading")}</p> : null}
-
-        {query.isError && isInvalidRequest(query.error) ? (
-          <div role="alert" className="border border-border bg-card p-6">
-            <p className="text-2xl font-semibold tracking-tight">{t("programs.invalidTitle")}</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t("programs.invalidText")}
-            </p>
-            <Button className="mt-5" onClick={() => setSearchParams(new URLSearchParams())}>
-              {t("programs.clearSearch")}
-            </Button>
-          </div>
-        ) : null}
-
-        {query.isError && !isInvalidRequest(query.error) ? (
-          <ConnectionError
-            message={t("programs.unavailable")}
-            retrying={query.isFetching}
-            onRetry={retry}
-          />
-        ) : null}
-
-        {data && data.total === 0 ? (
-          <div role="status" className="border border-border bg-card p-6">
-            <p className="text-2xl font-semibold tracking-tight">{t("programs.noneTitle")}</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t("programs.noneText")}
-            </p>
-          </div>
-        ) : null}
-
-        {data && data.total > 0 ? (
-          <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
-            <p role="status" className="mb-4 text-sm text-muted-foreground">
-              {tn("programs.found", data.total)}
-            </p>
-            <div className="grid gap-4 md:grid-cols-2">
-              {data.programs.map((program) => (
-                <ProgramCard key={program.program_id} program={program} />
-              ))}
+      <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-16 pb-24 sm:px-6 grid-cols-1 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-12 lg:px-8 lg:pt-20">
+        <aside aria-label={t("filters.title")} className="lg:sticky lg:top-6 lg:self-start">
+          <FilterPanel values={filters} options={optionsQuery.data ?? NO_OPTIONS} onChange={updateFilters} />
+          {optionsQuery.isError && !query.isError ? (
+            <div role="alert" className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <p>{t("filters.optionsError")}</p>
+              <Button variant="outline" size="sm" onClick={() => void optionsQuery.refetch()} disabled={optionsQuery.isFetching}>
+                {optionsQuery.isFetching ? t("error.tryingAgain") : t("error.tryAgain")}
+              </Button>
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </aside>
+
+        <div aria-busy={query.isFetching} className="min-w-0">
+          {query.isPending ? <p className="text-muted-foreground">{t("programs.loading")}</p> : null}
+
+          {query.isError && isInvalidRequest(query.error) ? (
+            <div role="alert" className="border-2 border-ink bg-card p-6">
+              <p className="font-display text-3xl font-extrabold uppercase">{t("programs.invalidTitle")}</p>
+              <p className="mt-2 text-muted-foreground">{t("programs.invalidText")}</p>
+              <Button className="mt-5" onClick={() => setSearchParams(new URLSearchParams())}>
+                {t("programs.clearSearch")}
+              </Button>
+            </div>
+          ) : null}
+
+          {query.isError && !isInvalidRequest(query.error) ? (
+            <ConnectionError message={t("programs.unavailable")} retrying={query.isFetching} onRetry={retry} />
+          ) : null}
+
+          {data ? (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b-2 border-ink pb-4">
+              <p role="status" className="tabular font-display text-3xl font-extrabold uppercase">
+                {tn("programs.found", data.total)}
+              </p>
+              <ActiveFilters values={filters} onChange={updateFilters} />
+            </div>
+          ) : null}
+
+          {data && data.total === 0 ? (
+            <div className="border-2 border-dashed border-input p-8">
+              <p className="font-display text-3xl font-extrabold uppercase">{t("programs.noneTitle")}</p>
+              <p className="mt-2 max-w-[52ch] text-muted-foreground">{t("programs.noneText")}</p>
+            </div>
+          ) : null}
+
+          {data && data.total > 0 ? (
+            <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                {data.programs.map((program) => (
+                  <ProgramCard key={program.program_id} program={program} />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   )

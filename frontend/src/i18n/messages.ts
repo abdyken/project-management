@@ -64,7 +64,6 @@ const en = {
   "home.q5": "How can I contact the SDU Admissions Office?",
   "home.globe": "Interactive globe with SDU University marker on Almaty",
 
-  "programs.kicker": "Catalogue",
   "programs.title": "Study programs",
   "programs.lead":
     "Fees and deadlines come from the admissions catalogue. Confirm them with the Admissions Office before you apply.",
@@ -90,6 +89,12 @@ const en = {
   "filters.language": "Language",
   "filters.allLanguages": "All languages",
   "filters.optionsError": "Could not load the lists of schools and languages.",
+  "filters.title": "Filters",
+  "filters.all": "All",
+  "filters.clearAll": "Clear filters",
+  "filters.remove": "Remove filter: {value}",
+  "filters.activeCount": "Filters ({count})",
+  "filters.searchFor": "Search: {value}",
 
   "card.localDeadline": "Local deadline: {value}",
   "card.localTuition": "Local tuition: {value}",
@@ -132,6 +137,7 @@ const en = {
   "detail.loadingChecklist": "Loading checklist…",
   "detail.checklistError": "The document checklist could not be loaded.",
   "detail.askInChat": "Ask in chat",
+  "detail.nextSteps": "Next steps",
   "detail.askDocuments.local": "Which documents do I need for {title} ({code}) as a local applicant?",
   "detail.askDocuments.international": "Which documents do I need for {title} ({code}) as an international applicant?",
 
@@ -297,7 +303,6 @@ const kk: Messages = {
   "home.q5": "SDU қабылдау комиссиясымен қалай байланысуға болады?",
   "home.globe": "Алматыдағы SDU University белгісі бар интерактивті глобус",
 
-  "programs.kicker": "Каталог",
   "programs.title": "Білім беру бағдарламалары",
   "programs.lead":
     "Оқу ақысы мен мерзімдер қабылдау каталогынан алынған. Өтінім бермес бұрын оларды қабылдау комиссиясынан нақтылаңыз.",
@@ -323,6 +328,12 @@ const kk: Messages = {
   "filters.language": "Тілі",
   "filters.allLanguages": "Барлық тілдер",
   "filters.optionsError": "Мектептер мен тілдер тізімін жүктеу мүмкін болмады.",
+  "filters.title": "Сүзгілер",
+  "filters.all": "Барлығы",
+  "filters.clearAll": "Сүзгілерді тазалау",
+  "filters.remove": "Сүзгіні алып тастау: {value}",
+  "filters.activeCount": "Сүзгілер ({count})",
+  "filters.searchFor": "Іздеу: {value}",
 
   "card.localDeadline": "Мерзім (отандық): {value}",
   "card.localTuition": "Ақы (отандық): {value}",
@@ -365,6 +376,7 @@ const kk: Messages = {
   "detail.loadingChecklist": "Тізім жүктелуде…",
   "detail.checklistError": "Құжаттар тізімін жүктеу мүмкін болмады.",
   "detail.askInChat": "Чатта сұрау",
+  "detail.nextSteps": "Келесі қадамдар",
   "detail.askDocuments.local": "Отандық талапкер ретінде {title} ({code}) бағдарламасына қандай құжаттар қажет?",
   "detail.askDocuments.international": "Шетелдік талапкер ретінде {title} ({code}) бағдарламасына қандай құжаттар қажет?",
 
@@ -528,7 +540,6 @@ const ru: Messages = {
   "home.q5": "Как связаться с приёмной комиссией SDU?",
   "home.globe": "Интерактивный глобус с отметкой SDU University в Алматы",
 
-  "programs.kicker": "Каталог",
   "programs.title": "Образовательные программы",
   "programs.lead":
     "Стоимость и сроки взяты из каталога приёмной комиссии. Уточните их в приёмной комиссии перед подачей заявления.",
@@ -554,6 +565,12 @@ const ru: Messages = {
   "filters.language": "Язык",
   "filters.allLanguages": "Все языки",
   "filters.optionsError": "Не удалось загрузить списки школ и языков.",
+  "filters.title": "Фильтры",
+  "filters.all": "Все",
+  "filters.clearAll": "Сбросить фильтры",
+  "filters.remove": "Убрать фильтр: {value}",
+  "filters.activeCount": "Фильтры ({count})",
+  "filters.searchFor": "Поиск: {value}",
 
   "card.localDeadline": "Срок (местные): {value}",
   "card.localTuition": "Стоимость (местные): {value}",
@@ -596,6 +613,7 @@ const ru: Messages = {
   "detail.loadingChecklist": "Загрузка списка…",
   "detail.checklistError": "Не удалось загрузить список документов.",
   "detail.askInChat": "Спросить в чате",
+  "detail.nextSteps": "Следующие шаги",
   "detail.askDocuments.local": "Какие документы нужны местному абитуриенту на {title} ({code})?",
   "detail.askDocuments.international": "Какие документы нужны иностранному абитуриенту на {title} ({code})?",
 

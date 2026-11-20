@@ -109,7 +109,7 @@ export function HomePage() {
           <div className="absolute inset-x-0 bottom-full overflow-hidden" style={{ height: 96 }}>
             <Tesserae size={32} rows={HERO_EDGE} className="absolute bottom-0 left-0" />
           </div>
-          <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
+          <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>
               <h1
                 id="home-title"
@@ -205,7 +205,7 @@ export function HomePage() {
 
       {/* Key dates as a board: published dates are solid tiles, unpublished ones outline tiles. */}
       <section aria-labelledby="dates-title" className="border-y-2 border-ink bg-card">
-        <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-16 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16 lg:px-8 lg:py-24">
           <div>
             <SectionHeading id="dates-title" title={t("home.dates.title")} />
             <p className="mt-5 max-w-[46ch] text-muted-foreground">{t("home.dates.note")}</p>
@@ -221,7 +221,7 @@ export function HomePage() {
 
       {/* Cost as a ledger on the deep field. */}
       <section aria-labelledby="cost-title" className="on-field bg-field-deep">
-        <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-16 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16 lg:px-8 lg:py-24">
           <div>
             <SectionHeading id="cost-title" title={t("home.cost.title")} onField />
             <p className="mt-5 max-w-[46ch] text-field-muted">{t("home.cost.lead")}</p>
@@ -305,7 +305,7 @@ export function HomePage() {
 
       {/* International applicants, with Daniyar's globe. */}
       <section aria-labelledby="intl-title" className="on-field overflow-hidden bg-field">
-        <div className="mx-auto grid max-w-[84rem] items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-[84rem] grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:px-8 lg:py-24">
           <div>
             <SectionHeading id="intl-title" title={t("home.intl.title")} onField />
             <p className="mt-5 max-w-[52ch] text-lg text-field-muted">
@@ -323,7 +323,7 @@ export function HomePage() {
       </section>
 
       {/* Ask the office: the usual questions open the chat with the question filled in. */}
-      <section aria-labelledby="ask-title" className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-16 lg:px-8 lg:py-28">
+      <section aria-labelledby="ask-title" className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16 lg:px-8 lg:py-28">
         <div>
           <SectionHeading id="ask-title" title={t("home.ask.title")} />
           <p className="mt-5 max-w-[46ch] text-muted-foreground">{t("home.ask.lead")}</p>
