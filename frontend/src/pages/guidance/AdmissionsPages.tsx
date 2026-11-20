@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import {
   SUBJECT_PAIRS,
@@ -24,6 +24,7 @@ import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
 import { MosaicTile } from "@/components/mosaic/MosaicTile"
+import { useRevealList } from "@/lib/motion"
 
 function SubmitHint({ id, text }: { id: string; text: string | null }) {
   return text ? (
@@ -45,6 +46,8 @@ export function AdmissionsPage() {
   const t = useGuidanceT()
   const { t: appT, degree, deadline, language } = useI18n()
   const routes = Object.fromEntries(GUIDANCE_ROUTES)
+  const hubRef = useRef<HTMLDivElement>(null)
+  useRevealList(hubRef)
   const catalogue = useQuery(allProgramsQuery)
   const programs = catalogue.data?.programs ?? []
   const bachelors = programs.filter((program) => program.degree_level === "bachelor")
@@ -61,7 +64,7 @@ export function AdmissionsPage() {
     : {}
   return (
     <GuidanceShell title={t("hub")} lead={t("lead")}>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-12">
+      <div data-reveal-list="" ref={hubRef} className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-12">
         {HUB_TILES.map((tile) => (
           <MosaicTile
             key={tile.key}

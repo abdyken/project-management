@@ -86,8 +86,10 @@ The status answer in the chat is built from the database, not from a model.
   - The logo appears in one colour (white or ink), keeping SDU's letterforms and emblem
     unchanged.
   - The portal's own identity is built in DESIGN.md.
-- **Official tagline:** "Making your dreams a reality" / "Арманыңа анық бас" /
-  "Реализуй свои мечты".
+- **Portal headline (team decision, 21.11.2026):** "Study at the foot of the Alatau" /
+  "Алатау баурайында оқы" / "Учитесь у подножия Алатау". It is original to the portal and
+  place-true: the campus sits under the Zailiysky Alatau. SDU's own tagline ("Making your
+  dreams a reality") is not used, to keep the portal's voice its own.
 - **Voice:** warm and encouraging when addressing applicants; precise and formal for
   requirements, deadlines and money.
 - **Structure reference:** Purdue University undergraduate admissions (IA and page

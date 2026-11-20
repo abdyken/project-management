@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, Search } from "lucide-react"
-import { useMemo, useState, type FormEvent } from "react"
+import { useMemo, useRef, useState, type FormEvent } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { DegreeLevel, Program } from "@/api/types"
@@ -11,6 +11,7 @@ import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n, type Language } from "@/i18n"
+import { useCountUp, useRevealScope } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
@@ -27,6 +28,7 @@ type Facts = {
   schools: { name: string; count: number }[]
   byLevel: Record<DegreeLevel, { count: number; deadlineLocal: string | null; deadlineIntl: string | null; min: number | null; max: number | null }>
   english: number
+  languages: string[]
 }
 
 function mode(values: (string | null)[]): string | null {
@@ -61,11 +63,15 @@ function summarise(programs: Program[]): Facts {
     schools: [...schools].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count),
     byLevel,
     english: programs.filter((program) => programLanguages(program).includes("English")).length,
+    // Teaching languages, most common first (from the catalogue, never typed in).
+    languages: [...programs.flatMap(programLanguages).reduce((counts, name) => counts.set(name, (counts.get(name) ?? 0) + 1), new Map<string, number>())]
+      .sort((a, b) => b[1] - a[1])
+      .map(([name]) => name),
   }
 }
 
 export function HomePage() {
-  const { t, language, degree } = useI18n()
+  const { t, language, degree, languages } = useI18n()
   const guidanceT = useGuidanceT()
   const navigate = useNavigate()
   const setOpen = useChatStore((state) => state.setOpen)
@@ -74,6 +80,9 @@ export function HomePage() {
   const facts = useMemo(() => (programs.data ? summarise(programs.data.programs) : null), [programs.data])
   const numbers = useMemo(() => new Intl.NumberFormat(NUMBER_LOCALE[language]), [language])
   const [query, setQuery] = useState("")
+  const pageRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  useRevealScope(pageRef, facts)
 
   function search(event: FormEvent) {
     event.preventDefault()
@@ -87,10 +96,10 @@ export function HomePage() {
   }
 
   return (
-    <div>
+    <div ref={pageRef}>
       {/* First viewport: the campus inside a mosaic frame, with a working search. */}
-      <section aria-labelledby="home-title" className="relative bg-field">
-        <picture>
+      <section ref={heroRef} aria-labelledby="home-title" className="relative bg-field">
+        <picture className="block overflow-hidden">
           <img
             src="/images/sdu/campus-autumn-1920.webp"
             srcSet="/images/sdu/campus-autumn-640.webp 640w, /images/sdu/campus-autumn-1280.webp 1280w, /images/sdu/campus-autumn-1920.webp 1920w, /images/sdu/campus-autumn-2560.webp 2560w"
@@ -99,13 +108,13 @@ export function HomePage() {
             width={2560}
             height={1440}
             fetchPriority="high"
-            className="block h-[38svh] min-h-64 w-full object-cover object-[50%_40%] sm:h-[48svh] lg:h-[54svh] lg:max-h-[640px]"
+            className="hero-settle block h-[38svh] min-h-64 w-full object-cover object-[50%_40%] sm:h-[48svh] lg:h-[54svh] lg:max-h-[640px]"
           />
         </picture>
         <div className="on-field relative bg-field">
           {/* On desktop the steps stop before the search tile, so the photo edge behind it stays straight. */}
           <div className="absolute inset-x-0 bottom-full overflow-hidden lg:right-[45%]">
-            <Tesserae size={16} rows={HERO_STEPS} />
+            <Tesserae size={16} rows={HERO_STEPS} lightFrom={heroRef} />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>
@@ -116,7 +125,7 @@ export function HomePage() {
                 {t("home.title")}
               </h1>
               <p className="tabular mt-6 min-h-7 text-lg text-field-muted sm:text-xl">
-                {facts ? t("home.tally", { programs: numbers.format(facts.total), schools: numbers.format(facts.schools.length) }) : ""}
+                {facts ? t("home.tally", { programs: numbers.format(facts.total), schools: numbers.format(facts.schools.length), languages: languages(facts.languages.join(", ")) }) : ""}
               </p>
             </div>
 
@@ -159,7 +168,7 @@ export function HomePage() {
       {/* Paths by applicant type: a mosaic of unequal tiles, not a row of equal cards. */}
       <section aria-labelledby="paths-title" className="mx-auto max-w-[84rem] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <SectionHeading id="paths-title" title={t("home.paths.title")} lead={t("home.paths.lead")} />
-        <div className="mt-10 grid gap-2 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[auto_auto]">
+        <div data-reveal-list="" className="mt-10 grid gap-2 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[auto_auto]">
           <MosaicTile
             to="/programs?degree_level=bachelor"
             tone="field"
@@ -213,7 +222,7 @@ export function HomePage() {
             ) : null}
             <p className="mt-4 max-w-[46ch] text-muted-foreground">{t("home.dates.note")}</p>
           </div>
-          <ol className="divide-y divide-border border-y border-border">
+          <ol data-reveal-list="" className="divide-y divide-border border-y border-border">
             <DateRow date={facts?.byLevel.bachelor.deadlineLocal} language={language} label={t("home.dates.bachelorLocal")} notPublished={t("home.dates.notPublished")} />
             <DateRow date={facts?.byLevel.bachelor.deadlineIntl} language={language} label={t("home.dates.bachelorIntl")} notPublished={t("home.dates.notPublished")} />
             <DateRow date={facts?.byLevel.master.deadlineLocal} language={language} label={t("home.dates.master")} notPublished={t("home.dates.notPublished")} />
@@ -240,15 +249,23 @@ export function HomePage() {
               </Button>
             </div>
           </div>
-          <dl className="divide-y divide-field-foreground/20 border-y border-field-foreground/20">
+          <dl data-reveal-list="" className="divide-y divide-field-foreground/20 border-y border-field-foreground/20">
             {LEVELS.map((level) => {
               const row = facts?.byLevel[level]
               const range =
-                row && row.min !== null && row.max !== null
-                  ? row.min === row.max
-                    ? `${numbers.format(row.min)}\u00a0₸`
-                    : `${numbers.format(row.min)}–${numbers.format(row.max)}\u00a0₸`
-                  : null
+                row && row.min !== null && row.max !== null ? (
+                  row.min === row.max ? (
+                    <>
+                      <CountNumber value={row.min} format={numbers.format} />
+                      {"\u00a0₸"}
+                    </>
+                  ) : (
+                    <>
+                      <CountNumber value={row.min} format={numbers.format} />–<CountNumber value={row.max} format={numbers.format} />
+                      {"\u00a0₸"}
+                    </>
+                  )
+                ) : null
               return (
                 <div key={level} className="grid gap-1 py-6 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-6">
                   <dt className="font-heading text-xl font-medium">{degree(level)}</dt>
@@ -281,7 +298,7 @@ export function HomePage() {
         </figure>
         <div className="lg:col-span-7">
           <SectionHeading id="schools-title" title={t("home.schools.title")} />
-          <ul className="mt-8 border-t-2 border-ink">
+          <ul data-reveal-list="" className="mt-8 border-t-2 border-ink">
             {(facts?.schools ?? []).map((school) => (
               <li key={school.name} className="border-b border-border">
                 <Link
@@ -292,7 +309,7 @@ export function HomePage() {
                     {school.name}
                   </span>
                   <span className="tabular flex shrink-0 items-center gap-3 font-display text-2xl font-bold text-primary">
-                    {numbers.format(school.count)}
+                    <CountNumber value={school.count} format={numbers.format} />
                     <ArrowRight className="size-5 transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
                   </span>
                 </Link>
@@ -333,7 +350,7 @@ export function HomePage() {
             {t("home.askQuestion")}
           </Button>
         </div>
-        <ul className="border-t-2 border-ink">
+        <ul data-reveal-list="" className="border-t-2 border-ink">
           {QUESTIONS.map((key) => (
             <li key={key} className="border-b border-border">
               <button
@@ -354,7 +371,7 @@ export function HomePage() {
 
 function SectionHeading({ id, title, lead, onField }: { id: string; title: string; lead?: string; onField?: boolean }) {
   return (
-    <div>
+    <div data-reveal="">
       <h2 id={id} className="max-w-[20ch] text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
         {title}
       </h2>
@@ -401,3 +418,16 @@ function DateRow({ date, label, language, notPublished }: { date: string | null 
     </li>
   )
 }
+
+// A figure that counts up once when it scrolls into view (final value under reduced motion).
+function CountNumber({ value, format }: { value: number; format: (value: number) => string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const shown = useCountUp(ref, value)
+  return (
+    <span ref={ref} className="tabular">
+      <span className="sr-only">{format(value)}</span>
+      <span aria-hidden="true">{format(shown ?? value)}</span>
+    </span>
+  )
+}
+

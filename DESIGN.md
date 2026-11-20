@@ -348,10 +348,23 @@ Square, solid and quick; the arrow is the only flourish.
 Four equal square steps with 4px gaps and condensed numerals. Done is deep turquoise with a check; current is a solid tile carrying the status word; only the current step names the status.
 
 ### Mosaic Signature
-The one decorative motif. `signatureSteps` builds a deterministic stepped edge of 16px tesserae: runs of 3 to 8 columns step up and down one tile at a time and rise across the first 90 columns, each column a darker cap tile on a body that joins the band below. The hero band rises into the photo with three rows (deep cap on field body); the footer rises into the page with two rows (field cap on deep body). It is aria-hidden, monochrome turquoise, and fades in once over 0.4s (opacity only, expo-out) when it enters the viewport; static under reduced motion.
+The one decorative motif. `signatureSteps` builds a deterministic stepped edge of 16px tesserae: short runs of 2 to 5 columns step up and down one tile at a time from the first column, each column a cap tile on a body that joins the band below, every tile with a faint 1px grout line. The hero band rises into the photo with three rows (deep cap on field body) and stops before the search tile on desktop; the footer rises into the page with the same three-row profile (field cap on deep body). It is aria-hidden and monochrome turquoise.
 
 ### Logo and Photography
 The SDU emblem and lockup are SDU's own SVG paths in one colour: white on fields, ink on light. Photography is real SDU campus and student photography, credited in frontend/public/images/sdu/CREDITS.md, set square-cornered: the full-bleed hero, the main path tile, a student photo beside the schools ledger.
+
+## Motion
+
+Researched against Purdue, Stanford, Yale and Fondation Beyeler (21.11.2026). One authored moment, quiet support, no bounce (`--ease-out-expo` = cubic-bezier(0.16, 1, 0.3, 1)).
+
+- **Signature (the focal moment):** the first time a stepped edge enters view, its tiles are laid column by column from the left: each tile rises 6px from scale 0.6 with opacity, 280ms, delay `min(column × 12ms, 700ms)`. It then settles into the static brand edge. On fine pointers, tiles within three columns of the cursor over the hero catch the light (`brightness(1.32)`, 150ms in, 400ms out); they never move.
+- **Hero photo:** settles once from scale 1.05 to 1 over 1.4s.
+- **Scroll reveals:** section headings and lists (`data-reveal`, `data-reveal-list`) rise 24px and fade in over 600ms once, at 12% in view; list items arrive 70ms apart, capped at 350ms. Only lists stagger.
+- **Figures:** the tuition ledger and school counts count up once in view (750ms, ease-out cubic); screen readers get the final number.
+- **Hover and feedback:** cards lift 4px over 200ms and their border turns turquoise; photos inside tiles zoom to 1.04 over 500ms; arrows slide 3px; the active nav underline grows from the left; buttons press 1px.
+- **Overlays and routes:** the mobile menu panel enters over 320ms and its links follow 40ms apart; route changes cross-fade over 150ms.
+- **Never:** bounce or overshoot curves, hover scales of 1.1 or more, autoplaying carousels, parallax stacks, cursor followers, infinite ambient loops.
+- **Reduced motion:** everything renders in its final state; the 150ms route fade and colour transitions remain.
 
 ## Do's and Don'ts
 
@@ -365,7 +378,7 @@ The SDU emblem and lockup are SDU's own SVG paths in one colour: white on fields
 - **Do** build structure from ledgers: a 2px ink rule over 1px hairline rows.
 - **Do** use the flat 2px ink ring (`--shadow-overlay`) for floating overlays only.
 - **Do** give Kazakh and Russian headings line-height 1.16.
-- **Do** keep motion to the 0.4s signature fade, 0.2s colour transitions and the 3px arrow slide, all static under reduced motion.
+- **Do** keep motion to the set below; every spatial movement is gated on `prefers-reduced-motion: no-preference`, and hidden states only apply under `html.motion-ready`, so content never disappears without scripts.
 
 ### Don't:
 - **Don't** use the mosaic signature more than twice per page, or as random, multicoloured edges or sticker clusters.

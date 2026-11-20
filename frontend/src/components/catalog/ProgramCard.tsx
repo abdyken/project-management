@@ -13,7 +13,7 @@ export function ProgramCard({ program }: { program: Program }) {
 
   return (
     <article
-      className="group relative flex h-full min-w-0 flex-col border border-border bg-card p-5 transition-colors duration-200 hover:border-primary sm:p-6"
+      className="group relative flex h-full min-w-0 flex-col border border-border bg-card p-5 transition-[border-color,translate] duration-200 ease-out hover:-translate-y-1 hover:border-primary motion-reduce:hover:translate-y-0 sm:p-6"
     >
       <h2 className="min-w-0 text-[1.375rem] leading-[1.18] font-medium sm:text-[1.5rem]">
         <Link to={`/programs/${program.program_id}`} className="after:absolute after:inset-0 group-hover:text-primary">

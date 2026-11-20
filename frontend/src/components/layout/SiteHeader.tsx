@@ -106,7 +106,7 @@ export function SiteHeader() {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40" />
-              <Dialog.Content className="on-field fixed inset-0 z-50 flex flex-col overflow-y-auto bg-field-deep">
+              <Dialog.Content className="menu-sheet on-field fixed inset-0 z-50 flex flex-col overflow-y-auto bg-field-deep">
                 <div className="flex h-16 items-center justify-between px-4 sm:px-6">
                   <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto" width={108} height={34} />
                   <Dialog.Close className="grid size-10 place-items-center border border-field-foreground/50 hover:bg-field">

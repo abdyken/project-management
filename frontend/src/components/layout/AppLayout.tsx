@@ -15,9 +15,11 @@ export function AppLayout() {
       <SiteHeader />
       <main id="main" tabIndex={-1} className="min-h-[60vh] flex-1 outline-none">
         <ErrorBoundary key={location.pathname}>
-          <Suspense fallback={<PageLoading />}>
-            <Outlet />
-          </Suspense>
+          <div className="page-in">
+            <Suspense fallback={<PageLoading />}>
+              <Outlet />
+            </Suspense>
+          </div>
         </ErrorBoundary>
       </main>
       <SiteFooter />

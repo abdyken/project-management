@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 // Used for paths on the home page and tools on the admissions hub.
 const TONES = {
   field: "on-field bg-field text-field-foreground hover:bg-field-deep",
-  card: "border border-border bg-card text-card-foreground hover:border-primary",
+  card: "border border-border bg-card text-card-foreground hover:-translate-y-1 hover:border-primary",
 } as const
 
 export type MosaicTone = keyof typeof TONES
@@ -39,19 +39,21 @@ export function MosaicTile({
   return (
     <Link
       to={to}
-      className={cn("group relative flex min-h-48 min-w-0 flex-col justify-between p-6 transition-colors duration-200 sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
+      className={cn("group relative flex min-h-48 min-w-0 flex-col justify-between p-6 transition-[background-color,border-color,translate] duration-200 ease-out sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
     >
       <div>
         {image ? (
-          <img
-            src={image.src}
-            srcSet={image.srcSet}
-            sizes="(min-width: 1024px) 45vw, 100vw"
-            alt=""
-            loading="lazy"
-            style={image.position ? { objectPosition: image.position } : undefined}
-            className="-mx-6 -mt-6 mb-6 block h-44 w-[calc(100%+3rem)] max-w-none object-cover sm:-mx-8 sm:-mt-8 sm:mb-8 sm:h-56 sm:w-[calc(100%+4rem)] lg:-mx-6 lg:-mt-6 lg:mb-6 lg:w-[calc(100%+3rem)] xl:-mx-8 xl:-mt-8 xl:mb-8 xl:h-64 xl:w-[calc(100%+4rem)]"
-          />
+          <div className="-mx-6 -mt-6 mb-6 block h-44 overflow-hidden w-[calc(100%+3rem)] max-w-none sm:-mx-8 sm:-mt-8 sm:mb-8 sm:h-56 sm:w-[calc(100%+4rem)] lg:-mx-6 lg:-mt-6 lg:mb-6 lg:w-[calc(100%+3rem)] xl:-mx-8 xl:-mt-8 xl:mb-8 xl:h-64 xl:w-[calc(100%+4rem)]">
+            <img
+              src={image.src}
+              srcSet={image.srcSet}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              alt=""
+              loading="lazy"
+              style={image.position ? { objectPosition: image.position } : undefined}
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none"
+            />
+          </div>
         ) : null}
         <Heading className={cn("font-heading font-medium", large ? "text-[clamp(1.75rem,2.6vw,2.25rem)]" : "text-[clamp(1.25rem,1.6vw,1.5rem)]", "leading-[1.15]")}>
           {title}

@@ -59,7 +59,7 @@ OWN-WORLD (refined 21.11.2026 on Dimash's decision):
   turquoise tesserae (deep cap on a field body) where the hero band rises into the photo, and
   the same profile where the footer rises into the page.
 
-STORY: The visitor sees SDU's campus, reads "Making your dreams a reality" set as a calm serif
+STORY: The visitor sees SDU's campus, reads "Study at the foot of the Alatau" set as a calm serif
 headline, and searches at once. They pick a path from one turquoise main tile and quiet white
 cards, read the real dates and costs as ledgers, and always know the next step: apply, check
 status or ask.
