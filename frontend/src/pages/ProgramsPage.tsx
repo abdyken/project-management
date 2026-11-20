@@ -113,7 +113,7 @@ export function ProgramsPage() {
 
           {data && data.total > 0 ? (
             <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
-              <div className="grid auto-rows-fr grid-cols-1 gap-2 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                 {data.programs.map((program) => (
                   <ProgramCard key={program.program_id} program={program} />
                 ))}

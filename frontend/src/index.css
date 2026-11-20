@@ -247,3 +247,10 @@ select:not([multiple]):not([size]) {
     transform: none;
   }
 }
+
+/* Cyrillic capitals carry diacritics (Ё, Й, Ң, Қ, Ұ): give stacked display lines a little air
+   in Kazakh and Russian. Unlayered, so it outranks the tight leading utilities on headings. */
+html:lang(kk) :is(h1, h2, h3),
+html:lang(ru) :is(h1, h2, h3) {
+  line-height: 1.04;
+}

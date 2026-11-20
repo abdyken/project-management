@@ -51,20 +51,20 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-[84rem] items-center gap-3 px-4 sm:px-6 lg:h-[4.5rem] lg:gap-6 lg:px-8">
         <Link to="/" aria-label={t("header.home")} className="flex shrink-0 items-center gap-3">
           <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto lg:h-10" width={108} height={34} />
-          <span aria-hidden="true" className="hidden h-7 w-px bg-field-foreground/40 sm:block lg:hidden xl:block" />
-          <span className="hidden font-display text-xl font-bold tracking-[0.02em] uppercase sm:block lg:hidden xl:block">
+          <span aria-hidden="true" className="hidden h-7 w-px bg-field-foreground/40 sm:block" />
+          <span className="hidden font-display text-xl font-bold tracking-[0.02em] uppercase sm:block">
             {t("header.admissions")}
           </span>
         </Link>
 
-        <nav aria-label={t("header.menu")} className="ml-auto hidden items-stretch self-stretch lg:flex">
+        <nav aria-label={t("header.menu")} className="ml-auto hidden items-stretch self-stretch xl:flex">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
                 cn(
-                  "relative flex items-center px-4 text-[0.9375rem] font-medium transition-colors duration-200",
+                  "relative flex items-center px-4 text-[0.9375rem] font-medium whitespace-nowrap transition-colors duration-200",
                   isActive ? "text-field-foreground" : "text-field-muted hover:text-field-foreground",
                 )
               }
@@ -86,20 +86,20 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setChatOpen(true)}
-            className="flex items-center px-4 text-[0.9375rem] font-medium text-field-muted transition-colors duration-200 hover:text-field-foreground"
+            className="flex items-center px-4 text-[0.9375rem] font-medium whitespace-nowrap text-field-muted transition-colors duration-200 hover:text-field-foreground"
           >
             {t("nav.ask")}
           </button>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 lg:ml-0 lg:gap-4">
+        <div className="ml-auto flex items-center gap-2 xl:ml-0 xl:gap-4">
           <LanguageSwitcher tone="field" />
           <div className="hidden sm:block">{apply}</div>
           <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>
             <Dialog.Trigger asChild>
               <button
                 type="button"
-                className="grid size-10 place-items-center border border-field-foreground/50 text-field-foreground transition-colors hover:bg-field-deep lg:hidden"
+                className="grid size-10 place-items-center border border-field-foreground/50 text-field-foreground transition-colors hover:bg-field-deep xl:hidden"
               >
                 <Menu className="size-5" aria-hidden="true" />
                 <span className="sr-only">{t("header.menu")}</span>
@@ -168,4 +168,4 @@ export function SiteHeader() {
 }
 
 const applyClass =
-  "group/button inline-flex h-11 items-center gap-2 bg-ochre px-5 font-display text-lg font-bold tracking-[0.04em] text-ink uppercase transition-colors duration-200 hover:bg-ochre-hover [&_svg]:size-4 [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:translate-x-[3px]"
+  "group/button inline-flex h-11 items-center gap-2 whitespace-nowrap bg-ochre px-5 font-display text-lg font-bold tracking-[0.04em] text-ink uppercase transition-colors duration-200 hover:bg-ochre-hover [&_svg]:size-4 [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:translate-x-[3px]"

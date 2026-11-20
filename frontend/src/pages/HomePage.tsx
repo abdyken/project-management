@@ -126,7 +126,7 @@ export function HomePage() {
             <form
               role="search"
               onSubmit={search}
-              className="relative mr-14 bg-card p-5 text-card-foreground sm:mr-0 sm:p-7 lg:-mt-36 lg:p-8"
+              className="relative mr-14 bg-card p-4 text-card-foreground sm:mr-0 sm:p-7 lg:-mt-36 lg:p-8"
             >
               <Tesserae
                 size={16}
@@ -137,7 +137,7 @@ export function HomePage() {
                 {t("home.search.label")}
               </label>
               <div className="relative mt-5">
-                <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-primary" aria-hidden="true" />
+                <Search className="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-primary" aria-hidden="true" />
                 <input
                   id="home-search"
                   type="search"
@@ -145,7 +145,7 @@ export function HomePage() {
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder={t("home.search.placeholder")}
                   autoComplete="off"
-                  className="h-14 w-full border-2 border-ink bg-card pr-4 pl-12 text-base outline-none placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  className="h-14 w-full border-2 border-ink bg-card pr-3 pl-11 text-base outline-none placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 />
               </div>
               <Button type="submit" variant="ochre" size="lg" className="mt-4 h-14 w-full justify-between">
