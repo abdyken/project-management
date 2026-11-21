@@ -101,3 +101,30 @@ full-page 1280 px captures):
 | Admissions hub | 56% | 0.3% | A short page, so the title band and the deep footer take a large share of its height. The tool tiles are white apart from the one photo tile. |
 
 Before the refinement, the hub tiles alone were four saturated hues side by side.
+
+## Independent audits, 21.11.2026
+
+Two read-only auditors reviewed the live site in a browser. They were given the same brief before and after the changes and were not told what had changed.
+
+| Audit | Before | After | What moved the score |
+| --- | --- | --- | --- |
+| Premium / AI-slop (design director) | 6/10 | 6.5/10 | No internal research notes and no stale "upcoming" dates shown to applicants; one page frame; hub as ruled lists; a phone action bar instead of floating buttons. Still held back by stock program photos (kept by decision), the cobe globe (kept, now centred on Almaty) and a 2026 cycle that is over. |
+| Purdue fidelity (information architecture) | not scored; Apply, Deadlines, Status and Contact missing | 7.5/10 | New /apply, /deadlines, /application-status and /contact; quick links and search in the header; "Information for" in the footer; a program page with breadcrumb, Apply, entry requirements and related programs. |
+
+Where both auditors say we already beat Purdue:
+- real dates and fees on every program
+- document checklists by applicant type, with save and PDF
+- entry requirements with sources
+- one deadlines page with a live status
+- Compare
+- KK/RU/EN
+
+### Remaining, not done in this pass
+
+These items need a decision or data we do not have:
+- **2027 intake dates.** The site says when a cycle is over, but it cannot announce the next one before the office publishes it.
+- **Site-wide search across programs, FAQ and pages.** The header search reaches the program finder only.
+- **A cost-and-aid hub page.**
+- **A footer legal bar** (privacy, accessibility, "catalogue last checked").
+- **Catalogue wording for the catalogue owner.** Examples: "Applied law" / "Applied Law" casing; KK titles that differ between degrees, such as "Компьютерлік ғылымдар" and "Компьютер ғылымдары"; per-credit fees like 41,667 ₸ that come from annual fees.
+- **Mixed Kazakh "өтініш" / "өтінім"** in older strings. A native speaker should settle the glossary.

@@ -209,9 +209,9 @@ export function DeadlinesPage() {
           <h2 id="notes-title" className="text-[clamp(1.5rem,2vw,1.875rem)] leading-[1.15] font-medium">
             {t("deadlines.notesTitle")}
           </h2>
-          <ul className="mt-5 space-y-3 text-muted-foreground">
+          <ul className="mt-5 divide-y divide-border border-y border-border text-muted-foreground">
             {(["deadlines.note1", "deadlines.note2", "deadlines.note3", "deadlines.note4"] as const).map((note) => (
-              <li key={note} className="border-l-2 border-primary pl-4">
+              <li key={note} className="py-3">
                 {t(note)}
               </li>
             ))}
@@ -321,7 +321,7 @@ export function ContactPage() {
     <GuidanceShell title={t("contact.title")} lead={t("contact.lead")} tools={false}>
       <div className={SPLIT}>
         <section aria-labelledby="office-title">
-          <h2 id="office-title" className="label text-primary">
+          <h2 id="office-title" className="font-heading text-xl font-medium">
             {t("contact.office")}
           </h2>
           <address className="mt-4 not-italic">
@@ -335,7 +335,7 @@ export function ContactPage() {
         </section>
         <div className="space-y-12">
           <section aria-labelledby="write-title">
-            <h2 id="write-title" className="label text-primary">
+            <h2 id="write-title" className="font-heading text-xl font-medium">
               {t("contact.write")}
             </h2>
             <ul className="mt-4 border-t-2 border-ink">
@@ -349,7 +349,7 @@ export function ContactPage() {
             </ul>
           </section>
           <section aria-labelledby="online-title">
-            <h2 id="online-title" className="label text-primary">
+            <h2 id="online-title" className="font-heading text-xl font-medium">
               {t("contact.online")}
             </h2>
             <ul className="mt-4 border-t-2 border-ink">

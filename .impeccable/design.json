@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T19:44:48+00:00",
+  "generatedAt": "2026-11-21T12:00:00+00:00",
   "title": "Design System: SDU Admissions Portal",
   "extensions": {
     "colorMeta": {
@@ -8,7 +8,7 @@
         "role": "primary",
         "displayName": "Smalt Turquoise",
         "canonical": "#0a6c74",
-        "purpose": "Brand field: header, hero and guide bands, the main path tile, published date tiles, default button, checked filters, focus on light.",
+        "purpose": "Brand field: header, hero, hub, guide and information bands, the main path tile, upcoming date tiles, default button, checked filters, focus on light.",
         "tonalRamp": [
           "#00171c",
           "#003439",
@@ -24,7 +24,7 @@
         "role": "primary",
         "displayName": "Deep Turquoise",
         "canonical": "#074f55",
-        "purpose": "Footer, cost ledger band, mobile sheet, hover on turquoise, completed steps, signature cap tiles.",
+        "purpose": "Footer, cost ledger band, quick-links strip, phone action bar, mobile sheet, hover on turquoise, completed steps, signature cap tiles.",
         "tonalRamp": [
           "#00171c",
           "#003338",
@@ -56,7 +56,7 @@
         "role": "neutral",
         "displayName": "Field Mist",
         "canonical": "#cdebe9",
-        "purpose": "Secondary text, inactive nav and footer column titles on turquoise.",
+        "purpose": "Secondary text, inactive nav and quick links, breadcrumb, photo credits and footer column titles on turquoise.",
         "tonalRamp": [
           "#091413",
           "#212e2e",
@@ -72,7 +72,7 @@
         "role": "secondary",
         "displayName": "Apricot Ochre",
         "canonical": "#e3a33a",
-        "purpose": "Primary action only: header Apply, hero and finder Search. Slate-ink text.",
+        "purpose": "Primary action only: the shared Apply action and the hero and finder Search. Slate-ink text.",
         "tonalRamp": [
           "#230900",
           "#432300",
@@ -184,7 +184,7 @@
         "role": "neutral",
         "displayName": "Card White",
         "canonical": "#ffffff",
-        "purpose": "Cards, inputs, hero search tile, date band, text on fields.",
+        "purpose": "Cards, inputs, hero search tile, date band, text on fields, the selected Compare toggle on the programme band.",
         "tonalRamp": [
           "#121212",
           "#2b2b2b",
@@ -200,7 +200,7 @@
         "role": "neutral",
         "displayName": "Pale Turquoise",
         "canonical": "#e4eeed",
-        "purpose": "Badge boxes, filter chips, ghost hover.",
+        "purpose": "Badge boxes, filter chips, ghost hover, ruled-row hover (at 60%).",
         "tonalRamp": [
           "#0c1313",
           "#252d2c",
@@ -216,7 +216,7 @@
         "role": "neutral",
         "displayName": "Muted Surface",
         "canonical": "#e9efee",
-        "purpose": "Neutral badge box, unpublished date tiles.",
+        "purpose": "Neutral badge box.",
         "tonalRamp": [
           "#0e1312",
           "#282c2c",
@@ -248,7 +248,7 @@
         "role": "neutral",
         "displayName": "Muted Text",
         "canonical": "#4a5553",
-        "purpose": "Secondary text on light, unpublished deadlines, unchecked filter options.",
+        "purpose": "Secondary text on light, closed and unpublished deadlines, closed date tiles, same-for-all compare rows, unchecked filter options.",
         "tonalRamp": [
           "#0a1412",
           "#242e2c",
@@ -304,15 +304,15 @@
       },
       "headline-band": {
         "displayName": "Headline, band",
-        "purpose": "Page h1 on turquoise band pages (admissions planning), max 20ch."
+        "purpose": "Page h1 on turquoise band pages (hub, planning guides, information pages), max 20ch."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Section h2s, max 20ch."
+        "purpose": "Section h2s, max 20ch, including programme page sections."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Card and tile titles, 1.25-1.5rem; never larger than the section heading."
+        "purpose": "Card, tile and ruled-row titles, 1.125-1.5rem; never larger than the section heading."
       },
       "title-large": {
         "displayName": "Title, large",
@@ -328,7 +328,7 @@
       },
       "label": {
         "displayName": "Label",
-        "purpose": "The label utility: condensed 600 caps, +0.08em, for 1-3 word labels."
+        "purpose": "The label utility: condensed 600 caps, +0.08em, for 1-3 word labels, facts, counts and the word Closed."
       },
       "label-action": {
         "displayName": "Action label",
@@ -336,31 +336,56 @@
       },
       "numeral": {
         "displayName": "Numeral",
-        "purpose": "Condensed 700 tabular figures: cost ledger, date days, school counts, stepper."
+        "purpose": "Condensed 700 tabular figures: cost ledger, date days, steps list, school counts, stepper."
       }
     },
     "shadows": [
       {
         "name": "overlay",
         "value": "0 0 0 2px #17222a",
-        "purpose": "Flat ink ring for floating overlays only: chat launcher, chat bar and panel, compare bar, sheets. Token --shadow-overlay."
+        "purpose": "Flat ink ring for floating overlays only: chat launcher, chat bar and panel, the floating compare bar from 640px, sheets. Docked phone bars take a top hairline instead. Token --shadow-overlay."
       }
     ],
     "motion": [
       {
         "name": "ease-out-expo",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Signature fade."
+        "purpose": "Default ease for every authored movement; no bounce."
       },
       {
-        "name": "signature-fade",
-        "value": "opacity 0 to 1 over 0.4s, once, when the edge enters the viewport",
-        "purpose": "The mosaic signature. No scale, no stagger. Static under reduced motion."
+        "name": "signature-lay",
+        "value": "per tile: rise 6px from scale 0.6 with opacity, 280ms, delay min(column x 12ms, 700ms)",
+        "purpose": "The mosaic signature on the home page, once in view. Inner-page footer edges are drawn still."
+      },
+      {
+        "name": "signature-light",
+        "value": "brightness(1.32), 150ms in, 400ms out",
+        "purpose": "Hero tesserae within three columns of a fine pointer catch the light; they never move."
+      },
+      {
+        "name": "hero-settle",
+        "value": "scale 1.05 to 1 over 1.4s, once",
+        "purpose": "Home hero photo."
+      },
+      {
+        "name": "reveal",
+        "value": "rise 24px and fade over 600ms at 12% in view; list items 70ms apart, capped at 350ms",
+        "purpose": "Section headings and lists; only lists stagger."
+      },
+      {
+        "name": "count-up",
+        "value": "750ms ease-out cubic, once in view",
+        "purpose": "School counts only; tuition figures are static."
+      },
+      {
+        "name": "globe-sway",
+        "value": "phi = Almaty + 0.5 rad x sin(t)",
+        "purpose": "HeroGlobe sways around Almaty instead of spinning."
       },
       {
         "name": "colour-transition",
         "value": "0.2s ease-out",
-        "purpose": "Buttons, links, tiles, cards, nav, filters."
+        "purpose": "Buttons, links, tiles, cards, rows, nav, filters."
       },
       {
         "name": "arrow-slide",
@@ -368,14 +393,24 @@
         "purpose": "Trailing arrow icons on hover."
       },
       {
+        "name": "card-lift",
+        "value": "translateY(-4px) over 200ms",
+        "purpose": "Programme cards on hover; border turns turquoise."
+      },
+      {
         "name": "nav-underline",
         "value": "scaleX 0.3s ease-out",
         "purpose": "White 2px active-link underline in the header."
       },
       {
+        "name": "route-fade",
+        "value": "150ms cross-fade",
+        "purpose": "Route changes; kept under reduced motion."
+      },
+      {
         "name": "reduced-motion",
         "value": "prefers-reduced-motion: reduce",
-        "purpose": "Everything static; no smooth scroll; the globe does not spin."
+        "purpose": "Everything renders in its final state; the route fade and colour transitions remain; the globe is still."
       }
     ],
     "breakpoints": [
@@ -398,7 +433,7 @@
       "name": "Primary Button (Ochre)",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The primary action only: header Apply, hero and finder Search.",
+      "description": "The primary action only: the shared Apply action (header, sheet, programme band, compare, phone action bar) and the hero and finder Search. One per view.",
       "html": "<button class=\"ds-btn-ochre\">Search 64 programs <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
       "css": ".ds-btn-ochre{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:0;cursor:pointer;transition:background-color .2s ease-out,color .2s ease-out,border-color .2s ease-out;min-height:48px;padding:8px 24px;background:#e3a33a;color:#17222a;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.9375rem;letter-spacing:.06em;text-transform:uppercase;} .ds-btn-ochre svg{transition:transform .2s ease-out;} .ds-btn-ochre:hover{background:#d2912a;} .ds-btn-ochre:hover svg{transform:translateX(3px);} .ds-btn-ochre:active{transform:translateY(1px);} .ds-btn-ochre:focus-visible{outline:2px solid #0a6c74;outline-offset:2px;}"
     },
@@ -454,7 +489,7 @@
       "name": "Programme Card",
       "kind": "card",
       "refersTo": "program-card",
-      "description": "White, 1px hairline, three fixed lines; an unpublished deadline is muted words.",
+      "description": "White, 1px hairline, three fixed lines; closed and unpublished deadlines are muted words; the deadline is dropped when the degree group states it.",
       "html": "<div class=\"ds-pcards\"><article class=\"ds-pcard\"><h3 class=\"ds-ptitle\">Computer Science</h3><p class=\"ds-pmeta\">Bachelor · English · 6B06102</p><p class=\"ds-pfact\">Local deadline: 25.08.2026</p></article><article class=\"ds-pcard\"><h3 class=\"ds-ptitle\">Mathematics</h3><p class=\"ds-pmeta\">PhD · English · 8D05401</p><p class=\"ds-pfact ds-pfact-off\">Local deadline: not published yet</p></article></div>",
       "css": ".ds-pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;} .ds-pcard{display:flex;flex-direction:column;padding:24px;background:#fff;border:1px solid #c9d4d2;color:#17222a;transition:border-color .2s;cursor:pointer;} .ds-pcard:hover{border-color:#0a6c74;} .ds-pcard:hover .ds-ptitle{color:#0a6c74;} .ds-ptitle{margin:0;font-family:'Source Serif 4 Variable','Source Serif 4',Georgia,serif;font-weight:500;font-size:1.5rem;line-height:1.18;transition:color .2s;} .ds-pmeta{margin:12px 0 20px;color:#4a5553;font-family:'Golos Text',system-ui,sans-serif;font-size:.9375rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .ds-pfact{margin:auto 0 0;padding-top:16px;border-top:1px solid #c9d4d2;font-family:'Golos Text',system-ui,sans-serif;font-size:.9375rem;font-weight:600;font-variant-numeric:tabular-nums;} .ds-pfact-off{font-weight:400;color:#4a5553;}"
     },
@@ -462,7 +497,7 @@
       "name": "Mosaic Tiles",
       "kind": "card",
       "refersTo": "mosaic-tile-field",
-      "description": "One turquoise field tile (the main path, optionally with a photo) beside quiet white card tiles.",
+      "description": "Home page only. One turquoise field tile (the main path, optionally with a photo) beside quiet white card tiles.",
       "html": "<div class=\"ds-mgrid\"><a class=\"ds-mtile ds-mfield\" href=\"#\"><div><div class=\"ds-mphoto\"></div><h3 class=\"ds-mtitle\">School leavers</h3><p class=\"ds-mtext\">Bachelor's programs with UNT results</p></div><p class=\"ds-mfact\"><span>33 programs</span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></p></a><a class=\"ds-mtile ds-mcard\" href=\"#\"><div><h3 class=\"ds-mtitle\">Master's</h3><p class=\"ds-mtext\">Two-year programs</p></div><p class=\"ds-mfact\"><span>21 programs</span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></p></a></div>",
       "css": ".ds-mgrid{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;max-width:640px;} .ds-mtile{display:flex;flex-direction:column;justify-content:space-between;min-height:192px;padding:32px;text-decoration:none;transition:background-color .2s,border-color .2s;} .ds-mfield{background:#0a6c74;color:#fff;} .ds-mfield:hover{background:#074f55;} .ds-mfield:focus-visible{outline:2px solid #fff;outline-offset:2px;} .ds-mcard{background:#fff;color:#17222a;border:1px solid #c9d4d2;} .ds-mcard:hover{border-color:#0a6c74;} .ds-mcard:focus-visible{outline:2px solid #0a6c74;outline-offset:2px;} .ds-mphoto{margin:-32px -32px 32px;height:120px;background:#3b4349;} .ds-mtitle{margin:0;font-family:'Source Serif 4 Variable','Source Serif 4',Georgia,serif;font-weight:500;font-size:1.5rem;line-height:1.15;} .ds-mtext{margin:12px 0 0;font-family:'Golos Text',system-ui,sans-serif;font-size:1rem;} .ds-mcard .ds-mtext{color:#4a5553;} .ds-mfact{margin:32px 0 0;display:flex;justify-content:space-between;align-items:center;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.875rem;letter-spacing:.08em;text-transform:uppercase;} .ds-mcard .ds-mfact{color:#0a6c74;} .ds-mfact svg{width:20px;height:20px;transition:transform .2s;} .ds-mtile:hover .ds-mfact svg{transform:translateX(3px);}"
     },
@@ -470,7 +505,7 @@
       "name": "Header Bar",
       "kind": "nav",
       "refersTo": "header-bar",
-      "description": "Turquoise bar, white lockup, field-mist links with a white active underline, ochre Apply.",
+      "description": "Turquoise bar, white lockup, field-mist links with a white active underline, search icon, ochre Apply. From xl a 36px deep turquoise quick-links strip sits above it.",
       "html": "<header class=\"ds-head\"><span class=\"ds-brand\">SDU <i></i> <b>Admissions</b></span><nav class=\"ds-nav\"><a href=\"#\" class=\"is-active\">Programs</a><a href=\"#\">Plan your admission</a><a href=\"#\">My account</a></nav><a class=\"ds-apply\" href=\"#\">Apply <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></header>",
       "css": ".ds-head{display:flex;align-items:stretch;gap:24px;height:72px;padding:0 32px;background:#0a6c74;color:#fff;} .ds-brand{display:flex;align-items:center;gap:12px;font-family:'Golos Text',system-ui,sans-serif;font-weight:700;font-size:1.25rem;} .ds-brand b{font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.9375rem;letter-spacing:.08em;text-transform:uppercase;} .ds-brand i{width:1px;height:28px;background:rgb(255 255 255 / 40%);} .ds-nav{display:flex;margin-left:auto;} .ds-nav a{position:relative;display:flex;align-items:center;padding:0 16px;color:#cdebe9;text-decoration:none;font-family:'Golos Text',system-ui,sans-serif;font-weight:500;font-size:.9375rem;transition:color .2s;} .ds-nav a:hover,.ds-nav a.is-active{color:#fff;} .ds-nav a::after{content:'';position:absolute;left:16px;right:16px;bottom:0;height:2px;background:#fff;transform:scaleX(0);transform-origin:left;transition:transform .3s ease-out;} .ds-nav a.is-active::after{transform:scaleX(1);} .ds-nav a:focus-visible,.ds-apply:focus-visible{outline:2px solid #fff;outline-offset:2px;} .ds-apply{align-self:center;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;background:#e3a33a;color:#17222a;text-decoration:none;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.9375rem;letter-spacing:.06em;text-transform:uppercase;transition:background-color .2s;} .ds-apply svg{transition:transform .2s;} .ds-apply:hover{background:#d2912a;} .ds-apply:hover svg{transform:translateX(3px);}"
     },
@@ -478,21 +513,45 @@
       "name": "Mosaic Signature",
       "kind": "custom",
       "refersTo": "",
-      "description": "Stepped 16px tesserae edge (deep cap on field body) where a band rises into the photo. At most twice per page.",
+      "description": "Stepped 16px tesserae edge (deep cap on field body) where a band rises into the photo. At most twice per page; laid only on home, drawn still elsewhere.",
       "html": "<div class=\"ds-sig\"><div class=\"ds-sig-photo\"></div><div class=\"ds-steps\"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#074f55\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:#0a6c74\"></span><span style=\"background:#0a6c74\"></span></div><div class=\"ds-sig-band\"></div></div>",
       "css": ".ds-sig{max-width:640px;overflow:hidden;} .ds-sig-photo{height:64px;background:#9da6ad;margin-bottom:-48px;} .ds-steps{position:relative;display:grid;grid-template-columns:repeat(40,16px);grid-auto-rows:16px;} .ds-sig-band{height:48px;background:#0a6c74;} @media (prefers-reduced-motion:no-preference){.ds-steps{animation:ds-fade .4s cubic-bezier(.16,1,.3,1) both;}} @keyframes ds-fade{from{opacity:0;}}"
+    },
+    {
+      "name": "Ruled Rows",
+      "kind": "custom",
+      "refersTo": "ruled-row-hover",
+      "description": "A ledger of linked rows under a 2px ink rule; hover padding hangs 8px outside the text edge. Hub, information pages, related programmes, schools, questions.",
+      "html": "<div class=\"ds-ruled\"><h3 class=\"ds-rh\">Plan your admission</h3><ul class=\"ds-rl\"><li><a class=\"ds-rr\" href=\"#\"><span><span class=\"ds-rt\">Eligibility check</span><span class=\"ds-rm\">See which programmes your results reach.</span><span class=\"ds-rf\">Bachelor · 25.08.2026</span></span><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></li><li><a class=\"ds-rr\" href=\"#\"><span><span class=\"ds-rt\">Cost calculator</span><span class=\"ds-rm\">Tuition for a year of study.</span></span><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></li></ul></div>",
+      "css": ".ds-ruled{max-width:560px;padding:0 16px;} .ds-rh{margin:0 0 16px;font-family:'Source Serif 4 Variable','Source Serif 4',Georgia,serif;font-weight:500;font-size:1.875rem;line-height:1.15;color:#17222a;} .ds-rl{list-style:none;margin:0;padding:0;border-top:2px solid #17222a;} .ds-rl li{border-bottom:1px solid #c9d4d2;} .ds-rr{display:grid;grid-template-columns:minmax(0,1fr) 20px;gap:16px;align-items:start;margin:0 -8px;padding:20px 8px;color:#17222a;text-decoration:none;transition:background-color .2s ease-out;} .ds-rr:hover{background:rgb(228 238 237 / 60%);} .ds-rr:focus-visible{outline:2px solid #0a6c74;outline-offset:2px;} .ds-rr svg{margin-top:6px;color:#0a6c74;transition:transform .2s;} .ds-rr:hover svg{transform:translateX(3px);} .ds-rt{display:block;font-family:'Source Serif 4 Variable','Source Serif 4',Georgia,serif;font-weight:500;font-size:1.375rem;line-height:1.2;transition:color .2s;} .ds-rr:hover .ds-rt{color:#0a6c74;} .ds-rm{display:block;margin-top:4px;color:#4a5553;font-family:'Golos Text',system-ui,sans-serif;} .ds-rf{display:block;margin-top:12px;color:#0a6c74;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.875rem;letter-spacing:.08em;text-transform:uppercase;font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Date Ledger",
+      "kind": "custom",
+      "refersTo": "date-tile",
+      "description": "Upcoming dates are turquoise squares; a passed date keeps its place as a hairline square with the word Closed.",
+      "html": "<ul class=\"ds-dl\"><li><span class=\"ds-dt ds-dt-on\"><b>25</b><i>Aug</i></span><span><span class=\"ds-dlab\">Bachelor, local</span><span class=\"ds-dd\">25.08.2026</span></span></li><li><span class=\"ds-dt ds-dt-off\"><b>10</b><i>Jul</i></span><span><span class=\"ds-dlab\">Master, international</span><span class=\"ds-dd\">10.07.2026<em>Closed</em></span></span></li></ul>",
+      "css": ".ds-dl{list-style:none;margin:0;padding:0;max-width:480px;border-top:2px solid #17222a;} .ds-dl li{display:grid;grid-template-columns:104px 1fr;gap:20px;align-items:center;padding:20px 0;border-bottom:1px solid #c9d4d2;} .ds-dt{display:grid;place-content:center;aspect-ratio:1;text-align:center;box-sizing:border-box;} .ds-dt b{font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:3rem;line-height:1;font-variant-numeric:tabular-nums;} .ds-dt i,.ds-dd em{font-style:normal;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.875rem;letter-spacing:.08em;text-transform:uppercase;} .ds-dt i{margin-top:4px;} .ds-dt-on{background:#0a6c74;color:#fff;} .ds-dt-off{border:1px solid #c9d4d2;color:#4a5553;} .ds-dlab{display:block;font-family:'Golos Text',system-ui,sans-serif;font-weight:600;font-size:1.125rem;color:#17222a;} .ds-dd{display:block;margin-top:4px;color:#4a5553;font-family:'Golos Text',system-ui,sans-serif;font-variant-numeric:tabular-nums;} .ds-dd em{margin-left:12px;color:#17222a;}"
+    },
+    {
+      "name": "Phone Action Bar",
+      "kind": "nav",
+      "refersTo": "phone-action-bar",
+      "description": "Below 640px: a docked deep turquoise bar with the ochre Apply and an outlined Ask, in place of a floating chat button; the compare tray stacks above it.",
+      "html": "<div class=\"ds-pbar\"><a class=\"ds-pbar-apply\" href=\"#\">Apply <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a><button class=\"ds-pbar-ask\" type=\"button\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/></svg>Ask</button></div>",
+      "css": ".ds-pbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;max-width:390px;padding:8px 16px;background:#074f55;border-top:1px solid rgb(255 255 255 / 15%);} .ds-pbar-apply{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:8px 24px;background:#e3a33a;color:#17222a;text-decoration:none;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.9375rem;letter-spacing:.06em;text-transform:uppercase;transition:background-color .2s;} .ds-pbar-apply:hover{background:#d2912a;} .ds-pbar-apply:focus-visible,.ds-pbar-ask:focus-visible{outline:2px solid #fff;outline-offset:2px;} .ds-pbar-ask{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 16px;border:2px solid #fff;border-radius:0;background:transparent;color:#fff;font-family:'Golos Text',system-ui,sans-serif;font-weight:600;font-size:1rem;cursor:pointer;transition:background-color .2s,color .2s;} .ds-pbar-ask:hover{background:#fff;color:#074f55;}"
     }
   ],
   "narrative": {
     "northStar": "Almaty Mosaic, refined",
-    "overview": "The portal reads as a calm institutional document that carries one Almaty-mosaic signature. Sections are white and cool-neutral pages, structured by sentence-case serif headings and hairline ledgers. One turquoise field per group carries the main path; everything around it is quiet. Neutrals outnumber the brand colour by a wide margin, so the turquoise reads as SDU's voice and not as wallpaper.\n\nThe mosaic survives as a signature, not a wall. It appears at most twice per page: a stepped edge of 16px turquoise tesserae where the hero band rises into the campus photo, and the same profile where the footer rises into the page. The system is flat and square by conviction, with no gradients, no soft shadows and no rounded cards. Depth comes from field against neutral and from a flat 2px ink ring on floating overlays. Real SDU photography carries the warmth, including inside the main path tile. The official SDU navy and peach are not used, so the portal does not read as a copy of sdu.edu.kz.\n\nDensity follows the visitor mode. Persuade (home, programmes) uses full-bleed bands, a mosaic of unequal tiles and ledgers. Read (admissions planning guides) puts a turquoise title band over a reading column. Operate (account, application, staff) is quieter, with plain hairline containers. The world is light only, because applicants use it on phones in daylight.",
+    "overview": "The portal reads as a calm institutional document that carries one Almaty-mosaic signature. Sections are white and cool-neutral pages, structured by sentence-case serif headings and hairline ledgers. Every page starts at the same left edge as the header logo. One turquoise field per group carries the main path; everything around it is quiet. Neutrals outnumber the brand colour by a wide margin, so the turquoise reads as SDU's voice and not as wallpaper.\n\nThe mosaic survives as a signature, not a wall. It appears at most twice per page: a stepped edge of 16px turquoise tesserae where the hero band rises into the campus photo, and the same profile where the footer rises into the page. The system is flat and square by conviction, with no gradients, no soft shadows and no rounded cards. Depth comes from field against neutral and from a flat 2px ink ring on floating overlays. Real SDU photography carries the warmth on the home page and the hub, including inside the main path tile; each programme page carries its own credited subject photograph. The official SDU navy and peach are not used, so the portal does not read as a copy of sdu.edu.kz.\n\nDensity follows the visitor mode. Persuade (home, programmes) uses full-bleed bands, a mosaic of unequal tiles and ledgers. Read (the admissions hub, planning guides and information pages) puts a turquoise title band over ruled lists, split ledgers and reading columns. Operate (account, application, staff) is quieter, with plain hairline containers. The world is light only, because applicants use it on phones in daylight.",
     "keyCharacteristics": [
       "One brand hue: smalt turquoise and its deep shade on cool white, white and a light tint.",
       "Source Serif 4 headings in sentence case at weight 500; Golos Text for everything you read.",
       "Condensed caps only for short labels, numerals and the large action label.",
       "Square corners, 1px hairlines, ledgers opened by a 2px ink rule.",
       "The mosaic is one stepped 16px edge, at most twice per page.",
-      "Ochre marks only the primary action."
+      "One ochre action: Apply (and Search where the page is a search)."
     ],
     "rules": [
       {
@@ -502,12 +561,12 @@
       },
       {
         "name": "The One Job Rule",
-        "body": "Ochre is only the primary action (header Apply, hero Search). Terracotta is only errors and destructive actions. Glacier is only selection. An ochre, terracotta or glacier tile, band or decoration is a defect.",
+        "body": "Ochre is only the primary action (the shared Apply action, and the hero and finder Search). Terracotta is only errors and destructive actions. Glacier is only selection. An ochre, terracotta or glacier tile, band or decoration is a defect. The one sanctioned use beyond that is application state: in `Badge` and `ApplicationStepper`, ochre marks \"changes requested\" and terracotta marks \"not accepted\", always as a small tile plus words, because there the colour carries meaning the applicant must act on.",
         "section": "colors"
       },
       {
         "name": "The White Marker Rule",
-        "body": "On turquoise, emphasis is white: the active nav underline is a 2px white bar and the globe marker is a white square. Ochre is not used to mark position.",
+        "body": "On turquoise, emphasis is white: the active nav underline is a 2px white bar, the active quick link is white and underlined, the selected Compare toggle on the programme band is a filled white button with turquoise text, and the globe marker is a white square. Ochre is not used to mark position or selection.",
         "section": "colors"
       },
       {
@@ -552,27 +611,30 @@
       },
       {
         "name": "The Globe Exception",
-        "body": "The shaded cobe HeroGlobe in the home International band is the one sanctioned departure from the Flat Page Rule, kept as Daniyar's component. It is rendered as flat as cobe allows: diffuse 0, dark 0, glow equal to the field tint so there is no halo, and a white marker. Nothing else may copy its shading.",
+        "body": "The shaded cobe HeroGlobe in the home International band is the one sanctioned departure from the Flat Page Rule, kept as Daniyar's component. It is rendered as flat as cobe allows: diffuse 0, dark 0, glow equal to the field tint so there is no halo, and a white marker. It opens centred on Almaty and sways ±0.5 rad around it instead of spinning, so Almaty never turns away. Nothing else may copy its shading.",
         "section": "elevation"
       }
     ],
     "dos": [
       "**Do** keep turquoise and deep turquoise as the only brand fields, on cool white, white and the field tint.",
-      "**Do** reserve ochre for the header Apply and the hero Search, terracotta for errors and destructive actions, glacier for selection.",
+      "**Do** reserve ochre for the shared Apply action and the hero and finder Search, terracotta for errors and destructive actions, glacier for selection.",
+      "**Do** start every page in the 84rem header frame and limit reading widths left-aligned inside it.",
       "**Do** set headings in Source Serif 4, sentence case, weight 500, letter-spacing −0.01em, and keep tile titles smaller than their section heading.",
       "**Do** use the label utility (condensed 600, 0.875rem, +0.08em, caps) for labels of three words or fewer, and condensed tabular figures for numerals.",
-      "**Do** make one mosaic tile per group the turquoise `field` main path, optionally with a real SDU photo across its top; the rest are white `card` tiles.",
-      "**Do** state unpublished deadlines in muted words and show unpublished dates as muted squares.",
-      "**Do** build structure from ledgers: a 2px ink rule over 1px hairline rows.",
+      "**Do** keep the mosaic tile grid to the home page, with one turquoise `field` main path per group, optionally with a real SDU photo across its top; the rest are white `card` tiles. Elsewhere use ruled rows.",
+      "**Do** derive every deadline state from the Almaty calendar day (upcoming, closed, unpublished), state closed and unpublished deadlines in words, and say so plainly when the whole cycle is over.",
+      "**Do** build structure from ledgers: a 2px ink rule over 1px hairline rows, with linked-row hover hanging outside the text edge.",
       "**Do** use the flat 2px ink ring (`--shadow-overlay`) for floating overlays only.",
       "**Do** give Kazakh and Russian headings line-height 1.16.",
-      "**Do** keep motion to the 0.4s signature fade, 0.2s colour transitions and the 3px arrow slide, all static under reduced motion."
+      "**Do** keep motion to the set below; every spatial movement is gated on `prefers-reduced-motion: no-preference`, and hidden states only apply under `html.motion-ready`, so content never disappears without scripts."
     ],
     "donts": [
       "**Don't** use the mosaic signature more than twice per page, or as random, multicoloured edges or sticker clusters.",
       "**Don't** make glacier, ochre or terracotta tiles, bands or decorations.",
       "**Don't** set headings in capitals or in the condensed face.",
-      "**Don't** add colour stripes or dashed outlines to cards to show state.",
+      "**Don't** add colour stripes or dashed outlines to cards to show state, or show \"Closed\" and \"Not published\" as badges.",
+      "**Don't** add a second ochre button to a view, or use ochre for a selected state on turquoise.",
+      "**Don't** float a chat button over content on phones; use the bottom action bar.",
       "**Don't** use gradients or soft shadows; the cobe HeroGlobe is the one sanctioned exception and nothing may copy its shading.",
       "**Don't** round corners on public surfaces.",
       "**Don't** put eyebrow or kicker labels above headings, or number sections.",
