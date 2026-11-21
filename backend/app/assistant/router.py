@@ -22,6 +22,8 @@ from app.assistant.schemas import (
     AskRequest,
     AskResponse,
     FeedbackRequest,
+    FaqSearchHit,
+    FaqSearchResponse,
     FeedbackResponse,
     Language,
     SessionId,
@@ -29,6 +31,7 @@ from app.assistant.schemas import (
 )
 from app.assistant.service import AssistantService
 from app.assistant.streaming import STREAM_HEADERS, answer_events
+from app.assistant import retrieval
 from app.assistant.suggestions import suggest
 from app.catalogue.service import search_programs
 from app.conversation.context import standalone_question
@@ -176,6 +179,43 @@ def suggestions(
 ) -> SuggestionsResponse:
     with open_session() as session:
         return SuggestionsResponse(suggestions=suggest(session, session_id, lang))
+
+
+SEARCH_LIMIT = 5
+
+
+@router.get(
+    "/search",
+    dependencies=[Depends(assistant_rate_limit)],
+    response_model=FaqSearchResponse,
+    responses={**TOO_MANY_ASKS, **INVALID_REQUEST_RESPONSE, **DATABASE_UNAVAILABLE_RESPONSE},
+    summary="Search the published FAQ (site search)",
+)
+def search_faq(
+    open_session: Annotated[SessionFactory, Depends(get_session_factory)],
+    q: Annotated[str, Query(min_length=2, max_length=200, description="What the visitor typed")],
+    lang: Annotated[Language, Query(description="Language of the results: en, ru or kk")] = "en",
+) -> FaqSearchResponse:
+    """The assistant's own retrieval over published FAQ items, with its relevance threshold:
+    answers come back as written by the admissions office, never generated."""
+    threshold = get_settings().similarity_threshold
+    with open_session() as session:
+        found = retrieval.search(session, q.strip(), limit=SEARCH_LIMIT, language=lang)
+    hits = []
+    for result in found:
+        if result.similarity_score < threshold:
+            continue
+        item = result.faq_item.localized(lang)
+        hits.append(
+            FaqSearchHit(
+                faq_id=item.faq_id,
+                question=item.question,
+                answer=item.answer,
+                category=item.category,
+                source_link=item.source_link,
+            )
+        )
+    return FaqSearchResponse(results=hits)
 
 
 @router.post(

@@ -39,6 +39,8 @@ const ApplyPage = lazy(() => info().then((m) => ({ default: m.ApplyPage })))
 const DeadlinesPage = lazy(() => info().then((m) => ({ default: m.DeadlinesPage })))
 const StatusGuidePage = lazy(() => info().then((m) => ({ default: m.StatusGuidePage })))
 const ContactPage = lazy(() => info().then((m) => ({ default: m.ContactPage })))
+const SearchPage = lazy(() => info().then((m) => ({ default: m.SearchPage })))
+const CostAidPage = lazy(() => info().then((m) => ({ default: m.CostAidPage })))
 
 function recheckStaffSession() {
   void queryClient.invalidateQueries({ queryKey: STAFF_ME_KEY, exact: true })
@@ -92,6 +94,8 @@ export default function App() {
             <Route path="/deadlines" element={<DeadlinesPage />} />
             <Route path="/application-status" element={<StatusGuidePage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/cost-and-aid" element={<CostAidPage />} />
             <Route path="/eligibility" element={<EligibilityPage />} />
             <Route path="/recommendations" element={<RecommendationsPage />} />
             <Route path="/cost-calculator" element={<CostPage />} />

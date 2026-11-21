@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, ArrowUpRight } from "lucide-react"
-import type { ReactNode } from "react"
-import { Link } from "react-router-dom"
+import { ArrowRight, ArrowUpRight, Search as SearchIcon } from "lucide-react"
+import { useState, type FormEvent, type ReactNode } from "react"
+import { Link, useSearchParams } from "react-router-dom"
 import type { ApplicationStatus } from "@/api/applications"
+import { getFunding, searchFaq } from "@/api/guidance"
 import { allProgramsQuery } from "@/api/programs"
 import type { DegreeLevel } from "@/api/types"
 import { useApplicationsT } from "@/applications/i18n"
@@ -12,10 +13,11 @@ import { ConnectionError } from "@/components/common/ConnectionError"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 import { useInfoT, type InfoKey } from "@/info/i18n"
-import { levelDeadlines, type LevelDeadlines } from "@/lib/catalogue"
+import { LEVELS, levelDeadlines, type LevelDeadlines } from "@/lib/catalogue"
 import { ADMISSIONS_PHONE, ADMISSIONS_WEBSITE } from "@/lib/constants"
 import { deadlineStatus } from "@/lib/dates"
 import { useChatStore } from "@/store/chat"
@@ -399,5 +401,237 @@ function ContactRow({ href, children, tabular, external }: { href: string; child
         )}
       </a>
     </li>
+  )
+}
+
+// Site search (Purdue's header search): programs from the catalogue, published FAQ answers as
+// written by the admissions office, and the pages of this site, grouped.
+export function SearchPage() {
+  const t = useInfoT()
+  const { t: appT, language, degree, programTitle } = useI18n()
+  const guidanceT = useGuidanceT()
+  const setChatOpen = useChatStore((state) => state.setOpen)
+  const setDraft = useChatStore((state) => state.setDraft)
+  const [params, setParams] = useSearchParams()
+  const q = (params.get("q") ?? "").trim()
+  const [draft, setDraftQuery] = useState(q)
+  const ready = q.length >= 2
+  const catalogue = useQuery(allProgramsQuery)
+  const answers = useQuery({
+    queryKey: ["faq-search", q, language],
+    queryFn: ({ signal }) => searchFaq(q, language, signal),
+    enabled: ready,
+  })
+
+  const needle = q.toLocaleLowerCase(language)
+  const matches = (text: string | null | undefined) => Boolean(text && text.toLocaleLowerCase(language).includes(needle))
+  const programs = ready
+    ? (catalogue.data?.programs ?? []).filter(
+        (program) => matches(program.program_id) || matches(program.title) || matches(program.title_ru) || matches(program.title_kk),
+      )
+    : []
+  const pages = [
+    { to: "/apply", title: t("apply.title"), text: t("apply.lead") },
+    { to: "/deadlines", title: t("deadlines.title"), text: t("deadlines.lead") },
+    { to: "/application-status", title: t("status.title"), text: t("status.lead") },
+    { to: "/cost-and-aid", title: t("costaid.title"), text: t("costaid.lead") },
+    { to: "/contact", title: t("contact.title"), text: t("contact.lead") },
+    { to: "/eligibility", title: guidanceT("eligibility"), text: guidanceT("eligibilityText") },
+    { to: "/recommendations", title: guidanceT("recommendations"), text: guidanceT("recommendationsText") },
+    { to: "/cost-calculator", title: guidanceT("cost"), text: guidanceT("costText") },
+    { to: "/funding", title: guidanceT("funding"), text: guidanceT("fundingText") },
+    { to: "/account/requests", title: guidanceT("requests"), text: guidanceT("requestsText") },
+    { to: "/compare", title: appT("compare.title"), text: appT("compare.lead") },
+  ].filter((page) => ready && (matches(page.title) || matches(page.text)))
+  const hits = answers.data?.results ?? []
+  const nothing = ready && !catalogue.isPending && !answers.isPending && !programs.length && !pages.length && !hits.length
+
+  return (
+    <GuidanceShell title={t("search.title")} lead={t("search.lead")} tools={false}>
+      <form
+        role="search"
+        className="flex max-w-2xl gap-2"
+        onSubmit={(event: FormEvent) => {
+          event.preventDefault()
+          setParams(draft.trim() ? { q: draft.trim() } : {})
+        }}
+      >
+        <label htmlFor="site-search" className="sr-only">
+          {t("search.label")}
+        </label>
+        <Input id="site-search" type="search" autoFocus value={draft} maxLength={200} onChange={(event) => setDraftQuery(event.target.value)} className="h-12 text-base" />
+        <Button type="submit" variant="ochre" className="h-12 px-6">
+          <SearchIcon aria-hidden="true" />
+          {t("search.submit")}
+        </Button>
+      </form>
+      {q && !ready ? <p className="mt-4 text-sm text-muted-foreground">{t("search.hint")}</p> : null}
+
+      {ready ? (
+        <div className="mt-12 space-y-14" aria-live="polite">
+          {nothing ? (
+            <div className="border-t-2 border-ink pt-6">
+              <p className="max-w-[60ch] text-lg">{t("search.none", { q })}</p>
+              <Button
+                variant="outline"
+                className="mt-5"
+                onClick={() => {
+                  setDraft(q)
+                  setChatOpen(true)
+                }}
+              >
+                {t("search.ask")}
+              </Button>
+            </div>
+          ) : null}
+
+          {programs.length ? (
+            <section aria-labelledby="search-programs">
+              <SectionTitle id="search-programs">
+                {t("search.programs")} <span className="label tabular align-middle text-muted-foreground">{programs.length}</span>
+              </SectionTitle>
+              <ul className="mt-5 border-t-2 border-ink">
+                {programs.slice(0, 8).map((program) => (
+                  <li key={program.program_id} className="border-b border-border">
+                    <Link to={`/programs/${program.program_id}`} className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-center gap-4 py-4 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2">
+                      <span className="min-w-0">
+                        <span className="block font-heading text-xl font-medium group-hover:text-primary">{programTitle(program)}</span>
+                        <span className="tabular mt-1 block text-sm text-muted-foreground">
+                          {degree(program.degree_level)} · {program.program_id}
+                        </span>
+                      </span>
+                      <ArrowRight className="size-5 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {programs.length > 8 ? (
+                <Link to={`/programs?q=${encodeURIComponent(q)}`} className="mt-4 inline-flex items-center gap-2 font-semibold text-primary">
+                  {t("search.allPrograms")}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              ) : null}
+            </section>
+          ) : null}
+
+          {answers.isError ? <p className="text-muted-foreground">{t("search.answersError")}</p> : null}
+          {hits.length ? (
+            <section aria-labelledby="search-answers">
+              <SectionTitle id="search-answers">{t("search.answers")}</SectionTitle>
+              <ul className="mt-5 border-t-2 border-ink">
+                {hits.map((hit) => (
+                  <li key={hit.faq_id} className="border-b border-border py-5">
+                    <h3 className="text-lg font-semibold">{hit.question}</h3>
+                    <p className="mt-2 line-clamp-4 max-w-[75ch] whitespace-pre-line text-muted-foreground">{hit.answer}</p>
+                    <a href={hit.source_link} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4">
+                      {t("search.source")}
+                      <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {pages.length ? (
+            <section aria-labelledby="search-pages">
+              <SectionTitle id="search-pages">{t("search.pages")}</SectionTitle>
+              <ul className="mt-5 border-t-2 border-ink">
+                {pages.map((page) => (
+                  <li key={page.to} className="border-b border-border">
+                    <Link to={page.to} className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-4 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2">
+                      <span className="min-w-0">
+                        <span className="block text-lg font-semibold group-hover:text-primary">{page.title}</span>
+                        <span className="mt-1 block text-muted-foreground">{page.text}</span>
+                      </span>
+                      <ArrowRight className="mt-1 size-5 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </div>
+      ) : null}
+    </GuidanceShell>
+  )
+}
+
+// Cost and aid in one place (Purdue's cost-financial-aid page): tuition per credit by level
+// from the catalogue, then the grants and discounts the admissions office has answered about.
+export function CostAidPage() {
+  const t = useInfoT()
+  const { language, degree, deadline } = useI18n()
+  const catalogue = useQuery(allProgramsQuery)
+  const funding = useQuery({
+    queryKey: ["funding", language, "", ""],
+    queryFn: ({ signal }) => getFunding(language, undefined, undefined, signal),
+  })
+  const numbers = new Intl.NumberFormat(language === "en" ? "en-GB" : "ru-RU")
+  const range = (values: (number | null)[], unit: string) => {
+    const known = values.filter((value): value is number => value !== null)
+    if (!known.length) return null
+    const low = Math.min(...known)
+    const high = Math.max(...known)
+    return low === high ? `${numbers.format(low)} ${unit}` : `${numbers.format(low)}–${numbers.format(high)} ${unit}`
+  }
+  const programs = catalogue.data?.programs ?? []
+
+  return (
+    <GuidanceShell title={t("costaid.title")} lead={t("costaid.lead")} tools={false}>
+      <section aria-labelledby="costs-title" className={SPLIT}>
+        <div>
+          <SectionTitle id="costs-title">{t("costaid.costsTitle")}</SectionTitle>
+          <Button asChild variant="outline" className="mt-6">
+            <Link to="/cost-calculator">
+              {t("costaid.calculator")}
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+        <table className="w-full table-fixed text-left">
+          <caption className="sr-only">{t("costaid.costsTitle")}</caption>
+          <thead className="border-y-2 border-ink text-sm text-muted-foreground">
+            <tr>
+              <th scope="col" className="w-[28%] py-3 pr-4 font-semibold">{t("costaid.level")}</th>
+              <th scope="col" className="py-3 pr-4 font-semibold">{t("costaid.local")}</th>
+              <th scope="col" className="py-3 font-semibold">{t("costaid.international")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {LEVELS.map((level) => {
+              const items = programs.filter((program) => program.degree_level === level)
+              return (
+                <tr key={level} className="border-b border-border align-baseline">
+                  <th scope="row" className="py-4 pr-4 font-heading text-xl font-medium">{degree(level)}</th>
+                  <td className="tabular py-4 pr-4 text-lg font-semibold">{catalogue.data ? (range(items.map((p) => p.tuition_per_ects_kzt), "₸") ?? "—") : "…"}</td>
+                  <td className="tabular py-4 text-lg font-semibold">{catalogue.data ? (range(items.map((p) => p.tuition_per_ects_usd), "USD") ?? "—") : "…"}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </section>
+
+      <section aria-labelledby="aid-title" className={`mt-16 border-t-2 border-ink pt-10 ${SPLIT}`}>
+        <div>
+          <SectionTitle id="aid-title">{t("costaid.aidTitle")}</SectionTitle>
+          <p className="mt-4 max-w-[46ch] text-muted-foreground">{t("costaid.aidLead")}</p>
+          <Link to="/funding" className="group mt-6 inline-flex items-center gap-2 font-semibold text-primary">
+            {t("costaid.allAid")}
+            <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+          </Link>
+        </div>
+        <ul className="border-t-2 border-ink">
+          {(funding.data?.items ?? []).slice(0, 6).map((item) => (
+            <li key={item.faq_id} className="border-b border-border py-5">
+              <h3 className="text-lg font-semibold">{item.title}</h3>
+              <p className="mt-1 line-clamp-3 text-muted-foreground">{item.text}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t("costaid.checked", { date: deadline(item.last_checked) })}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </GuidanceShell>
   )
 }

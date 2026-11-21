@@ -45,7 +45,7 @@ export function SiteFooter() {
           <FooterLink to="/apply#bachelor-international">{infoT("footer.international")}</FooterLink>
           <FooterLink to="/apply#master">{infoT("footer.masters")}</FooterLink>
           <FooterLink to="/apply#phd">{infoT("footer.phd")}</FooterLink>
-          <FooterLink to="/funding">{infoT("footer.parents")}</FooterLink>
+          <FooterLink to="/cost-and-aid">{infoT("footer.parents")}</FooterLink>
         </FooterColumn>
 
         <FooterColumn title={t("footer.applyTitle")}>

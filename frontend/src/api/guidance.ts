@@ -201,3 +201,7 @@ export const sendRequest = (
   })
 export const answerRequest = (id: number, answer: string) =>
   post<AdmissionRequest>(`/api/staff/requests/${id}/answer`, { answer })
+// Site search over published FAQ answers (the assistant's retrieval, answers as written).
+export type FaqHit = { faq_id: string; question: string; answer: string; category: string; source_link: string }
+export const searchFaq = (q: string, lang: string, signal?: AbortSignal) =>
+  request<{ results: FaqHit[] }>("/api/assistant/search", { query: { q, lang }, signal })

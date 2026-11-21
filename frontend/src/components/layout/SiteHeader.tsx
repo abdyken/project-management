@@ -32,8 +32,7 @@ export function SiteHeader() {
     { to: "/apply", label: infoT("apply.title") },
     { to: "/deadlines", label: infoT("deadlines.title") },
     { to: "/application-status", label: infoT("status.title") },
-    { to: "/cost-calculator", label: guidanceT("cost") },
-    { to: "/funding", label: guidanceT("funding") },
+    { to: "/cost-and-aid", label: infoT("costaid.title") },
     { to: "/contact", label: infoT("contact.title") },
   ]
   const applyInPortal = features.data?.applications === true
@@ -120,7 +119,7 @@ export function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-2 xl:ml-0 xl:gap-4">
           <Link
-            to="/programs#search"
+            to="/search"
             className="hidden size-10 place-items-center text-field-muted transition-colors hover:text-field-foreground sm:grid"
           >
             <Search className="size-5" aria-hidden="true" />
@@ -185,7 +184,7 @@ export function SiteHeader() {
                 <nav aria-label={infoT("quick.label")} className="mt-10 px-4 pb-10 sm:px-6">
                   <p className="label text-field-muted">{infoT("quick.label")}</p>
                   <ul className="mt-3 grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-                    {[{ to: "/programs#search", label: infoT("quick.search") }, ...quickLinks].map((link) => (
+                    {[{ to: "/search", label: infoT("quick.search") }, ...quickLinks].map((link) => (
                       <li key={link.to}>
                         <Link
                           to={link.to}
