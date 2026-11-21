@@ -138,6 +138,7 @@ const en = {
   "detail.checklistError": "The document checklist could not be loaded.",
   "detail.askInChat": "Ask in chat",
   "detail.nextSteps": "Next steps",
+  "detail.photoCredit": "Photo: {name}, Unsplash",
   "detail.askDocuments.local": "Which documents do I need for {title} ({code}) as a local applicant?",
   "detail.askDocuments.international": "Which documents do I need for {title} ({code}) as an international applicant?",
 
@@ -379,6 +380,7 @@ const kk: Messages = {
   "detail.checklistError": "Құжаттар тізімін жүктеу мүмкін болмады.",
   "detail.askInChat": "Чатта сұрау",
   "detail.nextSteps": "Келесі қадамдар",
+  "detail.photoCredit": "Фото: {name}, Unsplash",
   "detail.askDocuments.local": "Отандық талапкер ретінде {title} ({code}) бағдарламасына қандай құжаттар қажет?",
   "detail.askDocuments.international": "Шетелдік талапкер ретінде {title} ({code}) бағдарламасына қандай құжаттар қажет?",
 
@@ -618,6 +620,7 @@ const ru: Messages = {
   "detail.checklistError": "Не удалось загрузить список документов.",
   "detail.askInChat": "Спросить в чате",
   "detail.nextSteps": "Следующие шаги",
+  "detail.photoCredit": "Фото: {name}, Unsplash",
   "detail.askDocuments.local": "Какие документы нужны местному абитуриенту на {title} ({code})?",
   "detail.askDocuments.international": "Какие документы нужны иностранному абитуриенту на {title} ({code})?",
 

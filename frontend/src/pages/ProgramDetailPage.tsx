@@ -11,13 +11,17 @@ import { SaveChecklistButton } from "@/components/catalog/SaveChecklistButton"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { CompareToggle } from "@/components/compare/CompareToggle"
 import { PageShell } from "@/components/layout/PageShell"
+import { signatureSteps } from "@/components/mosaic/pattern"
+import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
+import { programImage } from "@/lib/programImages"
 import { cn } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
 const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
+const PHOTO_STEPS = signatureSteps(80, 2, "deep", "field", 7)
 
 export function ProgramDetailPage() {
   const guidanceT = useGuidanceT()
@@ -72,6 +76,7 @@ export function ProgramDetailPage() {
 
   const program = programQuery.data
   const title = programTitle(program)
+  const photo = programImage(program.program_id)
 
   function askInChat() {
     setDraft(t(`detail.askDocuments.${applicant}`, { title, code: program.program_id }))
@@ -86,14 +91,37 @@ export function ProgramDetailPage() {
             <ArrowLeft className="size-4" aria-hidden="true" />
             {backLabel}
           </Link>
-          <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
+          <div className={cn("mt-8 grid grid-cols-1 gap-8", photo && "lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-end lg:gap-14")}>
             <div className="min-w-0">
               <h1 className="max-w-[18ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{title}</h1>
               <p className="tabular mt-4 text-lg text-field-muted">
                 {degree(program.degree_level)} · {program.program_id}
               </p>
+              <div className="mt-6">
+                <CompareToggle programId={program.program_id} title={title} tone="field" />
+              </div>
             </div>
-            <CompareToggle programId={program.program_id} title={title} tone="field" />
+            {photo ? (
+              <figure className="m-0 min-w-0">
+                <div className="relative overflow-hidden">
+                  <img
+                    src={photo.src}
+                    srcSet={photo.srcSet}
+                    sizes="(min-width: 1024px) 45vw, 100vw"
+                    alt=""
+                    width={1920}
+                    height={1200}
+                    fetchPriority="high"
+                    className="hero-settle block aspect-[16/10] w-full object-cover"
+                  />
+                  {/* The band rises into the photo with the stepped mosaic edge (signature 1 of 2). */}
+                  <div className="absolute inset-x-0 bottom-0 overflow-hidden">
+                    <Tesserae size={16} rows={PHOTO_STEPS} />
+                  </div>
+                </div>
+                {photo.credit ? <figcaption className="mt-2 text-xs text-field-muted">{t("detail.photoCredit", { name: photo.credit })}</figcaption> : null}
+              </figure>
+            ) : null}
           </div>
 
           <dl className="mt-10 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-4">
