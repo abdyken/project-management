@@ -194,10 +194,9 @@ components:
     backgroundColor: "{colors.smalt-turquoise}"
     textColor: "{colors.field-mist}"
     height: "72px"
-  quick-links-strip:
+  menu-panel:
     backgroundColor: "{colors.deep-turquoise}"
-    textColor: "{colors.field-mist}"
-    height: "36px"
+    textColor: "{colors.card-white}"
   phone-action-bar:
     backgroundColor: "{colors.deep-turquoise}"
     textColor: "{colors.card-white}"
@@ -237,7 +236,7 @@ One cold turquoise hue and its deep shade on calm cool neutrals, with three rese
 
 ### Primary
 - **Smalt Turquoise** (smalt-turquoise): the brand field. Header bar, hero band, guide title bands, the one main path tile per group, published date tiles, the default working button, checked filter squares, the focus ring on light surfaces, links.
-- **Deep Turquoise** (deep-turquoise): the footer, the cost ledger band, the header quick-links strip, the phone action bar, the mobile menu sheet, hover on turquoise buttons and tiles, completed stepper steps, inactive guide tabs, the cap tiles of the hero signature.
+- **Deep Turquoise** (deep-turquoise): the footer, the cost ledger band, the phone action bar, the Menu panel, hover on turquoise buttons and tiles, completed stepper steps, inactive guide tabs, the cap tiles of the hero signature.
 - **Field Tint** (field-tint): the one quiet band colour, used for the International band.
 - **Field Mist** (field-mist): secondary text, inactive nav and footer column titles on turquoise fields.
 
@@ -305,7 +304,7 @@ On the home page the bands run: campus photo with the turquoise hero band rising
 
 Structure comes from lists, not boxes. Ledgers (dates, costs, schools, questions, documents, requirements, related programmes, steps, statuses, deadlines) open with a 2px ink rule and divide rows with 1px hairlines. A linked ruled row hangs its hover padding outside the text edge from sm (8px negative margin, 8px padding), so row text stays aligned with the headings above while the pale hover box extends past it. Band edges are clean cuts except the two signature edges.
 
-The finder stacks filters in a column beside the results from lg; below lg they sit behind a single hairline toggle. Without a degree filter the results are grouped by degree under a hairline sub-head, and the local deadline most of the group shares is stated once there instead of on each card. The header is 64px tall on mobile and 72px from lg; from 1280px a 36px quick-links strip sits above it and full navigation shows, a full-screen deep turquoise sheet below it.
+The finder stacks filters in a column beside the results from lg; below lg they sit behind a single hairline toggle. Without a degree filter the results are grouped by degree under a hairline sub-head, and the local deadline most of the group shares is stated once there instead of on each card. The header is 64px tall on mobile and 72px from lg; it is one row: the lockup, the three main sections (from 1280px), search, language, Apply and a Menu button at every width. Everything else lives in the Menu panel (Purdue's pattern).
 
 Below 640px a fixed deep turquoise action bar holds the ochre Apply and an outlined Ask button at the bottom of the screen, in place of a floating chat button, and the compare tray stacks directly above it as a full-width strip. From 640px the chat launcher and compare bar float in the corners.
 
@@ -361,9 +360,8 @@ Square, solid and quick; the arrow is the only flourish.
 - **Filters:** a hairline list under a label legend. Each option is a 44px row with an 18px square check indicator: unchecked is white with an input-stroke border and muted text; checked is a turquoise square with a white tick, and the option text is set at 600 in ink. Hover turns the text turquoise. Native radios underneath.
 
 ### Navigation
-- **Quick links (xl and up):** a 36px deep turquoise strip above the header, right-aligned in the frame: Apply, Deadlines, Application status, Cost, Funding, Contact in 0.875rem field mist, white on hover, white and underlined when active.
 - **Header:** a turquoise bar with the white SDU lockup, a hairline divider and the "Admissions" label, four links in Golos 500 (field mist, white when hovered or active, with a 2px white underline that scales in from the left on the active link), a 40px search icon button (sm and up) that opens the finder with the cursor in its search box, the language switcher and the ochre Apply with an arrow.
-- **Mobile:** below 1280px a square outlined menu button opens a full-screen deep turquoise sheet with serif links (1.5rem) on hairlines, the active one underlined in white, then the Apply, then the quick links (with Search) under a label, as plain rows on faint white hairlines.
+- **Menu panel (every width):** an outlined Menu button (icon, plus the word from lg) opens a full-screen deep turquoise panel in the 84rem frame: the three main sections as serif links (1.5rem, 1.875rem from lg) on hairlines, the active one underlined in white; then Apply, Search and Ask; then three labelled groups of plain rows on faint white hairlines: Applying to SDU (how to apply, deadlines, status, cost and aid, contact), Plan your admission (the tools, compare, questions) and Information for (school leavers, international, master's, PhD, parents). No strip above the header and no Ask in the bar: the chat launcher covers it.
 - **Breadcrumb and on-page bar (programme page):** on the turquoise band, a field-mist semibold trail (Programmes / degree / title, the title hidden below sm) above the title, and below it an "On this page" row of underlined field-mist links to documents, requirements, next steps and related programmes.
 - **Guide tabs:** square tiles on the turquoise band; active is white with turquoise text, inactive deep turquoise, hover ink.
 - **Footer:** deep turquoise rising into the page through the signature edge, five columns from lg: the white lockup with a serif tagline (1.875rem, weight 400), planning, "Information for" (school leavers, international, master's, PhD, parents), apply and contact. Label column titles in field mist, white links with a faint underline.

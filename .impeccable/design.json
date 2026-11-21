@@ -24,7 +24,7 @@
         "role": "primary",
         "displayName": "Deep Turquoise",
         "canonical": "#074f55",
-        "purpose": "Footer, cost ledger band, quick-links strip, phone action bar, mobile sheet, hover on turquoise, completed steps, signature cap tiles.",
+        "purpose": "Footer, cost ledger band, phone action bar, Menu panel, hover on turquoise, completed steps, signature cap tiles.",
         "tonalRamp": [
           "#00171c",
           "#003338",
@@ -56,7 +56,7 @@
         "role": "neutral",
         "displayName": "Field Mist",
         "canonical": "#cdebe9",
-        "purpose": "Secondary text, inactive nav and quick links, breadcrumb, photo credits and footer column titles on turquoise.",
+        "purpose": "Secondary text, inactive nav and Menu group labels, breadcrumb, photo credits and footer column titles on turquoise.",
         "tonalRamp": [
           "#091413",
           "#212e2e",
@@ -505,7 +505,7 @@
       "name": "Header Bar",
       "kind": "nav",
       "refersTo": "header-bar",
-      "description": "Turquoise bar, white lockup, field-mist links with a white active underline, search icon, ochre Apply. From xl a 36px deep turquoise quick-links strip sits above it.",
+      "description": "Turquoise bar, white lockup, field-mist links with a white active underline, search icon, ochre Apply and a Menu button in one row; the Menu panel groups the rest (Applying to SDU, Plan your admission, Information for).",
       "html": "<header class=\"ds-head\"><span class=\"ds-brand\">SDU <i></i> <b>Admissions</b></span><nav class=\"ds-nav\"><a href=\"#\" class=\"is-active\">Programs</a><a href=\"#\">Plan your admission</a><a href=\"#\">My account</a></nav><a class=\"ds-apply\" href=\"#\">Apply <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></header>",
       "css": ".ds-head{display:flex;align-items:stretch;gap:24px;height:72px;padding:0 32px;background:#0a6c74;color:#fff;} .ds-brand{display:flex;align-items:center;gap:12px;font-family:'Golos Text',system-ui,sans-serif;font-weight:700;font-size:1.25rem;} .ds-brand b{font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.9375rem;letter-spacing:.08em;text-transform:uppercase;} .ds-brand i{width:1px;height:28px;background:rgb(255 255 255 / 40%);} .ds-nav{display:flex;margin-left:auto;} .ds-nav a{position:relative;display:flex;align-items:center;padding:0 16px;color:#cdebe9;text-decoration:none;font-family:'Golos Text',system-ui,sans-serif;font-weight:500;font-size:.9375rem;transition:color .2s;} .ds-nav a:hover,.ds-nav a.is-active{color:#fff;} .ds-nav a::after{content:'';position:absolute;left:16px;right:16px;bottom:0;height:2px;background:#fff;transform:scaleX(0);transform-origin:left;transition:transform .3s ease-out;} .ds-nav a.is-active::after{transform:scaleX(1);} .ds-nav a:focus-visible,.ds-apply:focus-visible{outline:2px solid #fff;outline-offset:2px;} .ds-apply{align-self:center;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;background:#e3a33a;color:#17222a;text-decoration:none;font-family:'Fira Sans Extra Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:.9375rem;letter-spacing:.06em;text-transform:uppercase;transition:background-color .2s;} .ds-apply svg{transition:transform .2s;} .ds-apply:hover{background:#d2912a;} .ds-apply:hover svg{transform:translateX(3px);}"
     },

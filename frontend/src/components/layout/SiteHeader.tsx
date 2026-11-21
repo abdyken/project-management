@@ -27,13 +27,39 @@ export function SiteHeader() {
     { to: "/admissions", label: guidanceT("hub") },
     { to: "/account", label: applicantT("account") },
   ]
-  // Purdue-style quick links: the pages applicants look for most, one click from anywhere.
-  const quickLinks = [
-    { to: "/apply", label: infoT("apply.title") },
-    { to: "/deadlines", label: infoT("deadlines.title") },
-    { to: "/application-status", label: infoT("status.title") },
-    { to: "/cost-and-aid", label: infoT("costaid.title") },
-    { to: "/contact", label: infoT("contact.title") },
+  // Purdue's pattern: one calm row, and a Menu panel that groups everything else.
+  const groups = [
+    {
+      title: infoT("hub.applyTitle"),
+      links: [
+        { to: "/apply", label: infoT("apply.title") },
+        { to: "/deadlines", label: infoT("deadlines.title") },
+        { to: "/application-status", label: infoT("status.title") },
+        { to: "/cost-and-aid", label: infoT("costaid.title") },
+        { to: "/contact", label: infoT("contact.title") },
+      ],
+    },
+    {
+      title: guidanceT("hub"),
+      links: [
+        { to: "/eligibility", label: guidanceT("eligibility") },
+        { to: "/recommendations", label: guidanceT("recommendations") },
+        { to: "/cost-calculator", label: guidanceT("cost") },
+        { to: "/funding", label: guidanceT("funding") },
+        { to: "/compare", label: t("footer.compare") },
+        { to: "/account/requests", label: guidanceT("requests") },
+      ],
+    },
+    {
+      title: infoT("footer.infoFor"),
+      links: [
+        { to: "/apply#bachelor-local", label: infoT("footer.schoolLeavers") },
+        { to: "/apply#bachelor-international", label: infoT("footer.international") },
+        { to: "/apply#master", label: infoT("footer.masters") },
+        { to: "/apply#phd", label: infoT("footer.phd") },
+        { to: "/cost-and-aid", label: infoT("footer.parents") },
+      ],
+    },
   ]
   const applyInPortal = features.data?.applications === true
 
@@ -57,22 +83,6 @@ export function SiteHeader() {
       >
         {t("header.skip")}
       </a>
-      <nav aria-label={infoT("quick.label")} className="hidden bg-field-deep xl:block">
-        <ul className="mx-auto flex h-9 max-w-[84rem] items-center justify-end gap-6 px-8 text-sm">
-          {quickLinks.map((link) => (
-            <li key={link.to}>
-              <NavLink
-                to={link.to}
-                className={({ isActive }) =>
-                  cn("transition-colors duration-200 hover:text-field-foreground", isActive ? "text-field-foreground underline underline-offset-4" : "text-field-muted")
-                }
-              >
-                {link.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
       <div className="mx-auto flex h-16 max-w-[84rem] items-center gap-3 px-4 sm:px-6 lg:h-[4.5rem] lg:gap-6 lg:px-8">
         <Link to="/" aria-label={t("header.home")} className="flex shrink-0 items-center gap-3">
           <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto lg:h-10" width={108} height={34} />
@@ -108,13 +118,6 @@ export function SiteHeader() {
               )}
             </NavLink>
           ))}
-          <button
-            type="button"
-            onClick={() => setChatOpen(true)}
-            className="flex items-center px-4 text-[0.9375rem] font-medium whitespace-nowrap text-field-muted transition-colors duration-200 hover:text-field-foreground"
-          >
-            {t("nav.ask")}
-          </button>
         </nav>
 
         <div className="ml-auto flex items-center gap-2 xl:ml-0 xl:gap-4">
@@ -131,72 +134,81 @@ export function SiteHeader() {
             <Dialog.Trigger asChild>
               <button
                 type="button"
-                className="grid size-10 place-items-center border border-field-foreground/50 text-field-foreground transition-colors hover:bg-field-deep xl:hidden"
+                className="inline-flex h-10 items-center gap-2 border border-field-foreground/50 px-2.5 text-[0.9375rem] font-semibold text-field-foreground transition-colors hover:bg-field-deep 2xl:px-3.5"
               >
                 <Menu className="size-5" aria-hidden="true" />
-                <span className="sr-only">{t("header.menu")}</span>
+                <span className="sr-only lg:not-sr-only xl:sr-only 2xl:not-sr-only">{t("header.menu")}</span>
               </button>
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40" />
               <Dialog.Content className="menu-sheet on-field fixed inset-0 z-50 flex flex-col overflow-y-auto bg-field-deep">
-                <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-                  <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto" width={108} height={34} />
-                  <Dialog.Close className="grid size-10 place-items-center border border-field-foreground/50 hover:bg-field">
+                <div className="mx-auto flex h-16 w-full max-w-[84rem] items-center justify-between px-4 sm:px-6 lg:h-[4.5rem] lg:px-8">
+                  <img src="/brand/sdu-lockup-white.svg" alt="" className="h-8 w-auto lg:h-10" width={108} height={34} />
+                  <Dialog.Close className="inline-flex h-10 items-center gap-2 border border-field-foreground/50 px-2.5 text-[0.9375rem] font-semibold hover:bg-field lg:px-3.5">
                     <X className="size-5" aria-hidden="true" />
-                    <span className="sr-only">{t("header.closeMenu")}</span>
+                    <span className="sr-only lg:not-sr-only">{t("header.closeMenu")}</span>
                   </Dialog.Close>
                 </div>
                 <Dialog.Title className="sr-only">{t("header.menu")}</Dialog.Title>
                 <Dialog.Description className="sr-only">{t("header.admissions")}</Dialog.Description>
-                <nav aria-label={t("header.menu")} className="flex flex-col px-4 pt-6 sm:px-6">
-                  {links.map((link) => (
-                    <NavLink
-                      key={link.to}
-                      to={link.to}
-                      onClick={() => setMenuOpen(false)}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center justify-between border-b border-field-foreground/20 py-4 font-heading text-2xl font-medium",
-                          isActive ? "text-field-foreground underline decoration-2 underline-offset-8" : "text-field-muted",
-                        )
-                      }
-                    >
-                      {link.label}
-                      <ArrowRight className="size-6" aria-hidden="true" />
-                    </NavLink>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false)
-                      setChatOpen(true)
-                    }}
-                    className="flex items-center justify-between border-b border-field-foreground/20 py-4 text-left font-heading text-2xl font-medium"
-                  >
-                    {t("nav.ask")}
-                    <ArrowRight className="size-6" aria-hidden="true" />
-                  </button>
-                </nav>
-                <div className="mt-8 px-4 sm:px-6" onClick={() => setMenuOpen(false)}>
-                  {apply}
-                </div>
-                <nav aria-label={infoT("quick.label")} className="mt-10 px-4 pb-10 sm:px-6">
-                  <p className="label text-field-muted">{infoT("quick.label")}</p>
-                  <ul className="mt-3 grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-                    {[{ to: "/search", label: infoT("quick.search") }, ...quickLinks].map((link) => (
-                      <li key={link.to}>
-                        <Link
-                          to={link.to}
-                          onClick={() => setMenuOpen(false)}
-                          className="block border-b border-field-foreground/15 py-3 text-field-foreground"
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
+                <div className="mx-auto w-full max-w-[84rem] px-4 pt-6 pb-12 sm:px-6 lg:px-8 lg:pt-10">
+                  <nav aria-label={t("header.menu")} className="grid grid-cols-1 gap-x-10 lg:grid-cols-3">
+                    {links.map((link) => (
+                      <NavLink
+                        key={link.to}
+                        to={link.to}
+                        onClick={() => setMenuOpen(false)}
+                        className={({ isActive }) =>
+                          cn(
+                            "flex items-center justify-between border-b border-field-foreground/20 py-4 font-heading text-2xl font-medium lg:text-3xl",
+                            isActive ? "text-field-foreground underline decoration-2 underline-offset-8" : "text-field-muted hover:text-field-foreground",
+                          )
+                        }
+                      >
+                        {link.label}
+                        <ArrowRight className="size-6" aria-hidden="true" />
+                      </NavLink>
                     ))}
-                  </ul>
-                </nav>
+                  </nav>
+                  <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                    <div onClick={() => setMenuOpen(false)}>{apply}</div>
+                    <Link to="/search" onClick={() => setMenuOpen(false)} className="inline-flex items-center gap-2 font-semibold text-field-foreground underline decoration-field-foreground/40 underline-offset-4">
+                      <Search className="size-4" aria-hidden="true" />
+                      {infoT("quick.search")}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false)
+                        setChatOpen(true)
+                      }}
+                      className="font-semibold text-field-foreground underline decoration-field-foreground/40 underline-offset-4"
+                    >
+                      {t("nav.ask")}
+                    </button>
+                  </div>
+                  <div className="mt-12 grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+                    {groups.map((group) => (
+                      <nav key={group.title} aria-label={group.title}>
+                        <h2 className="label text-field-muted">{group.title}</h2>
+                        <ul className="mt-3 border-t border-field-foreground/30">
+                          {group.links.map((link) => (
+                            <li key={link.to + link.label}>
+                              <Link
+                                to={link.to}
+                                onClick={() => setMenuOpen(false)}
+                                className="block border-b border-field-foreground/15 py-3 text-field-foreground transition-colors hover:bg-field/60"
+                              >
+                                {link.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </nav>
+                    ))}
+                  </div>
+                </div>
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
