@@ -19,12 +19,13 @@ export function SiteFooter() {
   const email = t("footer.email")
   const { pathname } = useLocation()
 
+  // Below 640px the bottom padding clears the fixed Apply/Ask bar.
   return (
     <footer className="on-field relative mt-auto bg-field-deep">
       <div className="absolute inset-x-0 bottom-full overflow-hidden">
         <Tesserae size={16} rows={FOOTER_SIGNATURE} still={pathname !== "/"} />
       </div>
-      <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1.2fr] lg:px-8">
+      <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-28 sm:grid-cols-2 sm:pb-10 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1.2fr] lg:px-8">
         <div>
           <img src="/brand/sdu-lockup-white.svg" alt="SDU University" className="h-11 w-auto" width={150} height={47} />
           <p className="mt-6 max-w-[16ch] font-heading text-3xl leading-[1.12] font-normal">
@@ -67,11 +68,6 @@ export function SiteFooter() {
           <FooterLink to="/contact">{infoT("contact.title")}</FooterLink>
           <FooterLink href={ADMISSIONS_WEBSITE[language]}>{t("footer.officialAdmissions")}</FooterLink>
         </FooterColumn>
-      </div>
-      <div className="border-t border-field-foreground/15">
-        <p className="mx-auto max-w-[84rem] px-4 pt-5 pb-24 text-sm text-field-muted sm:px-6 sm:pb-6 lg:px-8">
-          {t("footer.credit")}
-        </p>
       </div>
     </footer>
   )

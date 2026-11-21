@@ -20,7 +20,6 @@ const en = {
   "footer.contactTitle": "Contact",
   "footer.compare": "Compare programs",
   "footer.email": "admissions@sdu.edu.kz",
-  "footer.credit": "Campus photos and logo: SDU University. Program photos: Unsplash. An INF451 course project. Official information is published on sdu.edu.kz.",
 
   "home.title": "Study at the foot of the Alatau",
   "home.tally": "{programs} programs in {schools} schools, taught in {languages}",
@@ -280,7 +279,6 @@ const kk: Messages = {
   "footer.contactTitle": "Байланыс",
   "footer.compare": "Бағдарламаларды салыстыру",
   "footer.email": "admissions@sdu.edu.kz",
-  "footer.credit": "Кампус фотолары мен логотип: SDU University. Бағдарлама фотолары: Unsplash. INF451 курстық жобасы. Ресми ақпарат sdu.edu.kz сайтында жарияланады.",
 
   "home.title": "Алатау баурайында оқы",
   "home.tally": "{schools} мектепте {programs} бағдарлама, оқыту тілдері: {languages}",
@@ -538,7 +536,6 @@ const ru: Messages = {
   "footer.contactTitle": "Контакты",
   "footer.compare": "Сравнить программы",
   "footer.email": "admissions@sdu.edu.kz",
-  "footer.credit": "Фото кампуса и логотип: SDU University. Фото программ: Unsplash. Учебный проект INF451. Официальная информация публикуется на sdu.edu.kz.",
 
   "home.title": "Учитесь у подножия Алатау",
   "home.tally": "Программ: {programs} в {schools} школах, языки обучения: {languages}",
