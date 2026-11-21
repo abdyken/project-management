@@ -134,8 +134,8 @@ export function HomePage() {
           />
         </picture>
         <div className="on-field relative bg-field">
-          {/* On desktop the steps stop before the search tile, so the photo edge behind it stays straight. */}
-          <div className="absolute inset-x-0 bottom-full overflow-hidden lg:right-[45%]">
+          {/* The steps run the full width; on desktop the search tile sits over them and they reappear to its right. */}
+          <div className="absolute inset-x-0 bottom-full overflow-hidden">
             <Tesserae size={16} rows={HERO_STEPS} lightFrom={heroRef} />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
