@@ -7,8 +7,6 @@ const en = {
 
   "contact.name": "SDU Admissions Office",
   "contact.address": "Abylai Khan 1/1, 040900 Kaskelen, Almaty Region",
-  "footer.officialAdmissions": "Official admissions",
-  "footer.applicationPortal": "Application portal",
   "header.apply": "Apply",
   "header.menu": "Menu",
   "header.closeMenu": "Close menu",
@@ -17,7 +15,6 @@ const en = {
   "footer.tagline": "Study at the foot of the Alatau",
   "footer.explore": "Explore",
   "footer.applyTitle": "Apply",
-  "footer.contactTitle": "Contact",
   "footer.compare": "Compare programs",
   "footer.email": "admissions@sdu.edu.kz",
 
@@ -266,8 +263,6 @@ const kk: Messages = {
 
   "contact.name": "SDU қабылдау комиссиясы",
   "contact.address": "Абылай хан к-сі, 1/1, 040900 Қаскелең, Алматы облысы",
-  "footer.officialAdmissions": "Ресми қабылдау беті",
-  "footer.applicationPortal": "Өтініш порталы",
   "header.apply": "Өтініш беру",
   "header.menu": "Мәзір",
   "header.closeMenu": "Мәзірді жабу",
@@ -276,7 +271,6 @@ const kk: Messages = {
   "footer.tagline": "Алатау баурайында оқы",
   "footer.explore": "Шолу",
   "footer.applyTitle": "Өтініш",
-  "footer.contactTitle": "Байланыс",
   "footer.compare": "Бағдарламаларды салыстыру",
   "footer.email": "admissions@sdu.edu.kz",
 
@@ -523,8 +517,6 @@ const ru: Messages = {
 
   "contact.name": "Приёмная комиссия SDU",
   "contact.address": "ул. Абылай хана, 1/1, 040900 Каскелен, Алматинская область",
-  "footer.officialAdmissions": "Официальная страница приёма",
-  "footer.applicationPortal": "Портал подачи заявлений",
   "header.apply": "Подать заявку",
   "header.menu": "Меню",
   "header.closeMenu": "Закрыть меню",
@@ -533,7 +525,6 @@ const ru: Messages = {
   "footer.tagline": "Учитесь у подножия Алатау",
   "footer.explore": "Обзор",
   "footer.applyTitle": "Поступление",
-  "footer.contactTitle": "Контакты",
   "footer.compare": "Сравнить программы",
   "footer.email": "admissions@sdu.edu.kz",
 
