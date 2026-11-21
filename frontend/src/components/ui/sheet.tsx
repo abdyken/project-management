@@ -41,11 +41,11 @@ function SheetContent({
     <SheetPortal>
       <SheetOverlay />
       <DialogPrimitive.Content
-        className={cn("fixed z-50 bg-background p-0 shadow-lg", sideClass, className)}
+        className={cn("fixed z-50 bg-background p-0 shadow-overlay", sideClass, className)}
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute top-3 right-3 rounded-full p-1 text-muted-foreground hover:bg-secondary">
+        <DialogPrimitive.Close className="absolute top-3 right-3 grid size-9 place-items-center text-muted-foreground hover:bg-secondary hover:text-foreground">
           <X className="size-4" />
           <span className="sr-only">{t("chat.close")}</span>
         </DialogPrimitive.Close>
@@ -59,7 +59,7 @@ function SheetHeader({ className, ...props }: ComponentProps<"div">) {
 }
 
 function SheetTitle({ className, ...props }: ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title className={cn("text-lg font-semibold tracking-tight", className)} {...props} />
+  return <DialogPrimitive.Title className={cn("font-heading text-xl leading-tight font-medium", className)} {...props} />
 }
 
 function SheetDescription({ className, ...props }: ComponentProps<typeof DialogPrimitive.Description>) {

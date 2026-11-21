@@ -13,11 +13,13 @@ export function AppLayout() {
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
-      <main className="flex-1 min-h-[60vh]">
+      <main id="main" tabIndex={-1} className="min-h-[60vh] flex-1 outline-none">
         <ErrorBoundary key={location.pathname}>
-          <Suspense fallback={<PageLoading />}>
-            <Outlet />
-          </Suspense>
+          <div className="page-in">
+            <Suspense fallback={<PageLoading />}>
+              <Outlet />
+            </Suspense>
+          </div>
         </ErrorBoundary>
       </main>
       <SiteFooter />

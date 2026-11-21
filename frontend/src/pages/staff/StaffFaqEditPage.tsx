@@ -165,7 +165,7 @@ export function StaffFaqEditPage() {
         {t("edit.back")}
       </Link>
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{isNew ? t("edit.newTitle") : faqId}</h1>
+        <h1 className="text-3xl leading-[1.12] font-medium">{isNew ? t("edit.newTitle") : faqId}</h1>
         {status && <StatusBadge status={status} />}
       </div>
       {item.data && (
@@ -305,7 +305,7 @@ export function StaffFaqEditPage() {
           {save.isPending ? t("edit.saving") : isNew ? t("edit.saveDraft") : t("edit.save")}
         </Button>
         {!isNew && status !== "published" && (
-          <Button type="button" variant="gold" disabled={!canSave} onClick={() => changeStatus.mutate("publish")}>
+          <Button type="button" disabled={!canSave} onClick={() => changeStatus.mutate("publish")}>
             {t("edit.publish")}
           </Button>
         )}

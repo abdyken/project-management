@@ -1,5 +1,5 @@
-import { chromium, firefox } from "playwright"
 import fs from "node:fs"
+import { qaRuns } from "./matrix.mjs"
 
 const BASE = process.env.BASE_URL ?? "http://localhost:5173"
 const OUT = process.env.OUT ?? "e2e/shots"
@@ -74,12 +74,7 @@ async function run(browserType, name, width) {
   }
 }
 
-for (const [type, name] of [
-  [chromium, "chromium"],
-  [firefox, "firefox"],
-]) {
-  for (const width of (process.env.WIDTHS ?? "360,768,1280").split(",").map(Number)) await run(type, name, width)
-}
+for (const { type, name, width } of qaRuns()) await run(type, name, width)
 
 const failed = results.filter((r) => !r.ok)
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`)

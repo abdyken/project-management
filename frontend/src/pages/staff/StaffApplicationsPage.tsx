@@ -43,7 +43,7 @@ export function StaffApplicationsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight">{t("app.title")}</h1>
+      <h1 className="text-3xl leading-[1.12] font-medium">{t("app.title")}</h1>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("app.lead")}</p>
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
         <div className="flex items-center gap-2">

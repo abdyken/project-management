@@ -224,7 +224,7 @@ function Editor({
         mutation.mutate()
       }}
     >
-      <h2 className="text-xl font-semibold">{t("rules")}</h2>
+      <h2 className="text-xl font-medium">{t("rules")}</h2>
       {value.rules.map((rule, ri) => (
         <fieldset
           key={ri}

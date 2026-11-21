@@ -88,7 +88,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
           disabled={Boolean(selected) || sending}
           onClick={() => commit("up", null)}
           className={cn(
-            "rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
+            "p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
             selected?.rating === "up" && "text-foreground",
           )}
         >
@@ -104,14 +104,14 @@ function RatingControls({ message }: { message: ChatMessageType }) {
             setPicking(true)
           }}
           className={cn(
-            "rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
+            "p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-100",
             selected?.rating === "down" && "text-foreground",
           )}
         >
           <ThumbsDown className="size-3.5" />
         </button>
         {selected?.reason ? (
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {t(`chat.reason.${selected.reason}`)}
           </span>
         ) : null}
@@ -124,7 +124,7 @@ function RatingControls({ message }: { message: ChatMessageType }) {
               type="button"
               disabled={sending}
               onClick={() => commit("down", reason)}
-              className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="border-2 border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               {t(`chat.reason.${reason}`)}
             </button>
@@ -133,13 +133,13 @@ function RatingControls({ message }: { message: ChatMessageType }) {
             type="button"
             disabled={sending}
             onClick={() => commit("down", null)}
-            className="rounded-full px-2.5 py-1 text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            className="px-2.5 py-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           >
             {t("chat.skipReason")}
           </button>
         </div>
       ) : null}
-      {error ? <p className="text-[11px] text-destructive">{t("chat.ratingError")}</p> : null}
+      {error ? <p className="text-xs text-destructive">{t("chat.ratingError")}</p> : null}
     </div>
   )
 }
@@ -159,7 +159,7 @@ export function ChatMessage({
   return (
     <article className={cn("flex min-w-0", isApplicant ? "justify-end" : "justify-start")}>
       <div className={cn("min-w-0 space-y-1.5", isApplicant ? "max-w-[85%] text-right" : "max-w-full text-left")}>
-        <p className="text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
+        <p className="text-xs font-semibold text-muted-foreground">
           {isApplicant ? t("chat.you") : t("chat.title")}
         </p>
         {text ? (

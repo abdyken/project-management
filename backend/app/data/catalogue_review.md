@@ -23,3 +23,15 @@ Collected 2026-10-08 from sdu.edu.kz and the documents linked from it: fee order
 9. **Russian School of Education pages** say "Язык обучения: Казахский язык" for programs that every other source lists as English-taught (6B01702, 6B01707 and others).
 10. **Left out** because no 2026–2027 fee order, price sheet or score table lists them: 6B03201 Journalism (TV and Multimedia), 6B01503 Physics–Informatics, 6B01502 Chemistry–Biology, 6B01201 Preschool training, 6B01801 Social pedagogy and self-knowledge, the Financial Mathematics master, the old Economics master page, 7M03202 Data Journalism.
 11. **Smaller errors on the site:** "6B0150 Physics" (truncated code, broken link) on the admission page, codes written with a Cyrillic "В", "6B01702 Computer Science" in the UNT discount table, the master page linking "7M06105 Software Engineering" to the Data Science page, and 6B03205's English page showing the old code 6B03201.
+
+## Applicant-facing wording of unconfirmed deadlines (21.11.2026)
+
+Two document deadlines carried research notes that were shown to applicants on the program pages.
+The applicant text was shortened; the sourcing notes are kept here.
+
+| Shown to applicants now | Original note (source evidence) |
+| --- | --- |
+| Not published yet for 2026 | Not published for 2026 (the master's page still shows the 2025 admission dates) |
+| State-grant competition: 28 August – 5 September (2026 dates not yet confirmed) | State-grant competition: between 28 August and 5 September (as stated on the master's page; year not given, not confirmed for 2026) |
+
+The database rows were updated in place (staff edits elsewhere are kept), not re-imported.

@@ -1,0 +1,18 @@
+name: Nightly browser QA
+
+# Pull requests run every browser suite in Chromium at 360 and 1280 px (backend-ci.yml).
+# Once a night, and on demand, the same suites run the full matrix: Chromium and Firefox at
+# 360, 768 and 1280 px.
+on:
+  schedule:
+    - cron: "0 21 * * *" # 02:00 in Almaty
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-matrix:
+    uses: ./.github/workflows/backend-ci.yml
+    with:
+      qa_runs: chromium:360,chromium:768,chromium:1280,firefox:360,firefox:768,firefox:1280

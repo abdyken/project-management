@@ -37,10 +37,19 @@ const en = {
   confirmDelete: "Delete my account permanently",
   cancel: "Cancel",
   privacy:
-    "We store your e-mail, password hash, saved programs and checklist progress. Document files are not collected here. You can delete this data from your account.",
+    "We store your e-mail, password hash, saved programs, checklist progress, and the applications and document scans you submit. You can delete all of it from your account.",
   local: "Local",
   international: "International",
   noDocuments: "The document list is not published. Contact the admissions office.",
+  forgot: "Forgot your password?",
+  resetTitle: "Choose a new password",
+  resetRequestLead: "Enter the e-mail of your account. We send a link to choose a new password; it works for 1 hour.",
+  resetSend: "Send link",
+  resetSent: "If an account exists for this e-mail, the link is on its way. Check your inbox.",
+  resetLead: "Choose a new password. Other devices signed in to this account will be logged out.",
+  resetSave: "Save new password",
+  resetInvalid: "This link is invalid or expired. Ask for a new one below.",
+  loginLead: "Your applicant account keeps your saved programs, document checklists and online applications.",
 }
 type Key = keyof typeof en
 const ru: Record<Key, string> = {
@@ -80,10 +89,19 @@ const ru: Record<Key, string> = {
   confirmDelete: "Удалить аккаунт навсегда",
   cancel: "Отмена",
   privacy:
-    "Мы храним почту, хеш пароля, сохранённые программы и прогресс подготовки документов. Файлы документов здесь не собираются. Данные можно удалить в аккаунте.",
+    "Мы храним почту, хеш пароля, сохранённые программы, прогресс подготовки документов, а также поданные заявки и сканы документов. Всё это можно удалить в аккаунте.",
   local: "Местные",
   international: "Иностранные",
   noDocuments: "Список документов не опубликован. Обратитесь в приёмную комиссию.",
+  forgot: "Забыли пароль?",
+  resetTitle: "Новый пароль",
+  resetRequestLead: "Укажите почту аккаунта. Мы пришлём ссылку, чтобы задать новый пароль; она действует 1 час.",
+  resetSend: "Отправить ссылку",
+  resetSent: "Если аккаунт с этой почтой существует, ссылка уже отправлена. Проверьте почту.",
+  resetLead: "Задайте новый пароль. На других устройствах выполнится выход из аккаунта.",
+  resetSave: "Сохранить пароль",
+  resetInvalid: "Ссылка недействительна или устарела. Запросите новую ниже.",
+  loginLead: "В аккаунте абитуриента хранятся сохранённые программы, списки документов и онлайн-заявки.",
 }
 const kk: Record<Key, string> = {
   account: "Менің аккаунтым",
@@ -122,10 +140,19 @@ const kk: Record<Key, string> = {
   confirmDelete: "Аккаунтты біржола жою",
   cancel: "Бас тарту",
   privacy:
-    "Біз поштаңызды, құпиясөз хешін, сақталған бағдарламаларды және құжаттарды дайындау барысын сақтаймыз. Құжат файлдары жиналмайды. Деректерді аккаунттан жоюға болады.",
+    "Біз поштаңызды, құпиясөз хешін, сақталған бағдарламаларды, құжаттарды дайындау барысын, сондай-ақ жіберілген өтініштер мен құжат сканерлерін сақтаймыз. Мұның бәрін аккаунттан жоюға болады.",
   local: "Отандық",
   international: "Шетелдік",
   noDocuments: "Құжаттар тізімі жарияланбаған. Қабылдау комиссиясына хабарласыңыз.",
+  forgot: "Құпиясөзді ұмыттыңыз ба?",
+  resetTitle: "Жаңа құпиясөз",
+  resetRequestLead: "Аккаунт поштасын енгізіңіз. Жаңа құпиясөз орнатуға сілтеме жібереміз; ол 1 сағат жарамды.",
+  resetSend: "Сілтеме жіберу",
+  resetSent: "Осы поштаға аккаунт тіркелген болса, сілтеме жіберілді. Поштаңызды тексеріңіз.",
+  resetLead: "Жаңа құпиясөз орнатыңыз. Басқа құрылғыларда аккаунттан шығу орындалады.",
+  resetSave: "Құпиясөзді сақтау",
+  resetInvalid: "Сілтеме жарамсыз немесе мерзімі өткен. Төменнен жаңасын сұраңыз.",
+  loginLead: "Талапкер аккаунтында сақталған бағдарламалар, құжаттар тізімі және онлайн өтініштер сақталады.",
 }
 
 export function useApplicantT() {

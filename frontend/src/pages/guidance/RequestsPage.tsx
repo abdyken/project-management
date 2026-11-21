@@ -65,7 +65,7 @@ function RequestCard({
       cache.invalidateQueries({ queryKey: ["staff", "requests"] }),
   })
   return (
-    <article className="rounded-xl border border-border p-5">
+    <article className="border-2 border-border bg-card p-6">
       <p className="text-xs text-muted-foreground">
         #{item.id} ·{" "}
         {staff ? item.created_at.slice(0, 10) : deadline(item.created_at)} ·{" "}
@@ -297,7 +297,7 @@ export function StaffRequestsPage() {
   const t = useStaffT()
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">{t("nav.requests")}</h1>
+      <h1 className="mb-8 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("nav.requests")}</h1>
       <RequestsContent staff />
     </div>
   )

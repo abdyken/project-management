@@ -37,8 +37,10 @@ COOKIE_NAME, COOKIE_PATH = "applicant_session", "/api/applicant"
 # Per e-mail: 5 attempts in 15 minutes protect each account. Per client IP the limit is
 # higher, because a campus or mobile network puts many applicants behind one address.
 IP_LIMIT = 30
-login_limiter, register_limiter = LoginLimiter(), LoginLimiter()
+login_limiter, register_limiter, reset_limiter = LoginLimiter(), LoginLimiter(), LoginLimiter()
 login_ip_limiter, register_ip_limiter = LoginLimiter(limit=IP_LIMIT), LoginLimiter(limit=IP_LIMIT)
+reset_ip_limiter = LoginLimiter(limit=IP_LIMIT)
+RESET_LINK_VALID = timedelta(hours=1)
 Db = Annotated[Session, Depends(get_db_session)]
 Token = Annotated[str | None, Cookie(alias=COOKIE_NAME, include_in_schema=False)]
 logger = logging.getLogger(__name__)
@@ -155,6 +157,76 @@ def verify(body: VerifyRequest, response: Response, session: Db) -> ApplicantOut
         raise ApiProblem(422, "INVALID_VERIFICATION", "This verification link is invalid or expired.")
     user.password_hash = hash_password(body.password)
     user.verified, user.verification_hash, user.verification_expires_at = True, None, None
+    set_cookie(response, service.start_session(session, user, get_settings()))
+    return ApplicantOut.model_validate(user)
+
+
+@router.post("/password-reset", response_model=MessageOut, status_code=202)
+def request_password_reset(body: RegisterRequest, request: Request, session: Db) -> MessageOut:
+    """Sends a one-hour link to choose a new password; the same answer whether or not the account exists."""
+    settings = get_settings()
+    if not settings.smtp_host:
+        raise ApiProblem(503, "MAIL_UNAVAILABLE", "E-mail delivery is not configured.")
+    email_key, ip_key = f"email:{body.email}", f"ip:{client_ip(request)}"
+    if reset_ip_limiter.blocked(ip_key) or reset_limiter.blocked(email_key):
+        raise ApiProblem(429, "TOO_MANY_ATTEMPTS", "Please try again in 15 minutes.")
+    reset_limiter.record_failure(email_key)
+    reset_ip_limiter.record_failure(ip_key)
+    answer = MessageOut(message="If an account exists for this e-mail, a link to choose a new password has been sent.")
+    user = session.scalar(
+        select(Applicant).where(Applicant.email == body.email, Applicant.verified.is_(True)).with_for_update()
+    )
+    if user is None:
+        # Pending accounts finish by registering again; unknown e-mails get the same answer.
+        return answer
+    # A verified account's verification fields are free: the reset link reuses them. /verify only
+    # accepts tokens of unverified accounts and /password-reset/confirm only of verified ones.
+    token = secrets.token_urlsafe(32)
+    user.verification_hash = service.token_hash(token)
+    user.verification_expires_at = service.now() + RESET_LINK_VALID
+    email, language = user.email, user.language
+    session.commit()
+    subjects = {
+        "en": "Choose a new password for your SDU applicant account",
+        "ru": "Новый пароль для аккаунта абитуриента SDU",
+        "kk": "SDU талапкер аккаунтына жаңа құпиясөз",
+    }
+    instructions = {
+        "en": "Open this link to choose a new password (valid for 1 hour). If you did not ask for it, ignore this e-mail:",
+        "ru": "Откройте ссылку, чтобы задать новый пароль (действует 1 час). Если вы не запрашивали его, проигнорируйте письмо:",
+        "kk": "Жаңа құпиясөз орнату үшін сілтемені ашыңыз (1 сағат жарамды). Егер сұрамаған болсаңыз, хатты елемеңіз:",
+    }
+    try:
+        mail.send_mail(
+            settings,
+            email,
+            subjects[language],
+            f"{instructions[language]}\n\n{settings.public_base_url.rstrip('/')}/account/reset#token={token}\n",
+        )
+    except (OSError, smtplib.SMTPException) as error:
+        logger.warning("Password reset e-mail failed: %s", mail.describe_error(error))
+        raise ApiProblem(503, "MAIL_UNAVAILABLE", "E-mail could not be sent. Please try again.") from None
+    return answer
+
+
+@router.post("/password-reset/confirm", response_model=ApplicantOut)
+def confirm_password_reset(body: VerifyRequest, response: Response, session: Db) -> ApplicantOut:
+    user = session.scalar(
+        select(Applicant)
+        .where(
+            Applicant.verification_hash == service.token_hash(body.token),
+            Applicant.verification_expires_at > service.now(),
+            Applicant.verified.is_(True),
+        )
+        .with_for_update()
+    )
+    if user is None:
+        raise ApiProblem(422, "INVALID_RESET_LINK", "This link is invalid or expired.")
+    user.password_hash = hash_password(body.password)
+    user.verification_hash, user.verification_expires_at = None, None
+    # Every other signed-in device is logged out with the old password.
+    session.execute(delete(ApplicantSession).where(ApplicantSession.applicant_id == user.id))
+    login_limiter.reset(f"email:{user.email}")
     set_cookie(response, service.start_session(session, user, get_settings()))
     return ApplicantOut.model_validate(user)
 
