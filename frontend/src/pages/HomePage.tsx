@@ -195,7 +195,7 @@ export function HomePage() {
             to="/programs?degree_level=bachelor"
             tone="field"
             title={t("home.path.bachelor.title")}
-            image={{ src: "/images/sdu/students-laptop-1280.webp", srcSet: "/images/sdu/students-laptop-640.webp 640w, /images/sdu/students-laptop-1280.webp 1280w" }}
+            image={{ src: "/images/sdu/campus-letters-1280.webp", srcSet: "/images/sdu/campus-letters-640.webp 640w, /images/sdu/campus-letters-1280.webp 1280w, /images/sdu/campus-letters-1920.webp 1920w", position: "50% 100%" }}
             text={t("home.path.bachelor.text")}
             fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.bachelor.count) }) : null}
             className="sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[26rem]"
@@ -302,18 +302,18 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Schools beside a real photo of SDU students. */}
+      {/* Schools beside a photo inside the SDU campus. */}
       <section aria-labelledby="schools-title" className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-28">
         <figure data-reveal="photo" className="relative self-start overflow-hidden lg:col-span-5">
           <img
-            src="/images/sdu/students-international-1280.webp"
-            srcSet="/images/sdu/students-international-640.webp 640w, /images/sdu/students-international-1280.webp 1280w, /images/sdu/students-international-1920.webp 1920w"
+            src="/images/sdu/campus-library-1280.webp"
+            srcSet="/images/sdu/campus-library-640.webp 640w, /images/sdu/campus-library-1280.webp 1280w, /images/sdu/campus-library-1920.webp 1920w"
             sizes="(min-width: 1024px) 40vw, 100vw"
             alt=""
             width={1920}
-            height={1280}
+            height={1080}
             loading="lazy"
-            className="aspect-[4/3] w-full object-cover object-[50%_35%]"
+            className="aspect-[4/3] w-full object-cover object-[62%_50%]"
           />
         </figure>
         <div className="lg:col-span-7">

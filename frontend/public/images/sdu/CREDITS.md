@@ -14,8 +14,8 @@ Files are resized WebP copies (`-strip -quality 72`); the content is unchanged.
 | `campus-autumn-*` | https://sdu.edu.kz/wp-content/uploads/2025/09/campus-osennyi.webp | Aerial of the main building in autumn, mountains behind |
 | `campus-summer-*` | https://sdu.edu.kz/wp-content/uploads/2026/06/sdu-leto.webp | Main building in summer |
 | `campus-facade-*` | https://sdu.edu.kz/wp-content/uploads/2026/05/sdu-campus-scaled.jpg | Facade with the SDU emblem, portrait |
-| `students-international-*` | https://sdu.edu.kz/wp-content/uploads/2026/08/International-students-scaled.jpeg | SDU students in the main hall |
-| `students-laptop-*` | https://sdu.edu.kz/wp-content/uploads/2026/06/SDU-Faces-213-scaled.jpg | SDU students around a laptop (studio) |
+| `campus-library-*` | Frame at 0:42 of SDU University's official "CAMPUS TOUR \| SDU University" video, https://www.youtube.com/watch?v=e7qB9xInwwY | The library entrance off the main atrium, in sunlight (captured 22.11.2026) |
+| `campus-letters-*` | Frame at 0:38 of the same video | The big blue SDU letters in the main hall, in front of the university history wall (captured 22.11.2026) |
 
 ## Logo (`frontend/public/brand/`)
 
