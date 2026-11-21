@@ -50,6 +50,9 @@ const en = {
   resetSave: "Save new password",
   resetInvalid: "This link is invalid or expired. Ask for a new one below.",
   loginLead: "Your applicant account keeps your saved programs, document checklists and online applications.",
+  beforeApply: "Before you apply",
+  newHere: "New here?",
+  haveAccount: "Already have an account?",
 }
 type Key = keyof typeof en
 const ru: Record<Key, string> = {
@@ -102,6 +105,9 @@ const ru: Record<Key, string> = {
   resetSave: "Сохранить пароль",
   resetInvalid: "Ссылка недействительна или устарела. Запросите новую ниже.",
   loginLead: "В аккаунте абитуриента хранятся сохранённые программы, списки документов и онлайн-заявки.",
+  beforeApply: "Перед подачей заявки",
+  newHere: "Впервые здесь?",
+  haveAccount: "Уже есть аккаунт?",
 }
 const kk: Record<Key, string> = {
   account: "Менің аккаунтым",
@@ -153,6 +159,9 @@ const kk: Record<Key, string> = {
   resetSave: "Құпиясөзді сақтау",
   resetInvalid: "Сілтеме жарамсыз немесе мерзімі өткен. Төменнен жаңасын сұраңыз.",
   loginLead: "Талапкер аккаунтында сақталған бағдарламалар, құжаттар тізімі және онлайн өтініштер сақталады.",
+  beforeApply: "Өтініш бермес бұрын",
+  newHere: "Алғаш рет пе?",
+  haveAccount: "Аккаунтыңыз бар ма?",
 }
 
 export function useApplicantT() {
