@@ -3,11 +3,11 @@ import { ArrowRight, ArrowUpRight } from "lucide-react"
 import type { ReactNode } from "react"
 import { Link } from "react-router-dom"
 import type { ApplicationStatus } from "@/api/applications"
-import { useFeatures } from "@/api/features"
 import { allProgramsQuery } from "@/api/programs"
 import type { DegreeLevel } from "@/api/types"
 import { useApplicationsT } from "@/applications/i18n"
 import { StatusBadge } from "@/components/applications/StatusBadge"
+import { ApplyAction } from "@/components/common/ApplyAction"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,7 +22,6 @@ import { useChatStore } from "@/store/chat"
 // Information pages after Purdue's admissions site (how to apply, deadlines, status, contact).
 // Every date and count comes from the live catalogue; nothing here is typed in by hand.
 
-const OFFICIAL_APPLICATION_PORTAL = "https://admissions.sdu.edu.kz"
 const MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("SDU University, Kaskelen")}`
 const SPLIT = "grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16"
 
@@ -93,26 +92,6 @@ function SectionTitle({ id, children }: { id?: string; children: ReactNode }) {
   )
 }
 
-function ApplyAction() {
-  const t = useInfoT()
-  const features = useFeatures()
-  return features.data?.applications ? (
-    <Button asChild variant="ochre" size="lg">
-      <Link to="/account/applications">
-        {t("apply.applyNow")}
-        <ArrowRight aria-hidden="true" />
-      </Link>
-    </Button>
-  ) : (
-    <Button asChild variant="ochre" size="lg">
-      <a href={OFFICIAL_APPLICATION_PORTAL} target="_blank" rel="noreferrer">
-        {t("apply.applyNow")}
-        <ArrowUpRight aria-hidden="true" />
-      </a>
-    </Button>
-  )
-}
-
 export function ApplyPage() {
   const t = useInfoT()
   const { deadlineWithStatus } = useI18n()
@@ -179,7 +158,7 @@ export function ApplyPage() {
               ))}
             </dl>
             <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-4">
-              <ApplyAction />
+              <ApplyAction label={t("apply.applyNow")} />
               <Link
                 to={`/programs?degree_level=${route.level}`}
                 className="group inline-flex items-center gap-2 font-semibold text-primary"
@@ -260,7 +239,7 @@ export function DeadlinesPage() {
             </tbody>
           </table>
           <div className="mt-8">
-            <ApplyAction />
+            <ApplyAction label={t("apply.applyNow")} />
           </div>
         </div>
       </div>

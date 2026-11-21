@@ -3,13 +3,16 @@ import { ArrowLeft, ArrowRight, ExternalLink, MessageCircleQuestion } from "luci
 import type { ReactNode } from "react"
 import { Link, useParams, useSearchParams } from "react-router-dom"
 import { isNotFound } from "@/api/errors"
-import { getChecklist, getProgram } from "@/api/programs"
-import type { ApplicantType } from "@/api/types"
+import { getGuidance } from "@/api/guidance"
+import { allProgramsQuery, getChecklist, getProgram } from "@/api/programs"
+import type { ApplicantType, Program } from "@/api/types"
 import { ChecklistPdfButton } from "@/components/catalog/ChecklistPdfButton"
 import { DocumentChecklist } from "@/components/catalog/DocumentChecklist"
 import { SaveChecklistButton } from "@/components/catalog/SaveChecklistButton"
+import { ApplyAction } from "@/components/common/ApplyAction"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { CompareToggle } from "@/components/compare/CompareToggle"
+import { ConditionText, EvidenceView } from "@/components/guidance/rules"
 import { PageShell } from "@/components/layout/PageShell"
 import { signatureSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
@@ -87,17 +90,34 @@ export function ProgramDetailPage() {
     <div>
       <section className="on-field relative bg-field">
         <div className="mx-auto max-w-[84rem] px-4 pt-8 pb-16 sm:px-6 lg:px-8 lg:pb-20">
-          <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-field-muted hover:text-field-foreground">
-            <ArrowLeft className="size-4" aria-hidden="true" />
-            {backLabel}
-          </Link>
+          <nav aria-label={t("detail.breadcrumb")}>
+            <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.9375rem] font-semibold text-field-muted">
+              <li>
+                <Link to="/programs" className="inline-flex items-center gap-2 hover:text-field-foreground">
+                  <ArrowLeft className="size-4" aria-hidden="true" />
+                  {backLabel}
+                </Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li>
+                <Link to={`/programs?degree_level=${program.degree_level}`} className="hover:text-field-foreground">
+                  {degree(program.degree_level)}
+                </Link>
+              </li>
+              <li aria-hidden="true" className="hidden sm:block">/</li>
+              <li aria-current="page" className="hidden max-w-[32ch] truncate text-field-foreground sm:block">
+                {title}
+              </li>
+            </ol>
+          </nav>
           <div className={cn("mt-8 grid grid-cols-1 gap-8", photo && "lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-end lg:gap-14")}>
             <div className="min-w-0">
               <h1 className="max-w-[18ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{title}</h1>
               <p className="tabular mt-4 text-lg text-field-muted">
                 {degree(program.degree_level)} · {program.program_id}
               </p>
-              <div className="mt-6">
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <ApplyAction label={t("detail.apply")} />
                 <CompareToggle programId={program.program_id} title={title} tone="field" />
               </div>
             </div>
@@ -150,7 +170,8 @@ export function ProgramDetailPage() {
       </section>
 
       <div className="mx-auto grid max-w-[84rem] gap-12 px-4 pt-16 pb-24 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16 lg:px-8 lg:pt-20">
-        <section aria-labelledby="documents-heading" className="min-w-0">
+        <div className="min-w-0">
+        <section aria-labelledby="documents-heading">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 id="documents-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
@@ -187,6 +208,9 @@ export function ProgramDetailPage() {
             <ChecklistPdfButton path={`/api/programs/${encodeURIComponent(id)}/checklist/pdf?applicant_type=${applicant}&language=${language}`} />
           </div>
         </section>
+          <RequirementsSection programId={program.program_id} applicant={applicant} />
+          <RelatedPrograms program={program} />
+        </div>
 
         <aside aria-labelledby="next-steps" className="lg:sticky lg:top-6 lg:self-start">
           <div className="bg-card p-6">
@@ -239,5 +263,99 @@ function StepLink({ to, children }: { to: string; children: ReactNode }) {
         <ArrowRight className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
       </Link>
     </li>
+  )
+}
+
+// Published entry requirements for the chosen applicant type, each with its source; the same
+// rules the eligibility check evaluates. Hidden while loading or when the service is down.
+function RequirementsSection({ programId, applicant }: { programId: string; applicant: ApplicantType }) {
+  const { t } = useI18n()
+  const guidanceT = useGuidanceT()
+  const guidance = useQuery({
+    queryKey: ["guidance", programId],
+    queryFn: ({ signal }) => getGuidance(programId, false, signal),
+  })
+  if (!guidance.data) return null
+  const rules = guidance.data.rules.filter((rule) => !rule.applicant_type || rule.applicant_type === applicant)
+
+  return (
+    <section aria-labelledby="requirements-heading" className="mt-20">
+      <h2 id="requirements-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
+        {t("detail.requirements")}
+      </h2>
+      <p className="mt-3 text-muted-foreground">{t("detail.requirementsNote")}</p>
+      {rules.length ? (
+        <ul className="mt-8 border-t-2 border-ink">
+          {rules.map((rule, index) => {
+            const scope = [rule.education_route, rule.track, rule.admission_basis].flatMap((value) => (value ? [value] : []))
+            return (
+              <li key={`${rule.key}-${index}`} className="border-b border-border py-5">
+                <h3 className="font-semibold">{guidanceT.code(rule.key)}</h3>
+                {scope.length ? <p className="mt-1 text-sm text-muted-foreground">{scope.map((value) => guidanceT.code(value)).join(" · ")}</p> : null}
+                <div className="mt-2 space-y-1 text-[0.9375rem]">
+                  {rule.alternatives.map((group, groupIndex) => (
+                    <p key={groupIndex}>
+                      {groupIndex > 0 ? <strong className="label mr-1">{guidanceT("or")}</strong> : null}
+                      {group.map((condition, conditionIndex) => (
+                        <span key={conditionIndex}>
+                          {conditionIndex > 0 ? ` ${guidanceT("and").toLocaleLowerCase()} ` : null}
+                          <ConditionText condition={condition} />
+                        </span>
+                      ))}
+                    </p>
+                  ))}
+                </div>
+                <EvidenceView evidence={rule.evidence} />
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="mt-6 text-muted-foreground">{t("detail.requirementsNone")}</p>
+      )}
+      <Button asChild variant="outline" className="mt-6">
+        <Link to={`/eligibility?program=${encodeURIComponent(programId)}`}>
+          {t("detail.checkEligibility")}
+          <ArrowRight aria-hidden="true" />
+        </Link>
+      </Button>
+    </section>
+  )
+}
+
+// Up to three programs of the same school: the same title at other degrees first, then the same degree.
+function RelatedPrograms({ program }: { program: Program }) {
+  const { t, degree, programTitle } = useI18n()
+  const catalogue = useQuery(allProgramsQuery)
+  const others = (catalogue.data?.programs ?? []).filter((item) => item.faculty === program.faculty && item.program_id !== program.program_id)
+  const sameTitle = others.filter((item) => item.title.toLowerCase() === program.title.toLowerCase())
+  const sameLevel = others.filter((item) => item.degree_level === program.degree_level && !sameTitle.includes(item))
+  const picks = [...sameTitle, ...sameLevel].slice(0, 3)
+  if (!picks.length) return null
+
+  return (
+    <section aria-labelledby="related-heading" className="mt-20">
+      <h2 id="related-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
+        {t("detail.related")}
+      </h2>
+      <ul className="mt-8 border-t-2 border-ink">
+        {picks.map((item) => (
+          <li key={item.program_id} className="border-b border-border">
+            <Link
+              to={`/programs/${item.program_id}`}
+              className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-center gap-4 py-5 transition-colors hover:bg-secondary/60 sm:px-2"
+            >
+              <span className="min-w-0">
+                <span className="block font-heading text-xl font-medium group-hover:text-primary">{programTitle(item)}</span>
+                <span className="tabular mt-1 block text-sm text-muted-foreground">
+                  {degree(item.degree_level)} · {item.program_id}
+                </span>
+              </span>
+              <ArrowRight className="size-5 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }

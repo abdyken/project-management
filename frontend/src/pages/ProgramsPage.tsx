@@ -4,6 +4,7 @@ import { useLocation, useSearchParams } from "react-router-dom"
 import { isInvalidRequest } from "@/api/errors"
 import { allProgramsQuery, filterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
+import { LEVELS, mode } from "@/lib/catalogue"
 import { ActiveFilters, FilterPanel, ProgramSearch, type FilterValues } from "@/components/catalog/ProgramFilters"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
@@ -21,7 +22,7 @@ function readFilters(params: URLSearchParams): FilterValues {
 }
 
 export function ProgramsPage() {
-  const { t, tn } = useI18n()
+  const { t, tn, deadlineWithStatus } = useI18n()
   const { hash } = useLocation()
   // The header search button opens /programs#search: put the cursor in the search box.
   useEffect(() => {
@@ -113,11 +114,48 @@ export function ProgramsPage() {
 
           {data && data.total > 0 ? (
             <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                {data.programs.map((program) => (
-                  <ProgramCard key={program.program_id} program={program} />
-                ))}
-              </div>
+              {filters.degree_level ? (
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {data.programs.map((program) => (
+                    <ProgramCard key={program.program_id} program={program} />
+                  ))}
+                </div>
+              ) : (
+                // Without a degree filter the list is grouped by degree, so programs that share a
+                // title (Computer Science at bachelor's, master's and PhD level) read as distinct.
+                <div className="space-y-14">
+                  {LEVELS.map((level) => {
+                    const items = data.programs.filter((program) => program.degree_level === level)
+                    if (!items.length) return null
+                    // The local deadline most of the group shares is stated once in the heading.
+                    const shared = mode(items.map((program) => program.deadline_local))
+                    const sharedCount = items.filter((program) => program.deadline_local === shared).length
+                    const groupDeadline = shared && sharedCount >= 2 ? shared : null
+                    return (
+                      <section key={level} aria-labelledby={`level-${level}`}>
+                        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border pb-3">
+                          <h2 id={`level-${level}`} className="text-[clamp(1.5rem,2vw,1.875rem)] leading-[1.15] font-medium">
+                            {t(`degree.${level}`)} <span className="label tabular align-middle text-muted-foreground">{items.length}</span>
+                          </h2>
+                          {groupDeadline ? (
+                            <p className="tabular text-[0.9375rem] text-muted-foreground">{t("card.localDeadline", { value: deadlineWithStatus(groupDeadline) })}</p>
+                          ) : null}
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                          {items.map((program) => (
+                            <ProgramCard
+                              key={program.program_id}
+                              program={program}
+                              headingLevel={3}
+                              hideDeadline={groupDeadline !== null && program.deadline_local === groupDeadline}
+                            />
+                          ))}
+                        </div>
+                      </section>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           ) : null}
         </div>

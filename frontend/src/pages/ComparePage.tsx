@@ -7,6 +7,8 @@ import { comparePrograms } from "@/api/programs"
 import type { ComparedProgram } from "@/api/types"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { ApplyAction } from "@/components/common/ApplyAction"
 import { useI18n, type I18n } from "@/i18n"
 import type { MessageKey } from "@/i18n/messages"
 import { MAX_COMPARED, useCompareStore } from "@/store/compare"
@@ -160,8 +162,16 @@ function ProgramHeading({ program, onRemove }: { program: ComparedProgram; onRem
 function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRemove: (id: string) => void }) {
   const i18n = useI18n()
   const { t } = i18n
+  // Rows whose values are not all the same are tinted, so the differences stand out.
+  const differs = (row: Row) => programs.length > 1 && new Set(programs.map((program) => row.value(program, i18n))).size > 1
   return (
     <>
+      {programs.length > 1 ? (
+        <p className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <span aria-hidden="true" className="inline-block size-3 bg-field-tint ring-1 ring-primary/30" />
+          {t("compare.differsNote")}
+        </p>
+      ) : null}
       <table className="hidden w-full table-fixed border-collapse text-sm sm:table">
         <caption className="sr-only">{t("compare.caption")}</caption>
         <thead>
@@ -178,12 +188,13 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
         </thead>
         <tbody>
           {ROWS.map((row) => (
-            <tr key={row.label} className="border-b border-border">
-              <th scope="row" className={`py-3 pr-4 text-left align-top font-normal ${labelClass}`}>
+            <tr key={row.label} className={cn("border-b border-border", differs(row) && "bg-field-tint")}>
+              <th scope="row" className={`py-3 pr-4 pl-2 text-left align-top font-normal ${labelClass}`}>
                 {t(row.label)}
+                {differs(row) ? <span className="sr-only"> ({t("compare.differs")})</span> : null}
               </th>
               {programs.map((program) => (
-                <td key={program.program_id} className="py-3 pr-4 align-top break-words">
+                <td key={program.program_id} className={cn("py-3 pr-4 align-top break-words", differs(row) && "font-semibold")}>
                   {row.value(program, i18n)}
                 </td>
               ))}
@@ -201,8 +212,11 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
           ))}
         </ul>
         {ROWS.map((row) => (
-          <section key={row.label} aria-label={t(row.label)}>
-            <h2 className={labelClass}>{t(row.label)}</h2>
+          <section key={row.label} aria-label={t(row.label)} className={cn(differs(row) && "-mx-2 bg-field-tint px-2 py-2")}>
+            <h2 className={labelClass}>
+              {t(row.label)}
+              {differs(row) ? <span className="sr-only"> ({t("compare.differs")})</span> : null}
+            </h2>
             <dl className="mt-2 space-y-1.5 text-sm">
               {programs.map((program) => (
                 <div key={program.program_id} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-3">
@@ -213,6 +227,9 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
             </dl>
           </section>
         ))}
+      </div>
+      <div className="mt-8">
+        <ApplyAction label={t("detail.apply")} />
       </div>
     </>
   )

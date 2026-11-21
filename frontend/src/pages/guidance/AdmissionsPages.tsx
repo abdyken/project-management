@@ -8,10 +8,8 @@ import {
   getFunding,
   getGuidance,
   recommendPrograms,
-  type Condition,
   type CostInput,
   type Eligibility,
-  type Evidence,
   type Metric,
   type Profile,
 } from "@/api/guidance"
@@ -22,6 +20,7 @@ import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
 import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
+import { ConditionText, EvidenceView } from "@/components/guidance/rules"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
 import { MosaicTile } from "@/components/mosaic/MosaicTile"
 import { useRevealList } from "@/lib/motion"
@@ -84,35 +83,6 @@ export function AdmissionsPage() {
   )
 }
 
-export function EvidenceView({
-  evidence,
-}: {
-  evidence: Evidence | null | undefined
-}) {
-  const t = useGuidanceT()
-  if (!evidence) return null
-  return (
-    <details className="mt-2 text-xs text-muted-foreground">
-      <summary className="cursor-pointer">
-        {t("evidence")} · {evidence.academic_year} · {t(evidence.status)}
-      </summary>
-      <a
-        className="my-2 inline-block break-all underline"
-        href={evidence.url}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {t("sources")}
-      </a>
-      <blockquote className="whitespace-pre-wrap break-words border-l-2 border-border pl-3">
-        {evidence.quote}
-      </blockquote>
-      <p className="mt-2">
-        {t("checked")}: {evidence.checked_on}
-      </p>
-    </details>
-  )
-}
 export function GapList({ gaps }: { gaps: string[] }) {
   const t = useGuidanceT()
   return gaps.length > 0 ? (
@@ -122,17 +92,6 @@ export function GapList({ gaps }: { gaps: string[] }) {
       ))}
     </ul>
   ) : null
-}
-function ConditionText({ condition }: { condition: Condition }) {
-  const t = useGuidanceT()
-  return (
-    <span>
-      {t(condition.metric)}{" "}
-      {condition.minimum != null
-        ? `≥ ${condition.minimum}`
-        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t.code(String(condition.equals))}`}
-    </span>
-  )
 }
 export function EligibilityResult({ result }: { result: Eligibility }) {
   const t = useGuidanceT()
