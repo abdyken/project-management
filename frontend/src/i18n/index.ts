@@ -1,10 +1,28 @@
 import { useMemo } from "react"
+import { deadlineStatus } from "@/lib/dates"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import type { DegreeLevel, Program } from "@/api/types"
 import { MESSAGES, type MessageKey } from "@/i18n/messages"
 
 export type Language = "kk" | "ru" | "en"
+
+// Official school names (sdu.edu.kz, 21.11.2026). The catalogue stores the English name, which
+// stays the filter value; unknown names are shown as stored.
+const SCHOOL_NAMES: Record<string, { kk: string; ru: string }> = {
+  "School of Education and Humanities": {
+    kk: "Білім беру және гуманитарлық ғылымдар мектебі",
+    ru: "Школа образования и гуманитарных наук",
+  },
+  "School of Information Technologies and Applied Mathematics": {
+    kk: "Ақпараттық технологиялар және қолданбалы математика мектебі",
+    ru: "Школа информационных технологий и прикладной математики",
+  },
+  "School of Social Sciences, Business and Law": {
+    kk: "Әлеуметтік ғылымдар, бизнес және құқық мектебі",
+    ru: "Школа социальных наук, бизнеса и права",
+  },
+}
 
 export const LANGUAGES: { code: Language; label: string; short: string }[] = [
   { code: "kk", label: "Қазақша", short: "Қаз" },
@@ -84,6 +102,12 @@ function makeI18n(language: Language) {
       : new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
   const t = (key: MessageKey, params?: Params) => translate(language, key, params)
   const notPublished = t("format.notPublished")
+  const formatDeadline = (value: string | null | undefined) => {
+    if (!value) return notPublished
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value)
+    if (!match) return value
+    return dates.format(new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))))
+  }
 
   return {
     language,
@@ -94,17 +118,22 @@ function makeI18n(language: Language) {
       const chosen = candidate in MESSAGES.en ? candidate : (`${key}.other` as MessageKey)
       return t(chosen, { count: numbers.format(count), ...params })
     },
-    deadline: (value: string | null | undefined) => {
-      if (!value) return notPublished
-      const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value)
-      if (!match) return value
-      return dates.format(new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))))
+    deadline: formatDeadline,
+    // A catalogue deadline with its state: "25 August 2026, closed" once the day has passed.
+    deadlineWithStatus: (value: string | null | undefined) => {
+      const status = deadlineStatus(value)
+      if (status === "unpublished") return notPublished
+      const date = formatDeadline(value)
+      return status === "closed" ? t("format.closed", { date }) : date
     },
     tuitionKzt: (kzt: number | null) =>
       kzt === null ? notPublished : t("format.tuitionKzt", { amount: numbers.format(kzt) }),
     tuitionUsd: (usd: number | null) =>
       usd === null ? notPublished : t("format.tuitionUsd", { amount: numbers.format(usd) }),
     degree: (level: DegreeLevel) => t(`degree.${level}`),
+    schoolName: (faculty: string) => (language === "en" ? faculty : (SCHOOL_NAMES[faculty]?.[language] ?? faculty)),
+    // The language of a school name as shown, for the lang attribute.
+    schoolLang: (faculty: string): Language => (language !== "en" && SCHOOL_NAMES[faculty] ? language : "en"),
     programTitle: (program: Pick<Program, "title" | "title_ru" | "title_kk">) =>
       (language === "kk" ? program.title_kk : language === "ru" ? program.title_ru : null) || program.title,
     languages: (value: string | null) =>

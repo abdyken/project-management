@@ -25,7 +25,7 @@ const PHOTO_STEPS = signatureSteps(80, 2, "deep", "field", 7)
 
 export function ProgramDetailPage() {
   const guidanceT = useGuidanceT()
-  const { t, language, degree, languages, deadline, tuitionKzt, tuitionUsd, programTitle } = useI18n()
+  const { t, language, degree, languages, deadlineWithStatus, schoolName, schoolLang, tuitionKzt, tuitionUsd, programTitle } = useI18n()
   const { id = "" } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const applicant: ApplicantType = searchParams.get("applicant") === "international" ? "international" : "local"
@@ -126,7 +126,7 @@ export function ProgramDetailPage() {
 
           <dl className="mt-10 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-4">
             <Fact label={t("detail.school")}>
-              <span lang="en">{program.faculty}</span>
+              <span lang={schoolLang(program.faculty)}>{schoolName(program.faculty)}</span>
             </Fact>
             <Fact label={t("detail.language")}>{languages(program.language)}</Fact>
             <Fact label={t("detail.tuition")} published={program.tuition_per_ects_kzt !== null}>
@@ -134,10 +134,16 @@ export function ProgramDetailPage() {
               <br />
               {t("detail.internationalValue", { value: tuitionUsd(program.tuition_per_ects_usd) })}
             </Fact>
-            <Fact label={t("detail.deadline")} published={Boolean(program.deadline_local)}>
-              {t("detail.localValue", { value: deadline(program.deadline_local) })}
-              <br />
-              {t("detail.internationalValue", { value: deadline(program.deadline_international) })}
+            <Fact label={t("detail.deadline")} published={Boolean(program.deadline_local || program.deadline_international)}>
+              {program.deadline_local || program.deadline_international ? (
+                <>
+                  {t("detail.localValue", { value: deadlineWithStatus(program.deadline_local) })}
+                  <br />
+                  {t("detail.internationalValue", { value: deadlineWithStatus(program.deadline_international) })}
+                </>
+              ) : (
+                t("format.notPublishedYet")
+              )}
             </Fact>
           </dl>
         </div>

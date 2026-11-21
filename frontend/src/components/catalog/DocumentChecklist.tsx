@@ -30,6 +30,8 @@ export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse 
   const showTranslation = items.some((item) => item.translation)
   const showNotary = items.some((item) => item.notarisation)
   const ownDeadline = (deadline: string) => (shared !== null && deadline === shared ? null : deadline)
+  // When every row has the shared deadline, the column would repeat it; it is left out.
+  const showDeadline = items.some((item) => ownDeadline(item.deadline) !== null)
 
   return (
     <>
@@ -65,7 +67,7 @@ export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse 
               <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.format")}</th>
               {showTranslation ? <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.translationColumn")}</th> : null}
               {showNotary ? <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.notary")}</th> : null}
-              <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.deadline")}</th>
+              {showDeadline ? <th scope="col" className="px-3 py-3 font-semibold">{t("checklist.deadline")}</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -79,9 +81,11 @@ export function DocumentChecklist({ checklist }: { checklist: ChecklistResponse 
                   <td className="px-3 py-4">{item.format === "original" ? t("checklist.original") : t("checklist.copy")}</td>
                   {showTranslation ? <td className="px-3 py-4">{item.translation ? t("checklist.required") : "—"}</td> : null}
                   {showNotary ? <td className="px-3 py-4">{item.notarisation ? t("checklist.required") : "—"}</td> : null}
-                  <td className="px-3 py-4 text-muted-foreground">
-                    {own ? <span lang="en">{own}</span> : t("checklist.sameDeadline")}
-                  </td>
+                  {showDeadline ? (
+                    <td className="px-3 py-4 text-muted-foreground">
+                      {own ? <span lang="en">{own}</span> : t("checklist.sameDeadline")}
+                    </td>
+                  ) : null}
                 </tr>
               )
             })}

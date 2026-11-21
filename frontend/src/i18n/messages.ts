@@ -20,7 +20,7 @@ const en = {
   "footer.contactTitle": "Contact",
   "footer.compare": "Compare programs",
   "footer.email": "admissions@sdu.edu.kz",
-  "footer.credit": "Photos and logo: SDU University. INF451 course project; official information is published on sdu.edu.kz.",
+  "footer.credit": "Campus photos and logo: SDU University; program photos: Unsplash. INF451 course project; official information is published on sdu.edu.kz.",
 
   "home.title": "Study at the foot of the Alatau",
   "home.tally": "{programs} programs in {schools} schools, taught in {languages}",
@@ -46,6 +46,8 @@ const en = {
   "home.dates.master": "Master's deadlines",
   "home.dates.phd": "PhD deadlines",
   "home.dates.notPublished": "Not published yet",
+  "home.dates.closed": "Closed",
+  "home.dates.pendingLevels": "Not published yet: {list}",
   "home.cost.title": "What it costs",
   "home.cost.lead": "Tuition is charged per ECTS credit and depends on the program. Figures are for local applicants.",
   "home.cost.perCredit": "per ECTS credit",
@@ -100,6 +102,8 @@ const en = {
   "card.localTuition": "Local tuition: {value}",
 
   "format.notPublished": "Not published",
+  "format.closed": "{date}, closed",
+  "format.notPublishedYet": "Not published yet",
   "format.tuitionKzt": "{amount} KZT per ECTS credit",
   "format.tuitionUsd": "{amount} USD per ECTS credit",
 
@@ -153,8 +157,10 @@ const en = {
   "checklist.deadline": "Deadline",
   "checklist.required": "Required",
   "checklist.sharedDeadline": "Deadline for the documents below, unless a row says otherwise:",
-  "checklist.sameDeadline": "As above",
-  "home.dates.tally": "{published} published · {pending} not published yet",
+  "checklist.sameDeadline": "Shared deadline",
+  "home.dates.tally.upcoming": "{count} upcoming",
+  "home.dates.tally.closed": "{count} closed",
+  "home.dates.tally.pending": "{count} not published yet",
   "checklist.missing": "The document list for this program is not published yet, please contact the admissions office.",
   "checklist.publishedInEnglish": "",
 
@@ -262,7 +268,7 @@ const kk: Messages = {
   "footer.contactTitle": "Байланыс",
   "footer.compare": "Бағдарламаларды салыстыру",
   "footer.email": "admissions@sdu.edu.kz",
-  "footer.credit": "Фото мен логотип: SDU University. INF451 курстық жобасы; ресми ақпарат sdu.edu.kz сайтында жарияланады.",
+  "footer.credit": "Кампус фотолары мен логотип: SDU University; бағдарлама фотолары: Unsplash. INF451 курстық жобасы; ресми ақпарат sdu.edu.kz сайтында жарияланады.",
 
   "home.title": "Алатау баурайында оқы",
   "home.tally": "{schools} мектепте {programs} бағдарлама, оқыту тілдері: {languages}",
@@ -288,6 +294,8 @@ const kk: Messages = {
   "home.dates.master": "Магистратура мерзімдері",
   "home.dates.phd": "Докторантура мерзімдері",
   "home.dates.notPublished": "Әлі жарияланбаған",
+  "home.dates.closed": "Аяқталды",
+  "home.dates.pendingLevels": "Әлі жарияланбаған: {list}",
   "home.cost.title": "Оқу ақысы",
   "home.cost.lead": "Оқу ақысы ECTS кредиті үшін алынады және бағдарламаға байланысты. Сомалар отандық талапкерлерге арналған.",
   "home.cost.perCredit": "бір ECTS кредиті үшін",
@@ -342,6 +350,8 @@ const kk: Messages = {
   "card.localTuition": "Ақы (отандық): {value}",
 
   "format.notPublished": "Жарияланбаған",
+  "format.closed": "{date}, қабылдау аяқталды",
+  "format.notPublishedYet": "Әлі жарияланбаған",
   "format.tuitionKzt": "1 ECTS кредиті үшін {amount} теңге",
   "format.tuitionUsd": "1 ECTS кредиті үшін {amount} USD",
 
@@ -395,8 +405,10 @@ const kk: Messages = {
   "checklist.deadline": "Мерзімі",
   "checklist.required": "Қажет",
   "checklist.sharedDeadline": "Төмендегі құжаттардың мерзімі (жолда басқасы көрсетілмесе):",
-  "checklist.sameDeadline": "Жоғарыдағыдай",
-  "home.dates.tally": "{published} жарияланған · {pending} әлі жарияланбаған",
+  "checklist.sameDeadline": "Ортақ мерзім",
+  "home.dates.tally.upcoming": "{count} алда",
+  "home.dates.tally.closed": "{count} аяқталды",
+  "home.dates.tally.pending": "{count} әлі жарияланбаған",
   "checklist.missing": "Бұл бағдарламаның құжаттар тізімі әлі жарияланбаған, қабылдау комиссиясына хабарласыңыз.",
   "checklist.publishedInEnglish":
     "Құжат атаулары мен мерзімдері қабылдау комиссиясы ағылшын тілінде жариялағандай берілген.",
@@ -502,7 +514,7 @@ const ru: Messages = {
   "footer.contactTitle": "Контакты",
   "footer.compare": "Сравнить программы",
   "footer.email": "admissions@sdu.edu.kz",
-  "footer.credit": "Фото и логотип: SDU University. Учебный проект INF451; официальная информация публикуется на sdu.edu.kz.",
+  "footer.credit": "Фото кампуса и логотип: SDU University; фото программ: Unsplash. Учебный проект INF451; официальная информация публикуется на sdu.edu.kz.",
 
   "home.title": "Учитесь у подножия Алатау",
   "home.tally": "Программ: {programs} в {schools} школах, языки обучения: {languages}",
@@ -528,6 +540,8 @@ const ru: Messages = {
   "home.dates.master": "Сроки магистратуры",
   "home.dates.phd": "Сроки докторантуры",
   "home.dates.notPublished": "Пока не опубликованы",
+  "home.dates.closed": "Завершён",
+  "home.dates.pendingLevels": "Пока не опубликованы: {list}",
   "home.cost.title": "Стоимость обучения",
   "home.cost.lead": "Оплата начисляется за кредит ECTS и зависит от программы. Суммы указаны для местных абитуриентов.",
   "home.cost.perCredit": "за кредит ECTS",
@@ -582,6 +596,8 @@ const ru: Messages = {
   "card.localTuition": "Стоимость (местные): {value}",
 
   "format.notPublished": "Не опубликовано",
+  "format.closed": "{date}, приём завершён",
+  "format.notPublishedYet": "Пока не опубликовано",
   "format.tuitionKzt": "{amount} тенге за 1 кредит ECTS",
   "format.tuitionUsd": "{amount} USD за 1 кредит ECTS",
 
@@ -635,8 +651,10 @@ const ru: Messages = {
   "checklist.deadline": "Срок",
   "checklist.required": "Требуется",
   "checklist.sharedDeadline": "Срок для документов ниже, если в строке не указано иное:",
-  "checklist.sameDeadline": "Как указано выше",
-  "home.dates.tally": "Опубликовано: {published} · ещё не опубликовано: {pending}",
+  "checklist.sameDeadline": "Общий срок",
+  "home.dates.tally.upcoming": "впереди: {count}",
+  "home.dates.tally.closed": "завершено: {count}",
+  "home.dates.tally.pending": "ещё не опубликовано: {count}",
   "checklist.missing": "Список документов для этой программы ещё не опубликован, обратитесь в приёмную комиссию.",
   "checklist.publishedInEnglish":
     "Названия документов и сроки приведены так, как их опубликовала приёмная комиссия на английском языке.",

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type FormEvent, useState } from "react"
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom"
-import { loginApplicant, registerApplicant, verifyApplicant } from "@/api/applicant"
+import { confirmPasswordReset, loginApplicant, registerApplicant, requestPasswordReset, verifyApplicant } from "@/api/applicant"
 import { isApiError } from "@/api/errors"
 import { useApplicantT } from "@/applicant/i18n"
 import { APPLICANT_KEY, APPLICANT_ME_KEY, useApplicant } from "@/applicant/session"
@@ -57,7 +57,7 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
   return (
     <div className="mx-auto max-w-md px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
       <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t(register ? "register" : "login")}</h1>
-      {register && <p className="mt-3 text-sm text-muted-foreground">{t("signupLead")}</p>}
+      <p className="mt-3 text-muted-foreground">{t(register ? "signupLead" : "loginLead")}</p>
       {register && mutation.isSuccess ? (
         <p role="status" className="mt-6">
           {t("verifySent")}
@@ -98,13 +98,20 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
           </Button>
         </form>
       )}
-      <Link
-        className="mt-5 inline-block text-sm underline"
-        to={`/account/${register ? "login" : "register"}?next=${encodeURIComponent(next)}`}
-        state={location.state}
-      >
-        {t(register ? "login" : "register")}
-      </Link>
+      <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <Link
+          className="underline"
+          to={`/account/${register ? "login" : "register"}?next=${encodeURIComponent(next)}`}
+          state={location.state}
+        >
+          {t(register ? "login" : "register")}
+        </Link>
+        {!register && (
+          <Link className="underline" to="/account/reset">
+            {t("forgot")}
+          </Link>
+        )}
+      </div>
       <p className="mt-8 text-xs leading-relaxed text-muted-foreground">{t("privacy")}</p>
     </div>
   )
@@ -161,6 +168,100 @@ export function ApplicantVerifyPage() {
       </form>
       <Link to="/account/register" className="block text-sm underline">
         {t("register")}
+      </Link>
+    </div>
+  )
+}
+
+// Forgotten password: without a token the page asks for the e-mail and sends a one-hour link;
+// opened from that link (#token=…, never sent to the server in the URL) it sets the new password.
+export function ApplicantResetPage() {
+  const t = useApplicantT()
+  const { language } = useI18n()
+  const cache = useQueryClient()
+  const navigate = useNavigate()
+  const [token] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get("token") ?? "")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const request = useMutation({ mutationFn: () => requestPasswordReset(email, language) })
+  const confirm = useMutation({
+    mutationFn: () => confirmPasswordReset(token, password),
+    onSuccess: (user) => {
+      setPassword("")
+      cache.removeQueries({ queryKey: APPLICANT_KEY })
+      cache.setQueryData(APPLICANT_ME_KEY, user)
+      navigate("/account", { replace: true })
+    },
+    onError: () => setPassword(""),
+  })
+  const linkFailed = Boolean(token) && confirm.isError
+  const asking = !token || linkFailed
+
+  return (
+    <div className="mx-auto max-w-md px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+      <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("resetTitle")}</h1>
+      {linkFailed ? (
+        <p role="alert" className="mt-4 text-sm text-destructive">
+          {isApiError(confirm.error) && confirm.error.code !== "INVALID_RESET_LINK" ? t("error") : t("resetInvalid")}
+        </p>
+      ) : null}
+      {asking ? (
+        request.isSuccess ? (
+          <p role="status" className="mt-6">
+            {t("resetSent")}
+          </p>
+        ) : (
+          <form
+            onSubmit={(event: FormEvent) => {
+              event.preventDefault()
+              request.mutate()
+            }}
+            className="mt-6 space-y-4"
+          >
+            <p className="text-muted-foreground">{t("resetRequestLead")}</p>
+            <label className="block space-y-2 text-sm">
+              <span>{t("email")}</span>
+              <Input type="email" autoComplete="username" required maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
+            </label>
+            {request.isError ? (
+              <p role="alert" className="text-sm text-destructive">
+                {isApiError(request.error) && request.error.code === "TOO_MANY_ATTEMPTS" ? t("tooMany") : t("error")}
+              </p>
+            ) : null}
+            <Button className="w-full" disabled={request.isPending} type="submit">
+              {request.isPending ? t("working") : t("resetSend")}
+            </Button>
+          </form>
+        )
+      ) : (
+        <form
+          onSubmit={(event: FormEvent) => {
+            event.preventDefault()
+            confirm.mutate()
+          }}
+          className="mt-6 space-y-4"
+        >
+          <p className="text-muted-foreground">{t("resetLead")}</p>
+          <label className="block space-y-2 text-sm">
+            <span>{t("password")}</span>
+            <Input
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={10}
+              maxLength={200}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+          <p className="text-xs text-muted-foreground">{t("passwordHint")}</p>
+          <Button className="w-full" disabled={password.length < 10 || confirm.isPending} type="submit">
+            {confirm.isPending ? t("working") : t("resetSave")}
+          </Button>
+        </form>
+      )}
+      <Link to="/account/login" className="mt-5 inline-block text-sm underline">
+        {t("login")}
       </Link>
     </div>
   )

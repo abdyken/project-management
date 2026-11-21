@@ -44,7 +44,7 @@ const HUB_TILES = [
 
 export function AdmissionsPage() {
   const t = useGuidanceT()
-  const { t: appT, degree, deadline, language } = useI18n()
+  const { t: appT, degree, deadlineWithStatus, language } = useI18n()
   const routes = Object.fromEntries(GUIDANCE_ROUTES)
   const hubRef = useRef<HTMLDivElement>(null)
   useRevealList(hubRef)
@@ -57,7 +57,7 @@ export function AdmissionsPage() {
   // One deciding fact per tool, from the live catalogue; nothing when it is not loaded.
   const facts: Partial<Record<(typeof HUB_TILES)[number]["key"], string>> = catalogue.data
     ? {
-        eligibility: bachelorDeadline ? `${degree("bachelor")} · ${deadline(bachelorDeadline)}` : undefined,
+        eligibility: bachelorDeadline ? `${degree("bachelor")} · ${deadlineWithStatus(bachelorDeadline)}` : undefined,
         recommendations: appT("home.path.count", { count: numbers.format(programs.length) }),
         cost: fees.length ? `${numbers.format(Math.min(...fees))}–${numbers.format(Math.max(...fees))}\u00a0₸` : undefined,
       }

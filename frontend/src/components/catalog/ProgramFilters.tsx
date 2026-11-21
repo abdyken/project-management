@@ -120,7 +120,7 @@ export function FilterPanel({
   options: FilterOptions
   onChange: (values: FilterValues) => void
 }) {
-  const { t, degree, languages } = useI18n()
+  const { t, degree, languages, schoolName, schoolLang } = useI18n()
   const [open, setOpen] = useState(false)
   const active = [values.faculty, values.degree_level, values.language].filter(Boolean).length
 
@@ -155,7 +155,7 @@ export function FilterPanel({
           name="faculty"
           legend={t("filters.school")}
           value={values.faculty}
-          options={options.faculties.map((faculty) => ({ value: faculty, label: faculty, lang: "en" }))}
+          options={options.faculties.map((faculty) => ({ value: faculty, label: schoolName(faculty), lang: schoolLang(faculty) }))}
           onChange={(faculty) => onChange({ ...values, faculty })}
         />
       </div>
@@ -165,12 +165,12 @@ export function FilterPanel({
 
 // Applied filters as removable chips, plus "Clear filters".
 export function ActiveFilters({ values, onChange }: { values: FilterValues; onChange: (values: FilterValues) => void }) {
-  const { t, degree, languages } = useI18n()
+  const { t, degree, languages, schoolName, schoolLang } = useI18n()
   const chips: { key: keyof FilterValues; label: string; lang?: string }[] = []
   if (values.q) chips.push({ key: "q", label: t("filters.searchFor", { value: values.q }) })
   if (values.degree_level) chips.push({ key: "degree_level", label: degree(values.degree_level as "bachelor") })
   if (values.language) chips.push({ key: "language", label: languages(values.language) })
-  if (values.faculty) chips.push({ key: "faculty", label: values.faculty, lang: "en" })
+  if (values.faculty) chips.push({ key: "faculty", label: schoolName(values.faculty), lang: schoolLang(values.faculty) })
   if (chips.length === 0) return null
 
   return (

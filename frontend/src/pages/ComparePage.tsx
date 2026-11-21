@@ -21,12 +21,12 @@ function documents(count: number, i18n: I18n) {
 
 const ROWS: Row[] = [
   { label: "compare.row.degree", value: (program, i18n) => `${i18n.degree(program.degree_level)} · ${program.program_id}` },
-  { label: "compare.row.school", value: (program) => program.faculty },
+  { label: "compare.row.school", value: (program, i18n) => i18n.schoolName(program.faculty) },
   { label: "compare.row.language", value: (program, i18n) => i18n.languages(program.language) },
   { label: "compare.row.tuitionLocal", value: (program, i18n) => i18n.tuitionKzt(program.tuition_per_ects_kzt) },
   { label: "compare.row.tuitionInternational", value: (program, i18n) => i18n.tuitionUsd(program.tuition_per_ects_usd) },
-  { label: "compare.row.deadlineLocal", value: (program, i18n) => i18n.deadline(program.deadline_local) },
-  { label: "compare.row.deadlineInternational", value: (program, i18n) => i18n.deadline(program.deadline_international) },
+  { label: "compare.row.deadlineLocal", value: (program, i18n) => i18n.deadlineWithStatus(program.deadline_local) },
+  { label: "compare.row.deadlineInternational", value: (program, i18n) => i18n.deadlineWithStatus(program.deadline_international) },
   { label: "compare.row.documentsLocal", value: (program, i18n) => documents(program.documents_local, i18n) },
   {
     label: "compare.row.documentsInternational",

@@ -31,6 +31,8 @@ def applicant_env(catalogue_session, monkeypatch):
     monkeypatch.setattr(router, "register_limiter", LoginLimiter())
     monkeypatch.setattr(router, "login_ip_limiter", LoginLimiter(limit=router.IP_LIMIT))
     monkeypatch.setattr(router, "register_ip_limiter", LoginLimiter(limit=router.IP_LIMIT))
+    monkeypatch.setattr(router, "reset_limiter", LoginLimiter())
+    monkeypatch.setattr(router, "reset_ip_limiter", LoginLimiter(limit=router.IP_LIMIT))
     messages = []
     monkeypatch.setattr(
         mail, "send_mail", lambda settings, recipient, subject, body: messages.append((recipient, subject, body))
@@ -238,6 +240,67 @@ def test_login_and_registration_rate_limits(applicant_env):
     for index in range(router.IP_LIMIT - 5):
         assert client.post(f"{ROOT}/login", json={"email": f"u{index}@example.com", "password": "x"}).status_code == 401
     assert client.post(f"{ROOT}/login", json={"email": "other@example.com", "password": "x"}).status_code == 429
+
+
+NEW_PASSWORD = "another secure password"
+
+
+def reset_token(messages):
+    return messages[-1][2].split("/account/reset#token=")[1].strip()
+
+
+def test_password_reset_sets_a_new_password_and_logs_out_other_sessions(logged_in):
+    client, session, messages = logged_in
+    other = TestClient(app, base_url="https://localhost")
+    assert other.post(f"{ROOT}/login", json={"email": "applicant@example.com", "password": PASSWORD}).status_code == 200
+    count = len(messages)
+    response = client.post(f"{ROOT}/password-reset", json={"email": " Applicant@Example.com ", "language": "ru"})
+    assert response.status_code == 202
+    assert len(messages) == count + 1 and messages[-1][0] == "applicant@example.com"
+    token = reset_token(messages)
+    user = session.scalar(select(Applicant))
+    assert token not in repr(user.verification_hash)
+    # A reset token is not a verification token.
+    assert client.post(f"{ROOT}/verify", json={"token": token, "password": NEW_PASSWORD}).status_code == 422
+    assert client.post(f"{ROOT}/password-reset/confirm", json={"token": token, "password": "short"}).status_code == 422
+    confirm = client.post(f"{ROOT}/password-reset/confirm", json={"token": token, "password": NEW_PASSWORD})
+    assert confirm.status_code == 200 and "password" not in confirm.text
+    assert client.get(f"{ROOT}/me").status_code == 200
+    assert other.get(f"{ROOT}/me").status_code == 401
+    # Single use; the old password no longer works, the new one does.
+    assert client.post(f"{ROOT}/password-reset/confirm", json={"token": token, "password": PASSWORD}).status_code == 422
+    assert client.post(f"{ROOT}/login", json={"email": user.email, "password": PASSWORD}).status_code == 401
+    assert client.post(f"{ROOT}/login", json={"email": user.email, "password": NEW_PASSWORD}).status_code == 200
+    other.close()
+
+
+def test_password_reset_link_expires(logged_in):
+    client, session, messages = logged_in
+    client.post(f"{ROOT}/password-reset", json={"email": "applicant@example.com"})
+    token = reset_token(messages)
+    session.scalar(select(Applicant)).verification_expires_at = service.now() - timedelta(seconds=1)
+    session.flush()
+    assert client.post(f"{ROOT}/password-reset/confirm", json={"token": token, "password": NEW_PASSWORD}).status_code == 422
+
+
+def test_password_reset_reveals_nothing_for_unknown_or_pending_accounts(applicant_env):
+    client, session, messages = applicant_env
+    unknown = client.post(f"{ROOT}/password-reset", json={"email": "nobody@example.com"})
+    register(client, "pending@example.com")
+    count = len(messages)
+    pending = client.post(f"{ROOT}/password-reset", json={"email": "pending@example.com"})
+    assert unknown.status_code == pending.status_code == 202 and unknown.json() == pending.json()
+    assert len(messages) == count
+    # The pending account's verification link is untouched and cannot be used to reset.
+    token = messages[-1][2].split("#token=")[1].strip()
+    assert client.post(f"{ROOT}/password-reset/confirm", json={"token": token, "password": NEW_PASSWORD}).status_code == 422
+
+
+def test_password_reset_is_rate_limited(applicant_env):
+    client, _, _ = applicant_env
+    for _ in range(5):
+        assert client.post(f"{ROOT}/password-reset", json={"email": "target@example.com"}).status_code == 202
+    assert client.post(f"{ROOT}/password-reset", json={"email": "target@example.com"}).status_code == 429
 
 
 def test_registration_needs_no_password(applicant_env):

@@ -33,6 +33,7 @@ const ApplicationPage = lazy(() =>
 const applicantLogin = () => import("@/pages/applicant/ApplicantLoginPage")
 const ApplicantLoginPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantLoginPage })))
 const ApplicantVerifyPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantVerifyPage })))
+const ApplicantResetPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantResetPage })))
 
 function recheckStaffSession() {
   void queryClient.invalidateQueries({ queryKey: STAFF_ME_KEY, exact: true })
@@ -93,6 +94,7 @@ export default function App() {
             <Route path="/account/login" element={<ApplicantLoginPage key="login" />} />
             <Route path="/account/register" element={<ApplicantLoginPage key="register" register />} />
             <Route path="/account/verify" element={<ApplicantVerifyPage />} />
+            <Route path="/account/reset" element={<ApplicantResetPage />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/:id" element={<ProgramDetailPage />} />

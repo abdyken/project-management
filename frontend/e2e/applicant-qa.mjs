@@ -12,6 +12,7 @@ const PASSWORD = "Sprint5-local-test-only"
 fs.mkdirSync(OUT, { recursive: true })
 const results = []
 let created = false
+let resetChecked = false
 
 function record(browser, width, check, ok = true) {
   results.push({ browser, width, check, ok })
@@ -31,6 +32,19 @@ async function verificationLink() {
     await new Promise((resolve) => setTimeout(resolve, 200))
   }
   throw new Error("Verification message did not reach Mailpit")
+}
+
+async function resetLink() {
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const inbox = await (await fetch(`${MAIL}/api/v1/messages`)).json()
+    for (const message of inbox.messages.filter((item) => item.To.some((to) => to.Address === EMAIL))) {
+      const details = await (await fetch(`${MAIL}/api/v1/message/${message.ID}`)).json()
+      const match = details.Text.match(/https?:\/\/[^\s]+\/account\/reset#token=[A-Za-z0-9_-]+/)
+      if (match) return match[0]
+    }
+    await new Promise((resolve) => setTimeout(resolve, 200))
+  }
+  throw new Error("Password reset message did not reach Mailpit")
 }
 
 async function login(page) {
@@ -191,6 +205,23 @@ async function run(type, name, width) {
       "US23 browser back after logout exposes no account data",
       !(await page.getByText(EMAIL, { exact: true }).count()),
     )
+    if (!resetChecked) {
+      // Forgotten password: request a link from the login page, open it from Mailpit and set a
+      // password (the same one, so later runs still log in).
+      await page.goto(`${BASE}/account/login`)
+      await page.getByRole("link", { name: "Forgot your password?", exact: true }).click()
+      await page.getByRole("heading", { name: "Choose a new password", exact: true }).waitFor()
+      await page.getByLabel("E-mail", { exact: true }).fill(EMAIL)
+      await page.getByRole("button", { name: "Send link", exact: true }).click()
+      await page.getByRole("status").filter({ hasText: "the link is on its way" }).waitFor()
+      await page.goto(await resetLink())
+      await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
+      await page.getByRole("button", { name: "Save new password", exact: true }).click()
+      await page.waitForURL(/\/account$/)
+      await page.getByRole("heading", { name: "My account", exact: true }).waitFor()
+      resetChecked = true
+      record(name, width, "Password reset by e-mail link sets the password and signs in")
+    }
     record(name, width, "US23 no frontend runtime errors", pageErrors.length === 0)
   } catch (error) {
     results.push({ browser: name, width, check: String(error), ok: false })

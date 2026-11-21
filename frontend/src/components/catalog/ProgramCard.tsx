@@ -2,14 +2,15 @@ import { Link } from "react-router-dom"
 import type { Program } from "@/api/types"
 import { CompareToggle } from "@/components/compare/CompareToggle"
 import { useI18n } from "@/i18n"
+import { deadlineStatus } from "@/lib/dates"
 import { cn } from "@/lib/utils"
 
 // Three fixed lines on every card: the full title (never cut), degree · language · code,
-// and the deciding fact (local deadline). An unpublished deadline is said in words, muted.
+// and the deciding fact (local deadline). A passed or unpublished deadline is said in words, muted.
 export function ProgramCard({ program }: { program: Program }) {
-  const { t, degree, languages, deadline, programTitle } = useI18n()
+  const { t, degree, languages, deadlineWithStatus, programTitle } = useI18n()
   const title = programTitle(program)
-  const published = Boolean(program.deadline_local)
+  const open = deadlineStatus(program.deadline_local) === "upcoming"
 
   return (
     <article
@@ -24,8 +25,8 @@ export function ProgramCard({ program }: { program: Program }) {
         {degree(program.degree_level)} · {languages(program.language)} · <span className="tabular">{program.program_id}</span>
       </p>
       <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-border pt-4">
-        <p className={cn("tabular text-[0.9375rem]", published ? "font-semibold" : "text-muted-foreground")}>
-          {t("card.localDeadline", { value: deadline(program.deadline_local) })}
+        <p className={cn("tabular text-[0.9375rem]", open ? "font-semibold" : "text-muted-foreground")}>
+          {t("card.localDeadline", { value: deadlineWithStatus(program.deadline_local) })}
         </p>
         <CompareToggle programId={program.program_id} title={title} className="shrink-0" />
       </div>
