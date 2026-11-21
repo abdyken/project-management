@@ -55,7 +55,7 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-md px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t(register ? "register" : "login")}</h1>
       <p className="mt-3 text-muted-foreground">{t(register ? "signupLead" : "loginLead")}</p>
       {register && mutation.isSuccess ? (
@@ -138,7 +138,7 @@ export function ApplicantVerifyPage() {
     verification.mutate()
   }
   return (
-    <div className="mx-auto max-w-md space-y-5 px-4 py-12">
+    <div className="mx-auto max-w-[84rem] space-y-5 px-4 py-12 sm:px-6 lg:px-8 [&>*]:max-w-md">
       <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("verify")}</h1>
       <p>{t("verifyLead")}</p>
       {(!token || verification.isError) && (
@@ -200,7 +200,7 @@ export function ApplicantResetPage() {
   const asking = !token || linkFailed
 
   return (
-    <div className="mx-auto max-w-md px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-md px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("resetTitle")}</h1>
       {linkFailed ? (
         <p role="alert" className="mt-4 text-sm text-destructive">

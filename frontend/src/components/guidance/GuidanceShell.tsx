@@ -48,7 +48,7 @@ export function GuidanceShell({ title, lead, children, tools = true }: { title: 
           )}
         </div>
       </section>
-      <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", wide ? "max-w-[84rem]" : "max-w-6xl")}>{children}</div>
+      <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", wide ? "max-w-[84rem]" : "max-w-[84rem] [&>*]:max-w-6xl")}>{children}</div>
     </div>
   )
 }

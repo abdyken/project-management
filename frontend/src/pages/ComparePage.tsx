@@ -82,7 +82,7 @@ export function ComparePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-5xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-primary hover:underline">
         <ArrowLeft className="size-4" aria-hidden="true" />
         {t("detail.backToPrograms").replace(/^←\s*/, "")}

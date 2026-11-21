@@ -125,12 +125,12 @@ export function ApplicationsPage() {
     staleTime: 0,
   })
 
-  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (isApiError(me.error) && me.error.status === 401) return <Navigate to="/account/login" replace />
   const error = me.error ?? applications.error
   if (!me.data || applications.isError) {
     return (
-      <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+      <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
         <ConnectionError
           message={t(isApiError(error) ? applicationsErrorKey(error.code, error.status) : "error")}
           onRetry={() => void (me.data ? applications.refetch() : me.refetch())}
@@ -142,7 +142,7 @@ export function ApplicationsPage() {
 
   const items = applications.data?.items ?? []
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <Link to="/account" className="text-sm underline">
         ← {me.data.email}
       </Link>

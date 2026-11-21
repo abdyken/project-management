@@ -486,7 +486,7 @@ export function ApplicationPage() {
     refetchOnWindowFocus: false,
   })
 
-  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (isApiError(me.error) && me.error.status === 401) return <Navigate to="/account/login" replace />
   if (isApiError(application.error) && application.error.status === 401) return <Navigate to="/account/login" replace />
   const data = application.data
@@ -494,7 +494,7 @@ export function ApplicationPage() {
     const error = me.error ?? application.error
     const notFound = id === null || (isApiError(error) && error.status === 404)
     return (
-      <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+      <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
         <Link to="/account/applications" className="text-sm underline">
           ← {t("back")}
         </Link>
@@ -518,7 +518,7 @@ export function ApplicationPage() {
   // The note belongs to the status it came with; after a resubmission it is out of date.
   const showNote = data.staff_note && ["needs_changes", "accepted", "rejected"].includes(data.status)
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <Link to="/account/applications" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-primary hover:underline">
         <ArrowLeft className="size-4" aria-hidden="true" />
         {t("back")}

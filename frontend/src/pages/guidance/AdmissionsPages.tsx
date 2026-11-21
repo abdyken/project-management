@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useEffect, useRef, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
@@ -18,11 +19,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
+import { useInfoT } from "@/info/i18n"
 import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { ConditionText, EvidenceView } from "@/components/guidance/rules"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
-import { MosaicTile } from "@/components/mosaic/MosaicTile"
 import { useRevealList } from "@/lib/motion"
 
 function SubmitHint({ id, text }: { id: string; text: string | null }) {
@@ -34,18 +35,34 @@ function SubmitHint({ id, text }: { id: string; text: string | null }) {
 }
 
 const HUB_TILES = [
-  { key: "eligibility", text: "eligibilityText", tone: "field", className: "sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[28rem]", large: true },
-  { key: "recommendations", text: "recommendationsText", tone: "card", className: "lg:col-span-3" },
-  { key: "cost", text: "costText", tone: "card", className: "lg:col-span-3" },
-  { key: "funding", text: "fundingText", tone: "card", className: "lg:col-span-3" },
-  { key: "requests", text: "requestsText", tone: "card", className: "lg:col-span-3" },
+  { key: "eligibility", text: "eligibilityText" },
+  { key: "recommendations", text: "recommendationsText" },
+  { key: "cost", text: "costText" },
+  { key: "funding", text: "fundingText" },
+  { key: "requests", text: "requestsText" },
 ] as const
+
+function HubRow({ to, title, text, fact }: { to: string; title: string; text: string; fact?: string }) {
+  return (
+    <li className="border-b border-border">
+      <Link to={to} className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-5 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2">
+        <span className="min-w-0">
+          <span className="block font-heading text-[1.375rem] leading-[1.2] font-medium group-hover:text-primary">{title}</span>
+          <span className="mt-1 block max-w-[60ch] text-muted-foreground">{text}</span>
+          {fact ? <span className="label tabular mt-3 block text-primary">{fact}</span> : null}
+        </span>
+        <ArrowRight className="mt-1.5 size-5 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+      </Link>
+    </li>
+  )
+}
 
 export function AdmissionsPage() {
   const t = useGuidanceT()
+  const infoT = useInfoT()
   const { t: appT, degree, deadlineWithStatus, language } = useI18n()
   const routes = Object.fromEntries(GUIDANCE_ROUTES)
-  const hubRef = useRef<HTMLDivElement>(null)
+  const hubRef = useRef<HTMLUListElement>(null)
   useRevealList(hubRef)
   const catalogue = useQuery(allProgramsQuery)
   const programs = catalogue.data?.programs ?? []
@@ -63,21 +80,33 @@ export function AdmissionsPage() {
     : {}
   return (
     <GuidanceShell title={t("hub")} lead={t("lead")}>
-      <div data-reveal-list="" ref={hubRef} className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-12">
-        {HUB_TILES.map((tile) => (
-          <MosaicTile
-            key={tile.key}
-            to={routes[tile.key]}
-            tone={tile.tone}
-            title={t(tile.key)}
-            text={t(tile.text)}
-            className={tile.className}
-            large={"large" in tile}
-            fact={facts[tile.key]}
-            headingLevel={2}
-            image={tile.key === "eligibility" ? { src: "/images/sdu/campus-facade-960.webp", srcSet: "/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w", position: "50% 30%" } : undefined}
+      {/* Tools as a ruled list beside one campus photograph; the tile grid is kept for the home page. */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
+        <figure className="m-0">
+          <img
+            src="/images/sdu/campus-facade-960.webp"
+            srcSet="/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w, /images/sdu/campus-facade-1440.webp 1440w"
+            sizes="(min-width: 1024px) 35vw, 100vw"
+            alt=""
+            width={960}
+            height={720}
+            className="aspect-[4/3] w-full object-cover object-[50%_30%]"
           />
-        ))}
+        </figure>
+        <div>
+          <ul data-reveal-list="" ref={hubRef} className="border-t-2 border-ink">
+            {HUB_TILES.map((tile) => (
+              <HubRow key={tile.key} to={routes[tile.key]} title={t(tile.key)} text={t(tile.text)} fact={facts[tile.key]} />
+            ))}
+          </ul>
+          <h2 className="mt-14 text-[clamp(1.5rem,2vw,1.875rem)] leading-[1.15] font-medium">{infoT("hub.applyTitle")}</h2>
+          <ul className="mt-5 border-t-2 border-ink">
+            <HubRow to="/apply" title={infoT("apply.title")} text={infoT("apply.lead")} />
+            <HubRow to="/deadlines" title={infoT("deadlines.title")} text={infoT("deadlines.lead")} />
+            <HubRow to="/application-status" title={infoT("status.title")} text={infoT("status.lead")} />
+            <HubRow to="/contact" title={infoT("contact.title")} text={infoT("contact.lead")} />
+          </ul>
+        </div>
       </div>
     </GuidanceShell>
   )
@@ -134,12 +163,16 @@ function ProfileFields({
   value,
   onChange,
   degree,
+  needed,
 }: {
   value: Profile
   onChange: (p: Profile) => void
   degree: string
+  // Metrics the chosen program's published rules use; only those fields are asked for.
+  needed?: Set<Metric>
 }) {
   const t = useGuidanceT()
+  const asks = (key: Metric) => !needed || needed.has(key) || (key === "ielts_component_min" && needed.has("ielts_overall"))
   const change = (key: keyof Profile, next: string | null) =>
     onChange({ ...value, [key]: next })
   const metrics: [Metric, number, number][] = [
@@ -220,6 +253,7 @@ function ProfileFields({
         {metrics
           .filter(([key]) => key !== "unt_total" || degree === "bachelor")
           .filter(([key]) => key !== "ct_total" || degree === "master")
+          .filter(([key]) => asks(key))
           .map(([key, max, step]) => (
             <Field key={key} label={t(key)}>
               <Input
@@ -241,7 +275,7 @@ function ProfileFields({
               />
             </Field>
           ))}
-        {degree === "bachelor" && (
+        {degree === "bachelor" && asks("subject_pair") && (
           <Field label={t("subject_pair")}>
             <select
               className={fieldClass}
@@ -273,7 +307,7 @@ function ProfileFields({
             "creative_exam",
             ...(degree === "phd" ? ["kaztest"] : []),
           ] as Metric[]
-        ).map((key) => (
+        ).filter(asks).map((key) => (
           <Field label={t(key)} key={key}>
             <select
               className={fieldClass}
@@ -377,6 +411,15 @@ export function EligibilityPage() {
   const mutation = useMutation({
     mutationFn: () => checkEligibility({ ...profile, program_id: program }),
   })
+  // The program comes first; then only the fields its published rules use are shown.
+  const guidance = useQuery({
+    queryKey: ["guidance", program],
+    queryFn: ({ signal }) => getGuidance(program, false, signal),
+    enabled: Boolean(program),
+  })
+  const needed = guidance.data?.rules.length
+    ? new Set(guidance.data.rules.flatMap((rule) => rule.alternatives.flat().map((condition) => condition.metric)))
+    : undefined
   const setSelected = (id: string) => {
     setProgram(id)
     const d = programs.data?.programs.find(
@@ -392,29 +435,39 @@ export function EligibilityPage() {
   }
   return (
     <GuidanceShell title={t("eligibility")}>
-      <form
-        className="max-w-3xl"
-        onSubmit={(e) => {
-          e.preventDefault()
-          mutation.mutate()
-        }}
-      >
-        <ProgramSelect value={program} onChange={setSelected} />
-        <ProfileFields
-          degree={degree}
-          value={profile}
-          onChange={(p) => {
-            setProfile(p)
-            mutation.reset()
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
+        <form
+          className="min-w-0"
+          onSubmit={(e) => {
+            e.preventDefault()
+            mutation.mutate()
           }}
-        />
-        <Button className="mt-6" disabled={!program || mutation.isPending} aria-describedby={program ? undefined : "eligibility-hint"}>
-          {t(mutation.isPending ? "working" : "submit")}
-        </Button>
-        <SubmitHint id="eligibility-hint" text={program ? null : t("needProgram")} />
-      </form>
-      <ErrorMessage error={mutation.error} />
-      {mutation.data && <EligibilityResult result={mutation.data} />}
+        >
+          <ProgramSelect value={program} onChange={setSelected} />
+          {program ? (
+            <>
+              <ProfileFields
+                degree={degree}
+                needed={needed}
+                value={profile}
+                onChange={(p) => {
+                  setProfile(p)
+                  mutation.reset()
+                }}
+              />
+              <Button className="mt-6" disabled={mutation.isPending}>
+                {t(mutation.isPending ? "working" : "submit")}
+              </Button>
+            </>
+          ) : (
+            <SubmitHint id="eligibility-hint" text={t("needProgram")} />
+          )}
+        </form>
+        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+          <ErrorMessage error={mutation.error} />
+          {mutation.data && <EligibilityResult result={mutation.data} />}
+        </div>
+      </div>
     </GuidanceShell>
   )
 }

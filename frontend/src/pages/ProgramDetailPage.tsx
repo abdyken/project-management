@@ -343,7 +343,7 @@ function RelatedPrograms({ program }: { program: Program }) {
           <li key={item.program_id} className="border-b border-border">
             <Link
               to={`/programs/${item.program_id}`}
-              className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-center gap-4 py-5 transition-colors hover:bg-secondary/60 sm:px-2"
+              className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-center gap-4 py-5 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2"
             >
               <span className="min-w-0">
                 <span className="block font-heading text-xl font-medium group-hover:text-primary">{programTitle(item)}</span>

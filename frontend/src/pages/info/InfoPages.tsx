@@ -128,11 +128,11 @@ export function ApplyPage() {
             return (
               <li key={step.title} className="border-b border-border">
                 {step.to ? (
-                  <Link to={step.to} className={`group ${layout} transition-colors hover:bg-secondary/60 sm:px-2`}>
+                  <Link to={step.to} className={`group ${layout} transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2`}>
                     {body}
                   </Link>
                 ) : (
-                  <div className={`${layout} sm:px-2`}>{body}</div>
+                  <div className={`${layout} sm:-mx-2 sm:px-2`}>{body}</div>
                 )}
               </li>
             )
@@ -327,7 +327,7 @@ export function ContactPage() {
             </h2>
             <ul className="mt-4 border-t-2 border-ink">
               <li className="border-b border-border">
-                <Link to="/account/requests" className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-5 transition-colors hover:bg-secondary/60 sm:px-2">
+                <Link to="/account/requests" className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-5 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2">
                   <span>
                     <span className="block text-lg font-semibold">{guidanceT("requests")}</span>
                     <span className="mt-1 block text-muted-foreground">{t("contact.questions.text")}</span>
@@ -339,7 +339,7 @@ export function ContactPage() {
                 <button
                   type="button"
                   onClick={() => setChatOpen(true)}
-                  className="group grid w-full grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-5 text-left transition-colors hover:bg-secondary/60 sm:px-2"
+                  className="group grid w-full grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-5 text-left transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2"
                 >
                   <span>
                     <span className="block text-lg font-semibold">{t("contact.assistant")}</span>
@@ -362,7 +362,7 @@ function ContactRow({ href, children, tabular, external }: { href: string; child
       <a
         href={href}
         {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-        className={`group flex items-center justify-between gap-4 py-4 text-lg font-semibold transition-colors hover:bg-secondary/60 hover:text-primary sm:px-2${tabular ? " tabular" : ""}`}
+        className={`group flex items-center justify-between gap-4 py-4 text-lg font-semibold transition-colors hover:bg-secondary/60 hover:text-primary sm:-mx-2 sm:px-2${tabular ? " tabular" : ""}`}
       >
         {children}
         {external ? (

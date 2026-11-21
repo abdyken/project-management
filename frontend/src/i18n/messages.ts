@@ -401,7 +401,7 @@ const kk: Messages = {
   "detail.nextSteps": "Келесі қадамдар",
   "detail.photoCredit": "Фото: {name}, Unsplash",
   "detail.breadcrumb": "Навигация",
-  "detail.apply": "Өтінім беру",
+  "detail.apply": "Өтініш беру",
   "detail.requirements": "Түсу талаптары",
   "detail.requirementsNote": "Жарияланған талаптар дереккөздерімен. Сәйкестікті тексеру осы ережелерді қолданады.",
   "detail.requirementsNone": "Бұл бағдарламаның түсу талаптары әлі жарияланбаған.",

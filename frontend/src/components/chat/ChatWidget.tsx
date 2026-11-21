@@ -1,6 +1,7 @@
 import { MessageCircle, Minus, SquarePen, X } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { ChatPanel } from "@/components/chat/ChatPanel"
+import { ApplyAction } from "@/components/common/ApplyAction"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useI18n } from "@/i18n"
@@ -30,15 +31,21 @@ function MobileChat() {
 
   return (
     <>
-      <button
-        ref={fabRef}
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={t("chat.open")}
-        className={`${fabClass} right-4 bottom-4`}
-      >
-        <MessageCircle className="size-5" />
-      </button>
+      {/* Phones: one bottom bar instead of a floating button, so nothing covers the content and
+          Apply stays one tap away. The compare tray, when present, sits directly above it. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-[minmax(0,1fr)_auto] gap-2 border-t border-field-foreground/15 bg-field-deep px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <ApplyAction label={t("header.apply")} className="w-full justify-center" />
+        <button
+          ref={fabRef}
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={`${t("nav.ask")}: ${t("chat.open")}`}
+          className="inline-flex min-h-12 items-center gap-2 border-2 border-field-foreground px-4 font-semibold text-field-foreground transition-colors hover:bg-field-foreground hover:text-field-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          <MessageCircle className="size-5" aria-hidden="true" />
+          {t("nav.ask")}
+        </button>
+      </div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="bottom"

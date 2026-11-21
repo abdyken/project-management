@@ -225,7 +225,7 @@ export function ApplicantAccountPage() {
   const logout = useMutation({ mutationFn: logoutApplicant, onSuccess: clear })
   const deletion = useMutation({ mutationFn: deleteApplicant, onSuccess: clear })
 
-  if (me.isPending) return <p className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-[84rem] [&>*]:max-w-5xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (
     (isApiError(me.error) && me.error.status === 401) ||
     (isApiError(saved.error) && saved.error.status === 401)
@@ -233,7 +233,7 @@ export function ApplicantAccountPage() {
     return <Navigate to="/account/login" replace />
   if (!me.data)
     return (
-      <div className="mx-auto max-w-5xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+      <div className="mx-auto max-w-[84rem] [&>*]:max-w-5xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
         <ConnectionError
           message={
             isApiError(me.error) && me.error.code === "ACCOUNTS_UNAVAILABLE" ? t("unavailable") : t("error")
@@ -245,7 +245,7 @@ export function ApplicantAccountPage() {
     )
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("account")}</h1>

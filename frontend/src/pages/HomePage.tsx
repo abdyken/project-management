@@ -146,7 +146,7 @@ export function HomePage() {
             <form
               role="search"
               onSubmit={search}
-              className="relative mr-14 bg-card p-4 text-card-foreground sm:mr-0 sm:p-7 lg:-mt-36 lg:p-8"
+              className="relative bg-card p-4 text-card-foreground sm:p-7 lg:-mt-36 lg:p-8"
             >
               <label htmlFor="home-search" className="block font-heading text-2xl font-medium sm:text-3xl">
                 {t("home.search.label")}
@@ -187,7 +187,7 @@ export function HomePage() {
             to="/programs?degree_level=bachelor"
             tone="field"
             title={t("home.path.bachelor.title")}
-            image={{ src: "/images/sdu/campus-summer-1280.webp", srcSet: "/images/sdu/campus-summer-640.webp 640w, /images/sdu/campus-summer-1280.webp 1280w" }}
+            image={{ src: "/images/sdu/students-laptop-1280.webp", srcSet: "/images/sdu/students-laptop-640.webp 640w, /images/sdu/students-laptop-1280.webp 1280w" }}
             text={t("home.path.bachelor.text")}
             fact={facts ? t("home.path.count", { count: numbers.format(facts.byLevel.bachelor.count) }) : null}
             className="sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:min-h-[26rem]"
@@ -323,7 +323,7 @@ export function HomePage() {
               <li key={school.name} className="border-b border-border">
                 <Link
                   to={`/programs?faculty=${encodeURIComponent(school.name)}`}
-                  className="group flex items-center justify-between gap-6 py-5 transition-colors hover:bg-secondary/60 sm:px-2"
+                  className="group flex items-center justify-between gap-6 py-5 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2"
                 >
                   <span className="text-lg font-semibold sm:text-xl" lang={schoolLang(school.name)}>
                     {schoolName(school.name)}
@@ -376,7 +376,7 @@ export function HomePage() {
               <button
                 type="button"
                 onClick={() => ask(t(key))}
-                className="group flex w-full items-center justify-between gap-6 py-5 text-left text-lg transition-colors hover:bg-secondary/60 sm:px-2"
+                className="group flex w-full items-center justify-between gap-6 py-5 text-left text-lg transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2"
               >
                 {t(key)}
                 <ArrowRight className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />

@@ -3,6 +3,10 @@ import { useEffect, useRef } from "react"
 import { useI18n } from "@/i18n"
 
 const ALMATY: [number, number] = [43.24, 76.95]
+// cobe's rotation that puts a longitude at the centre of the visible face (cobe README, "focus").
+const ALMATY_PHI = Math.PI - ((ALMATY[1] * Math.PI) / 180 - Math.PI / 2)
+// The globe sways ±0.5 rad around its centre instead of spinning, so Almaty never turns away.
+const SWAY = 0.5
 
 export function HeroGlobe() {
   const { t } = useI18n()
@@ -15,8 +19,10 @@ export function HeroGlobe() {
     if (!container || !canvas) return
 
     let width = canvas.offsetWidth
-    let phi = 2.1
-    let theta = 0.28
+    let center = ALMATY_PHI
+    let sway = 0
+    let phi = center
+    let theta = 0.4
     let frame = 0
     let dragging = false
     let touch = false
@@ -49,7 +55,8 @@ export function HeroGlobe() {
 
     const tick = () => {
       frame = 0
-      if (spin && !dragging) phi += 0.0015
+      if (spin && !dragging) sway += 0.004
+      phi = center + SWAY * Math.sin(sway)
       globe.update({
         phi,
         theta,
@@ -81,7 +88,7 @@ export function HeroGlobe() {
       if (!dragging) return
       const dx = event.clientX - lastX
       const dy = event.clientY - lastY
-      phi += dx * 0.006
+      center += dx * 0.006
       // Vertical swipes scroll the page on touch screens, so a finger only spins the globe.
       if (!touch) theta = Math.max(-0.8, Math.min(0.8, theta + dy * 0.004))
       lastX = event.clientX
