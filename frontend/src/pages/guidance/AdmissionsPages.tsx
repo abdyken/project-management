@@ -463,9 +463,17 @@ export function EligibilityPage() {
             <SubmitHint id="eligibility-hint" text={t("needProgram")} />
           )}
         </form>
-        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start [&>section]:lg:mt-0">
           <ErrorMessage error={mutation.error} />
-          {mutation.data && <EligibilityResult result={mutation.data} />}
+          {mutation.data ? (
+            <EligibilityResult result={mutation.data} />
+          ) : (
+            <div className="border-t-2 border-ink pt-5 text-muted-foreground">
+              <p className="font-heading text-xl font-medium text-foreground">{t("eligibility")}</p>
+              <p className="mt-2">{t("eligibilityText")}</p>
+              <p className="mt-3 text-sm">{t("disclaimer")}</p>
+            </div>
+          )}
         </div>
       </div>
     </GuidanceShell>

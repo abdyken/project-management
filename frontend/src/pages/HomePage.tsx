@@ -236,6 +236,9 @@ export function HomePage() {
                   .join(" · ")}
               </p>
             ) : null}
+            {dateBoard && dateBoard.upcoming === 0 && dateBoard.closed > 0 ? (
+              <p className="mt-4 max-w-[46ch] font-semibold">{t("home.dates.cycleClosed")}</p>
+            ) : null}
             <p className="mt-4 max-w-[46ch] text-muted-foreground">{t("home.dates.note")}</p>
           </div>
           <div>
@@ -275,15 +278,9 @@ export function HomePage() {
               const range =
                 row && row.min !== null && row.max !== null ? (
                   row.min === row.max ? (
-                    <>
-                      <CountNumber value={row.min} format={numbers.format} />
-                      {"\u00a0₸"}
-                    </>
+                    `${numbers.format(row.min)}\u00a0₸`
                   ) : (
-                    <>
-                      <CountNumber value={row.min} format={numbers.format} />–<CountNumber value={row.max} format={numbers.format} />
-                      {"\u00a0₸"}
-                    </>
+                    `${numbers.format(row.min)}–${numbers.format(row.max)}\u00a0₸`
                   )
                 ) : null
               return (

@@ -8,6 +8,7 @@ import type { DegreeLevel } from "@/api/types"
 import { useApplicationsT } from "@/applications/i18n"
 import { StatusBadge } from "@/components/applications/StatusBadge"
 import { ApplyAction } from "@/components/common/ApplyAction"
+import { ConnectionError } from "@/components/common/ConnectionError"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -84,6 +85,12 @@ function useLevels() {
   return catalogue.data ? levelDeadlines(catalogue.data.programs) : null
 }
 
+// The catalogue request itself, for pages that must say when it failed instead of waiting forever.
+function useCatalogueState() {
+  const catalogue = useQuery(allProgramsQuery)
+  return { failed: catalogue.isError, retrying: catalogue.isFetching, retry: () => void catalogue.refetch() }
+}
+
 function SectionTitle({ id, children }: { id?: string; children: ReactNode }) {
   return (
     <h2 id={id} className="text-[clamp(1.75rem,2.6vw,2.25rem)] leading-[1.12] font-medium">
@@ -94,11 +101,17 @@ function SectionTitle({ id, children }: { id?: string; children: ReactNode }) {
 
 export function ApplyPage() {
   const t = useInfoT()
-  const { deadlineWithStatus } = useI18n()
+  const { t: appT, deadlineWithStatus } = useI18n()
   const levels = useLevels()
+  const catalogue = useCatalogueState()
 
   return (
     <GuidanceShell title={t("apply.title")} lead={t("apply.lead")} tools={false}>
+      {catalogue.failed ? (
+        <div className="mb-8">
+          <ConnectionError message={appT("programs.unavailable")} retrying={catalogue.retrying} onRetry={catalogue.retry} />
+        </div>
+      ) : null}
       <nav aria-label={t("apply.jump")} className="flex flex-wrap gap-x-8 gap-y-3 border-b border-border pb-6">
         {ROUTES.map((route) => (
           <a key={route.id} href={`#${route.id}`} className="font-semibold text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary">
@@ -176,12 +189,14 @@ export function ApplyPage() {
 
 export function DeadlinesPage() {
   const t = useInfoT()
-  const { language, deadline } = useI18n()
+  const { t: appT, language, deadline } = useI18n()
   const levels = useLevels()
+  const catalogue = useCatalogueState()
   const lower = (text: string) => text.toLocaleLowerCase(language)
   const rows = ROUTES.flatMap((route) =>
     route.dates.map((date) => ({
       key: `${route.id}-${date.label}`,
+      route: route.id,
       label: route.level === "bachelor" ? t(route.title) : `${t(route.title)}, ${lower(t(date.label))}`,
       value: levels ? date.value(levels) : null,
     })),
@@ -203,6 +218,14 @@ export function DeadlinesPage() {
           </ul>
         </aside>
         <div className="order-1 lg:order-2">
+          {catalogue.failed ? (
+            <div className="mb-6">
+              <ConnectionError message={appT("programs.unavailable")} retrying={catalogue.retrying} onRetry={catalogue.retry} />
+            </div>
+          ) : null}
+          {levels && levels.bachelor.local && deadlineStatus(levels.bachelor.local) === "closed" && deadlineStatus(levels.bachelor.international) !== "upcoming" ? (
+            <p className="mb-6 font-semibold">{appT("home.dates.cycleClosed")}</p>
+          ) : null}
           <table className="w-full table-fixed text-left">
             <caption className="sr-only">{t("deadlines.title")}</caption>
             <colgroup>
@@ -222,13 +245,17 @@ export function DeadlinesPage() {
                 const status = levels ? deadlineStatus(row.value) : null
                 return (
                   <tr key={row.key} className="border-b border-border align-top">
-                    <th scope="row" className="py-4 pr-4 font-semibold">{row.label}</th>
+                    <th scope="row" className="py-4 pr-4 font-semibold">
+                      <a href={`/apply#${row.route}`} className="underline decoration-primary/30 underline-offset-4 hover:text-primary hover:decoration-primary">
+                        {row.label}
+                      </a>
+                    </th>
                     <td className="tabular py-4 pr-4">{levels ? (row.value ? deadline(row.value) : "—") : "…"}</td>
                     <td className="py-4 text-right">
                       {status === "upcoming" ? (
                         <Badge tone="field">{t("deadlines.upcoming")}</Badge>
                       ) : status === "closed" ? (
-                        <Badge tone="neutral">{t("deadlines.closed")}</Badge>
+                        <span className="label text-foreground">{t("deadlines.closed")}</span>
                       ) : status === "unpublished" ? (
                         <span className="text-sm text-muted-foreground">{t("deadlines.unpublished")}</span>
                       ) : null}

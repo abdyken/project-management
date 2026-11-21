@@ -27,12 +27,14 @@ type TesseraeProps = {
   style?: CSSProperties
   // Element whose pointer movement lights nearby tiles (fine pointers only).
   lightFrom?: RefObject<HTMLElement | null>
+  // Drawn settled, without the laying animation (the footer on inner pages).
+  still?: boolean
 }
 
-export function Tesserae({ rows, size = 24, className, style, lightFrom }: TesseraeProps) {
+export function Tesserae({ rows, size = 24, className, style, lightFrom, still = false }: TesseraeProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<"waiting" | "laying" | "settled">(() =>
-    typeof IntersectionObserver === "undefined" || prefersReducedMotion() ? "settled" : "waiting",
+    still || typeof IntersectionObserver === "undefined" || prefersReducedMotion() ? "settled" : "waiting",
   )
 
   useEffect(() => {

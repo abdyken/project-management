@@ -110,7 +110,7 @@ export function ProgramDetailPage() {
               </li>
             </ol>
           </nav>
-          <div className={cn("mt-8 grid grid-cols-1 gap-8", photo && "lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-end lg:gap-14")}>
+          <div className={cn("mt-8 grid grid-cols-1 gap-8", photo && "lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-center lg:gap-14")}>
             <div className="min-w-0">
               <h1 className="max-w-[18ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{title}</h1>
               <p className="tabular mt-4 text-lg text-field-muted">
@@ -118,7 +118,7 @@ export function ProgramDetailPage() {
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <ApplyAction label={t("detail.apply")} />
-                <CompareToggle programId={program.program_id} title={title} tone="field" />
+                <CompareToggle programId={program.program_id} title={title} tone="field" className="h-12 px-5" />
               </div>
             </div>
             {photo ? (
@@ -166,6 +166,18 @@ export function ProgramDetailPage() {
               )}
             </Fact>
           </dl>
+          <nav aria-label={t("detail.jump")} className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[0.9375rem] font-semibold">
+            {[
+              ["#documents-heading", t("detail.documents")],
+              ["#requirements-heading", t("detail.requirements")],
+              ["#next-steps", t("detail.nextSteps")],
+              ["#related-heading", t("detail.related")],
+            ].map(([href, label]) => (
+              <a key={href} href={href} className="text-field-muted underline decoration-field-foreground/30 underline-offset-4 hover:text-field-foreground hover:decoration-field-foreground">
+                {label}
+              </a>
+            ))}
+          </nav>
         </div>
       </section>
 
@@ -174,7 +186,7 @@ export function ProgramDetailPage() {
         <section aria-labelledby="documents-heading">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 id="documents-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
+              <h2 id="documents-heading" className="scroll-mt-6 text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
                 {t("detail.documents")}
               </h2>
               <p className="mt-3 text-muted-foreground">{t("detail.documentsNote")}</p>
@@ -276,11 +288,14 @@ function RequirementsSection({ programId, applicant }: { programId: string; appl
     queryFn: ({ signal }) => getGuidance(programId, false, signal),
   })
   if (!guidance.data) return null
-  const rules = guidance.data.rules.filter((rule) => !rule.applicant_type || rule.applicant_type === applicant)
+  // Only confirmed rules are shown to applicants; rules still under review stay out of sight.
+  const rules = guidance.data.rules.filter(
+    (rule) => rule.evidence.status === "confirmed" && (!rule.applicant_type || rule.applicant_type === applicant),
+  )
 
   return (
     <section aria-labelledby="requirements-heading" className="mt-20">
-      <h2 id="requirements-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
+      <h2 id="requirements-heading" className="scroll-mt-6 text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
         {t("detail.requirements")}
       </h2>
       <p className="mt-3 text-muted-foreground">{t("detail.requirementsNote")}</p>
@@ -335,7 +350,7 @@ function RelatedPrograms({ program }: { program: Program }) {
 
   return (
     <section aria-labelledby="related-heading" className="mt-20">
-      <h2 id="related-heading" className="text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
+      <h2 id="related-heading" className="scroll-mt-6 text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
         {t("detail.related")}
       </h2>
       <ul className="mt-8 border-t-2 border-ink">

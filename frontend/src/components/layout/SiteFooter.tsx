@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { signatureSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
@@ -17,11 +17,12 @@ export function SiteFooter() {
   const guidanceT = useGuidanceT()
   const infoT = useInfoT()
   const email = t("footer.email")
+  const { pathname } = useLocation()
 
   return (
     <footer className="on-field relative mt-auto bg-field-deep">
       <div className="absolute inset-x-0 bottom-full overflow-hidden">
-        <Tesserae size={16} rows={FOOTER_SIGNATURE} />
+        <Tesserae size={16} rows={FOOTER_SIGNATURE} still={pathname !== "/"} />
       </div>
       <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1.2fr] lg:px-8">
         <div>
