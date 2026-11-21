@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, Search } from "lucide-react"
+import { ArrowRight, CalendarClock, Search } from "lucide-react"
 import { useMemo, useRef, useState, type FormEvent } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { allProgramsQuery, programLanguages } from "@/api/programs"
@@ -74,25 +74,33 @@ export function HomePage() {
   const numbers = useMemo(() => new Intl.NumberFormat(NUMBER_LOCALE[language]), [language])
   // Kazakh and Russian write language names in lower case inside a sentence.
   const inSentence = (text: string) => (language === "en" ? text : text.toLocaleLowerCase(language))
-  // Key dates in date order; passed ones are marked closed, unpublished levels collapse into one line.
+  // Key dates in date order; passed ones are marked closed, unpublished levels share one row.
   const dateBoard = useMemo(() => {
     if (!facts) return null
-    const rows = [
-      { label: t("home.dates.bachelorLocal"), date: facts.byLevel.bachelor.deadlineLocal },
-      { label: t("home.dates.bachelorIntl"), date: facts.byLevel.bachelor.deadlineIntl },
-      { label: t("home.dates.master"), date: facts.byLevel.master.deadlineLocal },
-      { label: t("home.dates.phd"), date: facts.byLevel.phd.deadlineLocal },
-    ].map((row) => ({ ...row, status: deadlineStatus(row.date) }))
-    const published = rows
+    const rows: { level: DegreeLevel; label: string; date: string | null }[] = [
+      { level: "bachelor", label: t("home.dates.bachelorLocal"), date: facts.byLevel.bachelor.deadlineLocal },
+      { level: "bachelor", label: t("home.dates.bachelorIntl"), date: facts.byLevel.bachelor.deadlineIntl },
+      { level: "master", label: degree("master"), date: facts.byLevel.master.deadlineLocal },
+      { level: "phd", label: degree("phd"), date: facts.byLevel.phd.deadlineLocal },
+    ]
+    const withStatus = rows.map((row) => ({ ...row, status: deadlineStatus(row.date) }))
+    const published = withStatus
       .filter((row): row is typeof row & { date: string } => row.status !== "unpublished" && row.date !== null)
       .sort((a, b) => a.date.localeCompare(b.date))
+    const pendingNames = [...new Set(withStatus.filter((row) => row.status === "unpublished").map((row) => row.level))].map((level, index) =>
+      index === 0 || language === "en" ? degree(level) : degree(level).toLocaleLowerCase(language),
+    )
     return {
       published,
-      upcoming: published.filter((row) => row.status === "upcoming").length,
-      closed: published.filter((row) => row.status === "closed").length,
-      pending: rows.filter((row) => row.status === "unpublished").map((row) => row.label),
+      cycleClosed: published.length > 0 && published.every((row) => row.status === "closed"),
+      // Joined by hand: browsers have no Kazakh list rules.
+      pending: pendingNames.length
+        ? pendingNames.length === 1
+          ? pendingNames[0]
+          : `${pendingNames.slice(0, -1).join(", ")} ${t("format.and")} ${pendingNames[pendingNames.length - 1]}`
+        : null,
     }
-  }, [facts, t])
+  }, [facts, t, degree, language])
   const [query, setQuery] = useState("")
   const pageRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLElement>(null)
@@ -225,32 +233,30 @@ export function HomePage() {
         <div className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16 lg:px-8 lg:py-24">
           <div>
             <SectionHeading id="dates-title" title={t("home.dates.title")} />
-            {dateBoard ? (
-              <p className="label tabular mt-5 text-primary">
-                {[
-                  dateBoard.upcoming ? t("home.dates.tally.upcoming", { count: numbers.format(dateBoard.upcoming) }) : null,
-                  dateBoard.closed ? t("home.dates.tally.closed", { count: numbers.format(dateBoard.closed) }) : null,
-                  dateBoard.pending.length ? t("home.dates.tally.pending", { count: numbers.format(dateBoard.pending.length) }) : null,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            ) : null}
-            {dateBoard && dateBoard.upcoming === 0 && dateBoard.closed > 0 ? (
-              <p className="mt-4 max-w-[46ch] font-semibold">{t("home.dates.cycleClosed")}</p>
-            ) : null}
-            <p className="mt-4 max-w-[46ch] text-muted-foreground">{t("home.dates.note")}</p>
+            <p className="mt-5 max-w-[46ch] text-lg text-muted-foreground">{dateBoard?.cycleClosed ? t("home.dates.cycleClosed") : t("home.dates.note")}</p>
+            <Button asChild variant="outline" size="lg" className="mt-8">
+              <Link to="/deadlines">
+                {t("home.dates.all")}
+                <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
           </div>
-          <div>
-            <ol data-reveal-list="" className="divide-y divide-border border-y border-border">
-              {dateBoard?.published.map((row) => (
-                <DateRow key={row.label} date={row.date} closed={row.status === "closed"} language={language} label={row.label} closedLabel={t("home.dates.closed")} />
-              ))}
-            </ol>
-            {dateBoard?.pending.length ? (
-              <p className="mt-5 text-muted-foreground">{t("home.dates.pendingLevels", { list: dateBoard.pending.join(", ") })}</p>
+          <ol data-reveal-list="" className="divide-y divide-border border-y border-border">
+            {dateBoard?.published.map((row) => (
+              <DateRow key={row.label} date={row.date} closed={row.status === "closed"} language={language} label={row.label} detail={t("home.dates.documents")} closedLabel={t("home.dates.closed")} />
+            ))}
+            {dateBoard?.pending ? (
+              <li className="grid grid-cols-[5.5rem_1fr] items-center gap-5 py-5 sm:grid-cols-[6.5rem_1fr]">
+                <span className="grid aspect-square place-content-center border border-border text-muted-foreground">
+                  <CalendarClock className="size-8" strokeWidth={1.5} aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block text-lg font-semibold">{dateBoard.pending}</span>
+                  <span className="mt-1 block text-muted-foreground">{t("home.dates.pending")}</span>
+                </span>
+              </li>
             ) : null}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -275,22 +281,19 @@ export function HomePage() {
           <dl data-reveal-list="" className="divide-y divide-field-foreground/20 border-y border-field-foreground/20">
             {LEVELS.map((level) => {
               const row = facts?.byLevel[level]
-              const range =
-                row && row.min !== null && row.max !== null ? (
-                  row.min === row.max ? (
-                    `${numbers.format(row.min)}\u00a0₸`
-                  ) : (
-                    `${numbers.format(row.min)}–${numbers.format(row.max)}\u00a0₸`
-                  )
-                ) : null
+              const fee = row && row.min !== null && row.max !== null ? { min: row.min, max: row.max } : null
+              const ranged = fee !== null && fee.min !== fee.max
               return (
-                <div key={level} className="grid gap-1 py-6 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-6">
+                <div key={level} className="grid gap-3 py-6 sm:grid-cols-[10rem_1fr] sm:items-center sm:gap-6">
                   <dt className="font-heading text-xl font-medium">{degree(level)}</dt>
                   <dd>
+                    {ranged ? <span className="label mb-2 block text-field-muted">{t("home.cost.from")}</span> : null}
                     <span className="tabular block font-display text-[clamp(2.25rem,4.4vw,3.25rem)] leading-none font-bold">
-                      {range ?? (facts ? t("home.dates.notPublished") : "…")}
+                      {fee ? `${numbers.format(fee.min)}\u00a0₸` : facts ? t("home.dates.notPublished") : "…"}
                     </span>
-                    <span className="mt-1 block text-field-muted">{t("home.cost.perCredit")}</span>
+                    <span className="mt-2 block text-field-muted">
+                      {ranged ? t("home.cost.upTo", { max: `${numbers.format(fee.max)}\u00a0₸` }) : t("home.cost.perCredit")}
+                    </span>
                   </dd>
                 </div>
               )
@@ -397,7 +400,7 @@ function SectionHeading({ id, title, lead, onField }: { id: string; title: strin
   )
 }
 
-function DateRow({ date, label, language, closed, closedLabel }: { date: string; label: string; language: Language; closed: boolean; closedLabel: string }) {
+function DateRow({ date, label, detail, language, closed, closedLabel }: { date: string; label: string; detail: string; language: Language; closed: boolean; closedLabel: string }) {
   const parsed = /^(\d{4})-(\d{2})-(\d{2})/.exec(date)
   if (!parsed) return null
   const value = new Date(Date.UTC(Number(parsed[1]), Number(parsed[2]) - 1, Number(parsed[3])))
@@ -421,8 +424,8 @@ function DateRow({ date, label, language, closed, closedLabel }: { date: string;
       </span>
       <span>
         <span className="block text-lg font-semibold">{label}</span>
-        <span className="tabular mt-1 block text-muted-foreground">
-          {`${parsed[3]}.${parsed[2]}.${parsed[1]}`}
+        <span className="mt-1 block text-muted-foreground">
+          {detail}
           {closed ? <span className="label ml-3 text-foreground">{closedLabel}</span> : null}
         </span>
       </span>

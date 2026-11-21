@@ -561,7 +561,7 @@ export function SearchPage() {
 // from the catalogue, then the grants and discounts the admissions office has answered about.
 export function CostAidPage() {
   const t = useInfoT()
-  const { language, degree, deadline } = useI18n()
+  const { t: appT, language, degree, deadline } = useI18n()
   const catalogue = useQuery(allProgramsQuery)
   const funding = useQuery({
     queryKey: ["funding", language, "", ""],
@@ -573,7 +573,7 @@ export function CostAidPage() {
     if (!known.length) return null
     const low = Math.min(...known)
     const high = Math.max(...known)
-    return low === high ? `${numbers.format(low)} ${unit}` : `${numbers.format(low)}–${numbers.format(high)} ${unit}`
+    return low === high ? `${numbers.format(low)} ${unit}` : appT("format.range", { min: numbers.format(low), max: `${numbers.format(high)} ${unit}` })
   }
   const programs = catalogue.data?.programs ?? []
 
@@ -589,23 +589,24 @@ export function CostAidPage() {
             </Link>
           </Button>
         </div>
-        <table className="w-full table-fixed text-left">
+        <table className="block w-full text-left sm:table sm:table-fixed">
           <caption className="sr-only">{t("costaid.costsTitle")}</caption>
-          <thead className="border-y-2 border-ink text-sm text-muted-foreground">
-            <tr>
-              <th scope="col" className="w-[28%] py-3 pr-4 font-semibold">{t("costaid.level")}</th>
+          <thead className="block border-y-2 border-ink text-sm text-muted-foreground sm:table-header-group">
+            {/* Below sm each level heads its own row and the two figures sit side by side under it. */}
+            <tr className="grid grid-cols-2 gap-x-4 sm:table-row">
+              <th scope="col" className="hidden w-[30%] py-3 pr-4 font-semibold sm:table-cell">{t("costaid.level")}</th>
               <th scope="col" className="py-3 pr-4 font-semibold">{t("costaid.local")}</th>
               <th scope="col" className="py-3 font-semibold">{t("costaid.international")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="block sm:table-row-group">
             {LEVELS.map((level) => {
               const items = programs.filter((program) => program.degree_level === level)
               return (
-                <tr key={level} className="border-b border-border align-baseline">
-                  <th scope="row" className="py-4 pr-4 font-heading text-xl font-medium">{degree(level)}</th>
-                  <td className="tabular py-4 pr-4 text-lg font-semibold">{catalogue.data ? (range(items.map((p) => p.tuition_per_ects_kzt), "₸") ?? "—") : "…"}</td>
-                  <td className="tabular py-4 text-lg font-semibold">{catalogue.data ? (range(items.map((p) => p.tuition_per_ects_usd), "USD") ?? "—") : "…"}</td>
+                <tr key={level} className="grid grid-cols-2 gap-x-4 border-b border-border align-baseline sm:table-row">
+                  <th scope="row" className="col-span-2 pt-4 font-heading text-xl font-medium sm:py-4 sm:pr-4">{degree(level)}</th>
+                  <td className="tabular pt-1 pb-4 font-semibold sm:py-4 sm:pr-4 sm:text-lg">{catalogue.data ? (range(items.map((p) => p.tuition_per_ects_kzt), "₸") ?? appT("format.notPublishedYet")) : "…"}</td>
+                  <td className="tabular pt-1 pb-4 font-semibold sm:py-4 sm:text-lg">{catalogue.data ? (range(items.map((p) => p.tuition_per_ects_usd), "USD") ?? appT("format.notPublishedYet")) : "…"}</td>
                 </tr>
               )
             })}

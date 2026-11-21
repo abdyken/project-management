@@ -75,7 +75,7 @@ export function AdmissionsPage() {
     ? {
         eligibility: bachelorDeadline ? `${degree("bachelor")} · ${deadlineWithStatus(bachelorDeadline)}` : undefined,
         recommendations: appT("home.path.count", { count: numbers.format(programs.length) }),
-        cost: fees.length ? `${numbers.format(Math.min(...fees))}–${numbers.format(Math.max(...fees))}\u00a0₸` : undefined,
+        cost: fees.length ? appT("format.range", { min: `${numbers.format(Math.min(...fees))}\u00a0₸`, max: `${numbers.format(Math.max(...fees))}\u00a0₸` }) : undefined,
       }
     : {}
   return (

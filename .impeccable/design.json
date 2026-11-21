@@ -601,7 +601,17 @@
       },
       {
         "name": "The Plain Heading Rule",
-        "body": "No eyebrow or kicker label above a heading, and no section numbers. A real tally (for example \"2 published · 2 not published yet\") may sit below a heading as content.",
+        "body": "No eyebrow or kicker label above a heading, and no section numbers. A real count (for example the number of programs in a degree group) may sit below a heading as content.",
+        "section": "typography"
+      },
+      {
+        "name": "The Worded Range Rule",
+        "body": "A range is written in words, never with a dash: \"19,000 to 41,500 ₸\", \"от 19 000 до 41 500 ₸\". A large display figure shows the lowest value under a \"From\" mark, and the highest goes in the line below. Official compound names that contain a dash (UNT subject pairs) keep it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Full Sentence Rule",
+        "body": "Interface copy is written in short full sentences. No semicolons, and a ledger row has a title and one plain detail line. Levels with no published dates share one row (title \"Master's and PhD\", detail \"Dates not published yet\").",
         "section": "typography"
       },
       {

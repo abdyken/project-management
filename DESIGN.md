@@ -279,7 +279,7 @@ One cold turquoise hue and its deep shade on calm cool neutrals, with three rese
 - **Title** (500, 1.25 to 2.25rem, line-height 1.15 to 1.18): mosaic tile titles (1.25 to 1.5rem, or clamp(1.75rem, 2.6vw, 2.25rem) on the large main tile), programme card titles (1.375rem, 1.5rem from sm), ruled-row titles (1.375rem in the hub, 1.25rem for related programmes, 1.125rem in compare headers), the hero search label, the footer tagline (1.875rem, weight 400), mobile menu links (1.5rem).
 - **Body** (400, 1rem, line-height 1.55): running text; leads at 1.125rem, 46 to 52ch.
 - **Body small** (500 to 600, 0.9375rem): nav links, default button text, card meta lines, filter options, form labels.
-- **Label** (Fira Sans Extra Condensed 600, 0.875rem, +0.08em, uppercase): the "Admissions" lockup label, filter legends, footer column titles, date month abbreviations, the dates tally, tile and hub-row facts, the degree-group count, the word "Closed" beside a passed date, "or" between requirement alternatives.
+- **Label** (Fira Sans Extra Condensed 600, 0.875rem, +0.08em, uppercase): the "Admissions" lockup label, filter legends, footer column titles, date month abbreviations, the "From" mark above a fee, tile and hub-row facts, the degree-group count, the word "Closed" beside a passed date, "or" between requirement alternatives.
 - **Action label** (Fira Sans Extra Condensed 600, 0.9375rem, +0.06em, uppercase): large buttons and the header Apply.
 - **Numeral** (Fira Sans Extra Condensed 700, tabular): date-tile day numbers (3rem), the cost ledger (clamp(2.25rem, 4.4vw, 3.25rem)), steps-list numbers (1.875rem, turquoise), school counts (1.5rem), stepper numbers (1.125rem).
 
@@ -294,7 +294,11 @@ One cold turquoise hue and its deep shade on calm cool neutrals, with three rese
 
 **The Whole Word Rule.** Headings are never hyphenated and are balanced; sizes are set so whole words fit at 360, 1024 and 1440px in KK, RU and EN. overflow-wrap is a last-resort guard only.
 
-**The Plain Heading Rule.** No eyebrow or kicker label above a heading, and no section numbers. A real tally (for example "2 published · 2 not published yet") may sit below a heading as content.
+**The Plain Heading Rule.** No eyebrow or kicker label above a heading, and no section numbers. A real count (for example the number of programs in a degree group) may sit below a heading as content.
+
+**The Worded Range Rule.** A range is written in words, never with a dash: "19,000 to 41,500 ₸", "от 19 000 до 41 500 ₸". A large display figure shows the lowest value under a "From" mark, and the highest goes in the line below ("up to 41,500 ₸ per ECTS credit"). Official compound names that contain a dash (UNT subject pairs) keep it.
+
+**The Full Sentence Rule.** Interface copy is written in short full sentences. No semicolons, and a ledger row has a title and one plain detail line, not a sentence packed with colons. Levels that have no published dates share one row (title "Master's and PhD", detail "Dates not published yet"), not a comma list.
 
 ## Layout
 
