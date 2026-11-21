@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import fs from "node:fs"
-import { chromium, firefox, request } from "playwright"
+import { request } from "playwright"
+import { qaRuns } from "./matrix.mjs"
 
 // Use a disposable local database and Mailpit. This script creates one test account,
 // changes only its own saved checklists and preferences, and deletes it on completion.
@@ -236,13 +237,7 @@ async function run(type, name, width) {
 }
 
 try {
-  for (const [type, name] of [
-    [chromium, "chromium"],
-    [firefox, "firefox"],
-  ]) {
-    for (const width of (process.env.WIDTHS ?? "360,768,1280").split(",").map(Number))
-      await run(type, name, width)
-  }
+  for (const { type, name, width } of qaRuns()) await run(type, name, width)
 } finally {
   // Never leave a QA applicant or its reminders behind, including on failure.
   const api = await request.newContext({ baseURL: BASE })

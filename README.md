@@ -69,13 +69,36 @@ uv run pytest
 
 Deployment and repository rules are in [`docs/`](docs/).
 
-Applicant browser QA (Chromium and Firefox, 360/768/1280 px) runs against the local stack:
+### Browser QA
+
+Seven Playwright suites run against the local stack. They cover:
+
+- `qa:applicant`: sign-up, login, password reset, saved checklists and reminders
+- `qa:staff`: the staff area and catalogue/FAQ editing
+- `qa:compare`: program comparison
+- `qa:language`: Kazakh and Russian pages
+- `qa:widget`: the chat assistant
+- `qa:guidance`: the guidance tools and questions to admissions
+- `qa:applications`: online applications and staff review
 
 ```bash
 cd frontend
 npm ci
 npx playwright install chromium firefox
-BASE_URL=http://localhost:8080 npm run qa:applicant
+export BASE_URL=http://localhost:8080 STAFF_EMAIL=… STAFF_PASSWORD=…   # a local QA staff account
+npm run qa:all                                   # every suite, in CI order
+QA_RUNS=chromium:360,chromium:1280 npm run qa:staff   # one suite, a lighter matrix
 ```
 
-The script uses Mailpit, creates and deletes its own test applicant, and does not modify official catalogue data. Backend CI runs the same matrix. API details: [`backend/docs/api/applicant.md`](backend/docs/api/applicant.md).
+`QA_RUNS` lists `browser:width` pairs for every suite (`frontend/e2e/matrix.mjs`). Without it, a suite runs Chromium and Firefox at 360, 768 and 1280 px.
+
+The suites use Mailpit. They create and delete their own test accounts and do not modify official catalogue data. To re-run them on the same local database:
+
+- Run `uv run python scripts/qa_reset.py` in `backend/`. It removes the archived synthetic programmes that the guidance suite leaves behind.
+- Restart the API (`docker compose restart api`). This clears the in-memory login limiter, which locks the QA staff login after five wrong-password checks in 15 minutes.
+
+CI runs the checks in three tiers:
+
+- **Every pull request** (Frontend CI and Backend CI): lint, typecheck and build, the backend tests, and all seven suites in Chromium at 360 and 1280 px.
+- **Nightly at 02:00 Almaty, or on demand** (`Nightly browser QA`): the same suites on the full matrix.
+- **Pushes to `main`**: these go through the PR checks in `deploy.yml` before deploying. API details: [`backend/docs/api/applicant.md`](backend/docs/api/applicant.md).

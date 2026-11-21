@@ -1,7 +1,8 @@
 import assert from "node:assert/strict"
 import fs from "node:fs"
 import { execFileSync } from "node:child_process"
-import { chromium, firefox, request } from "playwright"
+import { request } from "playwright"
+import { qaRuns } from "./matrix.mjs"
 
 // Run ONLY against a disposable local stack, with a QA staff account. Creates and
 // deletes its own applicant; its synthetic programme is archived in finally.
@@ -365,11 +366,7 @@ async function run(type, name, width) {
 }
 
 try {
-  for (const [type, name] of [
-    [chromium, "chromium"],
-    [firefox, "firefox"],
-  ])
-    for (const width of [360, 768, 1280]) await run(type, name, width)
+  for (const { type, name, width } of qaRuns()) await run(type, name, width)
 } finally {
   for (const email of applicantsCreated) {
     const api = await request.newContext({ baseURL: BASE })
