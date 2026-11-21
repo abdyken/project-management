@@ -11,13 +11,13 @@ import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n, type Language } from "@/i18n"
+import { LEVELS, mode } from "@/lib/catalogue"
 import { deadlineStatus } from "@/lib/dates"
 import { useCountUp, useRevealScope } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
 const QUESTIONS = ["home.q1", "home.q2", "home.q3", "home.q4", "home.q5"] as const
-const LEVELS: DegreeLevel[] = ["bachelor", "master", "phd"]
 const NUMBER_LOCALE: Record<Language, string> = { en: "en-GB", ru: "ru-RU", kk: "ru-RU" }
 const KK_MONTHS_SHORT = ["қаң", "ақп", "нау", "сәу", "мам", "мау", "шіл", "там", "қыр", "қаз", "қар", "жел"]
 
@@ -30,14 +30,6 @@ type Facts = {
   byLevel: Record<DegreeLevel, { count: number; deadlineLocal: string | null; deadlineIntl: string | null; min: number | null; max: number | null }>
   english: number
   languages: string[]
-}
-
-function mode(values: (string | null)[]): string | null {
-  const counts = new Map<string, number>()
-  for (const value of values) if (value) counts.set(value, (counts.get(value) ?? 0) + 1)
-  let best: string | null = null
-  for (const [value, count] of counts) if (best === null || count > (counts.get(best) ?? 0)) best = value
-  return best
 }
 
 function summarise(programs: Program[]): Facts {

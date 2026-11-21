@@ -34,6 +34,11 @@ const applicantLogin = () => import("@/pages/applicant/ApplicantLoginPage")
 const ApplicantLoginPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantLoginPage })))
 const ApplicantVerifyPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantVerifyPage })))
 const ApplicantResetPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantResetPage })))
+const info = () => import("@/pages/info/InfoPages")
+const ApplyPage = lazy(() => info().then((m) => ({ default: m.ApplyPage })))
+const DeadlinesPage = lazy(() => info().then((m) => ({ default: m.DeadlinesPage })))
+const StatusGuidePage = lazy(() => info().then((m) => ({ default: m.StatusGuidePage })))
+const ContactPage = lazy(() => info().then((m) => ({ default: m.ContactPage })))
 
 function recheckStaffSession() {
   void queryClient.invalidateQueries({ queryKey: STAFF_ME_KEY, exact: true })
@@ -83,6 +88,10 @@ export default function App() {
           />
           <Route element={<AppLayout />}>
             <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/apply" element={<ApplyPage />} />
+            <Route path="/deadlines" element={<DeadlinesPage />} />
+            <Route path="/application-status" element={<StatusGuidePage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/eligibility" element={<EligibilityPage />} />
             <Route path="/recommendations" element={<RecommendationsPage />} />
             <Route path="/cost-calculator" element={<CostPage />} />

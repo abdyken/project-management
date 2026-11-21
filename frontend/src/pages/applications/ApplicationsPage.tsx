@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/applications/StatusBadge"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
+import { useInfoT } from "@/info/i18n"
 
 function ApplicationCard({ item }: { item: ApplicationSummary }) {
   const t = useApplicationsT()
@@ -108,6 +109,7 @@ function StartFromSaved({ saved, live }: { saved: SavedChecklist[]; live: Applic
 
 export function ApplicationsPage() {
   const t = useApplicationsT()
+  const infoT = useInfoT()
   const me = useApplicant()
   const applications = useQuery({
     queryKey: applicationsKey,
@@ -146,6 +148,9 @@ export function ApplicationsPage() {
       </Link>
       <h1 className="mt-4 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("title")}</h1>
       <p className="mt-3 text-muted-foreground">{t("lead")}</p>
+      <Link to="/application-status" className="mt-3 inline-block text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary">
+        {infoT("status.lead")}
+      </Link>
       {applications.isPending ? (
         <p className="mt-8">{t("working")}</p>
       ) : items.length === 0 ? (

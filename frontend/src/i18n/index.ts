@@ -122,7 +122,7 @@ function makeI18n(language: Language) {
     // A catalogue deadline with its state: "25 August 2026, closed" once the day has passed.
     deadlineWithStatus: (value: string | null | undefined) => {
       const status = deadlineStatus(value)
-      if (status === "unpublished") return notPublished
+      if (status === "unpublished") return t("format.notPublishedYet")
       const date = formatDeadline(value)
       return status === "closed" ? t("format.closed", { date }) : date
     },

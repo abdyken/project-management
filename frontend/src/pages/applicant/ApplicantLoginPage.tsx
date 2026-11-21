@@ -180,7 +180,9 @@ export function ApplicantResetPage() {
   const { language } = useI18n()
   const cache = useQueryClient()
   const navigate = useNavigate()
-  const [token] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get("token") ?? "")
+  // Read from the fragment on every change: the e-mail link may be opened in the tab that asked for it.
+  const { hash } = useLocation()
+  const token = new URLSearchParams(hash.slice(1)).get("token") ?? ""
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const request = useMutation({ mutationFn: () => requestPasswordReset(email, language) })

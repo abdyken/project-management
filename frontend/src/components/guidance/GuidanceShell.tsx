@@ -7,10 +7,13 @@ import { cn } from "@/lib/utils"
 
 // Admissions planning pages: a turquoise band with the title and the tools as tile tabs,
 // then a reading column. Mode: Read.
-export function GuidanceShell({ title, lead, children }: { title: string; lead?: string; children: ReactNode }) {
+// `tools={false}` for the information pages (apply, deadlines, status, contact): no tool tabs,
+// and the content uses the full page width like the hub.
+export function GuidanceShell({ title, lead, children, tools = true }: { title: string; lead?: string; children: ReactNode; tools?: boolean }) {
   const t = useGuidanceT()
   const { pathname } = useLocation()
   const onHub = pathname === "/admissions"
+  const wide = onHub || !tools
 
   return (
     <div>
@@ -25,7 +28,7 @@ export function GuidanceShell({ title, lead, children }: { title: string; lead?:
             {title}
           </h1>
           {lead ? <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{lead}</p> : null}
-          {onHub ? null : (
+          {wide ? null : (
           <nav aria-label={t("hub")} className="mt-10 flex flex-wrap gap-1.5">
             {GUIDANCE_ROUTES.map(([key, to]) => (
               <NavLink
@@ -45,7 +48,7 @@ export function GuidanceShell({ title, lead, children }: { title: string; lead?:
           )}
         </div>
       </section>
-      <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", onHub ? "max-w-[84rem]" : "max-w-6xl")}>{children}</div>
+      <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", wide ? "max-w-[84rem]" : "max-w-6xl")}>{children}</div>
     </div>
   )
 }

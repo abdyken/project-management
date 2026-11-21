@@ -1,5 +1,6 @@
+import { useEffect } from "react"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { useSearchParams } from "react-router-dom"
+import { useLocation, useSearchParams } from "react-router-dom"
 import { isInvalidRequest } from "@/api/errors"
 import { allProgramsQuery, filterOptions, listPrograms } from "@/api/programs"
 import { ProgramCard } from "@/components/catalog/ProgramCard"
@@ -21,6 +22,11 @@ function readFilters(params: URLSearchParams): FilterValues {
 
 export function ProgramsPage() {
   const { t, tn } = useI18n()
+  const { hash } = useLocation()
+  // The header search button opens /programs#search: put the cursor in the search box.
+  useEffect(() => {
+    if (hash === "#search") document.getElementById("q")?.focus()
+  }, [hash])
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = readFilters(searchParams)
 

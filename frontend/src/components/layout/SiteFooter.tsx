@@ -5,6 +5,7 @@ import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
+import { useInfoT } from "@/info/i18n"
 import { ADMISSIONS_PHONE, ADMISSIONS_WEBSITE } from "@/lib/constants"
 
 // Signature 2 of 2: the footer rises into the page with the same stepped mosaic edge.
@@ -14,6 +15,7 @@ export function SiteFooter() {
   const { t, language } = useI18n()
   const applicantT = useApplicantT()
   const guidanceT = useGuidanceT()
+  const infoT = useInfoT()
   const email = t("footer.email")
 
   return (
@@ -21,7 +23,7 @@ export function SiteFooter() {
       <div className="absolute inset-x-0 bottom-full overflow-hidden">
         <Tesserae size={16} rows={FOOTER_SIGNATURE} />
       </div>
-      <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:px-8">
+      <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1.2fr] lg:px-8">
         <div>
           <img src="/brand/sdu-lockup-white.svg" alt="SDU University" className="h-11 w-auto" width={150} height={47} />
           <p className="mt-6 max-w-[16ch] font-heading text-3xl leading-[1.12] font-normal">
@@ -37,7 +39,18 @@ export function SiteFooter() {
           <FooterLink to="/funding">{guidanceT("funding")}</FooterLink>
         </FooterColumn>
 
+        <FooterColumn title={infoT("footer.infoFor")}>
+          <FooterLink to="/apply#bachelor-local">{infoT("footer.schoolLeavers")}</FooterLink>
+          <FooterLink to="/apply#bachelor-international">{infoT("footer.international")}</FooterLink>
+          <FooterLink to="/apply#master">{infoT("footer.masters")}</FooterLink>
+          <FooterLink to="/apply#phd">{infoT("footer.phd")}</FooterLink>
+          <FooterLink to="/funding">{infoT("footer.parents")}</FooterLink>
+        </FooterColumn>
+
         <FooterColumn title={t("footer.applyTitle")}>
+          <FooterLink to="/apply">{infoT("apply.title")}</FooterLink>
+          <FooterLink to="/deadlines">{infoT("deadlines.title")}</FooterLink>
+          <FooterLink to="/application-status">{infoT("status.title")}</FooterLink>
           <FooterLink to="/account">{applicantT("account")}</FooterLink>
           <FooterLink to="/account/requests">{guidanceT("requests")}</FooterLink>
           <FooterLink href="https://admissions.sdu.edu.kz">{t("footer.applicationPortal")}</FooterLink>
@@ -50,6 +63,7 @@ export function SiteFooter() {
             {ADMISSIONS_PHONE}
           </FooterLink>
           <FooterLink href={`mailto:${email}`}>{email}</FooterLink>
+          <FooterLink to="/contact">{infoT("contact.title")}</FooterLink>
           <FooterLink href={ADMISSIONS_WEBSITE[language]}>{t("footer.officialAdmissions")}</FooterLink>
         </FooterColumn>
       </div>
