@@ -273,6 +273,23 @@ select:not([multiple]):not([size]) {
   }
 }
 
+/* A photo opens like a frame, from the bottom edge up. */
+@keyframes photo-in {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    translate: 0 100%;
+  }
+}
+
 @keyframes page-in {
   from {
     opacity: 0;
@@ -307,6 +324,39 @@ select:not([multiple]):not([size]) {
   /* The hero photo settles once (1.05 to 1) as the page opens. */
   .hero-settle {
     animation: settle 1.4s var(--ease-out-expo) both;
+  }
+
+  /* Hero entrance: headline, tally, then the search tile rise in once as the page opens. */
+  .hero-in {
+    animation: reveal-up 800ms var(--ease-out-expo) 80ms backwards;
+  }
+
+  .hero-in-2 { animation-delay: 200ms; }
+  .hero-in-3 { animation-delay: 300ms; }
+
+  /* Photos marked data-reveal="photo" open from the bottom edge as they enter view; the image settles inside. */
+  html.motion-ready [data-reveal="photo"][data-revealed] {
+    animation: photo-in 1100ms var(--ease-out-expo) backwards;
+  }
+
+  html.motion-ready [data-reveal="photo"][data-revealed] img {
+    animation: settle 1.4s var(--ease-out-expo) backwards;
+  }
+
+  /* Finder results rise in 40ms apart (capped), only the cards that are new to the list. */
+  .card-grid > * {
+    animation: reveal-up 500ms var(--ease-out-expo) backwards;
+  }
+
+  .card-grid > :nth-child(2) { animation-delay: 40ms; }
+  .card-grid > :nth-child(3) { animation-delay: 80ms; }
+  .card-grid > :nth-child(4) { animation-delay: 120ms; }
+  .card-grid > :nth-child(5) { animation-delay: 160ms; }
+  .card-grid > :nth-child(n + 6) { animation-delay: 200ms; }
+
+  /* The compare bar slides up into place when the first program is added. */
+  .compare-in {
+    animation: slide-up 360ms var(--ease-out-expo);
   }
 
   /* Mobile menu: panel, then its links. */

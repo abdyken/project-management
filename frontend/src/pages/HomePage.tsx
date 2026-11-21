@@ -142,11 +142,11 @@ export function HomePage() {
             <div>
               <h1
                 id="home-title"
-                className="max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.01em]"
+                className="hero-in max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.01em]"
               >
                 {t("home.title")}
               </h1>
-              <p className="tabular mt-6 min-h-7 text-lg text-field-muted sm:text-xl">
+              <p className="hero-in hero-in-2 tabular mt-6 min-h-7 text-lg text-field-muted sm:text-xl">
                 {facts ? t("home.tally", { programs: numbers.format(facts.total), schools: numbers.format(facts.schools.length), languages: inSentence(languages(facts.languages.join(", "))) }) : ""}
               </p>
             </div>
@@ -154,7 +154,7 @@ export function HomePage() {
             <form
               role="search"
               onSubmit={search}
-              className="relative bg-card p-4 text-card-foreground sm:p-7 lg:-mt-36 lg:p-8"
+              className="hero-in hero-in-3 relative bg-card p-4 text-card-foreground sm:p-7 lg:-mt-36 lg:p-8"
             >
               <label htmlFor="home-search" className="block font-heading text-2xl font-medium sm:text-3xl">
                 {t("home.search.label")}
@@ -304,7 +304,7 @@ export function HomePage() {
 
       {/* Schools beside a real photo of SDU students. */}
       <section aria-labelledby="schools-title" className="mx-auto grid max-w-[84rem] gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-28">
-        <figure className="relative self-start lg:col-span-5">
+        <figure data-reveal="photo" className="relative self-start overflow-hidden lg:col-span-5">
           <img
             src="/images/sdu/students-international-1280.webp"
             srcSet="/images/sdu/students-international-640.webp 640w, /images/sdu/students-international-1280.webp 1280w, /images/sdu/students-international-1920.webp 1920w"

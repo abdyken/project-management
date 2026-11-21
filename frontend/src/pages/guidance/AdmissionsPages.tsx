@@ -63,7 +63,9 @@ export function AdmissionsPage() {
   const { t: appT, degree, deadlineWithStatus, language } = useI18n()
   const routes = Object.fromEntries(GUIDANCE_ROUTES)
   const hubRef = useRef<HTMLUListElement>(null)
+  const photoRef = useRef<HTMLElement>(null)
   useRevealList(hubRef)
+  useRevealList(photoRef)
   const catalogue = useQuery(allProgramsQuery)
   const programs = catalogue.data?.programs ?? []
   const bachelors = programs.filter((program) => program.degree_level === "bachelor")
@@ -82,7 +84,7 @@ export function AdmissionsPage() {
     <GuidanceShell title={t("hub")} lead={t("lead")}>
       {/* Tools as a ruled list beside one campus photograph; the tile grid is kept for the home page. */}
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
-        <figure className="m-0">
+        <figure ref={photoRef} data-reveal="photo" className="m-0 overflow-hidden">
           <img
             src="/images/sdu/campus-facade-960.webp"
             srcSet="/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w, /images/sdu/campus-facade-1440.webp 1440w"

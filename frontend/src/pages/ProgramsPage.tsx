@@ -115,7 +115,7 @@ export function ProgramsPage() {
           {data && data.total > 0 ? (
             <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
               {filters.degree_level ? (
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <div className="card-grid grid grid-cols-1 gap-2 md:grid-cols-2">
                   {data.programs.map((program) => (
                     <ProgramCard key={program.program_id} program={program} />
                   ))}
@@ -141,7 +141,7 @@ export function ProgramsPage() {
                             <p className="tabular text-[0.9375rem] text-muted-foreground">{t("card.localDeadline", { value: deadlineWithStatus(groupDeadline) })}</p>
                           ) : null}
                         </div>
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                        <div className="card-grid grid grid-cols-1 gap-2 md:grid-cols-2">
                           {items.map((program) => (
                             <ProgramCard
                               key={program.program_id}

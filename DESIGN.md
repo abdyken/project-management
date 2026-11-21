@@ -388,6 +388,10 @@ Researched against Purdue, Stanford, Yale and Fondation Beyeler (21.11.2026). On
 
 - **Signature (the focal moment):** on the home page, the first time a stepped edge enters view, its tiles are laid column by column from the left: each tile rises 6px from scale 0.6 with opacity, 280ms, delay `min(column × 12ms, 700ms)`. It then settles into the static brand edge. On every other page the footer edge is drawn already settled, with no laying. On fine pointers, tiles within three columns of the cursor over the hero catch the light (`brightness(1.32)`, 150ms in, 400ms out); they never move.
 - **Hero photo:** settles once from scale 1.05 to 1 over 1.4s.
+- **Hero entrance:** the headline, the tally line and the search tile rise 24px and fade in once as the page opens (800ms, starting at 80, 200 and 300ms).
+- **Photos:** the student photo beside the schools and the campus photo in the hub open from the bottom edge as they enter view (clip-path, 1.1s) while the image settles from 1.05 to 1.
+- **Finder results:** program cards rise in 40ms apart, capped at 200ms; only cards new to the list animate, so filtering never replays the whole grid.
+- **Compare bar:** slides up into place (360ms) when the first program is added.
 - **Scroll reveals:** section headings and lists (`data-reveal`, `data-reveal-list`) rise 24px and fade in over 600ms once, at 12% in view; list items arrive 70ms apart, capped at 350ms. Only lists stagger.
 - **Figures:** only the school counts count up once in view (750ms, ease-out cubic); screen readers get the final number. Tuition figures are static.
 - **Globe:** the HeroGlobe sways ±0.5 rad around Almaty (a slow sine), never a full spin; dragging moves the centre of the sway.
