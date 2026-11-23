@@ -273,9 +273,9 @@ One cold turquoise hue and its deep shade on calm cool neutrals, with three rese
 **Character:** A sober text serif for headings, set in sentence case like a university prospectus, over a plain, sturdy Cyrillic-native sans. Condensed capitals survive only as a small label voice and in figures, where they read as cast numbers. All three faces are self-hosted via @fontsource and cover Kazakh Cyrillic (ә ғ қ ң ө ұ ү һ і).
 
 ### Hierarchy
-- **Display** (500, clamp(3rem, 5.8vw, 5.25rem), line-height 1.02, max 17ch): the home hero h1 only, the page's one loud moment. Under it, "SDU in figures": four condensed numerals (clamp(2.25rem, 3.4vw, 3rem), 700) with label captions: programs, schools and languages of study counted live from the catalogue, and the founding year.
+- **Display** (500, clamp(2.75rem, 5vw, 4.5rem), line-height 1.04, max 14ch): the home hero h1 only.
 - **Headline, page** (500, clamp(2.25rem, 4vw, 3.5rem), line-height about 1.1): page h1s on programmes, programme detail, account and staff. On turquoise band pages (the hub, planning guides and information pages) the h1 is clamp(2.5rem, 4.5vw, 4rem), line-height 1.06, max 20ch.
-- **Headline** (500, clamp(1.75rem, 2.6vw, 2.5rem), line-height 1.1, max 20ch): section h2s, including the programme page sections. Information pages open their split sections at clamp(1.75rem, 2.6vw, 2.25rem); sub-groups (degree groups in the finder, hub and notes sub-heads) at clamp(1.5rem, 2vw, 1.875rem), line-height 1.15.
+- **Headline** (500, clamp(1.875rem, 3vw, 2.75rem), line-height 1.1, max 20ch): section h2s, including the programme page sections. Information pages open their split sections at clamp(1.75rem, 2.6vw, 2.25rem); sub-groups (degree groups in the finder, hub and notes sub-heads) at clamp(1.5rem, 2vw, 1.875rem), line-height 1.15.
 - **Title** (500, 1.25 to 2.25rem, line-height 1.15 to 1.18): mosaic tile titles (1.25 to 1.5rem, or clamp(1.75rem, 2.6vw, 2.25rem) on the large main tile), programme card titles (1.375rem, 1.5rem from sm), ruled-row titles (1.375rem in the hub, 1.25rem for related programmes, 1.125rem in compare headers), the hero search label, the footer tagline (1.875rem, weight 400), mobile menu links (1.5rem).
 - **Body** (400, 1rem, line-height 1.55): running text; leads at 1.125rem, 46 to 52ch.
 - **Body small** (500 to 600, 0.9375rem): nav links, default button text, card meta lines, filter options, form labels.
@@ -368,7 +368,7 @@ Square, solid and quick; the arrow is the only flourish.
 - **Menu panel (every width):** an outlined Menu button (icon, plus the word from lg) opens a full-screen deep turquoise panel in the 84rem frame: the three main sections as serif links (1.5rem, 1.875rem from lg) on hairlines, the active one underlined in white; then Apply, Search and Ask; then three labelled groups of plain rows on faint white hairlines: Applying to SDU (how to apply, deadlines, status, cost and aid, contact), Plan your admission (the tools, compare, questions) and Information for (school leavers, international, master's, PhD, parents). No strip above the header and no Ask in the bar: the chat launcher covers it.
 - **Breadcrumb and on-page bar (programme page):** on the turquoise band, a field-mist semibold trail (Programmes / degree / title, the title hidden below sm) above the title, and below it an "On this page" row of underlined field-mist links to documents, requirements, next steps and related programmes.
 - **Guide tabs:** square tiles on the turquoise band; active is white with turquoise text, inactive deep turquoise, hover ink.
-- **Footer:** deep turquoise rising into the page through the signature edge: the white lockup with a serif tagline ("Founded in 1996", 1.875rem, weight 400) above the admissions office's address, phone and e-mail, and three columns of four plain links (Explore, Apply, Information for). Label column titles in field mist; links take an underline only on hover and focus.
+- **Footer:** deep turquoise rising into the page through the signature edge, five columns from lg: the white lockup with a serif tagline (1.875rem, weight 400), planning, "Information for" (school leavers, international, master's, PhD, parents), apply and contact. Label column titles in field mist, white links with a faint underline.
 
 ### Application Stepper
 Four equal square steps with 4px gaps and condensed numerals. Done is deep turquoise with a check; current is a solid tile carrying the status word; only the current step names the status.
@@ -388,7 +388,7 @@ Researched against Purdue, Stanford, Yale and Fondation Beyeler (21.11.2026). On
 
 - **Signature (the focal moment):** on the home page, the first time a stepped edge enters view, its tiles are laid column by column from the left: each tile rises 6px from scale 0.6 with opacity, 280ms, delay `min(column × 12ms, 700ms)`. It then settles into the static brand edge. On every other page the footer edge is drawn already settled, with no laying. On fine pointers, tiles within three columns of the cursor over the hero catch the light (`brightness(1.32)`, 150ms in, 400ms out); they never move.
 - **Hero photo:** settles once from scale 1.05 to 1 over 1.4s.
-- **Hero entrance:** the headline, the figures and the search tile rise 24px and fade in once as the page opens (800ms, starting at 80, 200 and 300ms).
+- **Hero entrance:** the headline, the tally line and the search tile rise 24px and fade in once as the page opens (800ms, starting at 80, 200 and 300ms).
 - **Photos:** the student photo beside the schools and the campus photo in the hub open from the bottom edge as they enter view (clip-path, 1.1s) while the image settles from 1.05 to 1.
 - **Finder results:** program cards rise in 40ms apart, capped at 200ms; only cards new to the list animate, so filtering never replays the whole grid.
 - **Compare bar:** slides up into place (360ms) when the first program is added.

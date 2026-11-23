@@ -471,7 +471,7 @@ export function EligibilityPage() {
             <EligibilityResult result={mutation.data} />
           ) : (
             <div className="border-t-2 border-ink pt-5 text-muted-foreground">
-              <p className="font-heading text-xl font-medium text-foreground">{t("resultPending")}</p>
+              <p className="font-heading text-xl font-medium text-foreground">{t("eligibility")}</p>
               <p className="mt-2">{t("eligibilityText")}</p>
               <p className="mt-3 text-sm">{t("disclaimer")}</p>
             </div>

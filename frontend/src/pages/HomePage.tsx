@@ -64,7 +64,7 @@ function summarise(programs: Program[]): Facts {
 }
 
 export function HomePage() {
-  const { t, language, degree, schoolName, schoolLang } = useI18n()
+  const { t, language, degree, languages, schoolName, schoolLang } = useI18n()
   const guidanceT = useGuidanceT()
   const navigate = useNavigate()
   const setOpen = useChatStore((state) => state.setOpen)
@@ -72,6 +72,8 @@ export function HomePage() {
   const programs = useQuery(allProgramsQuery)
   const facts = useMemo(() => (programs.data ? summarise(programs.data.programs) : null), [programs.data])
   const numbers = useMemo(() => new Intl.NumberFormat(NUMBER_LOCALE[language]), [language])
+  // Kazakh and Russian write language names in lower case inside a sentence.
+  const inSentence = (text: string) => (language === "en" ? text : text.toLocaleLowerCase(language))
   // Key dates in date order; passed ones are marked closed, unpublished levels share one row.
   const dateBoard = useMemo(() => {
     if (!facts) return null
@@ -140,24 +142,13 @@ export function HomePage() {
             <div>
               <h1
                 id="home-title"
-                className="hero-in max-w-[17ch] text-[clamp(3rem,5.8vw,5.25rem)] leading-[1.02] font-medium tracking-[-0.015em]"
+                className="hero-in max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.01em]"
               >
                 {t("home.title")}
               </h1>
-              {/* SDU in figures: live counts from the catalogue, and the founding year. */}
-              <dl className="hero-in hero-in-2 mt-8 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4 lg:mt-10">
-                {[
-                  [facts ? numbers.format(facts.total) : "…", t("home.figures.programs")],
-                  [facts ? numbers.format(facts.schools.length) : "…", t("home.figures.schools")],
-                  [facts ? numbers.format(facts.languages.length) : "…", t("home.figures.languages")],
-                  ["1996", t("home.figures.founded")],
-                ].map(([value, label]) => (
-                  <div key={label} className="flex flex-col-reverse border-t border-field-foreground/25 pt-3">
-                    <dt className="label mt-2 text-field-muted">{label}</dt>
-                    <dd className="tabular font-display text-[clamp(2.25rem,3.4vw,3rem)] leading-none font-bold">{value}</dd>
-                  </div>
-                ))}
-              </dl>
+              <p className="hero-in hero-in-2 tabular mt-6 min-h-7 text-lg text-field-muted sm:text-xl">
+                {facts ? t("home.tally", { programs: numbers.format(facts.total), schools: numbers.format(facts.schools.length), languages: inSentence(languages(facts.languages.join(", "))) }) : ""}
+              </p>
             </div>
 
             <form
@@ -401,7 +392,7 @@ export function HomePage() {
 function SectionHeading({ id, title, lead, onField }: { id: string; title: string; lead?: string; onField?: boolean }) {
   return (
     <div data-reveal="">
-      <h2 id={id} className="max-w-[20ch] text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.1] font-medium">
+      <h2 id={id} className="max-w-[20ch] text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
         {title}
       </h2>
       {lead ? <p className={cn("mt-5 max-w-[52ch] text-lg", onField ? "text-field-muted" : "text-muted-foreground")}>{lead}</p> : null}

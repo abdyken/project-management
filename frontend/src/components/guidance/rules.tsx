@@ -32,15 +32,14 @@ export function EvidenceView({
   )
 }
 
-// A rule as a plain sentence: "UNT total of at least 60", "Interview passed". The score range in
-// the metric label ("(0–140)") helps in the form but not in a rule, so it is dropped here.
 export function ConditionText({ condition }: { condition: Condition }) {
   const t = useGuidanceT()
-  const metric = t(condition.metric).replace(/\s*\([^)]*\)\s*$/, "")
-  if (condition.minimum != null) {
-    return <span>{t("atLeast").replace("{metric}", metric).replace("{value}", String(condition.minimum))}</span>
-  }
-  if (condition.equals === true) return <span>{metric}</span>
-  const value = typeof condition.equals === "boolean" ? t("no") : t.code(String(condition.equals))
-  return <span>{`${metric}: ${value}`}</span>
+  return (
+    <span>
+      {t(condition.metric)}{" "}
+      {condition.minimum != null
+        ? `≥ ${condition.minimum}`
+        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t.code(String(condition.equals))}`}
+    </span>
+  )
 }

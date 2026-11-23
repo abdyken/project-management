@@ -126,8 +126,6 @@ export function ApplyPage() {
         <div>
           <SectionTitle id="steps-title">{t("apply.stepsTitle")}</SectionTitle>
           <p className="mt-5 max-w-[46ch] text-muted-foreground">{t("apply.official")}</p>
-          {/* The page's one Apply action; the routes below state their deadlines in words. */}
-          <ApplyAction label={t("apply.applyNow")} className="mt-8" />
         </div>
         <ol className="border-t-2 border-ink">
           {STEPS.map((step, index) => {
@@ -174,7 +172,8 @@ export function ApplyPage() {
                 </div>
               ))}
             </dl>
-            <div className="mt-6">
+            <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-4">
+              <ApplyAction label={t("apply.applyNow")} />
               <Link
                 to={`/programs?degree_level=${route.level}`}
                 className="group inline-flex items-center gap-2 font-semibold text-primary"
@@ -253,7 +252,7 @@ export function DeadlinesPage() {
                         {row.label}
                       </a>
                     </th>
-                    <td className="tabular py-4 pr-4">{levels ? (row.value ? deadline(row.value) : null) : "…"}</td>
+                    <td className="tabular py-4 pr-4">{levels ? (row.value ? deadline(row.value) : "—") : "…"}</td>
                     <td className="py-4 text-right">
                       {status === "upcoming" ? (
                         <Badge tone="field">{t("deadlines.upcoming")}</Badge>

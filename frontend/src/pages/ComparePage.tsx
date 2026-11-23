@@ -22,6 +22,7 @@ function documents(count: number, i18n: I18n) {
 }
 
 const ROWS: Row[] = [
+  { label: "compare.row.degree", value: (program, i18n) => `${i18n.degree(program.degree_level)} · ${program.program_id}` },
   { label: "compare.row.school", value: (program, i18n) => i18n.schoolName(program.faculty) },
   { label: "compare.row.language", value: (program, i18n) => i18n.languages(program.language) },
   { label: "compare.row.tuitionLocal", value: (program, i18n) => i18n.tuitionKzt(program.tuition_per_ects_kzt) },
@@ -81,24 +82,21 @@ export function ComparePage() {
   }
 
   return (
-    <div>
-      {/* The same turquoise title band as the other inner pages. */}
-      <section className="on-field relative bg-field">
-        <div className="mx-auto max-w-[84rem] px-4 pt-8 pb-10 sm:px-6 lg:px-8">
-          <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-field-muted underline decoration-field-foreground/40 underline-offset-4 hover:text-field-foreground">
-            <ArrowLeft className="size-4" aria-hidden="true" />
-            {t("detail.backToPrograms").replace(/^←\s*/, "")}
-          </Link>
-          <h1 className="mt-6 max-w-[20ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{t("compare.title")}</h1>
-          <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{t("compare.lead", { max: MAX_COMPARED })}</p>
-        </div>
-      </section>
+    <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
+      <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-primary hover:underline">
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {t("detail.backToPrograms").replace(/^←\s*/, "")}
+      </Link>
+      <h1 className="mt-8 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("compare.title")}</h1>
+      <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+        {t("compare.lead", { max: MAX_COMPARED })}
+      </p>
 
-      <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24 lg:px-8">
+      <div className="mt-10">
         {ids.length < 2 ? (
-          <div className="max-w-2xl border-t-2 border-ink pt-6">
-            <h2 className="text-[1.75rem] leading-[1.15] font-medium">{t("compare.pickTitle")}</h2>
-            <p className="mt-2 text-muted-foreground">
+          <div className="border border-border bg-card p-6">
+            <p className="text-2xl font-semibold tracking-tight">{t("compare.pickTitle")}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
               {ids.length === 1 ? t("compare.oneSelected") : t("compare.noneSelected")}
             </p>
             <Button asChild className="mt-5">
@@ -111,9 +109,9 @@ export function ComparePage() {
 
         {ids.length >= 2 && query.isError ? (
           isNotFound(query.error) ? (
-            <div role="alert" className="max-w-2xl border-t-2 border-ink pt-6">
-              <h2 className="text-[1.75rem] leading-[1.15] font-medium">{t("detail.notFound")}</h2>
-              <p className="mt-2 text-muted-foreground">
+            <div role="alert" className="border border-border bg-card p-6">
+              <p className="text-2xl font-semibold tracking-tight">{t("detail.notFound")}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
                 {t("compare.notFoundText")}
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
@@ -156,7 +154,7 @@ function ProgramHeading({ program, onRemove }: { program: ComparedProgram; onRem
         type="button"
         aria-label={t("compare.removeAria", { title: programTitle(program) })}
         onClick={() => onRemove(program.program_id)}
-        className="shrink-0 p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
+        className="shrink-0 rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
       >
         <X className="size-4" />
       </button>
@@ -172,12 +170,12 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
   return (
     <>
       {programs.length > 1 ? (
-        <p className="mb-4 text-muted-foreground">{t("compare.sameNote")}</p>
+        <p className="mb-4 text-sm text-muted-foreground">{t("compare.sameNote")}</p>
       ) : null}
-      <table className="hidden w-full table-fixed border-collapse text-[0.9375rem] sm:table">
+      <table className="hidden w-full table-fixed border-collapse text-sm sm:table">
         <caption className="sr-only">{t("compare.caption")}</caption>
         <thead>
-          <tr className="border-b-2 border-ink">
+          <tr className="border-b border-border">
             <th scope="col" className="w-44 py-3 pr-4 text-left">
               <span className="sr-only">{t("compare.field")}</span>
             </th>
@@ -191,7 +189,7 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
         <tbody>
           {ROWS.map((row) => (
             <tr key={row.label} className={cn("border-b border-border", same(row) && "text-muted-foreground")}>
-              <th scope="row" className={`py-3 pr-4 text-left align-top font-normal ${labelClass}`}>
+              <th scope="row" className={`py-3 pr-4 pl-2 text-left align-top font-normal ${labelClass}`}>
                 {t(row.label)}
                 {same(row) ? <span className="sr-only"> ({t("compare.same")})</span> : null}
               </th>
