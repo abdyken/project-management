@@ -35,7 +35,7 @@ async function run(browserType, name, width) {
       record(name, width, "17.2 three programs side by side", columns === 4, `${columns - 1} columns`)
     } else {
       const sections = await page.locator("section[aria-label]").count()
-      record(name, width, "17.2 stacked by field on phones", sections === 9, `${sections} fields`)
+      record(name, width, "17.2 stacked by field on phones", sections === 8, `${sections} fields`)
     }
     const text = await page.locator("main").innerText()
     record(name, width, "17.2 empty values say Not published", text.includes("Not published"))

@@ -31,6 +31,10 @@ type TesseraeProps = {
   still?: boolean
 }
 
+// The grout line is fainter on small tiles, so 8px tesserae read as a surface, not as dots.
+const GROUT = (size: number) =>
+  size >= 16 ? "shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]" : "shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]"
+
 export function Tesserae({ rows, size = 24, className, style, lightFrom, still = false }: TesseraeProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<"waiting" | "laying" | "settled">(() =>
@@ -104,7 +108,7 @@ export function Tesserae({ rows, size = 24, className, style, lightFrom, still =
             <span
               key={`${r}-${c}`}
               data-col={c}
-              className={`${TILE_CLASS[tile]} shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]`}
+              className={`${TILE_CLASS[tile]} ${GROUT(size)}`}
               style={{ "--c": c } as CSSProperties}
             />
           ) : (

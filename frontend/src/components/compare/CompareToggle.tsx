@@ -9,11 +9,14 @@ export function CompareToggle({
   title,
   className,
   tone = "light",
+  quiet = false,
 }: {
   programId: string
   title: string
   className?: string
   tone?: "light" | "field"
+  // A borderless text toggle for dense lists (the finder rows).
+  quiet?: boolean
 }) {
   const { t } = useI18n()
   const ids = useCompareStore((state) => state.ids)
@@ -25,14 +28,20 @@ export function CompareToggle({
     <Button
       type="button"
       size="sm"
-      variant={tone === "field" ? "onField" : selected ? "default" : "outline"}
+      variant={quiet ? "ghost" : tone === "field" ? "onField" : selected ? "default" : "outline"}
       aria-pressed={selected}
       aria-label={selected ? t("compare.removeAria", { title }) : t("compare.addAria", { title })}
       title={full ? t("compare.full", { max: MAX_COMPARED }) : undefined}
       disabled={full}
       onClick={() => toggle(programId)}
       // Selected on the turquoise band: a filled white button, never ochre (ochre is only for Apply).
-      className={cn("relative z-10", tone === "field" && selected && "bg-field-foreground text-field", className)}
+      className={cn(
+        "relative z-10",
+        tone === "field" && selected && "bg-field-foreground text-field",
+        quiet && "px-2 text-primary hover:bg-card",
+        quiet && selected && "bg-primary text-primary-foreground hover:bg-field-deep",
+        className,
+      )}
     >
       {selected ? <Check className="size-3.5" /> : <Plus className="size-3.5" />}
       {selected ? t("compare.selected") : t("compare.add")}

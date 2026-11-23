@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { signatureSteps } from "@/components/mosaic/pattern"
+import { ridgeSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { useApplicantT } from "@/applicant/i18n"
 import { useGuidanceT } from "@/guidance/i18n"
@@ -8,8 +8,8 @@ import { useI18n } from "@/i18n"
 import { useInfoT } from "@/info/i18n"
 import { ADMISSIONS_PHONE } from "@/lib/constants"
 
-// Signature 2 of 2: the footer rises into the page with the same stepped mosaic edge.
-const FOOTER_SIGNATURE = signatureSteps(240, 3, "field", "deep", 2026)
+// Signature 2 of 2: the footer rises into the page as the Alatau, named in a small caption.
+const FOOTER_SIGNATURE = ridgeSteps({ columns: 320, rows: 6, degreesPerColumn: 0.25, peaks: 1.4, cap: "field", body: "deep" })
 
 export function SiteFooter() {
   const { t } = useI18n()
@@ -22,11 +22,12 @@ export function SiteFooter() {
   // Below 640px the bottom padding clears the fixed Apply/Ask bar.
   return (
     <footer className="on-field relative mt-auto bg-field-deep">
-      <div className="absolute inset-x-0 bottom-full overflow-hidden">
-        <Tesserae size={16} rows={FOOTER_SIGNATURE} still={pathname !== "/"} />
+      <div className="absolute inset-x-0 bottom-full flex justify-center overflow-hidden">
+        <Tesserae size={8} rows={FOOTER_SIGNATURE} still={pathname !== "/"} className="shrink-0" />
       </div>
+      <p className="mx-auto max-w-[84rem] px-4 pt-5 text-right label text-field-muted sm:px-6 lg:px-8">{t("footer.ridge")}</p>
       {/* Purdue's pattern: contact details under the logo, then three short columns of plain links. */}
-      <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-12 pb-28 sm:grid-cols-3 sm:px-6 sm:pb-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-8">
+      <div className="mx-auto grid max-w-[84rem] gap-x-8 gap-y-10 px-4 pt-6 pb-28 sm:grid-cols-3 sm:px-6 sm:pb-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-8">
         <div className="sm:col-span-3 lg:col-span-1">
           <img src="/brand/sdu-lockup-white.svg" alt="SDU University" className="h-11 w-auto" width={150} height={47} />
           <p className="mt-6 max-w-[16ch] font-heading text-3xl leading-[1.12] font-normal">

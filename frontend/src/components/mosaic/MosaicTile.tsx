@@ -39,7 +39,7 @@ export function MosaicTile({
   return (
     <Link
       to={to}
-      className={cn("group relative flex min-h-48 min-w-0 flex-col justify-between p-6 transition-[background-color,border-color,translate] duration-200 ease-out sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
+      className={cn("group relative flex min-h-36 min-w-0 flex-col justify-between gap-6 p-6 sm:min-h-48 transition-[background-color,border-color,translate] duration-200 ease-out sm:p-8 lg:p-6 xl:p-8", TONES[tone], className)}
     >
       <div>
         {image ? (

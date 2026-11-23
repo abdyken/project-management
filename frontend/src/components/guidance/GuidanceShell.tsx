@@ -2,7 +2,24 @@ import type { ReactNode } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
 import { useGuidanceT } from "@/guidance/i18n"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
+import { RidgeHorizon } from "@/components/mosaic/RidgeHorizon"
 import { cn } from "@/lib/utils"
+
+// Each page sits at its own bearing on the Alatau, east to west in the order an applicant reads them.
+const BEARINGS: Record<string, number> = {
+  "/admissions": 163,
+  "/eligibility": 152,
+  "/recommendations": 156,
+  "/cost-calculator": 172,
+  "/funding": 176,
+  "/account/requests": 184,
+  "/apply": 148,
+  "/deadlines": 160,
+  "/application-status": 180,
+  "/cost-and-aid": 168,
+  "/contact": 188,
+  "/search": 158,
+}
 
 
 // Admissions planning pages: a turquoise band with the title and the tools as tile tabs,
@@ -18,7 +35,7 @@ export function GuidanceShell({ title, lead, children, tools = true }: { title: 
   return (
     <div>
       <section className="on-field relative bg-field">
-        <div className="mx-auto max-w-[84rem] px-4 pt-8 pb-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[84rem] px-4 pt-8 pb-4 sm:px-6 lg:px-8">
           {onHub ? null : (
             <Link className="text-[0.9375rem] font-semibold text-field-muted underline decoration-field-foreground/40 underline-offset-4 hover:text-field-foreground" to="/admissions">
               {t("hub")}
@@ -47,6 +64,7 @@ export function GuidanceShell({ title, lead, children, tools = true }: { title: 
           </nav>
           )}
         </div>
+        <RidgeHorizon bearing={BEARINGS[pathname] ?? 163} />
       </section>
       <div className={cn("mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-20", wide ? "max-w-[84rem]" : "max-w-[84rem] [&>*]:max-w-6xl")}>{children}</div>
     </div>

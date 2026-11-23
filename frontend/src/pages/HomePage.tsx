@@ -6,7 +6,7 @@ import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { DegreeLevel, Program } from "@/api/types"
 import { HeroGlobe } from "@/components/home/HeroGlobe"
 import { MosaicTile } from "@/components/mosaic/MosaicTile"
-import { signatureSteps } from "@/components/mosaic/pattern"
+import { ridgeSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
@@ -22,7 +22,8 @@ const NUMBER_LOCALE: Record<Language, string> = { en: "en-GB", ru: "ru-RU", kk: 
 const KK_MONTHS_SHORT = ["қаң", "ақп", "нау", "сәу", "мам", "мау", "шіл", "там", "қыр", "қаз", "қар", "жел"]
 
 // Signature 1 of 2 on this page: the band rises into the photo as a stepped mosaic edge.
-const HERO_STEPS = signatureSteps(240, 3, "deep", "field", 2026)
+// The Alatau as seen from the campus, centred on its highest stretch so phones keep the summit.
+const HERO_STEPS = ridgeSteps({ columns: 320, rows: 10, degreesPerColumn: 0.25, peaks: 1.4, cap: "deep", body: "field" })
 
 type Facts = {
   total: number
@@ -64,7 +65,7 @@ function summarise(programs: Program[]): Facts {
 }
 
 export function HomePage() {
-  const { t, language, degree, languages, schoolName, schoolLang } = useI18n()
+  const { t, language, degree, schoolName, schoolLang } = useI18n()
   const guidanceT = useGuidanceT()
   const navigate = useNavigate()
   const setOpen = useChatStore((state) => state.setOpen)
@@ -72,8 +73,6 @@ export function HomePage() {
   const programs = useQuery(allProgramsQuery)
   const facts = useMemo(() => (programs.data ? summarise(programs.data.programs) : null), [programs.data])
   const numbers = useMemo(() => new Intl.NumberFormat(NUMBER_LOCALE[language]), [language])
-  // Kazakh and Russian write language names in lower case inside a sentence.
-  const inSentence = (text: string) => (language === "en" ? text : text.toLocaleLowerCase(language))
   // Key dates in date order; passed ones are marked closed, unpublished levels share one row.
   const dateBoard = useMemo(() => {
     if (!facts) return null
@@ -135,20 +134,31 @@ export function HomePage() {
         </picture>
         <div className="on-field relative bg-field">
           {/* The steps run the full width; on desktop the search tile sits over them and they reappear to its right. */}
-          <div className="absolute inset-x-0 bottom-full overflow-hidden">
-            <Tesserae size={16} rows={HERO_STEPS} lightFrom={heroRef} />
+          <div className="absolute inset-x-0 bottom-full flex justify-center overflow-hidden">
+            <Tesserae size={8} rows={HERO_STEPS} lightFrom={heroRef} className="shrink-0" />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>
               <h1
                 id="home-title"
-                className="hero-in max-w-[14ch] text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] font-medium tracking-[-0.01em]"
+                className="hero-in max-w-[17ch] text-[clamp(3rem,5.8vw,5.25rem)] leading-[1.02] font-medium tracking-[-0.015em]"
               >
                 {t("home.title")}
               </h1>
-              <p className="hero-in hero-in-2 tabular mt-6 min-h-7 text-lg text-field-muted sm:text-xl">
-                {facts ? t("home.tally", { programs: numbers.format(facts.total), schools: numbers.format(facts.schools.length), languages: inSentence(languages(facts.languages.join(", "))) }) : ""}
-              </p>
+              {/* SDU in figures: live counts from the catalogue, and the founding year. */}
+              <dl className="hero-in hero-in-2 mt-8 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4 lg:mt-10">
+                {[
+                  [facts ? numbers.format(facts.total) : "…", t("home.figures.programs")],
+                  [facts ? numbers.format(facts.schools.length) : "…", t("home.figures.schools")],
+                  [facts ? numbers.format(facts.languages.length) : "…", t("home.figures.languages")],
+                  ["1996", t("home.figures.founded")],
+                ].map(([value, label]) => (
+                  <div key={label} className="flex flex-col-reverse border-t border-field-foreground/25 pt-3">
+                    <dt className="label mt-2 text-field-muted">{label}</dt>
+                    <dd className="tabular font-display text-[clamp(2.25rem,3.4vw,3rem)] leading-none font-bold">{value}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
 
             <form
@@ -392,7 +402,7 @@ export function HomePage() {
 function SectionHeading({ id, title, lead, onField }: { id: string; title: string; lead?: string; onField?: boolean }) {
   return (
     <div data-reveal="">
-      <h2 id={id} className="max-w-[20ch] text-[clamp(1.875rem,3vw,2.75rem)] leading-[1.1] font-medium">
+      <h2 id={id} className="max-w-[20ch] text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.1] font-medium">
         {title}
       </h2>
       {lead ? <p className={cn("mt-5 max-w-[52ch] text-lg", onField ? "text-field-muted" : "text-muted-foreground")}>{lead}</p> : null}

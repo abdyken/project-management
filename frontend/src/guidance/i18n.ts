@@ -155,6 +155,7 @@ const messages = {
   ],
   program: ["Program", "Программа", "Бағдарлама"],
   choose: ["Choose a program", "Выберите программу", "Бағдарламаны таңдаңыз"],
+  resultPending: ["Your result will appear here", "Здесь появится результат", "Нәтиже осында шығады"],
   chooseLanguageGroup: [
     "Choose a language group",
     "Выберите языковую группу",
@@ -256,6 +257,7 @@ const messages = {
   ],
   unknown: ["Not known", "Неизвестно", "Белгісіз"],
   yes: ["Yes", "Да", "Иә"],
+  atLeast: ["{metric} of at least {value}", "{metric} не менее {value}", "{metric} кемінде {value}"],
   no: ["No", "Нет", "Жоқ"],
   submit: ["Check", "Проверить", "Тексеру"],
   calculate: ["Calculate", "Рассчитать", "Есептеу"],
