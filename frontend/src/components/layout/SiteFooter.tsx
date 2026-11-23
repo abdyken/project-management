@@ -22,7 +22,7 @@ export function SiteFooter() {
   // Below 640px the bottom padding clears the fixed Apply/Ask bar.
   return (
     <footer className="on-field relative mt-auto bg-field-deep">
-      <div className="absolute inset-x-0 bottom-full flex justify-center overflow-hidden">
+      <div className="tesserae-frame absolute inset-x-0 bottom-full flex justify-center overflow-hidden">
         <Tesserae size={8} rows={FOOTER_SIGNATURE} still={pathname !== "/"} className="shrink-0" />
       </div>
       <p className="mx-auto max-w-[84rem] px-4 pt-5 text-right label text-field-muted sm:px-6 lg:px-8">{t("footer.ridge")}</p>

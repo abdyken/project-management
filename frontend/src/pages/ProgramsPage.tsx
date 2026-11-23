@@ -117,7 +117,7 @@ export function ProgramsPage() {
           {data && data.total > 0 ? (
             <div className={query.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
               {filters.degree_level ? (
-                <div className="card-grid grid grid-cols-1 border-t-2 border-ink lg:grid-cols-2 lg:gap-x-12">
+                <div className="card-grid grid grid-cols-1 gap-2 md:grid-cols-2">
                   {data.programs.map((program) => (
                     <ProgramCard key={program.program_id} program={program} />
                   ))}
@@ -135,7 +135,7 @@ export function ProgramsPage() {
                     const groupDeadline = shared && sharedCount >= 2 ? shared : null
                     return (
                       <section key={level} aria-labelledby={`level-${level}`}>
-                        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b-2 border-ink pb-3">
+                        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border pb-3">
                           <h2 id={`level-${level}`} className="text-[clamp(1.5rem,2vw,1.875rem)] leading-[1.15] font-medium">
                             {t(`degree.${level}`)} <span className="label tabular align-middle text-muted-foreground">{items.length}</span>
                           </h2>
@@ -143,7 +143,7 @@ export function ProgramsPage() {
                             <p className="tabular text-[0.9375rem] text-muted-foreground">{t("card.localDeadline", { value: deadlineWithStatus(groupDeadline) })}</p>
                           ) : null}
                         </div>
-                        <div className="card-grid grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
+                        <div className="card-grid grid grid-cols-1 gap-2 md:grid-cols-2">
                           {items.map((program) => (
                             <ProgramCard
                               key={program.program_id}

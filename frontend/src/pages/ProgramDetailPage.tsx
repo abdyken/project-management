@@ -135,7 +135,7 @@ export function ProgramDetailPage() {
                     className="hero-settle block aspect-[16/10] w-full object-cover"
                   />
                   {/* The band rises into the photo with the stepped mosaic edge (signature 1 of 2). */}
-                  <div className="absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
+                  <div className="tesserae-frame absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
                     <Tesserae size={8} rows={PHOTO_STEPS} className="shrink-0" />
                   </div>
                 </div>
