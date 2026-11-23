@@ -12,7 +12,6 @@ import { ApplyAction } from "@/components/common/ApplyAction"
 import { useI18n, type I18n } from "@/i18n"
 import type { MessageKey } from "@/i18n/messages"
 import { MAX_COMPARED, useCompareStore } from "@/store/compare"
-import { RidgeHorizon } from "@/components/mosaic/RidgeHorizon"
 
 const labelClass = "text-sm font-semibold text-muted-foreground"
 
@@ -85,7 +84,7 @@ export function ComparePage() {
     <div>
       {/* The same turquoise title band as the other inner pages. */}
       <section className="on-field relative bg-field">
-        <div className="mx-auto max-w-[84rem] px-4 pt-8 pb-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[84rem] px-4 pt-8 pb-10 sm:px-6 lg:px-8">
           <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-field-muted underline decoration-field-foreground/40 underline-offset-4 hover:text-field-foreground">
             <ArrowLeft className="size-4" aria-hidden="true" />
             {t("detail.backToPrograms").replace(/^←\s*/, "")}
@@ -93,7 +92,6 @@ export function ComparePage() {
           <h1 className="mt-6 max-w-[20ch] text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{t("compare.title")}</h1>
           <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{t("compare.lead", { max: MAX_COMPARED })}</p>
         </div>
-        <RidgeHorizon bearing={154} />
       </section>
 
       <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24 lg:px-8">

@@ -14,7 +14,7 @@ import { ConnectionError } from "@/components/common/ConnectionError"
 import { CompareToggle } from "@/components/compare/CompareToggle"
 import { ConditionText, EvidenceView } from "@/components/guidance/rules"
 import { PageShell } from "@/components/layout/PageShell"
-import { ridgeSteps } from "@/components/mosaic/pattern"
+import { signatureSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils"
 import { useChatStore } from "@/store/chat"
 
 const APPLICANT_TYPES: ApplicantType[] = ["local", "international"]
-const PHOTO_STEPS = ridgeSteps({ columns: 160, rows: 5, bearing: 150, degreesPerColumn: 0.25, peaks: 1.8, cap: "deep", body: "field" })
+const PHOTO_STEPS = signatureSteps(80, 2, "deep", "field", 7)
 
 export function ProgramDetailPage() {
   const guidanceT = useGuidanceT()
@@ -135,8 +135,8 @@ export function ProgramDetailPage() {
                     className="hero-settle block aspect-[16/10] w-full object-cover"
                   />
                   {/* The band rises into the photo with the stepped mosaic edge (signature 1 of 2). */}
-                  <div className="tesserae-frame absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
-                    <Tesserae size={8} rows={PHOTO_STEPS} className="shrink-0" />
+                  <div className="absolute inset-x-0 bottom-0 overflow-hidden">
+                    <Tesserae size={16} rows={PHOTO_STEPS} />
                   </div>
                 </div>
                 {photo.credit ? <figcaption className="mt-2 text-xs text-field-muted">{t("detail.photoCredit", { name: photo.credit })}</figcaption> : null}

@@ -235,18 +235,18 @@ select:not([multiple]):not([size]) {
    no-preference; hidden states need html.motion-ready (set by main.tsx) so content never
    disappears if scripts fail. Ease: --ease-out-expo; no bounce. ---- */
 
-/* Signature: the Alatau edge is drawn in one smooth sweep from left to right across the
-   visible frame (one clip-path on the frame, no per-tile animation), the first time it
-   enters view. The frame is the element with .tesserae-frame around the tile grid. */
+/* Signature: tiles are laid column by column (280ms each, delay capped at 700ms). */
 @media (prefers-reduced-motion: no-preference) {
-  .tesserae-frame:has(> [data-tesserae="waiting"]) {
-    clip-path: inset(0 100% 0 0);
+  [data-tesserae="waiting"] > span[data-col] {
+    opacity: 0;
+    transform: translateY(6px) scale(0.6);
   }
 
-  .tesserae-frame:has(> [data-tesserae="laying"]),
-  .tesserae-frame:has(> [data-tesserae="settled"]) {
-    clip-path: inset(0 0 0 0);
-    transition: clip-path 1600ms cubic-bezier(0.65, 0, 0.35, 1);
+  [data-tesserae="laying"] > span[data-col] {
+    transition:
+      opacity 280ms var(--ease-out-expo),
+      transform 280ms var(--ease-out-expo);
+    transition-delay: min(calc(var(--c, 0) * 12ms), 700ms);
   }
 }
 

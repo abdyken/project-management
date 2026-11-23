@@ -6,7 +6,7 @@ import { allProgramsQuery, programLanguages } from "@/api/programs"
 import type { DegreeLevel, Program } from "@/api/types"
 import { HeroGlobe } from "@/components/home/HeroGlobe"
 import { MosaicTile } from "@/components/mosaic/MosaicTile"
-import { ridgeSteps } from "@/components/mosaic/pattern"
+import { signatureSteps } from "@/components/mosaic/pattern"
 import { Tesserae } from "@/components/mosaic/Tesserae"
 import { Button } from "@/components/ui/button"
 import { useGuidanceT } from "@/guidance/i18n"
@@ -22,8 +22,7 @@ const NUMBER_LOCALE: Record<Language, string> = { en: "en-GB", ru: "ru-RU", kk: 
 const KK_MONTHS_SHORT = ["қаң", "ақп", "нау", "сәу", "мам", "мау", "шіл", "там", "қыр", "қаз", "қар", "жел"]
 
 // Signature 1 of 2 on this page: the band rises into the photo as a stepped mosaic edge.
-// The Alatau as seen from the campus, centred on its highest stretch so phones keep the summit.
-const HERO_STEPS = ridgeSteps({ columns: 320, rows: 10, degreesPerColumn: 0.25, peaks: 1.4, cap: "deep", body: "field" })
+const HERO_STEPS = signatureSteps(240, 3, "deep", "field", 2026)
 
 type Facts = {
   total: number
@@ -134,8 +133,8 @@ export function HomePage() {
         </picture>
         <div className="on-field relative bg-field">
           {/* The steps run the full width; on desktop the search tile sits over them and they reappear to its right. */}
-          <div className="tesserae-frame absolute inset-x-0 bottom-full flex justify-center overflow-hidden">
-            <Tesserae size={8} rows={HERO_STEPS} lightFrom={heroRef} className="shrink-0" />
+          <div className="absolute inset-x-0 bottom-full overflow-hidden">
+            <Tesserae size={16} rows={HERO_STEPS} lightFrom={heroRef} />
           </div>
           <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-8 pb-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8 lg:pt-10 lg:pb-20">
             <div>

@@ -9,7 +9,6 @@ import { ActiveFilters, FilterPanel, ProgramSearch, type FilterValues } from "@/
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
-import { RidgeHorizon } from "@/components/mosaic/RidgeHorizon"
 
 const NO_OPTIONS = { faculties: [], degreeLevels: [], languages: [] }
 
@@ -58,14 +57,13 @@ export function ProgramsPage() {
   return (
     <div>
       <section className="on-field relative bg-field">
-        <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-6 sm:px-6 lg:px-8 lg:pt-16 lg:pb-8">
+        <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-16 sm:px-6 lg:px-8 lg:pt-16 lg:pb-20">
           <h1 className="text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.06] font-medium">{t("programs.title")}</h1>
           <p className="mt-5 max-w-[60ch] text-lg text-field-muted">{t("programs.lead")}</p>
           <div className="mt-8">
             <ProgramSearch key={filters.q} values={filters} onChange={updateFilters} />
           </div>
         </div>
-        <RidgeHorizon bearing={146} />
       </section>
 
       <div className="mx-auto grid max-w-[84rem] gap-10 px-4 pt-16 pb-24 sm:px-6 grid-cols-1 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-12 lg:px-8 lg:pt-20">

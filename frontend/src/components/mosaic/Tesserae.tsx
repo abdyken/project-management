@@ -7,8 +7,8 @@ export type { Tile }
 
 // The mosaic signature: square tiles in turquoise shades (null = gap), each with a faint 1px
 // grout line so the 16px module reads as laid tesserae. Purely decorative (aria-hidden).
-// Motion: the first time it enters view, the frame around it (.tesserae-frame) sweeps it in from
-// the left in one smooth 1.6s reveal (index.css), then it settles. With a fine pointer over `lightFrom`,
+// Motion: the first time it enters view, tiles are laid column by column from the left
+// (280ms each, under 0.9s in total), then settle. With a fine pointer over `lightFrom`,
 // tiles within three columns of the cursor catch the light; they brighten, never move.
 // Under reduced motion the edge is simply there.
 const TILE_CLASS: Record<Exclude<Tile, null>, string> = {
@@ -31,10 +31,6 @@ type TesseraeProps = {
   still?: boolean
 }
 
-// The grout line is fainter on small tiles, so 8px tesserae read as a surface, not as dots.
-const GROUT = (size: number) =>
-  size >= 16 ? "shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]" : "shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]"
-
 export function Tesserae({ rows, size = 24, className, style, lightFrom, still = false }: TesseraeProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<"waiting" | "laying" | "settled">(() =>
@@ -44,16 +40,13 @@ export function Tesserae({ rows, size = 24, className, style, lightFrom, still =
   useEffect(() => {
     const node = ref.current
     if (!node || state !== "waiting") return
-    // Watch the band the frame sits on: the frame itself is clipped away until the sweep starts,
-    // and a fully clipped element never counts as in view.
-    const watched = node.closest(".tesserae-frame")?.parentElement ?? node
-    return observeOnce(watched, () => setState("laying"), 0.01)
+    return observeOnce(node, () => setState("laying"), 0.01)
   }, [state])
 
-  // Once the 1.6s sweep is done, the tiles settle and can catch the light.
+  // Once laid (the longest delay is 700ms + 280ms), the tiles settle and can catch the light.
   useEffect(() => {
     if (state !== "laying") return
-    const timer = window.setTimeout(() => setState("settled"), 1700)
+    const timer = window.setTimeout(() => setState("settled"), 1000)
     return () => window.clearTimeout(timer)
   }, [state])
 
@@ -111,7 +104,8 @@ export function Tesserae({ rows, size = 24, className, style, lightFrom, still =
             <span
               key={`${r}-${c}`}
               data-col={c}
-              className={`${TILE_CLASS[tile]} ${GROUT(size)}`}
+              className={`${TILE_CLASS[tile]} shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]`}
+              style={{ "--c": c } as CSSProperties}
             />
           ) : (
             <span key={`${r}-${c}`} />
