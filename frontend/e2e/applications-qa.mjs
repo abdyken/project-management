@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import fs from "node:fs"
-import { chromium, firefox, request } from "playwright"
+import { chromium, request } from "playwright"
+import { qaRuns } from "./matrix.mjs"
 
 // Sprint 7 (US31-US33, US6) against a disposable local stack with Mailpit and
 // APPLICATIONS_ENABLED=true. Creates its own applicants (deleted at the end, with their
@@ -263,11 +264,8 @@ async function run(type, name, width) {
 }
 
 try {
-  const runs = (process.env.RUNS ?? "chromium:360,chromium:768,chromium:1280,firefox:1280").split(",")
-  for (const run_ of runs) {
-    const [browserName, width] = run_.split(":")
-    await run(browserName === "firefox" ? firefox : chromium, browserName, Number(width))
-  }
+  // Its own default matrix: the Sprint 7 suite is the longest, so Firefox runs at 1280 only.
+  for (const { type, name, width } of qaRuns(["chromium:360", "chromium:768", "chromium:1280", "firefox:1280"])) await run(type, name, width)
 } finally {
   // Never leave QA applicants or their files behind, including on failure.
   for (const email of created) {

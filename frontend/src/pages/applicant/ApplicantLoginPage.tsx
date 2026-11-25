@@ -1,13 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type FormEvent, useState } from "react"
+import { ArrowRight } from "lucide-react"
+import { type FormEvent, useRef, useState } from "react"
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom"
-import { loginApplicant, registerApplicant, verifyApplicant } from "@/api/applicant"
+import { confirmPasswordReset, loginApplicant, registerApplicant, requestPasswordReset, verifyApplicant } from "@/api/applicant"
 import { isApiError } from "@/api/errors"
 import { useApplicantT } from "@/applicant/i18n"
 import { APPLICANT_KEY, APPLICANT_ME_KEY, useApplicant } from "@/applicant/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useI18n } from "@/i18n"
+import { useInfoT } from "@/info/i18n"
+import { useRevealList } from "@/lib/motion"
 
 function safeNext(value: string | null) {
   return value && (value === "/account/requests" || /^\/programs(?:\/[^/?#]+)?(?:\?[^#]*)?$/.test(value)) ? value : "/account"
@@ -22,6 +25,9 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
   const [params] = useSearchParams()
   const next = safeNext(params.get("next"))
   const me = useApplicant()
+  const infoT = useInfoT()
+  const photoRef = useRef<HTMLElement>(null)
+  useRevealList(photoRef)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const mutation = useMutation({
@@ -54,58 +60,99 @@ export function ApplicantLoginPage({ register = false }: { register?: boolean })
     mutation.mutate()
   }
 
+  // The form on the left; from lg a campus photo and the pages to read before applying fill the right.
   return (
-    <div className="mx-auto max-w-md px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-semibold tracking-tight">{t(register ? "register" : "login")}</h1>
-      {register && <p className="mt-3 text-sm text-muted-foreground">{t("signupLead")}</p>}
-      {register && mutation.isSuccess ? (
-        <p role="status" className="mt-6">
-          {t("verifySent")}
-        </p>
-      ) : (
-        <form onSubmit={submit} className="mt-6 space-y-4">
-          <label className="block space-y-2 text-sm">
-            <span>{t("email")}</span>
-            <Input
-              type="email"
-              autoComplete="username"
-              required
-              maxLength={254}
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </label>
-          {!register && (
+    <div className="mx-auto grid max-w-[84rem] grid-cols-1 gap-14 px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:gap-24 lg:px-8">
+      <div className="max-w-md">
+        <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t(register ? "register" : "login")}</h1>
+        <p className="mt-3 text-muted-foreground">{t(register ? "signupLead" : "loginLead")}</p>
+        {register && mutation.isSuccess ? (
+          <p role="status" className="mt-6">
+            {t("verifySent")}
+          </p>
+        ) : (
+          <form onSubmit={submit} className="mt-6 space-y-4">
             <label className="block space-y-2 text-sm">
-              <span>{t("password")}</span>
+              <span>{t("email")}</span>
               <Input
-                type="password"
-                autoComplete="current-password"
+                type="email"
+                autoComplete="username"
                 required
-                maxLength={200}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                maxLength={254}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
               />
             </label>
-          )}
-          {message && (
-            <p role="alert" className="text-sm text-destructive">
-              {message}
-            </p>
-          )}
-          <Button className="w-full" disabled={mutation.isPending} type="submit">
-            {mutation.isPending ? t("working") : t(register ? "register" : "login")}
-          </Button>
-        </form>
-      )}
-      <Link
-        className="mt-5 inline-block text-sm underline"
-        to={`/account/${register ? "login" : "register"}?next=${encodeURIComponent(next)}`}
-        state={location.state}
-      >
-        {t(register ? "login" : "register")}
-      </Link>
-      <p className="mt-8 text-xs leading-relaxed text-muted-foreground">{t("privacy")}</p>
+            {!register && (
+              <div className="space-y-2 text-sm">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <label htmlFor="login-password">{t("password")}</label>
+                  <Link className="text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary" to="/account/reset">
+                    {t("forgot")}
+                  </Link>
+                </div>
+                <Input
+                  id="login-password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  maxLength={200}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              </div>
+            )}
+            {message && (
+              <p role="alert" className="text-sm text-destructive">
+                {message}
+              </p>
+            )}
+            <Button className="w-full" disabled={mutation.isPending} type="submit">
+              {mutation.isPending ? t("working") : t(register ? "register" : "login")}
+            </Button>
+          </form>
+        )}
+        <p className="mt-6 text-sm text-muted-foreground">
+          {t(register ? "haveAccount" : "newHere")}{" "}
+          <Link
+            className="font-semibold text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
+            to={`/account/${register ? "login" : "register"}?next=${encodeURIComponent(next)}`}
+            state={location.state}
+          >
+            {t(register ? "login" : "register")}
+          </Link>
+        </p>
+        {/* The data notice belongs where an account is created. */}
+        {register ? <p className="mt-8 text-xs leading-relaxed text-muted-foreground">{t("privacy")}</p> : null}
+      </div>
+      <aside aria-labelledby="before-apply" className="lg:pt-3">
+        <figure ref={photoRef} data-reveal="photo" className="m-0 hidden overflow-hidden lg:block">
+          <img
+            src="/images/sdu/campus-summer-1280.webp"
+            srcSet="/images/sdu/campus-summer-640.webp 640w, /images/sdu/campus-summer-1280.webp 1280w, /images/sdu/campus-summer-1844.webp 1844w"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            alt=""
+            width={1844}
+            height={1037}
+            className="aspect-[16/9] w-full object-cover"
+          />
+        </figure>
+        <h2 id="before-apply" className="label mt-8 text-muted-foreground lg:mt-10">{t("beforeApply")}</h2>
+        <ul className="mt-3 border-t-2 border-ink">
+          {[
+            ["/apply", infoT("apply.title")],
+            ["/deadlines", infoT("deadlines.title")],
+            ["/application-status", infoT("status.title")],
+          ].map(([to, label]) => (
+            <li key={to} className="border-b border-border">
+              <Link to={to} className="group flex items-center justify-between gap-4 py-4 font-heading text-xl font-medium transition-colors hover:bg-secondary/60 hover:text-primary sm:-mx-2 sm:px-2">
+                {label}
+                <ArrowRight className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </aside>
     </div>
   )
 }
@@ -131,8 +178,8 @@ export function ApplicantVerifyPage() {
     verification.mutate()
   }
   return (
-    <div className="mx-auto max-w-md space-y-5 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("verify")}</h1>
+    <div className="mx-auto max-w-[84rem] space-y-5 px-4 py-12 sm:px-6 lg:px-8 [&>*]:max-w-md">
+      <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("verify")}</h1>
       <p>{t("verifyLead")}</p>
       {(!token || verification.isError) && (
         <p role="alert" className="text-sm text-destructive">
@@ -161,6 +208,102 @@ export function ApplicantVerifyPage() {
       </form>
       <Link to="/account/register" className="block text-sm underline">
         {t("register")}
+      </Link>
+    </div>
+  )
+}
+
+// Forgotten password: without a token the page asks for the e-mail and sends a one-hour link;
+// opened from that link (#token=…, never sent to the server in the URL) it sets the new password.
+export function ApplicantResetPage() {
+  const t = useApplicantT()
+  const { language } = useI18n()
+  const cache = useQueryClient()
+  const navigate = useNavigate()
+  // Read from the fragment on every change: the e-mail link may be opened in the tab that asked for it.
+  const { hash } = useLocation()
+  const token = new URLSearchParams(hash.slice(1)).get("token") ?? ""
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const request = useMutation({ mutationFn: () => requestPasswordReset(email, language) })
+  const confirm = useMutation({
+    mutationFn: () => confirmPasswordReset(token, password),
+    onSuccess: (user) => {
+      setPassword("")
+      cache.removeQueries({ queryKey: APPLICANT_KEY })
+      cache.setQueryData(APPLICANT_ME_KEY, user)
+      navigate("/account", { replace: true })
+    },
+    onError: () => setPassword(""),
+  })
+  const linkFailed = Boolean(token) && confirm.isError
+  const asking = !token || linkFailed
+
+  return (
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-md px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
+      <h1 className="text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("resetTitle")}</h1>
+      {linkFailed ? (
+        <p role="alert" className="mt-4 text-sm text-destructive">
+          {isApiError(confirm.error) && confirm.error.code !== "INVALID_RESET_LINK" ? t("error") : t("resetInvalid")}
+        </p>
+      ) : null}
+      {asking ? (
+        request.isSuccess ? (
+          <p role="status" className="mt-6">
+            {t("resetSent")}
+          </p>
+        ) : (
+          <form
+            onSubmit={(event: FormEvent) => {
+              event.preventDefault()
+              request.mutate()
+            }}
+            className="mt-6 space-y-4"
+          >
+            <p className="text-muted-foreground">{t("resetRequestLead")}</p>
+            <label className="block space-y-2 text-sm">
+              <span>{t("email")}</span>
+              <Input type="email" autoComplete="username" required maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
+            </label>
+            {request.isError ? (
+              <p role="alert" className="text-sm text-destructive">
+                {isApiError(request.error) && request.error.code === "TOO_MANY_ATTEMPTS" ? t("tooMany") : t("error")}
+              </p>
+            ) : null}
+            <Button className="w-full" disabled={request.isPending} type="submit">
+              {request.isPending ? t("working") : t("resetSend")}
+            </Button>
+          </form>
+        )
+      ) : (
+        <form
+          onSubmit={(event: FormEvent) => {
+            event.preventDefault()
+            confirm.mutate()
+          }}
+          className="mt-6 space-y-4"
+        >
+          <p className="text-muted-foreground">{t("resetLead")}</p>
+          <label className="block space-y-2 text-sm">
+            <span>{t("password")}</span>
+            <Input
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={10}
+              maxLength={200}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+          <p className="text-xs text-muted-foreground">{t("passwordHint")}</p>
+          <Button className="w-full" disabled={password.length < 10 || confirm.isPending} type="submit">
+            {confirm.isPending ? t("working") : t("resetSave")}
+          </Button>
+        </form>
+      )}
+      <Link to="/account/login" className="mt-5 inline-block text-sm underline">
+        {t("login")}
       </Link>
     </div>
   )

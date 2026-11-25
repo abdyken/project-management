@@ -9,16 +9,17 @@ import { StatusBadge } from "@/components/applications/StatusBadge"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/i18n"
+import { useInfoT } from "@/info/i18n"
 
 function ApplicationCard({ item }: { item: ApplicationSummary }) {
   const t = useApplicationsT()
   const { programTitle, deadline } = useI18n()
   return (
-    <li className="rounded-xl border border-border p-5">
+    <li className="border-2 border-border bg-card p-6">
       <p className="text-xs text-muted-foreground">
         {item.program.program_id} · {t(item.applicant_type)}
       </p>
-      <h2 className="mt-2 text-xl font-semibold">{programTitle(item.program)}</h2>
+      <h2 className="mt-2 text-xl font-medium">{programTitle(item.program)}</h2>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <StatusBadge status={item.status} />
         <span className="text-muted-foreground">{t("updated", { date: deadline(item.updated_at.slice(0, 10)) })}</span>
@@ -66,7 +67,7 @@ function StartFromSaved({ saved, live }: { saved: SavedChecklist[]; live: Applic
   )
   return (
     <section aria-labelledby="start-title" className="mt-10">
-      <h2 id="start-title" className="text-2xl font-semibold">
+      <h2 id="start-title" className="text-2xl font-medium">
         {t("startTitle")}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("startLead")}</p>
@@ -108,6 +109,7 @@ function StartFromSaved({ saved, live }: { saved: SavedChecklist[]; live: Applic
 
 export function ApplicationsPage() {
   const t = useApplicationsT()
+  const infoT = useInfoT()
   const me = useApplicant()
   const applications = useQuery({
     queryKey: applicationsKey,
@@ -123,12 +125,12 @@ export function ApplicationsPage() {
     staleTime: 0,
   })
 
-  if (me.isPending) return <p className="mx-auto max-w-3xl px-4 py-12">{t("working")}</p>
+  if (me.isPending) return <p className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">{t("working")}</p>
   if (isApiError(me.error) && me.error.status === 401) return <Navigate to="/account/login" replace />
   const error = me.error ?? applications.error
   if (!me.data || applications.isError) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
         <ConnectionError
           message={t(isApiError(error) ? applicationsErrorKey(error.code, error.status) : "error")}
           onRetry={() => void (me.data ? applications.refetch() : me.refetch())}
@@ -140,12 +142,15 @@ export function ApplicationsPage() {
 
   const items = applications.data?.items ?? []
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-[84rem] [&>*]:max-w-3xl px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
       <Link to="/account" className="text-sm underline">
         ← {me.data.email}
       </Link>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{t("title")}</h1>
+      <h1 className="mt-4 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("title")}</h1>
       <p className="mt-3 text-muted-foreground">{t("lead")}</p>
+      <Link to="/application-status" className="mt-3 inline-block text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary">
+        {infoT("status.lead")}
+      </Link>
       {applications.isPending ? (
         <p className="mt-8">{t("working")}</p>
       ) : items.length === 0 ? (

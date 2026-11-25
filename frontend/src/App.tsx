@@ -33,6 +33,14 @@ const ApplicationPage = lazy(() =>
 const applicantLogin = () => import("@/pages/applicant/ApplicantLoginPage")
 const ApplicantLoginPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantLoginPage })))
 const ApplicantVerifyPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantVerifyPage })))
+const ApplicantResetPage = lazy(() => applicantLogin().then((m) => ({ default: m.ApplicantResetPage })))
+const info = () => import("@/pages/info/InfoPages")
+const ApplyPage = lazy(() => info().then((m) => ({ default: m.ApplyPage })))
+const DeadlinesPage = lazy(() => info().then((m) => ({ default: m.DeadlinesPage })))
+const StatusGuidePage = lazy(() => info().then((m) => ({ default: m.StatusGuidePage })))
+const ContactPage = lazy(() => info().then((m) => ({ default: m.ContactPage })))
+const SearchPage = lazy(() => info().then((m) => ({ default: m.SearchPage })))
+const CostAidPage = lazy(() => info().then((m) => ({ default: m.CostAidPage })))
 
 function recheckStaffSession() {
   void queryClient.invalidateQueries({ queryKey: STAFF_ME_KEY, exact: true })
@@ -82,6 +90,12 @@ export default function App() {
           />
           <Route element={<AppLayout />}>
             <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/apply" element={<ApplyPage />} />
+            <Route path="/deadlines" element={<DeadlinesPage />} />
+            <Route path="/application-status" element={<StatusGuidePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/cost-and-aid" element={<CostAidPage />} />
             <Route path="/eligibility" element={<EligibilityPage />} />
             <Route path="/recommendations" element={<RecommendationsPage />} />
             <Route path="/cost-calculator" element={<CostPage />} />
@@ -93,6 +107,7 @@ export default function App() {
             <Route path="/account/login" element={<ApplicantLoginPage key="login" />} />
             <Route path="/account/register" element={<ApplicantLoginPage key="register" register />} />
             <Route path="/account/verify" element={<ApplicantVerifyPage />} />
+            <Route path="/account/reset" element={<ApplicantResetPage />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/:id" element={<ProgramDetailPage />} />

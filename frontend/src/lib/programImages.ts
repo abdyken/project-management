@@ -1,0 +1,82 @@
+// A unique subject photograph for every program page (Unsplash; not SDU photographs).
+// Files are public/images/programs/<code>-{800,1280,1920}.webp; sources and descriptions are
+// in public/images/programs/CREDITS.md. Value: the photographer, shown in the caption.
+const PHOTOGRAPHER_BY_PROGRAM: Record<string, string> = {
+  "6B01101": "Anima Visual",
+  "6B01301": "Far Chinberdiev",
+  "6B01501": "Derrick Treadwell",
+  "6B01504": "RUT MIIT",
+  "6B01505": "5010 (isoten)",
+  "6B01506": "Egor Myznik",
+  "6B01601": "Andrew Neel",
+  "6B01701": "T Y",
+  "6B01702": "Kelsy Gagnebin",
+  "6B01703": "Briana Tozour",
+  "6B01707": "Egor Myznik",
+  "6B01802": "Ben Wicks",
+  "6B02302": "Waldemar Brandt",
+  "6B02304": "Raphael Schaller",
+  "6B03101": "Maxim Klimashin",
+  "6B03103": "Patrick Perkins",
+  "6B03205": "Jana Shnipelson",
+  "6B04101": "Paul Lichtblau",
+  "6B04102": "Benjamin Child",
+  "6B04103": "Berke Citak",
+  "6B04104": "Aaron Lefler",
+  "6B04105": "Luke Chesser",
+  "6B04201": "Giammarco Boscaro",
+  "6B04202": "Bozhin Karaivanov",
+  "6B04203": "Katie Moum",
+  "6B05401": "Erwan Hesry",
+  "6B05402": "Lily V",
+  "6B06101": "Kevin Ache",
+  "6B06102": "Jakub Żerdzicki",
+  "6B06103": "Vaaris Chitkara",
+  "6B06104": "James Kovin",
+  "6B06105": "JL Cabrera",
+  "6B06107": "Israel Andrade",
+  "7M01501": "Annie Spratt",
+  "7M01502": "Ivona Rož",
+  "7M01503": "Ananya Ganni",
+  "7M01504": "Fayette Reynolds",
+  "7M01505": "Kelly Sikkema",
+  "7M01701": "Charlotte Venema",
+  "7M01702": "Beau Carpenter",
+  "7M03201": "Brad Weaver",
+  "7M03205": "Akshay Chauhan",
+  "7M04104": "Marcelo Leal",
+  "7M04105": "Tasha Kostyuk",
+  "7M04109": "Alvaro Reyes",
+  "7M04110": "Nicholas Cappello",
+  "7M04112": "chris wang",
+  "7M04113": "Verne Ho",
+  "7M04114": "Yibei Geng",
+  "7M04115": "Dylan Gillis",
+  "7M04201": "Thomas Griggs",
+  "7M04202": "Sasun Bughdaryan",
+  "7M04204": "Venti Views",
+  "7M06101": "Lightsaber Collection",
+  "7M06102": "Андрей Сизов",
+  "7M06104": "Conny Schneider",
+  "7M06105": "Safar Safarov",
+  "8D01501": "Buddha Elemental 3D",
+  "8D01701": "Andrey Olesko",
+  "8D01702": "John Angel",
+  "8D04101": "Sasun Bughdaryan",
+  "8D04201": "Tingey Injury Law Firm",
+  "8D05401": "ThisisEngineering",
+  "8D06102": "Laura Ockel",
+}
+
+export type ProgramImage = { src: string; srcSet: string; credit: string }
+
+export function programImage(programId: string): ProgramImage | null {
+  const credit = PHOTOGRAPHER_BY_PROGRAM[programId]
+  if (!credit) return null
+  const base = `/images/programs/${programId}`
+  return {
+    src: `${base}-1280.webp`,
+    srcSet: `${base}-800.webp 800w, ${base}-1280.webp 1280w, ${base}-1920.webp 1920w`,
+    credit,
+  }
+}

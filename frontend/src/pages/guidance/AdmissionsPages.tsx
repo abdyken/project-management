@@ -1,5 +1,6 @@
+import { ArrowRight } from "lucide-react"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import {
   SUBJECT_PAIRS,
@@ -8,10 +9,8 @@ import {
   getFunding,
   getGuidance,
   recommendPrograms,
-  type Condition,
   type CostInput,
   type Eligibility,
-  type Evidence,
   type Metric,
   type Profile,
 } from "@/api/guidance"
@@ -20,9 +19,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGuidanceT } from "@/guidance/i18n"
 import { useI18n } from "@/i18n"
+import { useInfoT } from "@/info/i18n"
 import { ErrorMessage, Field, fieldClass } from "@/components/guidance/fields"
 import { GuidanceShell } from "@/components/guidance/GuidanceShell"
+import { ConditionText, EvidenceView } from "@/components/guidance/rules"
 import { GUIDANCE_ROUTES } from "@/guidance/routes"
+import { useRevealList } from "@/lib/motion"
 
 function SubmitHint({ id, text }: { id: string; text: string | null }) {
   return text ? (
@@ -32,56 +34,86 @@ function SubmitHint({ id, text }: { id: string; text: string | null }) {
   ) : null
 }
 
+const HUB_TILES = [
+  { key: "eligibility", text: "eligibilityText" },
+  { key: "recommendations", text: "recommendationsText" },
+  { key: "cost", text: "costText" },
+  { key: "funding", text: "fundingText" },
+  { key: "requests", text: "requestsText" },
+] as const
+
+function HubRow({ to, title, text, fact }: { to: string; title: string; text: string; fact?: string }) {
+  return (
+    <li className="border-b border-border">
+      <Link to={to} className="group grid grid-cols-[minmax(0,1fr)_1.25rem] items-start gap-4 py-5 transition-colors hover:bg-secondary/60 sm:-mx-2 sm:px-2">
+        <span className="min-w-0">
+          <span className="block font-heading text-[1.375rem] leading-[1.2] font-medium group-hover:text-primary">{title}</span>
+          <span className="mt-1 block max-w-[60ch] text-muted-foreground">{text}</span>
+          {fact ? <span className="label tabular mt-3 block text-primary">{fact}</span> : null}
+        </span>
+        <ArrowRight className="mt-1.5 size-5 text-primary transition-transform duration-200 group-hover:translate-x-[3px]" aria-hidden="true" />
+      </Link>
+    </li>
+  )
+}
+
 export function AdmissionsPage() {
   const t = useGuidanceT()
+  const infoT = useInfoT()
+  const { t: appT, degree, deadlineWithStatus, language } = useI18n()
+  const routes = Object.fromEntries(GUIDANCE_ROUTES)
+  const hubRef = useRef<HTMLUListElement>(null)
+  const photoRef = useRef<HTMLElement>(null)
+  useRevealList(hubRef)
+  useRevealList(photoRef)
+  const catalogue = useQuery(allProgramsQuery)
+  const programs = catalogue.data?.programs ?? []
+  const bachelors = programs.filter((program) => program.degree_level === "bachelor")
+  const bachelorDeadline = bachelors.find((program) => program.deadline_local)?.deadline_local ?? null
+  const fees = bachelors.map((program) => program.tuition_per_ects_kzt).filter((fee): fee is number => fee !== null)
+  const numbers = new Intl.NumberFormat(language === "en" ? "en-GB" : "ru-RU")
+  // One deciding fact per tool, from the live catalogue; nothing when it is not loaded.
+  const facts: Partial<Record<(typeof HUB_TILES)[number]["key"], string>> = catalogue.data
+    ? {
+        eligibility: bachelorDeadline ? `${degree("bachelor")} · ${deadlineWithStatus(bachelorDeadline)}` : undefined,
+        recommendations: appT("home.path.count", { count: numbers.format(programs.length) }),
+        cost: fees.length ? appT("format.range", { min: `${numbers.format(Math.min(...fees))}\u00a0₸`, max: `${numbers.format(Math.max(...fees))}\u00a0₸` }) : undefined,
+      }
+    : {}
   return (
-    <GuidanceShell title={t("hub")}>
-      <p className="max-w-2xl text-muted-foreground">{t("lead")}</p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {GUIDANCE_ROUTES.map(([key, to], i) => (
-          <Link
-            className="rounded-xl border border-border p-6 hover:bg-secondary"
-            key={key}
-            to={to}
-          >
-            <p className="text-xs text-muted-foreground">0{i + 1}</p>
-            <h2 className="mt-2 text-xl font-medium">{t(key)}</h2>
-          </Link>
-        ))}
+    <GuidanceShell title={t("hub")} lead={t("lead")}>
+      {/* Tools as a ruled list beside one campus photograph; the tile grid is kept for the home page. */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
+        <figure ref={photoRef} data-reveal="photo" className="m-0 overflow-hidden">
+          <img
+            src="/images/sdu/campus-facade-960.webp"
+            srcSet="/images/sdu/campus-facade-480.webp 480w, /images/sdu/campus-facade-960.webp 960w, /images/sdu/campus-facade-1440.webp 1440w"
+            sizes="(min-width: 1024px) 35vw, 100vw"
+            alt=""
+            width={960}
+            height={720}
+            className="aspect-[4/3] w-full object-cover object-[50%_30%]"
+          />
+        </figure>
+        <div>
+          <ul data-reveal-list="" ref={hubRef} className="border-t-2 border-ink">
+            {HUB_TILES.map((tile) => (
+              <HubRow key={tile.key} to={routes[tile.key]} title={t(tile.key)} text={t(tile.text)} fact={facts[tile.key]} />
+            ))}
+          </ul>
+          <h2 className="mt-14 text-[clamp(1.5rem,2vw,1.875rem)] leading-[1.15] font-medium">{infoT("hub.applyTitle")}</h2>
+          <ul className="mt-5 border-t-2 border-ink">
+            <HubRow to="/apply" title={infoT("apply.title")} text={infoT("apply.lead")} />
+            <HubRow to="/deadlines" title={infoT("deadlines.title")} text={infoT("deadlines.lead")} />
+            <HubRow to="/application-status" title={infoT("status.title")} text={infoT("status.lead")} />
+            <HubRow to="/contact" title={infoT("contact.title")} text={infoT("contact.lead")} />
+          </ul>
+        </div>
       </div>
     </GuidanceShell>
   )
 }
 
-export function EvidenceView({
-  evidence,
-}: {
-  evidence: Evidence | null | undefined
-}) {
-  const t = useGuidanceT()
-  if (!evidence) return null
-  return (
-    <details className="mt-2 text-xs text-muted-foreground">
-      <summary className="cursor-pointer">
-        {t("evidence")} · {evidence.academic_year} · {t(evidence.status)}
-      </summary>
-      <a
-        className="my-2 inline-block break-all underline"
-        href={evidence.url}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {t("sources")}
-      </a>
-      <blockquote className="whitespace-pre-wrap break-words border-l-2 border-border pl-3">
-        {evidence.quote}
-      </blockquote>
-      <p className="mt-2">
-        {t("checked")}: {evidence.checked_on}
-      </p>
-    </details>
-  )
-}
 export function GapList({ gaps }: { gaps: string[] }) {
   const t = useGuidanceT()
   return gaps.length > 0 ? (
@@ -92,25 +124,14 @@ export function GapList({ gaps }: { gaps: string[] }) {
     </ul>
   ) : null
 }
-function ConditionText({ condition }: { condition: Condition }) {
-  const t = useGuidanceT()
-  return (
-    <span>
-      {t(condition.metric)}{" "}
-      {condition.minimum != null
-        ? `≥ ${condition.minimum}`
-        : `= ${typeof condition.equals === "boolean" ? t(condition.equals ? "yes" : "no") : t.code(String(condition.equals))}`}
-    </span>
-  )
-}
 export function EligibilityResult({ result }: { result: Eligibility }) {
   const t = useGuidanceT()
   return (
     <section
       aria-live="polite"
-      className="mt-8 rounded-xl border border-border p-5"
+      className="mt-8 border-2 border-border bg-card p-6"
     >
-      <h2 className="text-xl font-semibold">{t(result.status)}</h2>
+      <h2 className="text-xl font-medium">{t(result.status)}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{t("disclaimer")}</p>
       <GapList gaps={result.gaps} />
       <ul className="mt-4 divide-y divide-border">
@@ -144,12 +165,16 @@ function ProfileFields({
   value,
   onChange,
   degree,
+  needed,
 }: {
   value: Profile
   onChange: (p: Profile) => void
   degree: string
+  // Metrics the chosen program's published rules use; only those fields are asked for.
+  needed?: Set<Metric>
 }) {
   const t = useGuidanceT()
+  const asks = (key: Metric) => !needed || needed.has(key) || (key === "ielts_component_min" && needed.has("ielts_overall"))
   const change = (key: keyof Profile, next: string | null) =>
     onChange({ ...value, [key]: next })
   const metrics: [Metric, number, number][] = [
@@ -230,6 +255,7 @@ function ProfileFields({
         {metrics
           .filter(([key]) => key !== "unt_total" || degree === "bachelor")
           .filter(([key]) => key !== "ct_total" || degree === "master")
+          .filter(([key]) => asks(key))
           .map(([key, max, step]) => (
             <Field key={key} label={t(key)}>
               <Input
@@ -251,7 +277,7 @@ function ProfileFields({
               />
             </Field>
           ))}
-        {degree === "bachelor" && (
+        {degree === "bachelor" && asks("subject_pair") && (
           <Field label={t("subject_pair")}>
             <select
               className={fieldClass}
@@ -283,7 +309,7 @@ function ProfileFields({
             "creative_exam",
             ...(degree === "phd" ? ["kaztest"] : []),
           ] as Metric[]
-        ).map((key) => (
+        ).filter(asks).map((key) => (
           <Field label={t(key)} key={key}>
             <select
               className={fieldClass}
@@ -387,6 +413,15 @@ export function EligibilityPage() {
   const mutation = useMutation({
     mutationFn: () => checkEligibility({ ...profile, program_id: program }),
   })
+  // The program comes first; then only the fields its published rules use are shown.
+  const guidance = useQuery({
+    queryKey: ["guidance", program],
+    queryFn: ({ signal }) => getGuidance(program, false, signal),
+    enabled: Boolean(program),
+  })
+  const needed = guidance.data?.rules.length
+    ? new Set(guidance.data.rules.flatMap((rule) => rule.alternatives.flat().map((condition) => condition.metric)))
+    : undefined
   const setSelected = (id: string) => {
     setProgram(id)
     const d = programs.data?.programs.find(
@@ -402,29 +437,47 @@ export function EligibilityPage() {
   }
   return (
     <GuidanceShell title={t("eligibility")}>
-      <form
-        className="max-w-3xl"
-        onSubmit={(e) => {
-          e.preventDefault()
-          mutation.mutate()
-        }}
-      >
-        <ProgramSelect value={program} onChange={setSelected} />
-        <ProfileFields
-          degree={degree}
-          value={profile}
-          onChange={(p) => {
-            setProfile(p)
-            mutation.reset()
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
+        <form
+          className="min-w-0"
+          onSubmit={(e) => {
+            e.preventDefault()
+            mutation.mutate()
           }}
-        />
-        <Button className="mt-6" disabled={!program || mutation.isPending} aria-describedby={program ? undefined : "eligibility-hint"}>
-          {t(mutation.isPending ? "working" : "submit")}
-        </Button>
-        <SubmitHint id="eligibility-hint" text={program ? null : t("needProgram")} />
-      </form>
-      <ErrorMessage error={mutation.error} />
-      {mutation.data && <EligibilityResult result={mutation.data} />}
+        >
+          <ProgramSelect value={program} onChange={setSelected} />
+          {program ? (
+            <>
+              <ProfileFields
+                degree={degree}
+                needed={needed}
+                value={profile}
+                onChange={(p) => {
+                  setProfile(p)
+                  mutation.reset()
+                }}
+              />
+              <Button className="mt-6" disabled={mutation.isPending}>
+                {t(mutation.isPending ? "working" : "submit")}
+              </Button>
+            </>
+          ) : (
+            <SubmitHint id="eligibility-hint" text={t("needProgram")} />
+          )}
+        </form>
+        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start [&>section]:lg:mt-0">
+          <ErrorMessage error={mutation.error} />
+          {mutation.data ? (
+            <EligibilityResult result={mutation.data} />
+          ) : (
+            <div className="border-t-2 border-ink pt-5 text-muted-foreground">
+              <p className="font-heading text-xl font-medium text-foreground">{t("eligibility")}</p>
+              <p className="mt-2">{t("eligibilityText")}</p>
+              <p className="mt-3 text-sm">{t("disclaimer")}</p>
+            </div>
+          )}
+        </div>
+      </div>
     </GuidanceShell>
   )
 }
@@ -556,13 +609,13 @@ export function RecommendationsPage() {
           {mutation.data.items.length === 0 && <p>{t("noMatches")}</p>}
           {mutation.data.items.map((item) => (
             <article
-              className="rounded-xl border border-border p-5"
+              className="border-2 border-border bg-card p-6"
               key={item.program.program_id}
             >
               <p className="text-xs text-muted-foreground">
                 {item.program.program_id}
               </p>
-              <h2 className="mt-1 text-xl font-semibold">
+              <h2 className="mt-1 text-xl font-medium">
                 {programTitle(item.program)}
               </h2>
               <p className="mt-2 text-sm">
@@ -743,9 +796,9 @@ export function CostPage() {
       {mutation.data && (
         <section
           aria-live="polite"
-          className="mt-8 rounded-xl border border-border p-5"
+          className="mt-8 border-2 border-border bg-card p-6"
         >
-          <h2 className="text-xl font-semibold">
+          <h2 className="text-xl font-medium">
             {t("total")}: {number(mutation.data.estimated_total)} {currency}
           </h2>
           {mutation.data.estimated_total == null && (
@@ -832,7 +885,7 @@ export function FundingPage() {
         {data.data?.items.map((item) => (
           <article
             key={item.faq_id}
-            className="rounded-xl border border-border p-5"
+            className="border-2 border-border bg-card p-6"
           >
             <p className="text-xs text-muted-foreground">
               {t.code(item.status)} · {t("checked")}: {item.last_checked}

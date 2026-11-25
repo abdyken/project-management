@@ -166,7 +166,7 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
                 key={suggestion}
                 type="button"
                 onClick={() => void ask(suggestion)}
-                className="max-w-full rounded-full border border-border px-3 py-1.5 text-left text-xs break-words text-muted-foreground hover:bg-secondary hover:text-foreground"
+                className="max-w-full border-2 border-border bg-card px-3 py-2 text-left text-sm break-words text-muted-foreground hover:bg-secondary hover:text-foreground"
               >
                 {suggestion}
               </button>
@@ -190,9 +190,9 @@ export function ChatPanel({ autoFocus = false }: { autoFocus?: boolean }) {
           placeholder={t("chat.placeholder")}
           className="w-full resize-none bg-transparent text-base outline-none sm:text-sm placeholder:text-muted-foreground"
         />
-        <p className="mt-2 text-[11px] text-muted-foreground">{t("chat.noPersonalData")}</p>
+        <p className="mt-2 text-xs text-muted-foreground">{t("chat.noPersonalData")}</p>
         <div className="mt-2 flex items-center justify-between gap-3">
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {draft.length}/{MESSAGE_MAX_LENGTH}
           </span>
           <Button type="submit" size="sm" disabled={!canSend}>

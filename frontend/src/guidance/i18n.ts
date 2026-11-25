@@ -2,7 +2,7 @@ import { useLanguageStore } from "@/i18n"
 
 const messages = {
   profile_subjects: [
-    "Programme profile subjects",
+    "Program profile subjects",
     "Профильные предметы программы",
     "Бағдарламаның бейіндік пәндері",
   ],
@@ -93,9 +93,9 @@ const messages = {
     "Ресми дереккөз қосу",
   ],
   professional_tariff_needs_confirmation: [
-    "The programme tariff changed; the office must reconfirm its source.",
-    "Тариф программы изменился; комиссия должна повторно подтвердить источник.",
-    "Бағдарлама тарифі өзгерді; комиссия дереккөзді қайта растауы керек.",
+    "The program tariff changed. The office must reconfirm its source.",
+    "Тариф программы изменился. Комиссия должна повторно подтвердить источник.",
+    "Бағдарлама тарифі өзгерді. Комиссия дереккөзді қайта растауы керек.",
   ],
   hub: [
     "Plan your admission",
@@ -103,7 +103,7 @@ const messages = {
     "Оқуға түсуді жоспарлау",
   ],
   lead: [
-    "Explore programmes, check published requirements and plan your budget.",
+    "Explore programs, check published requirements and plan your budget.",
     "Подберите программу, проверьте опубликованные требования и рассчитайте бюджет.",
     "Бағдарламаны таңдап, жарияланған талаптарды тексеріп, бюджетіңізді есептеңіз.",
   ],
@@ -113,7 +113,7 @@ const messages = {
     "Талаптарды тексеру",
   ],
   recommendations: [
-    "Find my programmes",
+    "Find my programs",
     "Подобрать программы",
     "Бағдарламаларды таңдау",
   ],
@@ -128,8 +128,33 @@ const messages = {
     "Обращения в приёмную комиссию",
     "Қабылдау комиссиясына сұрақтар",
   ],
-  program: ["Programme", "Программа", "Бағдарлама"],
-  choose: ["Choose a programme", "Выберите программу", "Бағдарламаны таңдаңыз"],
+  eligibilityText: [
+    "See which published requirements of a program you already meet.",
+    "Узнайте, каким опубликованным требованиям программы вы уже соответствуете.",
+    "Бағдарламаның жарияланған талаптарының қайсысына сай келетініңізді біліңіз.",
+  ],
+  recommendationsText: [
+    "Get programs that fit your profile and their published requirements.",
+    "Подберите программы под ваш профиль и их опубликованные требования.",
+    "Профиліңізге және жарияланған талаптарға сай бағдарламаларды табыңыз.",
+  ],
+  costText: [
+    "Estimate tuition from the credits in your study plan.",
+    "Рассчитайте стоимость по кредитам вашего учебного плана.",
+    "Оқу жоспарыңыздағы кредиттер бойынша оқу ақысын есептеңіз.",
+  ],
+  fundingText: [
+    "State grants, SDU discounts and how to apply for them.",
+    "Государственные гранты, скидки SDU и как их получить.",
+    "Мемлекеттік гранттар, SDU жеңілдіктері және оларды алу жолы.",
+  ],
+  requestsText: [
+    "Send a private question and get an answer from the office.",
+    "Задайте личный вопрос и получите ответ приёмной комиссии.",
+    "Жеке сұрақ қойып, қабылдау комиссиясынан жауап алыңыз.",
+  ],
+  program: ["Program", "Программа", "Бағдарлама"],
+  choose: ["Choose a program", "Выберите программу", "Бағдарламаны таңдаңыз"],
   chooseLanguageGroup: [
     "Choose a language group",
     "Выберите языковую группу",
@@ -235,7 +260,7 @@ const messages = {
   submit: ["Check", "Проверить", "Тексеру"],
   calculate: ["Calculate", "Рассчитать", "Есептеу"],
   tooMany: ["Too many requests in a short time. Please wait a minute and try again.", "Слишком много запросов за короткое время. Подождите минуту и попробуйте снова.", "Қысқа уақытта тым көп сұраныс жіберілді. Бір минут күтіп, қайталап көріңіз."],
-  needProgram: ["Choose a programme first.", "Сначала выберите программу.", "Алдымен бағдарламаны таңдаңыз."],
+  needProgram: ["Choose a program first.", "Сначала выберите программу.", "Алдымен бағдарламаны таңдаңыз."],
   needInterest: ["Choose at least one interest.", "Выберите хотя бы один интерес.", "Кемінде бір қызығушылықты таңдаңыз."],
   needCredits: ["Enter the profile ECTS credits.", "Введите кредиты ECTS по профильным дисциплинам.", "Бейіндік пәндер бойынша ECTS кредиттерін енгізіңіз."],
   working: ["Please wait…", "Подождите…", "Күтіңіз…"],
@@ -319,7 +344,7 @@ const messages = {
     "Магистратура бағытын растау қажет.",
   ],
   credit_split_missing: [
-    "The programme's professional/MDE credit split needs confirmation.",
+    "The program's professional/MDE credit split needs confirmation.",
     "Распределение кредитов программы между профильными курсами и MDE требует подтверждения.",
     "Бағдарламадағы бейіндік/MDE кредиттерінің бөлінуін растау қажет.",
   ],
@@ -329,7 +354,7 @@ const messages = {
     "MDE тарифі расталмаған.",
   ],
   professional_rate_missing: [
-    "The programme tariff is not confirmed.",
+    "The program tariff is not confirmed.",
     "Профильный тариф не подтверждён.",
     "Бейіндік тариф расталмаған.",
   ],
@@ -344,7 +369,7 @@ const messages = {
     "Ресми дереккөздердегі айырмашылықтар шешілмеген.",
   ],
   doctoral_requirements_unconfirmed: [
-    "Programme-specific doctoral requirements need confirmation.",
+    "Program-specific doctoral requirements need confirmation.",
     "Требования конкретной программы PhD требуют подтверждения.",
     "PhD бағдарламасының талаптарын растау қажет.",
   ],
@@ -384,19 +409,19 @@ const messages = {
     "Расталған есеп бөлігі",
   ],
   costNote: [
-    "Enter the professional and MDE credits in your study plan. For a full-degree estimate, use the whole programme's split; a single tariff × all credits is not a full quote.",
-    "Укажите профильные и MDE-кредиты учебного плана. Для оценки всей программы нужен полный состав кредитов; одна ставка × все кредиты не даёт полной стоимости.",
-    "Оқу жоспарындағы бейіндік және MDE кредиттерін енгізіңіз. Толық бағдарлама үшін барлық кредиттердің бөлінуі қажет; бір тарифті барлық кредитке көбейту толық баға емес.",
+    "Enter the professional and MDE credits in your study plan. A full-degree estimate needs the whole program's split, not one tariff × all credits.",
+    "Укажите профильные и MDE-кредиты учебного плана. Для оценки всей программы нужен полный состав кредитов, а не одна ставка × все кредиты.",
+    "Оқу жоспарындағы бейіндік және MDE кредиттерін енгізіңіз. Толық бағдарламаны бағалау үшін кредиттердің толық бөлінуі қажет, бір тарифті барлық кредитке көбейту жеткіліксіз.",
   ],
   current_rates_only: [
-    "Current published rates; future price changes are excluded.",
-    "Тек текущие опубликованные ставки; будущие изменения цен не учтены.",
-    "Тек қазіргі жарияланған тарифтер; болашақ баға өзгерістері есептелмеген.",
+    "Current published rates only. Future price changes are not included.",
+    "Только текущие опубликованные ставки. Будущие изменения цен не учтены.",
+    "Тек қазіргі жарияланған тарифтер. Болашақ баға өзгерістері есептелмеген.",
   ],
   user_supplied_credit_split: [
     "Credit allocation is supplied by you and must match your study plan.",
     "Распределение кредитов введено вами и должно соответствовать учебному плану.",
-    "Кредиттерді сіз енгіздіңіз; олар оқу жоспарына сәйкес болуы керек.",
+    "Кредиттерді сіз енгіздіңіз. Олар оқу жоспарына сәйкес болуы керек.",
   ],
   discounts_not_applied: [
     "Scholarships, discounts and non-tuition expenses are excluded.",
@@ -445,7 +470,7 @@ const messages = {
   ],
   psychology: ["Psychology", "Психология", "Психология"],
   noMatches: [
-    "No matching programmes. Review your preferences and checked requirements.",
+    "No matching programs. Review your preferences and checked requirements.",
     "Подходящих программ нет. Проверьте предпочтения и требования.",
     "Сәйкес бағдарламалар жоқ. Қалауларыңыз бен талаптарды тексеріңіз.",
   ],
@@ -454,9 +479,9 @@ const messages = {
     "Соответствует интересам",
     "Қызығушылықтарыңызға сәйкес",
   ],
-  details: ["Programme details", "О программе", "Бағдарлама туралы"],
+  details: ["Program details", "О программе", "Бағдарлама туралы"],
   compare: [
-    "Compare these programmes",
+    "Compare these programs",
     "Сравнить программы",
     "Бағдарламаларды салыстыру",
   ],
@@ -476,16 +501,16 @@ const messages = {
     "Қазіргі науқанды нақтылаңыз",
   ],
   translation_missing: [
-    "Official translation is not published; showing the English source.",
-    "Официальный перевод не опубликован; показан английский источник.",
-    "Ресми аударма жарияланбаған; ағылшын дереккөзі көрсетілген.",
+    "No official translation is published, so the English source is shown.",
+    "Официальный перевод не опубликован, поэтому показан английский источник.",
+    "Ресми аударма жарияланбаған, сондықтан ағылшын дереккөзі көрсетілген.",
   ],
   checked: ["Last checked", "Проверено", "Тексерілді"],
   empty: ["No items yet.", "Пока нет записей.", "Әзірге жазбалар жоқ."],
   question: ["Your question", "Ваш вопрос", "Сұрағыңыз"],
   send: ["Send to admissions", "Отправить в комиссию", "Комиссияға жіберу"],
   requestNote: [
-    "Send a question from your verified account. Do not include document scans or identity numbers. The reply appears here; e-mail will notify you.",
+    "Send a question from your verified account. Do not include document scans or identity numbers. The reply appears here, and we e-mail you when it does.",
     "Отправьте вопрос из подтверждённого аккаунта. Не включайте сканы документов и номера удостоверений. Ответ появится здесь, почта уведомит о нём.",
     "Расталған аккаунттан сұрақ жіберіңіз. Құжат көшірмелері мен жеке куәлік нөмірлерін қоспаңыз. Жауап осы жерде көрсетіледі, пошта хабарлайды.",
   ],

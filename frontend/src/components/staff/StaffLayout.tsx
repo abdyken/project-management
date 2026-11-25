@@ -38,22 +38,25 @@ export function StaffLayout() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-border/80">
+      <header className="border-b-4 border-primary bg-card">
         {/* Phones: logo and controls on the first row, the page links on the second. */}
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-3 sm:h-16 sm:flex-nowrap sm:py-0 sm:px-6">
           <Link to="/staff" className="flex shrink-0 items-center gap-2">
-            <img src="/logo.svg" alt="" className="size-6" />
-            <span className="text-xl font-semibold tracking-tight">SDU</span>
-            <span className="hidden text-[11px] tracking-[0.12em] text-muted-foreground uppercase md:inline">
+            <img src="/brand/sdu-lockup-ink.svg" alt="SDU University" className="h-8 w-auto" width={102} height={34} />
+            <span className="hidden text-sm font-semibold text-muted-foreground md:inline">
               {t("staff.title")}
             </span>
           </Link>
-          <nav className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-2 text-sm sm:order-none sm:w-auto sm:flex-1">
+          <nav className="order-last flex w-full flex-wrap items-center gap-x-1 gap-y-1 sm:order-none sm:w-auto sm:flex-1 sm:self-stretch">
             {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex items-center bg-secondary px-3 py-2 text-[0.9375rem] font-semibold text-secondary-foreground shadow-[inset_0_-3px_0_var(--primary)] sm:py-0"
+                    : "flex items-center px-3 py-2 text-[0.9375rem] font-medium text-muted-foreground hover:bg-muted hover:text-foreground sm:py-0"
+                }
               >
                 {t(item.label)}
               </NavLink>

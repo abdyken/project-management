@@ -123,3 +123,15 @@ class FeedbackResponse(BaseModel):
     answer_id: str
     rating: Literal["up", "down"]
     reason: str | None
+
+
+class FaqSearchHit(BaseModel):
+    faq_id: str
+    question: str
+    answer: str
+    category: str
+    source_link: str
+
+
+class FaqSearchResponse(BaseModel):
+    results: list[FaqSearchHit]

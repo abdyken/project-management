@@ -1,5 +1,5 @@
-import { chromium, firefox } from "playwright"
 import fs from "node:fs"
+import { qaRuns } from "./matrix.mjs"
 
 // Sprint 4 staff area QA: US19 login, guard and logout at every width; at 1280 px also the
 // US20 FAQ editor, US22 inbox and US9 dashboard scenarios. Needs a staff account:
@@ -34,7 +34,7 @@ async function run(browserType, name, width) {
 
     await page.getByLabel("E-mail").fill(EMAIL)
     // One wrong password per run: five failures in 15 minutes lock the login (US19).
-    if (width === WIDTHS[0]) {
+    if (width === RUNS.find((run) => run.name === name).width) {
       await page.getByLabel("Password").fill("definitely wrong")
       await page.getByRole("button", { name: "Log in" }).click()
       await page.getByRole("alert").waitFor()
@@ -225,14 +225,8 @@ async function staffStories(page, name, width) {
   await page.screenshot({ path: `${OUT}/staff-dashboard.png`, fullPage: true })
 }
 
-const WIDTHS = (process.env.WIDTHS ?? "360,768,1280").split(",").map(Number)
-const BROWSERS = (process.env.BROWSERS ?? "chromium,firefox").split(",")
-for (const [type, name] of [
-  [chromium, "chromium"],
-  [firefox, "firefox"],
-].filter(([, name]) => BROWSERS.includes(name))) {
-  for (const width of WIDTHS) await run(type, name, width)
-}
+const RUNS = qaRuns()
+for (const { type, name, width } of RUNS) await run(type, name, width)
 
 const failed = results.filter((r) => !r.ok)
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`)

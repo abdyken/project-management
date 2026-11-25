@@ -2,8 +2,15 @@ name: Backend CI
 
 on:
   pull_request:
-  # Pushes to main run this through deploy.yml before deploying.
+  # Pushes to main run this through deploy.yml before deploying; the nightly QA
+  # workflow calls it with the full browser matrix.
   workflow_call:
+    inputs:
+      qa_runs:
+        description: "Browser runs for every QA suite (browser:width, comma separated)"
+        type: string
+        required: false
+        default: ""
 
 jobs:
   test:
@@ -33,6 +40,9 @@ jobs:
     env:
       DATABASE_URL: postgresql+psycopg://admissions:admissions@localhost:5432/admissions
       FASTEMBED_CACHE_PATH: /home/runner/.cache/fastembed
+      # Pull requests: Chromium at phone and desktop width. Nightly: Chromium and Firefox at
+      # 360, 768 and 1280 px (frontend/e2e/matrix.mjs reads this for every suite).
+      QA_RUNS: ${{ inputs.qa_runs || 'chromium:360,chromium:1280' }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -93,6 +103,22 @@ jobs:
       - name: Run applicant browser QA
         working-directory: frontend
         run: npm run qa:applicant
+      # Staff runs before guidance: guidance archives a synthetic programme it creates.
+      - name: Run staff area browser QA
+        working-directory: frontend
+        env:
+          STAFF_EMAIL: qa-sprint6@example.test
+          STAFF_PASSWORD: Sprint6-browser-local-only
+        run: npm run qa:staff
+      - name: Run program comparison browser QA
+        working-directory: frontend
+        run: npm run qa:compare
+      - name: Run language (KK/RU) browser QA
+        working-directory: frontend
+        run: npm run qa:language
+      - name: Run chat widget browser QA
+        working-directory: frontend
+        run: npm run qa:widget
       - name: Run guidance and private request browser QA
         working-directory: frontend
         env:
@@ -110,7 +136,6 @@ jobs:
         env:
           STAFF_EMAIL: qa-sprint6@example.test
           STAFF_PASSWORD: Sprint6-browser-local-only
-          RUNS: chromium:360,chromium:1280,firefox:1280
         run: npm run qa:applications
       - name: Stop browser QA services
         if: always()

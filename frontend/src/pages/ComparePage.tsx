@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { X } from "lucide-react"
+import { X, ArrowLeft } from "lucide-react"
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { isNotFound } from "@/api/errors"
@@ -7,11 +7,13 @@ import { comparePrograms } from "@/api/programs"
 import type { ComparedProgram } from "@/api/types"
 import { ConnectionError } from "@/components/common/ConnectionError"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { ApplyAction } from "@/components/common/ApplyAction"
 import { useI18n, type I18n } from "@/i18n"
 import type { MessageKey } from "@/i18n/messages"
 import { MAX_COMPARED, useCompareStore } from "@/store/compare"
 
-const labelClass = "text-[11px] tracking-[0.14em] text-muted-foreground uppercase"
+const labelClass = "text-sm font-semibold text-muted-foreground"
 
 type Row = { label: MessageKey; value: (program: ComparedProgram, i18n: I18n) => string }
 
@@ -21,12 +23,12 @@ function documents(count: number, i18n: I18n) {
 
 const ROWS: Row[] = [
   { label: "compare.row.degree", value: (program, i18n) => `${i18n.degree(program.degree_level)} · ${program.program_id}` },
-  { label: "compare.row.school", value: (program) => program.faculty },
+  { label: "compare.row.school", value: (program, i18n) => i18n.schoolName(program.faculty) },
   { label: "compare.row.language", value: (program, i18n) => i18n.languages(program.language) },
   { label: "compare.row.tuitionLocal", value: (program, i18n) => i18n.tuitionKzt(program.tuition_per_ects_kzt) },
   { label: "compare.row.tuitionInternational", value: (program, i18n) => i18n.tuitionUsd(program.tuition_per_ects_usd) },
-  { label: "compare.row.deadlineLocal", value: (program, i18n) => i18n.deadline(program.deadline_local) },
-  { label: "compare.row.deadlineInternational", value: (program, i18n) => i18n.deadline(program.deadline_international) },
+  { label: "compare.row.deadlineLocal", value: (program, i18n) => i18n.deadlineWithStatus(program.deadline_local) },
+  { label: "compare.row.deadlineInternational", value: (program, i18n) => i18n.deadlineWithStatus(program.deadline_international) },
   { label: "compare.row.documentsLocal", value: (program, i18n) => documents(program.documents_local, i18n) },
   {
     label: "compare.row.documentsInternational",
@@ -80,12 +82,12 @@ export function ComparePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <Link to="/programs" className="text-sm text-muted-foreground hover:text-foreground">
-        {t("detail.backToPrograms")}
+    <div className="mx-auto max-w-[84rem] px-4 pt-12 pb-20 sm:px-6 lg:px-8 sm:pt-16 sm:pb-24">
+      <Link to="/programs" className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-primary hover:underline">
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {t("detail.backToPrograms").replace(/^←\s*/, "")}
       </Link>
-      <p className={`mt-6 ${labelClass}`}>{t("compare.kicker")}</p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{t("compare.title")}</h1>
+      <h1 className="mt-8 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-medium">{t("compare.title")}</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
         {t("compare.lead", { max: MAX_COMPARED })}
       </p>
@@ -139,11 +141,14 @@ export function ComparePage() {
 }
 
 function ProgramHeading({ program, onRemove }: { program: ComparedProgram; onRemove: (id: string) => void }) {
-  const { t, programTitle } = useI18n()
+  const { t, programTitle, degree } = useI18n()
   return (
     <div className="flex items-start justify-between gap-2">
-      <Link to={`/programs/${program.program_id}`} className="font-semibold leading-snug hover:text-primary">
-        {programTitle(program)}
+      <Link to={`/programs/${program.program_id}`} className="leading-snug hover:text-primary">
+        <span className="block font-heading text-lg font-medium">{programTitle(program)}</span>
+        <span className="tabular block text-sm text-muted-foreground">
+          {degree(program.degree_level)} · {program.program_id}
+        </span>
       </Link>
       <button
         type="button"
@@ -160,8 +165,13 @@ function ProgramHeading({ program, onRemove }: { program: ComparedProgram; onRem
 function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRemove: (id: string) => void }) {
   const i18n = useI18n()
   const { t } = i18n
+  // Rows that are the same for every program are greyed, so the differences carry the weight.
+  const same = (row: Row) => programs.length > 1 && new Set(programs.map((program) => row.value(program, i18n))).size === 1
   return (
     <>
+      {programs.length > 1 ? (
+        <p className="mb-4 text-sm text-muted-foreground">{t("compare.sameNote")}</p>
+      ) : null}
       <table className="hidden w-full table-fixed border-collapse text-sm sm:table">
         <caption className="sr-only">{t("compare.caption")}</caption>
         <thead>
@@ -178,12 +188,13 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
         </thead>
         <tbody>
           {ROWS.map((row) => (
-            <tr key={row.label} className="border-b border-border">
-              <th scope="row" className={`py-3 pr-4 text-left align-top font-normal ${labelClass}`}>
+            <tr key={row.label} className={cn("border-b border-border", same(row) && "text-muted-foreground")}>
+              <th scope="row" className={`py-3 pr-4 pl-2 text-left align-top font-normal ${labelClass}`}>
                 {t(row.label)}
+                {same(row) ? <span className="sr-only"> ({t("compare.same")})</span> : null}
               </th>
               {programs.map((program) => (
-                <td key={program.program_id} className="py-3 pr-4 align-top break-words">
+                <td key={program.program_id} className={cn("py-3 pr-4 align-top break-words", !same(row) && "font-semibold text-foreground")}>
                   {row.value(program, i18n)}
                 </td>
               ))}
@@ -201,8 +212,11 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
           ))}
         </ul>
         {ROWS.map((row) => (
-          <section key={row.label} aria-label={t(row.label)}>
-            <h2 className={labelClass}>{t(row.label)}</h2>
+          <section key={row.label} aria-label={t(row.label)} className={cn(same(row) && "text-muted-foreground")}>
+            <h2 className={labelClass}>
+              {t(row.label)}
+              {same(row) ? <span className="sr-only"> ({t("compare.same")})</span> : null}
+            </h2>
             <dl className="mt-2 space-y-1.5 text-sm">
               {programs.map((program) => (
                 <div key={program.program_id} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-3">
@@ -213,6 +227,9 @@ function Comparison({ programs, onRemove }: { programs: ComparedProgram[]; onRem
             </dl>
           </section>
         ))}
+      </div>
+      <div className="mt-8">
+        <ApplyAction label={t("detail.apply")} />
       </div>
     </>
   )

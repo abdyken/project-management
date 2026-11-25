@@ -47,11 +47,11 @@ export function StaffLoginPage() {
     <div className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
         <Link to="/" className="mb-8 flex items-center gap-2">
-          <img src="/logo.svg" alt="" className="size-6" />
+          <img src="/brand/sdu-emblem-ink.svg" alt="" className="h-7 w-auto" />
           <span className="text-xl font-semibold tracking-tight">SDU</span>
-          <span className="text-[11px] tracking-[0.12em] text-muted-foreground uppercase">{t("staff.title")}</span>
+          <span className="text-sm font-semibold text-muted-foreground">{t("staff.title")}</span>
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("login.title")}</h1>
+        <h1 className="text-3xl leading-[1.12] font-medium">{t("login.title")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{t("login.lead")}</p>
         <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
           <label className="block space-y-1.5 text-sm">

@@ -60,3 +60,12 @@ export async function downloadChecklist(path: string) {
   anchor.click()
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
+export const requestPasswordReset = (email: string, language: Language) =>
+  request<{ message: string }>(`${ROOT}/password-reset`, {
+    ...options,
+    method: "POST",
+    body: JSON.stringify({ email, language }),
+    timeoutMs: 20_000,
+  })
+export const confirmPasswordReset = (token: string, password: string) =>
+  request<Applicant>(`${ROOT}/password-reset/confirm`, { ...options, method: "POST", body: JSON.stringify({ token, password }) })
