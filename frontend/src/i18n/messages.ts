@@ -16,7 +16,7 @@ const en = {
   "footer.explore": "Explore",
   "footer.applyTitle": "Apply",
   "footer.compare": "Compare programs",
-  "footer.email": "admissions@sdu.edu.kz",
+  "footer.email": "sduadmissionsportal@gmail.com",
 
   "home.title": "Study at the foot of the Alatau",
   "home.tally": "{programs} programs in {schools} schools, taught in {languages}",
@@ -272,7 +272,7 @@ const kk: Messages = {
   "footer.explore": "Шолу",
   "footer.applyTitle": "Өтініш",
   "footer.compare": "Бағдарламаларды салыстыру",
-  "footer.email": "admissions@sdu.edu.kz",
+  "footer.email": "sduadmissionsportal@gmail.com",
 
   "home.title": "Алатау баурайында оқы",
   "home.tally": "{schools} мектепте {programs} бағдарлама, оқыту тілдері: {languages}",
@@ -526,7 +526,7 @@ const ru: Messages = {
   "footer.explore": "Обзор",
   "footer.applyTitle": "Поступление",
   "footer.compare": "Сравнить программы",
-  "footer.email": "admissions@sdu.edu.kz",
+  "footer.email": "sduadmissionsportal@gmail.com",
 
   "home.title": "Учитесь у подножия Алатау",
   "home.tally": "Программ: {programs} в {schools} школах, языки обучения: {languages}",
